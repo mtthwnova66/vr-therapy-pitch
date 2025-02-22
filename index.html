@@ -87,6 +87,7 @@
       padding: 60px 40px;
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      transition: opacity 0.5s ease;
     }
     input, button {
       width: 100%;
@@ -158,8 +159,15 @@
     /* Răzvan’s image cropped to focus on head, neck, and shoulders */
     .razvi-img { object-fit: cover; object-position: 50% 55%; }
     .team-member img:hover { transform: scale(1.05); }
-    .team-member h3 { font-size: 1.5rem; margin-bottom: 10px; }
+    .team-member h3 { font-size: 1.5rem; margin-bottom: 5px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
+    /* Role Label Styling */
+    .role {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
     
     /* Geometric Background Shapes – Simple Expansions & Contractions */
     .tech-symbol {
@@ -168,6 +176,7 @@
       z-index: -1;
       filter: blur(30px);
       animation: pulse 8s infinite ease-in-out;
+      will-change: transform;
     }
     @keyframes pulse {
       0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
@@ -197,6 +206,7 @@
       filter: blur(25px);
       opacity: 0.6;
       animation: dance 25s infinite ease-in-out;
+      will-change: transform;
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
@@ -235,6 +245,7 @@
       border-right: 50px solid transparent;
       border-bottom: 100px solid rgba(255,87,34,0.4);
       animation: tumble 18s infinite ease-in-out;
+      will-change: transform;
     }
     @keyframes tumble {
       0% { transform: translate(0, 0) rotate(0deg); }
@@ -403,6 +414,7 @@
         <div class="team-member">
           <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan">
           <h3>Matei Seleușan</h3>
+          <p class="role">CEO</p>
           <p>
             Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.
           </p>
@@ -410,6 +422,7 @@
         <div class="team-member">
           <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu">
           <h3>Răzvan Crețu</h3>
+          <p class="role">CTO</p>
           <p>
             Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
           </p>
