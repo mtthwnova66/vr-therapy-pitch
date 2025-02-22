@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI-Powered VR Therapy</title>
-  <!-- Refined fonts for an elegant look -->
+  <!-- Elegant Google Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Helvetica+Neue:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
   <style>
     /* Reset & Global Styles */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, #ffffff, #f9f9f9);
+      font-family: 'Source Sans Pro', sans-serif;
+      background: 
+        radial-gradient(circle at top left, rgba(0,113,227,0.1), transparent 70%),
+        radial-gradient(circle at bottom right, rgba(255,193,7,0.1), transparent 70%),
+        linear-gradient(135deg, #ffffff, #f9f9f9);
       color: #1d1d1f;
       line-height: 1.6;
       text-align: center;
       overflow-x: hidden;
+      position: relative;
     }
     a { text-decoration: none; color: inherit; }
     
-    /* Animations */
-    .fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 1s forwards; }
+    /* Seamless Transitions & Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+    }
     @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
     .delay-1 { animation-delay: 0.5s; }
     .delay-2 { animation-delay: 0.8s; }
@@ -32,7 +40,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.97);
       backdrop-filter: blur(20px);
       padding: 20px 60px;
       justify-content: center;
@@ -63,6 +71,7 @@
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
     }
     #login-container {
       margin-top: 200px;
@@ -141,12 +150,44 @@
     .team-member h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 10px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
     
+    /* Tech Symbols on the Margins */
+    .tech-symbol {
+      position: fixed;
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(30px);
+      animation: pulse 6s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    #tech-symbol-1 {
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(0,113,227,0.4), transparent 70%);
+      top: -50px; left: -50px;
+    }
+    #tech-symbol-2 {
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,193,7,0.4), transparent 70%);
+      bottom: -70px; right: -70px;
+    }
+    #tech-symbol-3 {
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(76,175,80,0.4), transparent 70%);
+      top: 20%; right: -50px;
+    }
+    
     /* Subtle Hover Effects for Sections */
     .section:hover { background: #fefefe; transition: background 0.3s ease; }
-    
   </style>
 </head>
 <body>
+  <!-- Tech Symbols -->
+  <div class="tech-symbol" id="tech-symbol-1"></div>
+  <div class="tech-symbol" id="tech-symbol-2"></div>
+  <div class="tech-symbol" id="tech-symbol-3"></div>
+  
   <!-- Login Container -->
   <div class="container fade-in" id="login-container">
     <h2>Enter Password to View the Pitch</h2>
@@ -169,7 +210,6 @@
   
   <!-- Main Content -->
   <div class="container hidden-content fade-in delay-1" id="pitch-content" style="display: none;">
-    
     <!-- Hero Section -->
     <div class="hero-section fade-in delay-1">
       <div class="hero-logo">
