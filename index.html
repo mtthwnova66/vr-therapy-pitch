@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI-Powered VR Therapy</title>
+  <!-- Refined fonts for an elegant look -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Helvetica+Neue:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Reset & Base Styles */
+    /* Reset & Global Styles */
     * {
       margin: 0;
       padding: 0;
@@ -15,15 +18,35 @@
       scroll-behavior: smooth;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background-color: #fafafa;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f9f9f9);
       color: #1d1d1f;
       line-height: 1.6;
       text-align: center;
+      overflow-x: hidden;
     }
     a {
       text-decoration: none;
       color: inherit;
+    }
+    
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .delay-1 {
+      animation-delay: 0.5s;
+    }
+    .delay-2 {
+      animation-delay: 0.8s;
     }
     
     /* Navbar Styling */
@@ -33,20 +56,31 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(15px);
-      padding: 20px 40px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 20px 60px;
       justify-content: center;
       gap: 40px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      transition: background 0.3s ease, padding 0.3s ease;
       z-index: 1000;
+      animation: fadeInDown 1s forwards;
+    }
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     .navbar a {
-      font-size: 16px;
-      font-weight: 500;
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 400;
       padding: 10px 15px;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       transition: color 0.3s ease, transform 0.2s ease;
     }
     .navbar a:hover {
@@ -60,14 +94,15 @@
       margin: 140px auto 80px;
       padding: 40px;
       background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     }
     #login-container {
       margin-top: 200px;
-      background: #fff;
       padding: 60px 40px;
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      border: none;
       border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     }
     input, button {
       width: 100%;
@@ -81,11 +116,11 @@
     }
     input:focus {
       border-color: #0071e3;
-      box-shadow: 0 0 5px rgba(0, 113, 227, 0.3);
+      box-shadow: 0 0 8px rgba(0, 113, 227, 0.3);
     }
     button {
       background: linear-gradient(135deg, #0071e3, #005bb5);
-      color: white;
+      color: #fff;
       border: none;
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
@@ -108,20 +143,24 @@
       transform: scale(1.05);
     }
     h1 {
-      font-size: 2.75rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
       margin-bottom: 20px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     h2 {
+      font-family: 'Playfair Display', serif;
       font-size: 1.75rem;
       margin-bottom: 15px;
-      font-weight: 500;
+      font-weight: 400;
+      letter-spacing: 0.5px;
     }
     p {
       font-size: 1rem;
       margin-bottom: 10px;
-      color: #333;
+      color: #444;
     }
     
     /* Section Styling */
@@ -146,12 +185,18 @@
       border: none;
       border-radius: 8px;
       margin-top: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Subtle Hover Effects for Sections */
+    .section:hover {
+      background: #fefefe;
+      transition: background 0.3s ease;
     }
   </style>
 </head>
 <body>
-  <div class="container" id="login-container">
+  <div class="container fade-in" id="login-container">
     <h2>Enter Password to View the Pitch</h2>
     <input type="password" id="password" placeholder="Enter Password" />
     <button onclick="checkPassword()">Submit</button>
@@ -164,46 +209,46 @@
     <a href="#team">Team</a>
   </div>
   
-  <div class="container hidden-content" id="pitch-content" style="display: none;">
-    <div class="hero-section">
+  <div class="container hidden-content fade-in delay-1" id="pitch-content" style="display: none;">
+    <div class="hero-section fade-in delay-1">
       <div class="hero-logo">
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" />
       </div>
       <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <div class="demo-video">
+      <div class="demo-video fade-in delay-2">
         <h2>Demo</h2>
         <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </div>
     
-    <div class="section" id="about">
+    <div class="section fade-in" id="about">
       <h2>About Our Vision</h2>
       <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time.</p>
       <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
       <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
     </div>
     
-    <div class="section dark-section" id="technology">
+    <div class="section dark-section fade-in" id="technology">
       <h2>Technology</h2>
       <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360° VR landscapes using advanced APIs & proprietary technology.</p>
       <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, and skin conductance (coming soon).</p>
       <p>Cloud-Based Analytics – Tracks patient progress seamlessly across sessions.</p>
     </div>
     
-    <div class="section" id="business">
+    <div class="section fade-in" id="business">
       <h2>Business Model</h2>
       <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
       <p>Hardware Bundling – We offer pre-configured VR headsets & smartwatches.</p>
       <p>Our scaling strategy focuses on expanding into broader telehealth markets.</p>
     </div>
     
-    <div class="section dark-section" id="team">
+    <div class="section dark-section fade-in" id="team">
       <h2>Meet the Team</h2>
       <p><strong>Matei Seleușan</strong> – Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.</p>
       <p><strong>Răzvan Crețu</strong> – Specialist in hardware & AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
     </div>
     
-    <div class="section" id="contact">
+    <div class="section fade-in" id="contact">
       <h2>Contact Us</h2>
       <p>Email: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
       <p>Email: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
