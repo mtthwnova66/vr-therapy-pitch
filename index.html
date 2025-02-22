@@ -17,7 +17,7 @@
       --light-text: #f5f5f7;
     }
     
-    /* Global Reset & System Font Stack Inspired by Apple */
+    /* Global Reset & System Font Stack (Apple‑inspired) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -107,7 +107,7 @@
     }
     button:hover { background: linear-gradient(135deg, var(--secondary), var(--primary)); transform: translateY(-2px); }
     
-    /* Hero Section - Increased Logo Size */
+    /* Hero Section with Larger Logo */
     .hero-section { margin-bottom: 60px; }
     .hero-logo img { max-width: 200px; margin-bottom: 20px; transition: transform 0.3s ease; }
     .hero-logo img:hover { transform: scale(1.05); }
@@ -128,9 +128,19 @@
     ul { text-align: left; margin: 20px auto; max-width: 800px; }
     li { margin-bottom: 10px; }
     
-    /* Section Styling */
-    .section { padding: 60px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); }
-    .section:last-child { border-bottom: none; }
+    /* Section Styling with Elegant Dividers */
+    .section {
+      padding: 60px 20px;
+      position: relative;
+    }
+    .section:not(:last-child)::after {
+      content: '';
+      display: block;
+      height: 2px;
+      width: 60%;
+      margin: 40px auto 0;
+      background: linear-gradient(to right, transparent, var(--primary), transparent);
+    }
     .dark-section { background-color: var(--dark-bg); color: var(--light-text); }
     .dark-section h2, .dark-section p, .dark-section li { color: var(--light-text); }
     iframe {
@@ -151,6 +161,11 @@
       margin-bottom: 15px;
       transition: transform 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    /* Răzvan’s image cropping to focus on head, neck & shoulders */
+    .razvi-img {
+      object-fit: cover;
+      object-position: 50% 55%;
     }
     .team-member img:hover { transform: scale(1.05); }
     .team-member h3 { font-size: 1.5rem; margin-bottom: 10px; }
@@ -194,9 +209,9 @@
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      25% { transform: translate(20px, -10px) rotate(3deg) scale(1.05); }
-      50% { transform: translate(-20px, 15px) rotate(-3deg) scale(0.95); }
-      75% { transform: translate(10px, -20px) rotate(5deg) scale(1.1); }
+      25% { transform: translate(30px, -15px) rotate(3deg) scale(1.1); }
+      50% { transform: translate(-30px, 20px) rotate(-3deg) scale(0.95); }
+      75% { transform: translate(15px, -25px) rotate(5deg) scale(1.15); }
       100% { transform: translate(0, 0) rotate(0deg) scale(1); }
     }
     #tech-geom-1 {
@@ -217,7 +232,7 @@
       top: 60%; left: -50px;
       clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
     }
-    /* New Triangle Shape */
+    /* New Additional Shapes */
     .tech-triangle {
       position: fixed;
       z-index: -1;
@@ -227,7 +242,7 @@
       height: 0;
       border-left: 50px solid transparent;
       border-right: 50px solid transparent;
-      border-bottom: 100px solid rgba(255, 87, 34, 0.4);
+      border-bottom: 100px solid rgba(255,87,34,0.4);
       animation: tumble 18s infinite ease-in-out;
     }
     @keyframes tumble {
@@ -402,7 +417,7 @@
           </p>
         </div>
         <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.JPG?raw=true" alt="Răzvan Crețu">
+          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.JPG?raw=true" alt="Răzvan Crețu">
           <h3>Răzvan Crețu</h3>
           <p>
             Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
