@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            overflow-x: hidden;
         }
         .container {
             max-width: 1000px;
@@ -20,6 +21,13 @@
             padding: 40px;
             box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
         }
         .hidden-content {
             display: none;
@@ -112,21 +120,6 @@
         <h2>Business Model</h2>
         <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
         <p>Hardware Bundling – We ship pre-configured VR headsets & smartwatches.</p>
-        
-        <h2>Market Opportunity</h2>
-        <p>VR therapy is a $11.3B market growing at 34% CAGR.</p>
-        
-        <h2>Our Team</h2>
-        <p><strong>Matei Seleușan</strong> – Biomedicine background, direct clinical insights. Lab experience in research settings – knows how to validate new technologies. Deep personal connection – overcame OCD via exposure therapy. Previously enrolled in ETH Zürich’s Master’s in Biotechnology, left to focus full-time on building Synaeon.</p>
-        <p><strong>Răzvan Crețu</strong> – Hardware & AI integration expert (C++, Python, Embedded Linux). Founded multiple hardware & embedded startups, raising €150K+ in investments. Won hackathons & accelerator programs, collaborating with interdisciplinary teams. Built AI-powered medical wearables & automation. Robotics, real-time AI, and sensor fusion specialist.</p>
-        
-        <h2>Funding & Next Steps</h2>
-        <p>Seeking $500K Pre-Seed funding to build and scale the solution.</p>
-        
-        <h2>The Vision</h2>
-        <p>Long-Term: AI-generated therapy without a human therapist.</p>
-        <p>We are building the future of mental health therapy.</p>
-        <p>Let’s revolutionize together. Join Us in Transforming The Mental Health Landscape.</p>
     </div>
 
     <script>
@@ -135,6 +128,7 @@
             var correctPassword = "buildthefuturewithus";
             if (inputPassword === correctPassword) {
                 document.getElementById("login-container").style.display = "none";
+                document.getElementById("pitch-content").classList.add("visible");
                 document.getElementById("pitch-content").style.display = "block";
             } else {
                 alert("Incorrect password. Try again.");
