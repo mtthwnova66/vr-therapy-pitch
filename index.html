@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI-Powered VR Therapy</title>
-  <!-- Mature Google Fonts -->
+  <!-- Mature Google Fonts: Merriweather for headings, Source Sans Pro for body text -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -19,7 +19,6 @@
       --dark-bg: #1d1d1f;
       --light-text: #f5f5f7;
     }
-    
     /* Reset & Global Styles */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -44,9 +43,7 @@
       transform: translateY(20px);
       animation: fadeInUp 1s forwards;
     }
-    @keyframes fadeInUp { 
-      to { opacity: 1; transform: translateY(0); } 
-    }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
     .delay-1 { animation-delay: 0.5s; }
     .delay-2 { animation-delay: 0.8s; }
     
@@ -141,7 +138,6 @@
     .section:last-child { border-bottom: none; }
     .dark-section { background-color: var(--dark-bg); color: var(--light-text); }
     .dark-section h2, .dark-section p, .dark-section li { color: var(--light-text); }
-    
     iframe {
       max-width: 100%;
       border: none;
@@ -150,7 +146,7 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     }
     
-    /* Team Section Styling */
+    /* Team Section */
     .team-members { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 30px; }
     .team-member { flex: 0 1 45%; margin-bottom: 40px; text-align: center; }
     .team-member img {
@@ -174,8 +170,8 @@
       animation: pulse 6s infinite ease-in-out;
     }
     @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.1); opacity: 1; }
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+      50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
     }
     #tech-symbol-1 {
       width: 150px; height: 150px;
@@ -193,14 +189,19 @@
       top: 20%; right: -50px;
     }
     
-    /* Additional Soft Geometric Shapes */
+    /* Additional Soft Geometric Shapes with Morphing Effect */
     .tech-geom {
       position: fixed;
       z-index: -1;
       filter: blur(25px);
       opacity: 0.6;
-      transform: rotate(45deg);
-      animation: pulse 8s infinite ease-in-out;
+      animation: morph 8s infinite ease-in-out;
+    }
+    @keyframes morph {
+      0% { transform: scale(1) rotate(0deg); }
+      33% { transform: scale(1.05) rotate(5deg); }
+      66% { transform: scale(0.95) rotate(-5deg); }
+      100% { transform: scale(1) rotate(0deg); }
     }
     #tech-geom-1 {
       width: 120px; height: 120px;
@@ -214,7 +215,6 @@
       bottom: 100px; right: -70px;
       clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     }
-    /* New Intricate Hexagon-like Geometric Shape */
     #tech-geom-3 {
       width: 100px; height: 100px;
       background: radial-gradient(circle, rgba(123,31,162,0.4), transparent 70%);
@@ -222,12 +222,12 @@
       clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
     }
     
-    /* Back to Top Button */
+    /* Back to Top Button - More Subtle */
     #back-to-top {
       position: fixed;
       bottom: 30px;
       right: 30px;
-      background: var(--primary);
+      background: rgba(0,0,0,0.3);
       color: #fff;
       border: none;
       padding: 10px 15px;
@@ -300,79 +300,74 @@
     <div class="section fade-in" id="about">
       <h2>About Our Vision</h2>
       <p>
-        We are dedicated to revolutionizing mental health by harnessing AI-powered VR exposure therapy that adapts in real time—overcoming the limitations of traditional methods and paving the way for a brighter, healthier future.
+        Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By harnessing cutting-edge technology, we overcome traditional limitations and offer an immersive, adaptive, and clinically effective solution.
       </p>
     </div>
     
-    <!-- The Problem Section with Bullet Points -->
+    <!-- The Problem Section -->
     <div class="section fade-in" id="problem">
       <h2>The Problem – Therapy Needs to Evolve</h2>
+      <p>
+        Traditional exposure therapy often falls short due to static, pre-recorded scenarios that fail to engage patients. This results in low immersion and high dropout rates.
+      </p>
       <ul>
-        <li>Traditional exposure therapy relies on static or pre-recorded scenarios, leading to low immersion.</li>
-        <li>Therapists lack real-time biofeedback, making it hard to tailor sessions dynamically.</li>
-        <li>High patient dropout rates—up to 50%—due to non-responsive therapy.</li>
+        <li>Low immersion and engagement.</li>
+        <li>Inability to adjust therapy in real time.</li>
+        <li>Patient dropout rates of up to 50%.</li>
       </ul>
     </div>
     
-    <!-- Our Solution Section with Bullet Points -->
+    <!-- Our Solution Section -->
     <div class="section fade-in dark-section" id="solution">
       <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+      <p>
+        We transform therapy by creating dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback.
+      </p>
       <ul>
-        <li>Dynamic, AI-generated VR environments guided by therapist input.</li>
-        <li>Real-time integration of biofeedback for safe and effective therapy.</li>
-        <li>Comprehensive clinical control through a dedicated dashboard.</li>
-        <li>A future vision of fully automated, AI-powered therapy.</li>
+        <li>Dynamic, AI-generated environments.</li>
+        <li>Real-time biofeedback integration.</li>
+        <li>Comprehensive clinical control via a dedicated dashboard.</li>
       </ul>
     </div>
     
-    <!-- How It Works Section with Bullet Points -->
+    <!-- How It Works Section -->
     <div class="section fade-in" id="how-it-works">
       <h2>How It Works</h2>
       <ul>
         <li>Therapist launches the software on a compatible VR headset.</li>
-        <li>Patient dons the VR headset and a sensor-enabled smartwatch.</li>
-        <li>The AI listens to the therapist’s guidance and generates an interactive VR environment.</li>
-        <li>Real-time biofeedback allows dynamic customization of the therapy session.</li>
-        <li>The system learns and adapts, personalizing future sessions.</li>
+        <li>Patient dons the VR headset and sensor-enabled smartwatch.</li>
+        <li>The AI listens and generates an interactive VR environment.</li>
+        <li>Real-time biofeedback allows for dynamic session adjustments.</li>
+        <li>The system adapts, personalizing future sessions.</li>
       </ul>
     </div>
     
-    <!-- Technology Section with Bullet Points -->
+    <!-- Technology Section -->
     <div class="section fade-in" id="technology">
       <h2>Technology</h2>
-      <ul>
-        <li><strong>Instantaneous Speech-to-Video AI:</strong> Converts spoken words into immersive 360° VR landscapes.</li>
-        <li><strong>Real-Time Biofeedback Processing:</strong> Monitors heart rate, HRV, and skin conductance.</li>
-        <li><strong>Cloud-Based Analytics:</strong> Tracks patient progress across sessions.</li>
-        <li><strong>VR Compatibility:</strong> Works with Meta Quest, HTC Vive, Pico 4, and Valve Index.</li>
-      </ul>
+      <p>
+        Leveraging instantaneous speech-to-video AI, our platform converts spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it seamlessly supports devices such as Meta Quest, HTC Vive, Pico 4, and Valve Index.
+      </p>
     </div>
     
-    <!-- Market Opportunity Section with Bullet Points -->
+    <!-- Market Opportunity Section -->
     <div class="section fade-in" id="market">
       <h2>Market Opportunity</h2>
-      <ul>
-        <li>Global VR therapy market valued at $11.3B with a 34% expected CAGR.</li>
-        <li>Speech-to-video AI emerging as a multi-billion-dollar industry.</li>
-        <li>Over 4.4M therapists worldwide present a massive B2B opportunity.</li>
-        <li>Targeting early adopters in Europe and North America.</li>
-      </ul>
+      <p>
+        With a global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a massive opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous—especially among early adopters in Europe and North America.
+      </p>
     </div>
     
-    <!-- Business Model & Funding Section with Bullet Points -->
+    <!-- Business Model & Funding Section -->
     <div class="section fade-in dark-section" id="business">
       <h2>Business Model & Funding</h2>
+      <p>
+        Our business model is based on a B2B SaaS subscription complemented by hardware bundling—providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
+      </p>
       <ul>
-        <li><strong>B2B SaaS Subscription:</strong> Clinics pay a monthly or per-patient fee.</li>
-        <li><strong>Hardware Bundling:</strong> Provision of pre-configured VR headsets and smartwatches.</li>
-        <li><strong>Funding Request:</strong> $500K Pre-Seed Round to drive development, market expansion, and clinical validation.</li>
-        <li><strong>Milestones:</strong>
-          <ul>
-            <li>6-12 months: Beta testing with early clinic adopters.</li>
-            <li>12-18 months: Refining AI algorithms and therapy scenarios.</li>
-            <li>24 months: Full commercial launch and expansion.</li>
-          </ul>
-        </li>
+        <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
+        <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
+        <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
       </ul>
     </div>
     
@@ -383,12 +378,16 @@
         <div class="team-member">
           <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan">
           <h3>Matei Seleușan</h3>
-          <p>Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.</p>
+          <p>
+            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.
+          </p>
         </div>
         <div class="team-member">
           <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.JPG?raw=true" alt="Răzvan Crețu">
           <h3>Răzvan Crețu</h3>
-          <p>Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
+          <p>
+            Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
+          </p>
         </div>
       </div>
     </div>
@@ -396,8 +395,10 @@
     <!-- Contact Section -->
     <div class="section fade-in" id="contact">
       <h2>Contact Us</h2>
-      <p>Email: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
-      <p>Email: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
+      <p>
+        Email: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a> | 
+        Email: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
+      </p>
     </div>
     
   </div>
