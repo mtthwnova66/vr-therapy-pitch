@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* CSS Variables for consistent theming */
+    /* CSS Variables for Consistent Theming */
     :root {
       --primary: #0071e3;
       --secondary: #005bb5;
@@ -44,22 +44,23 @@
       transform: translateY(20px);
       animation: fadeInUp 1s forwards;
     }
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { 
+      to { opacity: 1; transform: translateY(0); } 
+    }
     .delay-1 { animation-delay: 0.5s; }
     .delay-2 { animation-delay: 0.8s; }
     
-    /* Navbar Styling */
+    /* Navbar Styling - Hidden initially, Subtle background */
     .navbar {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0;
-      background: rgba(255,255,255,0.97);
+      background: rgba(250,250,250,0.8);
       backdrop-filter: blur(20px);
       padding: 20px 60px;
-      display: flex;
       justify-content: center;
       gap: 20px;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 0.5px solid rgba(0,0,0,0.03);
       z-index: 1000;
       animation: fadeInDown 1s forwards;
     }
@@ -164,7 +165,7 @@
     .team-member h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 10px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
     
-    /* Tech Symbols on the Margins */
+    /* Tech Symbols on the Margins (Circles) */
     .tech-symbol {
       position: fixed;
       border-radius: 50%;
@@ -190,6 +191,28 @@
       width: 100px; height: 100px;
       background: radial-gradient(circle, rgba(76,175,80,0.4), transparent 70%);
       top: 20%; right: -50px;
+    }
+    
+    /* Additional Soft Geometric Shapes */
+    .tech-geom {
+      position: fixed;
+      z-index: -1;
+      filter: blur(25px);
+      opacity: 0.6;
+      transform: rotate(45deg);
+      animation: pulse 8s infinite ease-in-out;
+    }
+    #tech-geom-1 {
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(76,175,80,0.4), transparent 70%);
+      top: 150px; left: -60px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+    #tech-geom-2 {
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(255,87,34,0.4), transparent 70%);
+      bottom: 100px; right: -70px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     }
     
     /* Back to Top Button */
@@ -223,17 +246,21 @@
   <div class="tech-symbol" id="tech-symbol-2"></div>
   <div class="tech-symbol" id="tech-symbol-3"></div>
   
+  <!-- Additional Geometric Shapes -->
+  <div class="tech-geom" id="tech-geom-1"></div>
+  <div class="tech-geom" id="tech-geom-2"></div>
+  
   <!-- Back to Top Button -->
   <button id="back-to-top" onclick="scrollToTop()">Top</button>
   
-  <!-- Login Container -->
+  <!-- Login Container (Shown Initially) -->
   <div class="container fade-in" id="login-container">
     <h2>Enter Password to View the Pitch</h2>
     <input type="password" id="password" placeholder="Enter Password">
     <button onclick="checkPassword()">Submit</button>
   </div>
   
-  <!-- Navbar -->
+  <!-- Navbar (Hidden Until Password is Correct) -->
   <div class="navbar" id="navbar">
     <a href="#about">About</a>
     <a href="#problem">The Problem</a>
@@ -246,7 +273,7 @@
     <a href="#contact">Contact</a>
   </div>
   
-  <!-- Main Content -->
+  <!-- Main Content (Hidden Until Password is Entered) -->
   <div class="container hidden-content fade-in delay-1" id="pitch-content" style="display: none;">
     <!-- Hero Section -->
     <div class="hero-section fade-in delay-1">
@@ -254,7 +281,7 @@
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
       </div>
       <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <p>Real-Time, Adaptive, and Clinically Effective</p>
+      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
       <div class="demo-video fade-in delay-2">
         <h2>Demo</h2>
         <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -264,80 +291,43 @@
     <!-- About Our Vision -->
     <div class="section fade-in" id="about">
       <h2>About Our Vision</h2>
-      <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time, addressing the shortcomings of traditional methods.</p>
+      <p>We are dedicated to revolutionizing mental health by harnessing AI-powered VR exposure therapy that adapts in real time, overcoming the limitations of traditional methods and paving the way for a brighter, healthier future.</p>
     </div>
     
     <!-- The Problem Section -->
     <div class="section fade-in" id="problem">
       <h2>The Problem – Therapy Needs to Evolve</h2>
-      <ul>
-        <li>Traditional exposure therapy relies on imagination or pre-recorded VR, resulting in low immersion.</li>
-        <li>Therapists lack real-time biofeedback, making precision adjustments impossible.</li>
-        <li>Patient dropouts can reach up to 50% due to non-responsive therapy.</li>
-      </ul>
+      <p>Traditional exposure therapy often relies on imagination or static, pre-recorded VR scenarios, resulting in low immersion and diminishing impact. Without real-time biofeedback, therapists struggle to make dynamic adjustments, leading to high patient dropout rates – sometimes as high as 50%.</p>
     </div>
     
     <!-- Our Solution Section -->
     <div class="section fade-in dark-section" id="solution">
-      <h2>Our Solution – AI-Driven Real-Time VR Exposure Therapy</h2>
-      <ul>
-        <li>AI-generated, therapist-guided VR environments that adjust dynamically.</li>
-        <li>Real-time biofeedback tracking ensures treatment is effective yet safe.</li>
-        <li>Therapists maintain full control via a dedicated dashboard.</li>
-        <li>Future vision: AI-powered therapy without the need for a human therapist.</li>
-      </ul>
+      <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+      <p>Imagine an immersive, ever-evolving environment where advanced AI listens to a therapist's guidance and instantly transforms it into a dynamic, responsive VR experience. Our solution delivers real-time biofeedback and full clinical control, ensuring that every session is tailored to maximize therapeutic outcomes.</p>
     </div>
     
     <!-- How It Works Section -->
     <div class="section fade-in" id="how-it-works">
       <h2>How It Works</h2>
-      <ol style="text-align:left; max-width:800px; margin: 0 auto;">
-        <li>Therapist launches our software on a compatible VR headset.</li>
-        <li>Patient wears the VR headset and a smartwatch (or future proprietary sensor).</li>
-        <li>Therapist speaks and the AI listens, generating a dynamic exposure environment.</li>
-        <li>Real-time biofeedback monitors the patient’s physiological responses.</li>
-        <li>Therapist input shapes the scene dynamically, offering clinical customization.</li>
-        <li>The AI learns over time, personalizing exposure scenarios for each patient.</li>
-      </ol>
+      <p>Our process is simple yet groundbreaking. The therapist launches our software on a compatible VR headset while the patient dons the headset and a sensor-enabled smartwatch. As the therapist speaks, our AI listens and creates a vibrant, interactive exposure environment. Real-time biofeedback is seamlessly integrated, empowering therapists to customize the experience to the patient’s needs – all in a matter of moments.</p>
     </div>
     
     <!-- Technology Section -->
     <div class="section fade-in" id="technology">
       <h2>Technology</h2>
-      <ul>
-        <li><strong>Instantaneous Speech-to-Video AI:</strong> Converts therapist's words into dynamic 360° VR landscapes using advanced APIs and proprietary technology.</li>
-        <li><strong>Real-Time Biofeedback Processing:</strong> Integrates heart rate, HRV, and skin conductance (future enhancement).</li>
-        <li><strong>Cloud-Based Analytics:</strong> Seamlessly tracks patient progress across sessions.</li>
-        <li><strong>VR Compatibility:</strong> Works with Meta Quest, HTC Vive, Pico 4, and Valve Index.</li>
-      </ul>
+      <p>Our platform leverages instantaneous speech-to-video AI to convert spoken words into immersive, 360° VR landscapes. Coupled with real-time biofeedback processing and cloud-based analytics, our system provides unparalleled insights and responsiveness. It’s fully compatible with leading VR devices such as Meta Quest, HTC Vive, Pico 4, and Valve Index.</p>
     </div>
     
     <!-- Market Opportunity Section -->
     <div class="section fade-in" id="market">
       <h2>Market Opportunity</h2>
-      <ul>
-        <li>$11.3B global market for VR therapy with an expected CAGR of 34%.</li>
-        <li>Speech-to-video AI is emerging as a multi-billion-dollar industry.</li>
-        <li>Over 4.4M therapists worldwide offer a massive B2B opportunity.</li>
-        <li>Initial focus on early adopters in Europe & North America.</li>
-      </ul>
+      <p>With a global VR therapy market valued at $11.3B and an expected CAGR of 34%, the opportunities are vast. Coupled with the emerging field of speech-to-video AI and over 4.4M therapists worldwide, our solution is uniquely positioned to capture a massive B2B market, especially among early adopters in Europe and North America.</p>
     </div>
     
     <!-- Business Model & Funding Section -->
     <div class="section fade-in dark-section" id="business">
       <h2>Business Model & Funding</h2>
-      <ul>
-        <li><strong>B2B SaaS Subscription-Based Pricing:</strong> Clinics pay a monthly or per-patient fee.</li>
-        <li><strong>Hardware Bundling:</strong> Pre-configured VR headsets and smartwatches are provided.</li>
-        <li><strong>Funding:</strong> $500K Pre-Seed Round to drive AI & VR software development, market expansion, and clinical validation.</li>
-        <li><strong>Milestones:</strong>
-          <ul>
-            <li>6-12 months: Beta testing with early clinic adopters.</li>
-            <li>12-18 months: Refining AI algorithms and therapy scenarios.</li>
-            <li>24 months: Full commercial release and expansion.</li>
-          </ul>
-        </li>
-      </ul>
+      <p>We operate on a B2B SaaS subscription model, with clinics paying on a monthly or per-patient basis, complemented by hardware bundling that includes pre-configured VR headsets and smartwatches. We are currently seeking a $500K Pre-Seed Round to drive our AI and VR software development, expand into new markets, and validate our clinical approach – with key milestones set for beta testing, algorithm refinement, and a full commercial launch within 24 months.</p>
     </div>
     
     <!-- Team Section -->
@@ -379,7 +369,7 @@
       }
     }
     
-    // Back to Top Button functionality
+    // Back to Top Button Functionality
     window.addEventListener('scroll', function() {
       const btn = document.getElementById('back-to-top');
       if (window.pageYOffset > 300) {
