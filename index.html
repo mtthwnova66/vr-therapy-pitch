@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI-Powered VR Therapy</title>
   <!-- Refined fonts for an elegant look -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Helvetica+Neue:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* Reset & Global Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       background: linear-gradient(135deg, #ffffff, #f9f9f9);
@@ -25,68 +19,41 @@
       text-align: center;
       overflow-x: hidden;
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
+    a { text-decoration: none; color: inherit; }
     
     /* Animations */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 1s forwards;
-    }
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .delay-1 {
-      animation-delay: 0.5s;
-    }
-    .delay-2 {
-      animation-delay: 0.8s;
-    }
+    .fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 1s forwards; }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    .delay-1 { animation-delay: 0.5s; }
+    .delay-2 { animation-delay: 0.8s; }
     
     /* Navbar Styling */
     .navbar {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px);
       padding: 20px 60px;
       justify-content: center;
-      gap: 40px;
+      gap: 20px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       z-index: 1000;
       animation: fadeInDown 1s forwards;
     }
     @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .navbar a {
       font-family: 'Playfair Display', serif;
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 400;
       padding: 10px 15px;
       letter-spacing: 1px;
       transition: color 0.3s ease, transform 0.2s ease;
     }
-    .navbar a:hover {
-      color: #0071e3;
-      transform: translateY(-2px);
-    }
+    .navbar a:hover { color: #0071e3; transform: translateY(-2px); }
     
     /* Container Styling */
     .container {
@@ -95,14 +62,13 @@
       padding: 40px;
       background: #fff;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
     #login-container {
       margin-top: 200px;
       padding: 60px 40px;
-      border: none;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     }
     input, button {
       width: 100%;
@@ -111,13 +77,9 @@
       font-size: 16px;
       border-radius: 8px;
       border: 1px solid #e0e0e0;
-      outline: none;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    input:focus {
-      border-color: #0071e3;
-      box-shadow: 0 0 8px rgba(0, 113, 227, 0.3);
-    }
+    input:focus { border-color: #0071e3; box-shadow: 0 0 8px rgba(0,113,227,0.3); }
     button {
       background: linear-gradient(135deg, #0071e3, #005bb5);
       color: #fff;
@@ -125,30 +87,19 @@
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
     }
-    button:hover {
-      background: linear-gradient(135deg, #005bb5, #0071e3);
-      transform: translateY(-2px);
-    }
+    button:hover { background: linear-gradient(135deg, #005bb5, #0071e3); transform: translateY(-2px); }
     
     /* Hero Section */
-    .hero-section {
-      margin-bottom: 60px;
-    }
-    .hero-logo img {
-      max-width: 150px;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease;
-    }
-    .hero-logo img:hover {
-      transform: scale(1.05);
-    }
+    .hero-section { margin-bottom: 60px; }
+    .hero-logo img { max-width: 150px; margin-bottom: 20px; transition: transform 0.3s ease; }
+    .hero-logo img:hover { transform: scale(1.05); }
     h1 {
       font-family: 'Playfair Display', serif;
       font-size: 3rem;
       margin-bottom: 20px;
       font-weight: 700;
       letter-spacing: -1px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     h2 {
       font-family: 'Playfair Display', serif;
@@ -157,102 +108,184 @@
       font-weight: 400;
       letter-spacing: 0.5px;
     }
-    p {
-      font-size: 1rem;
-      margin-bottom: 10px;
-      color: #444;
-    }
+    p { font-size: 1rem; margin-bottom: 10px; color: #444; }
+    ul { text-align: left; margin: 20px auto; max-width: 800px; }
+    li { margin-bottom: 10px; }
     
     /* Section Styling */
-    .section {
-      padding: 60px 20px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-    }
-    .section:last-child {
-      border-bottom: none;
-    }
-    .dark-section {
-      background-color: #1d1d1f;
-      color: #f5f5f7;
-    }
-    .dark-section h2,
-    .dark-section p {
-      color: #f5f5f7;
-    }
+    .section { padding: 60px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+    .section:last-child { border-bottom: none; }
+    .dark-section { background-color: #1d1d1f; color: #f5f5f7; }
+    .dark-section h2, .dark-section p { color: #f5f5f7; }
     
     iframe {
       max-width: 100%;
       border: none;
       border-radius: 8px;
       margin-top: 20px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     }
     
-    /* Subtle Hover Effects for Sections */
-    .section:hover {
-      background: #fefefe;
-      transition: background 0.3s ease;
+    /* Team Section Styling */
+    .team-members { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 30px; }
+    .team-member { flex: 0 1 45%; margin-bottom: 40px; text-align: center; }
+    .team-member img {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    .team-member img:hover { transform: scale(1.05); }
+    .team-member h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 10px; }
+    .team-member p { font-size: 0.95rem; line-height: 1.4; }
+    
+    /* Subtle Hover Effects for Sections */
+    .section:hover { background: #fefefe; transition: background 0.3s ease; }
+    
   </style>
 </head>
 <body>
+  <!-- Login Container -->
   <div class="container fade-in" id="login-container">
     <h2>Enter Password to View the Pitch</h2>
-    <input type="password" id="password" placeholder="Enter Password" />
+    <input type="password" id="password" placeholder="Enter Password">
     <button onclick="checkPassword()">Submit</button>
   </div>
   
+  <!-- Navbar -->
   <div class="navbar" id="navbar">
     <a href="#about">About</a>
+    <a href="#problem">The Problem</a>
+    <a href="#solution">Our Solution</a>
+    <a href="#how-it-works">How It Works</a>
     <a href="#technology">Technology</a>
-    <a href="#business">Business Model</a>
+    <a href="#market">Market</a>
+    <a href="#business">Business Model & Funding</a>
     <a href="#team">Team</a>
+    <a href="#contact">Contact</a>
   </div>
   
+  <!-- Main Content -->
   <div class="container hidden-content fade-in delay-1" id="pitch-content" style="display: none;">
+    
+    <!-- Hero Section -->
     <div class="hero-section fade-in delay-1">
       <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" />
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
       </div>
       <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <p>Real-Time, Adaptive, and Clinically Effective</p>
       <div class="demo-video fade-in delay-2">
         <h2>Demo</h2>
         <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </div>
     
+    <!-- About Our Vision -->
     <div class="section fade-in" id="about">
       <h2>About Our Vision</h2>
-      <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time.</p>
-      <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
-      <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
+      <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time, addressing the shortcomings of traditional methods.</p>
     </div>
     
-    <div class="section dark-section fade-in" id="technology">
+    <!-- The Problem Section -->
+    <div class="section fade-in" id="problem">
+      <h2>The Problem – Therapy Needs to Evolve</h2>
+      <ul>
+        <li>Traditional exposure therapy relies on imagination or pre-recorded VR, resulting in low immersion.</li>
+        <li>Therapists lack real-time biofeedback, making precision adjustments impossible.</li>
+        <li>Patient dropouts can reach up to 50% due to non-responsive therapy.</li>
+      </ul>
+    </div>
+    
+    <!-- Our Solution Section -->
+    <div class="section fade-in dark-section" id="solution">
+      <h2>Our Solution – AI-Driven Real-Time VR Exposure Therapy</h2>
+      <ul>
+        <li>AI-generated, therapist-guided VR environments that adjust dynamically.</li>
+        <li>Real-time biofeedback tracking ensures treatment is effective yet safe.</li>
+        <li>Therapists maintain full control via a dedicated dashboard.</li>
+        <li>Future vision: AI-powered therapy without the need for a human therapist.</li>
+      </ul>
+    </div>
+    
+    <!-- How It Works Section -->
+    <div class="section fade-in" id="how-it-works">
+      <h2>How It Works</h2>
+      <ol style="text-align:left; max-width:800px; margin: 0 auto;">
+        <li>Therapist launches our software on a compatible VR headset.</li>
+        <li>Patient wears the VR headset and a smartwatch (or future proprietary sensor).</li>
+        <li>Therapist speaks and the AI listens, generating a dynamic exposure environment.</li>
+        <li>Real-time biofeedback monitors the patient’s physiological responses.</li>
+        <li>Therapist input shapes the scene dynamically, offering clinical customization.</li>
+        <li>The AI learns over time, personalizing exposure scenarios for each patient.</li>
+      </ol>
+    </div>
+    
+    <!-- Technology Section -->
+    <div class="section fade-in" id="technology">
       <h2>Technology</h2>
-      <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360° VR landscapes using advanced APIs & proprietary technology.</p>
-      <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, and skin conductance (coming soon).</p>
-      <p>Cloud-Based Analytics – Tracks patient progress seamlessly across sessions.</p>
+      <ul>
+        <li><strong>Instantaneous Speech-to-Video AI:</strong> Converts therapist's words into dynamic 360° VR landscapes using advanced APIs and proprietary technology.</li>
+        <li><strong>Real-Time Biofeedback Processing:</strong> Integrates heart rate, HRV, and skin conductance (future enhancement).</li>
+        <li><strong>Cloud-Based Analytics:</strong> Seamlessly tracks patient progress across sessions.</li>
+        <li><strong>VR Compatibility:</strong> Works with Meta Quest, HTC Vive, Pico 4, and Valve Index.</li>
+      </ul>
     </div>
     
-    <div class="section fade-in" id="business">
-      <h2>Business Model</h2>
-      <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
-      <p>Hardware Bundling – We offer pre-configured VR headsets & smartwatches.</p>
-      <p>Our scaling strategy focuses on expanding into broader telehealth markets.</p>
+    <!-- Market Opportunity Section -->
+    <div class="section fade-in" id="market">
+      <h2>Market Opportunity</h2>
+      <ul>
+        <li>$11.3B global market for VR therapy with an expected CAGR of 34%.</li>
+        <li>Speech-to-video AI is emerging as a multi-billion-dollar industry.</li>
+        <li>Over 4.4M therapists worldwide offer a massive B2B opportunity.</li>
+        <li>Initial focus on early adopters in Europe & North America.</li>
+      </ul>
     </div>
     
-    <div class="section dark-section fade-in" id="team">
+    <!-- Business Model & Funding Section -->
+    <div class="section fade-in dark-section" id="business">
+      <h2>Business Model & Funding</h2>
+      <ul>
+        <li><strong>B2B SaaS Subscription-Based Pricing:</strong> Clinics pay a monthly or per-patient fee.</li>
+        <li><strong>Hardware Bundling:</strong> Pre-configured VR headsets and smartwatches are provided.</li>
+        <li><strong>Funding:</strong> $500K Pre-Seed Round to drive AI & VR software development, market expansion, and clinical validation.</li>
+        <li><strong>Milestones:</strong>
+          <ul>
+            <li>6-12 months: Beta testing with early clinic adopters.</li>
+            <li>12-18 months: Refining AI algorithms and therapy scenarios.</li>
+            <li>24 months: Full commercial release and expansion.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Team Section -->
+    <div class="section fade-in" id="team">
       <h2>Meet the Team</h2>
-      <p><strong>Matei Seleușan</strong> – Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.</p>
-      <p><strong>Răzvan Crețu</strong> – Specialist in hardware & AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
+      <div class="team-members">
+        <div class="team-member">
+          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan">
+          <h3>Matei Seleușan</h3>
+          <p>Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.</p>
+        </div>
+        <div class="team-member">
+          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.JPG?raw=true" alt="Răzvan Crețu">
+          <h3>Răzvan Crețu</h3>
+          <p>Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
+        </div>
+      </div>
     </div>
     
+    <!-- Contact Section -->
     <div class="section fade-in" id="contact">
       <h2>Contact Us</h2>
       <p>Email: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
       <p>Email: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
     </div>
+    
   </div>
   
   <script>
