@@ -6,36 +6,62 @@
     <title>AI-Powered VR Therapy Pitch</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
             margin: 0;
             padding: 0;
+            text-align: center;
         }
         .container {
-            max-width: 800px;
-            margin: 100px auto;
+            max-width: 1000px;
+            margin: 60px auto;
             background: white;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
         }
         .hidden-content {
             display: none;
         }
-        input {
-            padding: 10px;
-            margin-top: 10px;
+        input, button {
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
         }
         button {
-            padding: 10px;
-            margin-top: 10px;
-            background: #007BFF;
+            background: #0071e3;
             color: white;
             border: none;
             cursor: pointer;
+            transition: background 0.3s;
         }
         button:hover {
-            background: #0056b3;
+            background: #005bb5;
+        }
+        h1, h2 {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-section {
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+        .hero-logo img {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+        .demo-video {
+            margin: 40px auto;
+            max-width: 900px;
         }
     </style>
 </head>
@@ -47,60 +73,66 @@
         <button onclick="checkPassword()">Submit</button>
     </div>
 
-    
-
     <div class="container hidden-content" id="pitch-content">
-        <h2>Demo</h2>
-        <iframe width="800" height="450" src="https://www.youtube.com/embed/Py1ML8l-Y0E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="display: block; margin: 20px auto;"></iframe>
-
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" style="max-width: 200px; display: block; margin: 20px auto;">
+        <div class="hero-section">
+            <div class="hero-logo">
+                <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
+            </div>
+            <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+            <p><strong>Founders:</strong> Răzvan Crețu & Matei Seleușan</p>
+        </div>
         
-
-        <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-        <p><strong>Founders:</strong> Răzvan Crețu & Matei Seleușan</p>
+        <div class="demo-video">
+            <h2>Demo</h2>
+            <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        
         <h2>The Problem – Therapy Needs to Evolve</h2>
         <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
         <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
+        
         <h2>The Need for Disruption</h2>
         <p>90% of therapists say treatment effectiveness would improve if exposure therapy adapted dynamically to patient responses.</p>
         <p>Existing VR therapy is static – It plays pre-recorded scenarios that cannot change based on patient reactions.</p>
+        
         <h2>The Solution</h2>
         <p>AI-driven real-time VR exposure therapy dynamically adjusts based on therapist input and patient biofeedback.</p>
+        
         <h2>How It Works</h2>
         <p>Therapist launches software on a compatible VR headset.</p>
         <p>Patient wears the VR headset and smartwatch (or future proprietary sensor).</p>
         <p>Therapist speaks, AI listens: The AI generates the exposure environment.</p>
         <p>Biofeedback tracking: The software monitors the patient’s physiological responses in real-time.</p>
+        
         <h2>Technology Stack</h2>
         <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360-degree VR landscapes using existing APIs & proprietary technology.</p>
         <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, skin conductance (future).</p>
         <p>Cloud-Based Analytics – Tracks patient progress across multiple sessions.</p>
+        
         <h2>Business Model</h2>
         <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
         <p>Hardware Bundling – We ship pre-configured VR headsets & smartwatches.</p>
+        
         <h2>Market Opportunity</h2>
         <p>VR therapy is a $11.3B market growing at 34% CAGR.</p>
+        
         <h2>Our Team</h2>
         <p><strong>Matei Seleușan</strong> – Biomedicine background, direct clinical insights. Lab experience in research settings – knows how to validate new technologies. Deep personal connection – overcame OCD via exposure therapy. Previously enrolled in ETH Zürich’s Master’s in Biotechnology, left to focus full-time on building Synaeon.</p>
         <p><strong>Răzvan Crețu</strong> – Hardware & AI integration expert (C++, Python, Embedded Linux). Founded multiple hardware & embedded startups, raising €150K+ in investments. Won hackathons & accelerator programs, collaborating with interdisciplinary teams. Built AI-powered medical wearables & automation. Robotics, real-time AI, and sensor fusion specialist.</p>
+        
         <h2>Funding & Next Steps</h2>
         <p>Seeking $500K Pre-Seed funding to build and scale the solution.</p>
+        
         <h2>The Vision</h2>
         <p>Long-Term: AI-generated therapy without a human therapist.</p>
         <p>We are building the future of mental health therapy.</p>
         <p>Let’s revolutionize together. Join Us in Transforming The Mental Health Landscape.</p>
-        
-        
-        
-        
-        
     </div>
 
     <script>
         function checkPassword() {
             var inputPassword = document.getElementById("password").value;
-            var correctPassword = "buildthefuturewithus"; // Change this to your chosen password
-
+            var correctPassword = "buildthefuturewithus";
             if (inputPassword === correctPassword) {
                 document.getElementById("login-container").style.display = "none";
                 document.getElementById("pitch-content").style.display = "block";
