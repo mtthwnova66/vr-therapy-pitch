@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI-Powered VR Therapy</title>
-  <!-- Mature Google Fonts: Merriweather for headings, Source Sans Pro for body text -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
   <style>
     /* CSS Variables for Consistent Theming */
     :root {
@@ -20,11 +17,11 @@
       --light-text: #f5f5f7;
     }
     
-    /* Reset & Global Styles */
+    /* Global Reset & System Font Stack Inspired by Apple */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Source Sans Pro', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
       background: 
         radial-gradient(circle at top left, rgba(0,113,227,0.1), transparent 70%),
         radial-gradient(circle at bottom right, rgba(255,193,7,0.1), transparent 70%),
@@ -38,7 +35,7 @@
     }
     a { text-decoration: none; color: inherit; }
     
-    /* Seamless Transitions & Animations */
+    /* Animations */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -48,7 +45,7 @@
     .delay-1 { animation-delay: 0.5s; }
     .delay-2 { animation-delay: 0.8s; }
     
-    /* Navbar Styling - Hidden until authentication */
+    /* Navbar - Hidden until authentication */
     .navbar {
       display: none;
       position: fixed;
@@ -67,7 +64,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .navbar a {
-      font-family: 'Merriweather', serif;
       font-size: 15px;
       font-weight: 400;
       padding: 10px 15px;
@@ -111,12 +107,11 @@
     }
     button:hover { background: linear-gradient(135deg, var(--secondary), var(--primary)); transform: translateY(-2px); }
     
-    /* Hero Section */
+    /* Hero Section - Increased Logo Size */
     .hero-section { margin-bottom: 60px; }
-    .hero-logo img { max-width: 150px; margin-bottom: 20px; transition: transform 0.3s ease; }
+    .hero-logo img { max-width: 200px; margin-bottom: 20px; transition: transform 0.3s ease; }
     .hero-logo img:hover { transform: scale(1.05); }
     h1 {
-      font-family: 'Merriweather', serif;
       font-size: 3rem;
       margin-bottom: 20px;
       font-weight: 700;
@@ -124,7 +119,6 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     h2 {
-      font-family: 'Merriweather', serif;
       font-size: 1.75rem;
       margin-bottom: 15px;
       font-weight: 400;
@@ -159,10 +153,10 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .team-member img:hover { transform: scale(1.05); }
-    .team-member h3 { font-family: 'Merriweather', serif; font-size: 1.5rem; margin-bottom: 10px; }
+    .team-member h3 { font-size: 1.5rem; margin-bottom: 10px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
     
-    /* Tech Symbols on the Margins (Intricate Circles with Enhanced Movement) */
+    /* Geometric Background Shapes – Dancing, Morphing, and Tumbling */
     .tech-symbol {
       position: fixed;
       border-radius: 50%;
@@ -190,7 +184,7 @@
       top: 20%; right: -50px;
     }
     
-    /* Additional Soft Geometric Shapes with Dancing Movement */
+    /* Additional Dancing Geometric Shapes */
     .tech-geom {
       position: fixed;
       z-index: -1;
@@ -200,9 +194,9 @@
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      25% { transform: translate(20px, -10px) rotate(3deg) scale(1.02); }
-      50% { transform: translate(-20px, 15px) rotate(-3deg) scale(0.98); }
-      75% { transform: translate(10px, -20px) rotate(5deg) scale(1.03); }
+      25% { transform: translate(20px, -10px) rotate(3deg) scale(1.05); }
+      50% { transform: translate(-20px, 15px) rotate(-3deg) scale(0.95); }
+      75% { transform: translate(10px, -20px) rotate(5deg) scale(1.1); }
       100% { transform: translate(0, 0) rotate(0deg) scale(1); }
     }
     #tech-geom-1 {
@@ -223,6 +217,27 @@
       top: 60%; left: -50px;
       clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
     }
+    /* New Triangle Shape */
+    .tech-triangle {
+      position: fixed;
+      z-index: -1;
+      opacity: 0.5;
+      filter: blur(20px);
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 100px solid rgba(255, 87, 34, 0.4);
+      animation: tumble 18s infinite ease-in-out;
+    }
+    @keyframes tumble {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -20px) rotate(10deg); }
+      66% { transform: translate(-30px, 20px) rotate(-10deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    .tech-triangle#tech-triangle-1 { top: 200px; left: -80px; }
+    .tech-triangle#tech-triangle-2 { bottom: 150px; right: -80px; }
     
     /* Back to Top Button - More Subtle */
     #back-to-top {
@@ -255,10 +270,12 @@
   <div class="tech-symbol" id="tech-symbol-2"></div>
   <div class="tech-symbol" id="tech-symbol-3"></div>
   
-  <!-- Additional Geometric Shapes -->
+  <!-- Additional Dancing Geometric Shapes -->
   <div class="tech-geom" id="tech-geom-1"></div>
   <div class="tech-geom" id="tech-geom-2"></div>
   <div class="tech-geom" id="tech-geom-3"></div>
+  <div class="tech-triangle" id="tech-triangle-1"></div>
+  <div class="tech-triangle" id="tech-triangle-2"></div>
   
   <!-- Back to Top Button -->
   <button id="back-to-top" onclick="scrollToTop()">Top</button>
@@ -278,7 +295,7 @@
     <a href="#how-it-works">How It Works</a>
     <a href="#technology">Technology</a>
     <a href="#market">Market</a>
-    <a href="#business">Business Model & Funding</a>
+    <a href="#business">Business Model &amp; Funding</a>
     <a href="#team">Team</a>
     <a href="#contact">Contact</a>
   </div>
@@ -302,7 +319,7 @@
     <div class="section fade-in" id="about">
       <h2>About Our Vision</h2>
       <p>
-        Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome the limitations of traditional methods and create an immersive, adaptive, and effective therapeutic experience.
+        Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
       </p>
     </div>
     
@@ -310,7 +327,7 @@
     <div class="section fade-in" id="problem">
       <h2>The Problem – Therapy Needs to Evolve</h2>
       <p>
-        Traditional exposure therapy often falls short because it relies on a patient’s imagination or static, pre-recorded VR scenarios—limiting immersion and dynamic response. This results in high dropout rates, sometimes reaching 50%.
+        Traditional exposure therapy often falls short because it relies on a patient’s imagination or static, pre-recorded VR scenarios—limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
       </p>
       <ul>
         <li>Low immersion and engagement.</li>
@@ -323,12 +340,12 @@
     <div class="section fade-in dark-section" id="solution">
       <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
       <p>
-        We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback. Our system ensures that every therapy session is tailored to the individual, maximizing efficacy and patient engagement.
+        We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback—ensuring every session is personalized for maximum impact.
       </p>
       <ul>
         <li>Dynamic, AI-generated VR environments.</li>
         <li>Real-time biofeedback integration.</li>
-        <li>Full clinical control through a dedicated dashboard.</li>
+        <li>Comprehensive clinical control via a dedicated dashboard.</li>
       </ul>
     </div>
     
@@ -338,7 +355,7 @@
       <ul>
         <li>The therapist launches the software on a compatible VR headset.</li>
         <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-        <li>Our AI listens to the therapist’s guidance and generates an interactive VR environment.</li>
+        <li>The AI listens to the therapist’s guidance and generates an interactive VR environment.</li>
         <li>Real-time biofeedback allows for dynamic session adjustments.</li>
         <li>The system learns and adapts, personalizing future sessions.</li>
       </ul>
@@ -348,7 +365,7 @@
     <div class="section fade-in" id="technology">
       <h2>Technology</h2>
       <p>
-        Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, our system supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
+        Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
       </p>
     </div>
     
@@ -356,7 +373,7 @@
     <div class="section fade-in" id="market">
       <h2>Market Opportunity</h2>
       <p>
-        With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Coupled with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous—especially among early adopters in Europe and North America.
+        With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous—especially among early adopters in Europe and North America.
       </p>
     </div>
     
@@ -364,7 +381,7 @@
     <div class="section fade-in dark-section" id="business">
       <h2>Business Model & Funding</h2>
       <p>
-        Our revenue model is based on a B2B SaaS subscription, complemented by hardware bundling that includes pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive our development, expand into new markets, and validate our clinical approach.
+        Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling—providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
       </p>
       <ul>
         <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
