@@ -128,8 +128,11 @@
     ul { text-align: left; margin: 20px auto; max-width: 800px; }
     li { margin-bottom: 10px; }
     
-    /* Section Styling (No Fading Blue Lines) */
-    .section { padding: 60px 20px; }
+    /* Section Styling (No Fading Dividers) */
+    .section {
+      padding: 60px 20px;
+      position: relative;
+    }
     .section:last-child { border-bottom: none; }
     .dark-section { background-color: var(--dark-bg); color: var(--light-text); }
     .dark-section h2, .dark-section p, .dark-section li { color: var(--light-text); }
@@ -152,13 +155,13 @@
       transition: transform 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    /* Răzvan’s image cropped to focus on head, neck, and shoulders */
+    .razvi-img { object-fit: cover; object-position: 50% 55%; }
     .team-member img:hover { transform: scale(1.05); }
     .team-member h3 { font-size: 1.5rem; margin-bottom: 10px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
-    /* Răzvan’s image cropped to focus on head, neck, and shoulders */
-    .razvi-img { object-fit: cover; object-position: 50% 55%; }
     
-    /* Geometric Background Shapes – Enhanced Dancing & Morphing */
+    /* Geometric Background Shapes – Simple Expansions & Contractions */
     .tech-symbol {
       position: fixed;
       border-radius: 50%;
@@ -175,9 +178,10 @@
       background: radial-gradient(circle, rgba(0,113,227,0.4), transparent 70%);
       top: -50px; left: -50px;
     }
+    /* Changed yellow to a softer, more distinct gold to declump from the orange */
     #tech-symbol-2 {
       width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(255,193,7,0.4), transparent 70%);
+      background: radial-gradient(circle, rgba(255,223,150,0.4), transparent 70%);
       bottom: -70px; right: -70px;
     }
     #tech-symbol-3 {
@@ -186,13 +190,13 @@
       top: 20%; right: -50px;
     }
     
-    /* Additional Dancing Geometric Shapes with Expanded Movements */
+    /* Additional Dancing Geometric Shapes with Elaborate Contractions & Expansions */
     .tech-geom {
       position: fixed;
       z-index: -1;
       filter: blur(25px);
       opacity: 0.6;
-      animation: dance 20s infinite ease-in-out;
+      animation: dance 25s infinite ease-in-out;
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
@@ -219,7 +223,7 @@
       top: 60%; left: -50px;
       clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
     }
-    /* New Triangle Shape */
+    /* Existing Triangle Shape */
     .tech-triangle {
       position: fixed;
       z-index: -1;
