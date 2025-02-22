@@ -41,7 +41,9 @@
       transform: translateY(20px);
       animation: fadeInUp 1s forwards;
     }
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { 
+      to { opacity: 1; transform: translateY(0); } 
+    }
     .delay-1 { animation-delay: 0.5s; }
     .delay-2 { animation-delay: 0.8s; }
     
@@ -87,6 +89,7 @@
       padding: 60px 40px;
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      transition: opacity 0.5s ease;
     }
     input, button {
       width: 100%;
@@ -168,6 +171,7 @@
       z-index: -1;
       filter: blur(30px);
       animation: pulse 8s infinite ease-in-out;
+      will-change: transform;
     }
     @keyframes pulse {
       0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
@@ -196,7 +200,8 @@
       z-index: -1;
       filter: blur(25px);
       opacity: 0.6;
-      animation: dance 25s infinite ease-in-out;
+      animation: dance 30s infinite ease-in-out;
+      will-change: transform;
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
@@ -235,6 +240,7 @@
       border-right: 50px solid transparent;
       border-bottom: 100px solid rgba(255,87,34,0.4);
       animation: tumble 18s infinite ease-in-out;
+      will-change: transform;
     }
     @keyframes tumble {
       0% { transform: translate(0, 0) rotate(0deg); }
@@ -433,15 +439,19 @@
       var inputPassword = document.getElementById("password").value;
       var correctPassword = "FutureIsNow";
       if (inputPassword === correctPassword) {
-        document.getElementById("login-container").style.display = "none";
-        document.getElementById("pitch-content").style.display = "block";
-        document.getElementById("navbar").style.display = "flex";
+        var loginContainer = document.getElementById("login-container");
+        loginContainer.style.opacity = 0;
+        setTimeout(function(){
+          loginContainer.style.display = "none";
+          document.getElementById("pitch-content").style.display = "block";
+          document.getElementById("navbar").style.display = "flex";
+        }, 500);
       } else {
         alert("Incorrect password. Please try again.");
       }
     }
     
-    // Allow password submission via Enter key
+    // Allow submission via Enter key
     document.getElementById("password").addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
         checkPassword();
