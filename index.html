@@ -1,162 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered VR Therapy</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            overflow-x: hidden;
-        }
-        .navbar {
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            background: white;
-            padding: 20px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-        .navbar a {
-            text-decoration: none;
-            color: #1d1d1f;
-            font-weight: 500;
-            font-size: 18px;
-            padding: 10px 15px;
-        }
-        .navbar a:hover {
-            color: #0071e3;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 80px auto 60px;
-            background: white;
-            padding: 40px;
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-        }
-        .hidden-content {
-            display: none;
-        }
-        input, button {
-            padding: 12px;
-            margin-top: 20px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background: #0071e3;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #005bb5;
-        }
-        .hero-section {
-            max-width: 1000px;
-            margin: 40px auto;
-            text-align: center;
-        }
-        .hero-logo img {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-        .section {
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .dark-section {
-            background-color: #1d1d1f;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Powered VR Therapy</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #fff;
+      color: #1d1d1f;
+      line-height: 1.6;
+      text-align: center;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    /* Navbar Styling */
+    .navbar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      justify-content: center;
+      gap: 40px;
+      border-bottom: 1px solid #e5e5e5;
+      transition: background-color 0.3s ease;
+      z-index: 1000;
+    }
+    .navbar a {
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px 15px;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: #0071e3;
+    }
+    
+    /* Container Styling */
+    .container {
+      max-width: 960px;
+      margin: 120px auto 80px;
+      padding: 40px;
+      background: #fff;
+    }
+    #login-container {
+      margin-top: 200px;
+      background: #fff;
+      padding: 40px;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    input, button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #d2d2d7;
+      outline: none;
+    }
+    input:focus {
+      border-color: #0071e3;
+    }
+    button {
+      background: #0071e3;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #005bb5;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+      margin-bottom: 60px;
+    }
+    .hero-logo img {
+      max-width: 150px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    p {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    
+    /* Section Styling */
+    .section {
+      padding: 60px 20px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .dark-section {
+      background-color: #1d1d1f;
+      color: #fff;
+    }
+    .dark-section h2,
+    .dark-section p {
+      color: #fff;
+    }
+    
+    iframe {
+      max-width: 100%;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    
-    <div class="container" id="login-container">
-        <h2>Enter Password to View the Pitch</h2>
-        <input type="password" id="password" placeholder="Enter Password">
-        <button onclick="checkPassword()">Submit</button>
+  <div class="container" id="login-container">
+    <h2>Enter Password to View the Pitch</h2>
+    <input type="password" id="password" placeholder="Enter Password" />
+    <button onclick="checkPassword()">Submit</button>
+  </div>
+  
+  <div class="navbar" id="navbar">
+    <a href="#about">About</a>
+    <a href="#technology">Technology</a>
+    <a href="#business">Business Model</a>
+    <a href="#team">Team</a>
+  </div>
+  
+  <div class="container hidden-content" id="pitch-content" style="display: none;">
+    <div class="hero-section">
+      <div class="hero-logo">
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" />
+      </div>
+      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <div class="demo-video">
+        <h2>Demo</h2>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
     </div>
     
-    <div class="navbar" id="navbar">
-        <a href="#about">About</a>
-        <a href="#technology">Technology</a>
-        <a href="#business">Business Model</a>
-        <a href="#team">Team</a>
+    <div class="section" id="about">
+      <h2>About Our Vision</h2>
+      <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time.</p>
+      <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
+      <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
     </div>
     
-    <div class="container hidden-content" id="pitch-content">
-        <div class="hero-section">
-            <div class="hero-logo">
-                <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
-            </div>
-            <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-            <div class="demo-video">
-                <h2>Demo</h2>
-                <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
-        </div>
-        
-        <div class="section" id="about">
-            <h2>About Our Vision</h2>
-            <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time.</p>
-            <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
-            <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
-        </div>
-        
-        <div class="section dark-section" id="technology">
-            <h2>Technology</h2>
-            <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360-degree VR landscapes using existing APIs & proprietary technology.</p>
-            <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, skin conductance (future).</p>
-            <p>Cloud-Based Analytics – Tracks patient progress across multiple sessions.</p>
-        </div>
-        
-        <div class="section" id="business">
-            <h2>Business Model</h2>
-            <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
-            <p>Hardware Bundling – We ship pre-configured VR headsets & smartwatches.</p>
-            <p>Scaling strategy includes expanding into broader telehealth markets.</p>
-        </div>
-        
-        <div class="section dark-section" id="team">
-            <h2>Meet the Team</h2>
-            <p><strong>Matei Seleușan</strong> – Biomedical background, direct clinical insights. Lab experience in research settings – knows how to validate new technologies. Deep personal connection – overcame OCD via exposure therapy. Previously enrolled in ETH Zürich’s Master’s in Biotechnology, left to focus full-time on building Synaeon.</p>
-            <p><strong>Răzvan Crețu</strong> – Hardware & AI integration expert. Founded multiple hardware & embedded startups, raising €150K+ in investments. Won hackathons & accelerator programs, collaborating with interdisciplinary teams. Built AI-powered medical wearables & automation. Robotics, real-time AI, and sensor fusion specialist.</p>
-        </div>
-        
-        <div class="section" id="contact">
-            <h2>Contact Us</h2>
-            <p>Email: razvanmihaicretu@gmail.com</p>
-            <p>Email: mateiseleusan@gmail.com</p>
-        </div>
+    <div class="section dark-section" id="technology">
+      <h2>Technology</h2>
+      <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360° VR landscapes using advanced APIs & proprietary technology.</p>
+      <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, and skin conductance (coming soon).</p>
+      <p>Cloud-Based Analytics – Tracks patient progress seamlessly across sessions.</p>
     </div>
     
-    <script>
-        function checkPassword() {
-            var inputPassword = document.getElementById("password").value;
-            var correctPassword = "buildthefuturewithus";
-            if (inputPassword === correctPassword) {
-                document.getElementById("login-container").style.display = "none";
-                document.getElementById("pitch-content").style.display = "block";
-                document.getElementById("navbar").style.display = "flex";
-            } else {
-                alert("Incorrect password. Try again.");
-            }
-        }
-    </script>
+    <div class="section" id="business">
+      <h2>Business Model</h2>
+      <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
+      <p>Hardware Bundling – We offer pre-configured VR headsets & smartwatches.</p>
+      <p>Our scaling strategy focuses on expanding into broader telehealth markets.</p>
+    </div>
+    
+    <div class="section dark-section" id="team">
+      <h2>Meet the Team</h2>
+      <p><strong>Matei Seleușan</strong> – Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.</p>
+      <p><strong>Răzvan Crețu</strong> – Specialist in hardware & AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
+    </div>
+    
+    <div class="section" id="contact">
+      <h2>Contact Us</h2>
+      <p>Email: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
+      <p>Email: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
+    </div>
+  </div>
+  
+  <script>
+    function checkPassword() {
+      var inputPassword = document.getElementById("password").value;
+      var correctPassword = "buildthefuturewithus";
+      if (inputPassword === correctPassword) {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("pitch-content").style.display = "block";
+        document.getElementById("navbar").style.display = "flex";
+      } else {
+        alert("Incorrect password. Please try again.");
+      }
+    }
+  </script>
 </body>
 </html>
-
