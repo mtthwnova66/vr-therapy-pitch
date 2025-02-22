@@ -41,9 +41,7 @@
       transform: translateY(20px);
       animation: fadeInUp 1s forwards;
     }
-    @keyframes fadeInUp { 
-      to { opacity: 1; transform: translateY(0); } 
-    }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
     .delay-1 { animation-delay: 0.5s; }
     .delay-2 { animation-delay: 0.8s; }
     
@@ -130,11 +128,8 @@
     ul { text-align: left; margin: 20px auto; max-width: 800px; }
     li { margin-bottom: 10px; }
     
-    /* Section Styling (No Dividers) */
-    .section {
-      padding: 60px 20px;
-      position: relative;
-    }
+    /* Section Styling (No Fading Blue Lines) */
+    .section { padding: 60px 20px; }
     .section:last-child { border-bottom: none; }
     .dark-section { background-color: var(--dark-bg); color: var(--light-text); }
     .dark-section h2, .dark-section p, .dark-section li { color: var(--light-text); }
@@ -157,13 +152,13 @@
       transition: transform 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    /* Răzvan’s image cropped to focus on head, neck, and shoulders */
-    .razvi-img { object-fit: cover; object-position: 50% 55%; }
     .team-member img:hover { transform: scale(1.05); }
     .team-member h3 { font-size: 1.5rem; margin-bottom: 10px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
+    /* Răzvan’s image cropped to focus on head, neck, and shoulders */
+    .razvi-img { object-fit: cover; object-position: 50% 55%; }
     
-    /* Geometric Background Shapes – Enhanced Dancing & Morphing (Lava Lamp Effect) */
+    /* Geometric Background Shapes – Enhanced Dancing & Morphing */
     .tech-symbol {
       position: fixed;
       border-radius: 50%;
@@ -191,22 +186,19 @@
       top: 20%; right: -50px;
     }
     
-    /* Additional Dancing Geometric Shapes with Elaborate Lava-Lamp Movements */
+    /* Additional Dancing Geometric Shapes with Expanded Movements */
     .tech-geom {
       position: fixed;
       z-index: -1;
       filter: blur(25px);
       opacity: 0.6;
-      animation: dance 25s infinite ease-in-out;
+      animation: dance 20s infinite ease-in-out;
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      15% { transform: translate(25px, -15px) rotate(5deg) scale(1.3); }
-      30% { transform: translate(-20px, 10px) rotate(-5deg) scale(0.8); }
-      45% { transform: translate(15px, -25px) rotate(10deg) scale(1.1); }
-      60% { transform: translate(-15px, 20px) rotate(-10deg) scale(0.95); }
-      75% { transform: translate(10px, -20px) rotate(8deg) scale(1.2); }
-      90% { transform: translate(-5px, 5px) rotate(-3deg) scale(1.05); }
+      25% { transform: translate(30px, -15px) rotate(3deg) scale(1.2); }
+      50% { transform: translate(-30px, 20px) rotate(-3deg) scale(0.9); }
+      75% { transform: translate(15px, -25px) rotate(5deg) scale(1.15); }
       100% { transform: translate(0, 0) rotate(0deg) scale(1); }
     }
     #tech-geom-1 {
@@ -227,30 +219,7 @@
       top: 60%; left: -50px;
       clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
     }
-    /* New Lava Lamp–Style Morphing Shapes */
-    .tech-lava {
-      position: fixed;
-      z-index: -1;
-      background: radial-gradient(circle, rgba(123,31,162,0.4), transparent 70%);
-      width: 150px;
-      height: 150px;
-      border-radius: 40%;
-      opacity: 0.7;
-      animation: lava 30s infinite ease-in-out;
-    }
-    @keyframes lava {
-      0% { transform: translate(0, 0) scale(1); border-radius: 40%; }
-      20% { transform: translate(30px, -20px) scale(1.3); border-radius: 30%; }
-      40% { transform: translate(-20px, 10px) scale(0.8); border-radius: 50%; }
-      60% { transform: translate(20px, -30px) scale(1.2); border-radius: 35%; }
-      80% { transform: translate(-10px, 20px) scale(1.1); border-radius: 45%; }
-      100% { transform: translate(0, 0) scale(1); border-radius: 40%; }
-    }
-    /* Adding two lava shapes */
-    #tech-lava-1 { top: 100px; left: -80px; }
-    #tech-lava-2 { bottom: 150px; right: -80px; }
-    
-    /* Triangle Shape (Existing) */
+    /* New Triangle Shape */
     .tech-triangle {
       position: fixed;
       z-index: -1;
@@ -309,10 +278,6 @@
   <div class="tech-geom" id="tech-geom-3"></div>
   <div class="tech-triangle" id="tech-triangle-1"></div>
   <div class="tech-triangle" id="tech-triangle-2"></div>
-  
-  <!-- New Lava Lamp–Style Shapes -->
-  <div class="tech-lava" id="tech-lava-1"></div>
-  <div class="tech-lava" id="tech-lava-2"></div>
   
   <!-- Back to Top Button -->
   <button id="back-to-top" onclick="scrollToTop()">Top</button>
