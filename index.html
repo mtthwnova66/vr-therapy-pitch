@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered VR Therapy Pitch</title>
+    <title>AI-Powered VR Therapy</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -14,20 +14,35 @@
             text-align: center;
             overflow-x: hidden;
         }
+        .navbar {
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #1d1d1f;
+            font-weight: 500;
+            font-size: 18px;
+            padding: 10px 15px;
+        }
+        .navbar a:hover {
+            color: #0071e3;
+        }
         .container {
             max-width: 1000px;
-            margin: 60px auto;
+            margin: 80px auto 60px;
             background: white;
             padding: 40px;
             box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        .visible {
-            opacity: 1;
-            transform: translateY(0);
         }
         .hidden-content {
             display: none;
@@ -49,87 +64,87 @@
         button:hover {
             background: #005bb5;
         }
-        h1, h2 {
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 18px;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-        }
         .hero-section {
             max-width: 1000px;
             margin: 40px auto;
+            text-align: center;
         }
         .hero-logo img {
-            max-width: 180px;
+            max-width: 200px;
             margin-bottom: 20px;
         }
-        .demo-video {
-            margin: 40px auto;
-            max-width: 900px;
+        .section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .dark-section {
+            background-color: #1d1d1f;
+            color: white;
         }
     </style>
 </head>
 <body>
     
-    <div class="container" id="login-container" style="opacity: 1; transform: translateY(0);">
+    <div class="container" id="login-container">
         <h2>Enter Password to View the Pitch</h2>
         <input type="password" id="password" placeholder="Enter Password">
         <button onclick="checkPassword()">Submit</button>
     </div>
-
+    
+    <div class="navbar" id="navbar">
+        <a href="#about">About</a>
+        <a href="#technology">Technology</a>
+        <a href="#team">Team</a>
+        <a href="#contact">Contact</a>
+    </div>
+    
     <div class="container hidden-content" id="pitch-content">
         <div class="hero-section">
             <div class="hero-logo">
                 <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
             </div>
             <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-            <p><strong>Founders:</strong> Răzvan Crețu & Matei Seleușan</p>
+            <div class="demo-video">
+                <h2>Demo</h2>
+                <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
         </div>
         
-        <div class="demo-video">
-            <h2>Demo</h2>
-            <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="section" id="about">
+            <h2>About Our Vision</h2>
+            <p>We are revolutionizing mental health with AI-powered VR exposure therapy that adapts in real-time.</p>
+            <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
+            <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
         </div>
         
-        <h2>The Problem – Therapy Needs to Evolve</h2>
-        <p>1 in 3 people worldwide suffer from anxiety-related conditions.</p>
-        <p>Traditional exposure therapy relies on imagination or pre-recorded VR, making it ineffective.</p>
+        <div class="section dark-section" id="technology">
+            <h2>Technology</h2>
+            <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360-degree VR landscapes using existing APIs & proprietary technology.</p>
+            <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, skin conductance (future).</p>
+            <p>Cloud-Based Analytics – Tracks patient progress across multiple sessions.</p>
+        </div>
         
-        <h2>The Need for Disruption</h2>
-        <p>90% of therapists say treatment effectiveness would improve if exposure therapy adapted dynamically to patient responses.</p>
-        <p>Existing VR therapy is static – It plays pre-recorded scenarios that cannot change based on patient reactions.</p>
+        <div class="section" id="team">
+            <h2>Meet the Team</h2>
+            <p><strong>Matei Seleușan</strong> – Biomedical background, direct clinical insights. Lab experience in research settings – knows how to validate new technologies. Deep personal connection – overcame OCD via exposure therapy. Previously enrolled in ETH Zürich’s Master’s in Biotechnology, left to focus full-time on building Synaeon.</p>
+            <p><strong>Răzvan Crețu</strong> – Hardware & AI integration expert. Founded multiple hardware & embedded startups, raising €150K+ in investments. Won hackathons & accelerator programs, collaborating with interdisciplinary teams. Built AI-powered medical wearables & automation. Robotics, real-time AI, and sensor fusion specialist.</p>
+        </div>
         
-        <h2>The Solution</h2>
-        <p>AI-driven real-time VR exposure therapy dynamically adjusts based on therapist input and patient biofeedback.</p>
-        
-        <h2>How It Works</h2>
-        <p>Therapist launches software on a compatible VR headset.</p>
-        <p>Patient wears the VR headset and smartwatch (or future proprietary sensor).</p>
-        <p>Therapist speaks, AI listens: The AI generates the exposure environment.</p>
-        <p>Biofeedback tracking: The software monitors the patient’s physiological responses in real-time.</p>
-        
-        <h2>Technology Stack</h2>
-        <p>Instantaneous Speech-to-Video AI – Converts therapist's words into dynamic 360-degree VR landscapes using existing APIs & proprietary technology.</p>
-        <p>Real-Time Biofeedback Processing – Integrates heart rate, HRV, skin conductance (future).</p>
-        <p>Cloud-Based Analytics – Tracks patient progress across multiple sessions.</p>
-        
-        <h2>Business Model</h2>
-        <p>B2B SaaS Subscription-Based Pricing – Clinics pay a monthly or per-patient fee.</p>
-        <p>Hardware Bundling – We ship pre-configured VR headsets & smartwatches.</p>
+        <div class="section dark-section" id="contact">
+            <h2>Contact Us</h2>
+            <p>Email: razvanmihaicretu@gmail.com</p>
+            <p>Email: mateiseleusan@gmail.com</p>
+        </div>
     </div>
-
+    
     <script>
         function checkPassword() {
             var inputPassword = document.getElementById("password").value;
             var correctPassword = "buildthefuturewithus";
             if (inputPassword === correctPassword) {
                 document.getElementById("login-container").style.display = "none";
-                document.getElementById("pitch-content").classList.add("visible");
                 document.getElementById("pitch-content").style.display = "block";
+                document.getElementById("navbar").style.display = "flex";
             } else {
                 alert("Incorrect password. Try again.");
             }
@@ -137,5 +152,4 @@
     </script>
 </body>
 </html>
-
 
