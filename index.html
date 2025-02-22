@@ -128,8 +128,11 @@
     ul { text-align: left; margin: 20px auto; max-width: 800px; }
     li { margin-bottom: 10px; }
     
-    /* Section Styling */
-    .section { padding: 60px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+    /* Section Styling (No Dividers) */
+    .section {
+      padding: 60px 20px;
+      position: relative;
+    }
     .section:last-child { border-bottom: none; }
     .dark-section { background-color: var(--dark-bg); color: var(--light-text); }
     .dark-section h2, .dark-section p, .dark-section li { color: var(--light-text); }
@@ -152,11 +155,13 @@
       transition: transform 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    /* Răzvan’s image cropped to focus on head, neck, and shoulders */
+    .razvi-img { object-fit: cover; object-position: 50% 55%; }
     .team-member img:hover { transform: scale(1.05); }
     .team-member h3 { font-size: 1.5rem; margin-bottom: 10px; }
     .team-member p { font-size: 0.95rem; line-height: 1.4; }
     
-    /* Geometric Background Shapes – Dancing, Morphing, and Tumbling */
+    /* Geometric Background Shapes – Simple Expansions & Contractions */
     .tech-symbol {
       position: fixed;
       border-radius: 50%;
@@ -166,16 +171,17 @@
     }
     @keyframes pulse {
       0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
-      50% { transform: translate(10px, -10px) scale(1.1) rotate(5deg); opacity: 1; }
+      50% { transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; }
     }
     #tech-symbol-1 {
       width: 150px; height: 150px;
       background: radial-gradient(circle, rgba(0,113,227,0.4), transparent 70%);
       top: -50px; left: -50px;
     }
+    /* Yellow now uses a softer gold tone */
     #tech-symbol-2 {
       width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(255,193,7,0.4), transparent 70%);
+      background: radial-gradient(circle, rgba(255,223,150,0.4), transparent 70%);
       bottom: -70px; right: -70px;
     }
     #tech-symbol-3 {
@@ -184,19 +190,19 @@
       top: 20%; right: -50px;
     }
     
-    /* Additional Dancing Geometric Shapes */
+    /* Additional Dancing Geometric Shapes with Elaborate Contractions & Expansions */
     .tech-geom {
       position: fixed;
       z-index: -1;
       filter: blur(25px);
       opacity: 0.6;
-      animation: dance 20s infinite ease-in-out;
+      animation: dance 25s infinite ease-in-out;
     }
     @keyframes dance {
       0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      25% { transform: translate(20px, -10px) rotate(3deg) scale(1.05); }
-      50% { transform: translate(-20px, 15px) rotate(-3deg) scale(0.95); }
-      75% { transform: translate(10px, -20px) rotate(5deg) scale(1.1); }
+      25% { transform: translate(30px, -15px) rotate(3deg) scale(1.2); }
+      50% { transform: translate(-30px, 20px) rotate(-3deg) scale(0.9); }
+      75% { transform: translate(15px, -25px) rotate(5deg) scale(1.15); }
       100% { transform: translate(0, 0) rotate(0deg) scale(1); }
     }
     #tech-geom-1 {
@@ -217,7 +223,7 @@
       top: 60%; left: -50px;
       clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
     }
-    /* New Triangle Shape */
+    /* Existing Triangle Shape */
     .tech-triangle {
       position: fixed;
       z-index: -1;
@@ -227,7 +233,7 @@
       height: 0;
       border-left: 50px solid transparent;
       border-right: 50px solid transparent;
-      border-bottom: 100px solid rgba(255, 87, 34, 0.4);
+      border-bottom: 100px solid rgba(255,87,34,0.4);
       animation: tumble 18s infinite ease-in-out;
     }
     @keyframes tumble {
@@ -402,7 +408,7 @@
           </p>
         </div>
         <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.JPG?raw=true" alt="Răzvan Crețu">
+          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu">
           <h3>Răzvan Crețu</h3>
           <p>
             Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
