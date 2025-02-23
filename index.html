@@ -43,11 +43,11 @@
     }
     @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
     .delay-1 { animation-delay: 0.5s; }
-    .delay-2 { animation-delay: 0.8s; }
+    .delay-2 { animation-delay: 1s; }
+    .delay-3 { animation-delay: 1.5s; }
     
-    /* Navbar - Hidden until authentication */
+    /* Navbar */
     .navbar {
-      display: none;
       position: fixed;
       top: 0; left: 0; right: 0;
       background: rgba(250,250,250,0.8);
@@ -82,31 +82,6 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       transition: transform 0.3s ease;
     }
-    #login-container {
-      margin-top: 200px;
-      padding: 60px 40px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-      transition: opacity 0.5s ease;
-    }
-    input, button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    input:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0,113,227,0.3); }
-    button {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    button:hover { background: linear-gradient(135deg, var(--secondary), var(--primary)); transform: translateY(-2px); }
     
     /* Hero Section - Increased Logo Size */
     .hero-section { margin-bottom: 60px; }
@@ -297,14 +272,7 @@
   <!-- Back to Top Button -->
   <button id="back-to-top" onclick="scrollToTop()">Top</button>
   
-  <!-- Login Container (Shown Initially) -->
-  <div class="container fade-in" id="login-container">
-    <h2>Enter Password to View the Pitch</h2>
-    <input type="password" id="password" placeholder="Enter Password">
-    <button onclick="checkPassword()">Submit</button>
-  </div>
-  
-  <!-- Navbar (Hidden Until Password is Correct) -->
+  <!-- Navbar (Always Visible) -->
   <div class="navbar" id="navbar">
     <a href="#about">About</a>
     <a href="#problem">The Problem</a>
@@ -317,16 +285,22 @@
     <a href="#contact">Contact</a>
   </div>
   
-  <!-- Main Content (Hidden Until Password is Entered) -->
-  <div class="container hidden-content fade-in delay-1" id="pitch-content" style="display: none;">
+  <!-- Main Content (No Password) -->
+  <div class="container fade-in" id="pitch-content">
     <!-- Hero Section -->
     <div class="hero-section fade-in delay-1">
       <div class="hero-logo">
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
       </div>
       <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <!-- Intro Video Block -->
+      <div class="intro-video fade-in delay-2">
+        <h2>Introduction</h2>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
       <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-      <div class="demo-video fade-in delay-2">
+      <!-- Demo Video Block -->
+      <div class="demo-video fade-in delay-3">
         <h2>Demo</h2>
         <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
@@ -442,25 +416,6 @@
   </div>
   
   <script>
-    function checkPassword() {
-      var inputPassword = document.getElementById("password").value;
-      var correctPassword = "FutureIsNow";
-      if (inputPassword === correctPassword) {
-        document.getElementById("login-container").style.display = "none";
-        document.getElementById("pitch-content").style.display = "block";
-        document.getElementById("navbar").style.display = "flex";
-      } else {
-        alert("Incorrect password. Please try again.");
-      }
-    }
-    
-    // Allow password submission via Enter key
-    document.getElementById("password").addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        checkPassword();
-      }
-    });
-    
     // Back to Top Button Functionality
     window.addEventListener('scroll', function() {
       const btn = document.getElementById('back-to-top');
@@ -477,3 +432,4 @@
   </script>
 </body>
 </html>
+
