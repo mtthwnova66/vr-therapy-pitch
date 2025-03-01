@@ -525,11 +525,11 @@
       background: var(--bg-light);
     }
     
-    .team-members {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: var(--space-xl);
-      margin-top: var(--space-xl);
+    .team-grid {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 50px;
     }
     
     .team-member {
@@ -1179,9 +1179,6 @@
   
   <!-- Navbar -->
   <div class="navbar" id="navbar">
-    <div class="logo-container">
-      <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo">
-    </div>
     <div class="nav-links">
       <a href="#about">About</a>
       <a href="#problem">The Problem</a>
@@ -1334,8 +1331,8 @@
     <div class="container">
       <div class="section-inner fade-in">
         <h2 class="section-title">Meet the Team</h2>
-        <div class="team-members">
-          <div class="team-member card" style="margin: 0 auto;">
+        <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 50px;">
+          <div class="team-member card" style="flex: 0 0 350px; max-width: 400px;">
             <div class="team-member-photo">
               <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan">
             </div>
@@ -1345,7 +1342,7 @@
               Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
             </p>
           </div>
-          <div class="team-member card" style="margin: 0 auto;">
+          <div class="team-member card" style="flex: 0 0 350px; max-width: 400px;">
             <div class="team-member-photo">
               <img style="object-position: 50% 55%;" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu">
             </div>
@@ -1384,7 +1381,7 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-logo">
-        <img src="https://synaeon.com/logo.png" alt="Synaeon Logo">
+        <img src="https://github.com/mtthwnova66/vr-therapy-pitch/raw/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo">
       </div>
       <div class="footer-links">
         <a href="#about">About</a>
