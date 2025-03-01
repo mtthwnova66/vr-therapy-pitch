@@ -1,4 +1,13 @@
-<!DOCTYPE html>
+.hero-logo-container {
+      margin-bottom: var(--space-xl);
+      display: inline-block;
+      background: white;
+      padding: 15px 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      max-width: fit-content;
+      width: 100%;
+    }<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -337,22 +346,20 @@
       z-index: 2;
     }
     
-    /* Hero Logo Styling */
-    .hero-logo-container {
-      margin-bottom: var(--space-xl);
-      display: inline-block;
-      background: white;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      max-width: 300px;
-      width: 100%;
-    }
-    
-    .hero-logo-container img {
-      max-width: 100%;
-      height: auto;
-      display: block;
+    /* Text Logo Styling */
+    .text-logo {
+      font-family: 'Inter', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #000;
+      background: linear-gradient(45deg, #000, #333);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+      padding: 10px 0;
+      text-align: center;
     }
     
     .hero-logo:hover img {
