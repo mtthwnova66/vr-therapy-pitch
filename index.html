@@ -355,17 +355,18 @@
       margin-bottom: var(--space-xl);
       display: inline-block;
       position: relative;
+      padding: 0;
     }
     
     .hero-logo::after {
       content: '';
       position: absolute;
-      top: -20px;
-      left: -20px;
-      right: -20px;
-      bottom: -20px;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
       background: white;
-      border-radius: 50%;
+      border-radius: 8px;
       z-index: -1;
     }
     
@@ -374,6 +375,7 @@
       transition: transform var(--transition);
       position: relative;
       z-index: 1;
+      display: block;
     }
     
     .hero-logo:hover img {
