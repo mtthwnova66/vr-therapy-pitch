@@ -255,36 +255,22 @@
       background: rgba(255,255,255,0.8);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      padding: var(--space-md) var(--space-xxl);
+      padding: var(--space-md) 0;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       border-bottom: 1px solid var(--border-light);
       z-index: 1000;
       transition: all var(--transition);
     }
     
-    .logo-container {
-      display: flex;
-      align-items: center;
-    }
-    
-    .logo-container img {
-      height: 40px;
-      margin-right: var(--space-md);
-      transition: transform var(--transition-fast);
-    }
-    
-    .logo-text {
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--text-primary);
-    }
-    
     .nav-links {
       display: flex;
-      gap: var(--space-lg);
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: var(--container-width);
+      padding: 0 var(--space-md);
     }
     
     .nav-links a {
@@ -1191,11 +1177,6 @@
       <a href="#business">Business Model</a>
       <a href="#team">Team</a>
       <a href="#contact">Contact</a>
-    </div>
-    <div class="menu-icon">
-      <span></span>
-      <span></span>
-      <span></span>
     </div>
   </div>
   
