@@ -337,30 +337,22 @@
       z-index: 2;
     }
     
+    /* Hero Logo Styling */
     .hero-logo {
       margin-bottom: var(--space-xl);
       display: inline-block;
       position: relative;
-      padding: 0;
-    }
-    
-    .hero-logo::after {
-      content: '';
-      position: absolute;
-      top: -5px;
-      left: -5px;
-      right: -5px;
-      bottom: -5px;
       background: white;
-      border-radius: 8px;
-      z-index: -1;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      max-width: 300px;
+      width: 100%;
     }
     
     .hero-logo img {
-      max-width: 200px;
-      transition: transform var(--transition);
-      position: relative;
-      z-index: 1;
+      max-width: 100%;
+      height: auto;
       display: block;
     }
     
