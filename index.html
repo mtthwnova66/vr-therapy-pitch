@@ -80,6 +80,54 @@
       -moz-osx-font-smoothing: grayscale;
     }
     
+    /* Safari-specific background fix */
+    @media not all and (min-resolution:.001dpcm) { 
+      @supports (-webkit-appearance:none) {
+        body {
+          /* More intense colors for Safari */
+          background: 
+            -webkit-radial-gradient(top left, rgba(0,113,227,0.25), rgba(0,113,227,0) 70%),
+            -webkit-radial-gradient(bottom right, rgba(255,193,7,0.25), rgba(255,193,7,0) 70%),
+            -webkit-linear-gradient(135deg, #ffffff, #f5f5f7) !important;
+          /* Add a more pronounced color wash for Safari */
+          position: relative;
+        }
+        
+        /* Additional Safari-only overlay to ensure gradient visibility */
+        body:before {
+          content: "";
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            -webkit-radial-gradient(20% 20%, rgba(0,113,227,0.15), rgba(0,113,227,0) 60%),
+            -webkit-radial-gradient(80% 80%, rgba(255,193,7,0.15), rgba(255,193,7,0) 60%);
+          pointer-events: none;
+          z-index: -1;
+        }
+        
+        /* Make tech symbols more visible in Safari */
+        .tech-symbol {
+          opacity: 0.9;
+          -webkit-filter: blur(20px); /* Less blur for Safari */
+        }
+        
+        #tech-symbol-1 {
+          background: -webkit-radial-gradient(circle, rgba(0,113,227,0.6), rgba(0,113,227,0) 70%);
+        }
+        
+        #tech-symbol-2 {
+          background: -webkit-radial-gradient(circle, rgba(255,193,7,0.6), rgba(255,193,7,0) 70%);
+        }
+        
+        #tech-symbol-3 {
+          background: -webkit-radial-gradient(circle, rgba(76,175,80,0.6), rgba(76,175,80,0) 70%);
+        }
+      }
+    }
+    
     a { 
       text-decoration: none; 
       color: var(--primary);
@@ -971,8 +1019,11 @@
     
     // Safari-specific fixes
     document.addEventListener('DOMContentLoaded', function() {
-      // Force repaint on Safari to fix potential rendering issues
-      if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+      // Check if browser is Safari
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
+      if (isSafari) {
+        // Force repaint on Safari to fix potential rendering issues
         document.body.style.display = 'inline-block';
         setTimeout(function() {
           document.body.style.display = '';
@@ -984,6 +1035,18 @@
           h1.style.webkitBackgroundClip = 'text';
           h1.style.webkitTextFillColor = 'transparent';
         });
+        
+        // Create additional gradient elements specifically for Safari
+        const gradientOverlay = document.createElement('div');
+        gradientOverlay.style.position = 'fixed';
+        gradientOverlay.style.top = '0';
+        gradientOverlay.style.left = '0';
+        gradientOverlay.style.width = '100%';
+        gradientOverlay.style.height = '100%';
+        gradientOverlay.style.background = 'linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(255,193,7,0.08) 100%)';
+        gradientOverlay.style.pointerEvents = 'none';
+        gradientOverlay.style.zIndex = '-1';
+        document.body.appendChild(gradientOverlay);
       }
     });
     
