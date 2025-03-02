@@ -4,1066 +4,1788 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
-  
-  <!-- Preconnect to resources for faster loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://github.com">
-  <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="preconnect" href="https://www.youtube.com">
-  <link rel="dns-prefetch" href="https://www.youtube.com">
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
     /* Modern CSS Variables for Enhanced Theming */
     :root {
-      --primary: #0071e3;
-      --primary-dark: #005bb5;
-      --primary-light: #47a0ff;
-      --accent: #ffc107;
-      --accent-dark: #e6a800;
-      --accent-light: #ffdb66;
-      --success: #34c759;
-      --bg-white: #ffffff;
-      --bg-light: #f5f5f7;
-      --bg-dark: #000000;
-      --text-primary: #1d1d1f;
-      --text-secondary: #86868b;
-      --text-light: #f5f5f7;
-      --border-light: rgba(0,0,0,0.1);
-      --card-shadow: 0 12px 24px rgba(0,0,0,0.08);
-      --transition-fast: 0.2s ease;
-      --transition: 0.3s ease;
-      --transition-slow: 0.5s ease;
-      --container-width: 1200px;
-      --radius-sm: 8px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-      --space-xs: 4px;
-      --space-sm: 8px;
-      --space-md: 16px;
-      --space-lg: 24px;
-      --space-xl: 32px;
-      --space-xxl: 48px;
+      --primary-hue: 210;
+      --primary-saturation: 100%;
+      --primary-lightness: 45%;
+      --primary: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
+      --primary-dark: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%));
+      --primary-light: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) + 15%));
+      --primary-ghost: hsla(var(--primary-hue), var(--primary-saturation), var(--primary-lightness), 0.1);
+      --primary-transparent: hsla(var(--primary-hue), var(--primary-saturation), var(--primary-lightness), 0);
+      
+      --accent-hue: calc(var(--primary-hue) + 140);
+      --accent-saturation: 85%;
+      --accent-lightness: 60%;
+      --accent: hsl(var(--accent-hue), var(--accent-saturation), var(--accent-lightness));
+      --accent-dark: hsl(var(--accent-hue), var(--accent-saturation), calc(var(--accent-lightness) - 10%));
+      --accent-light: hsl(var(--accent-hue), var(--accent-saturation), calc(var(--accent-lightness) + 15%));
+      --accent-ghost: hsla(var(--accent-hue), var(--accent-saturation), var(--accent-lightness), 0.1);
+      
+      --white: #ffffff;
+      --black: #000000;
+      --dark: #0a0a12;
+      --darker: #050508;
+      --dark-glass: rgba(10, 10, 18, 0.85);
+      --light-ghost: rgba(255, 255, 255, 0.025);
+      
+      --primary-gradient: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      --accent-gradient: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+      --dark-glass-gradient: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.5));
+      --text-gradient: linear-gradient(90deg, var(--primary), var(--accent));
+      
+      --text-primary: rgba(255, 255, 255, 0.95);
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --text-inverse: rgba(10, 10, 18, 0.9);
+      
+      --size-1: 0.25rem;
+      --size-2: 0.5rem;
+      --size-3: 0.75rem;
+      --size-5: 1.25rem;
+      --size-8: 2rem;
+      --size-13: 3.25rem;
+      --size-21: 5.25rem;
+      --size-34: 8.5rem;
+      
+      --time-xfast: 0.1618s;
+      --time-fast: 0.2618s;
+      --time-medium: 0.4236s;
+      --time-slow: 0.6854s;
+      --time-xslow: 1.109s;
+      --time-xxslow: 1.7944s;
+      
+      --ease-1: cubic-bezier(0.25, 0, 0.5, 1);
+      --ease-2: cubic-bezier(0.25, 0, 0.4, 1);
+      --ease-3: cubic-bezier(0.25, 0, 0.3, 1);
+      --ease-4: cubic-bezier(0.25, 0, 0.2, 1);
+      --ease-5: cubic-bezier(0.25, 0, 0.1, 1);
+      --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+      --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      
+      --shadow-sm: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0px 8px 16px rgba(0, 0, 0, 0.1), 0px 3px 8px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0px 16px 32px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.08);
+      --shadow-xl: 0px 32px 64px rgba(0, 0, 0, 0.2), 0px 16px 32px rgba(0, 0, 0, 0.1);
+      --shadow-inner: inset 0px 2px 4px rgba(0, 0, 0, 0.05);
+      --shadow-focus: 0px 0px 0px 4px rgba(0, 113, 227, 0.4);
+      --shadow-neon: 0 0 15px var(--primary), 0 0 30px var(--primary-ghost), 0 0 45px var(--primary-ghost);
+      --shadow-accent-neon: 0 0 15px var(--accent), 0 0 30px var(--accent-ghost), 0 0 45px var(--accent-ghost);
+      
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-3xl: 2rem;
+      --radius-full: 9999px;
+      
+      --z-below: -1;
+      --z-flat: 1;
+      --z-lifted: 2;
+      --z-dropdown: 3;
+      --z-sticky: 5;
+      --z-overlay: 7;
+      --z-modal: 11;
+      --z-highest: 13;
+      
+      --max-width: 1440px;
+      --section-spacing: clamp(3rem, 10vh, 6rem);
       --team-width: 350px;
+
+      --scroll-progress: 0;
+      --scroll-direction: 1;
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      --focus-strength: 0;
+      --noise-intensity: 0.03;
+      --animate-speed: 1;
+      
+      --perspective: 1000px;
+      --card-rotation-x: 0deg;
+      --card-rotation-y: 0deg;
+      --tilt-strength: 0.25;
+      
+      --breakpoint-sm: 640px;
+      --breakpoint-md: 768px;
+      --breakpoint-lg: 1024px;
+      --breakpoint-xl: 1280px;
     }
     
-    /* Global Reset & Modern Font Stack */
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    html { 
-      scroll-behavior: smooth; 
-      font-size: 16px;
-    }
-    
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      /* Use explicit rgba values and add Safari-specific prefixes */
-      background: 
-        -webkit-radial-gradient(top left, rgba(0,113,227,0.1), rgba(0,113,227,0) 70%),
-        -webkit-radial-gradient(bottom right, rgba(255,193,7,0.1), rgba(255,193,7,0) 70%),
-        -webkit-linear-gradient(135deg, var(--bg-white), var(--bg-light));
-      background: 
-        radial-gradient(circle at top left, rgba(0,113,227,0.1), rgba(0,113,227,0) 70%),
-        radial-gradient(circle at bottom right, rgba(255,193,7,0.1), rgba(255,193,7,0) 70%),
-        linear-gradient(135deg, var(--bg-white), var(--bg-light));
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-      position: relative;
-      transition: background var(--transition);
+    /* Reset & Base */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
     
-    /* Safari-specific background fix */
-    @media not all and (min-resolution:.001dpcm) { 
-      @supports (-webkit-appearance:none) {
-        body {
-          /* More intense colors for Safari */
-          background: 
-            -webkit-radial-gradient(top left, rgba(0,113,227,0.25), rgba(0,113,227,0) 70%),
-            -webkit-radial-gradient(bottom right, rgba(255,193,7,0.25), rgba(255,193,7,0) 70%),
-            -webkit-linear-gradient(135deg, #ffffff, #f5f5f7) !important;
-          /* Add a more pronounced color wash for Safari */
-          position: relative;
-        }
-        
-        /* Additional Safari-only overlay to ensure gradient visibility */
-        body:before {
-          content: "";
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: 
-            -webkit-radial-gradient(20% 20%, rgba(0,113,227,0.15), rgba(0,113,227,0) 60%),
-            -webkit-radial-gradient(80% 80%, rgba(255,193,7,0.15), rgba(255,193,7,0) 60%);
-          pointer-events: none;
-          z-index: -1;
-        }
-        
-        /* Make tech symbols more visible in Safari */
-        .tech-symbol {
-          opacity: 0.9;
-          -webkit-filter: blur(20px); /* Less blur for Safari */
-        }
-        
-        #tech-symbol-1 {
-          background: -webkit-radial-gradient(circle, rgba(0,113,227,0.6), rgba(0,113,227,0) 70%);
-        }
-        
-        #tech-symbol-2 {
-          background: -webkit-radial-gradient(circle, rgba(255,193,7,0.6), rgba(255,193,7,0) 70%);
-        }
-        
-        #tech-symbol-3 {
-          background: -webkit-radial-gradient(circle, rgba(76,175,80,0.6), rgba(76,175,80,0) 70%);
-        }
-      }
+    @property --scroll-progress {
+      syntax: '<number>';
+      initial-value: 0;
+      inherits: true;
     }
     
-    a { 
-      text-decoration: none; 
-      color: var(--primary);
-      transition: color var(--transition-fast), transform var(--transition-fast);
-      -webkit-transition: color var(--transition-fast), -webkit-transform var(--transition-fast);
+    @property --mouse-x {
+      syntax: '<percentage>';
+      initial-value: 50%;
+      inherits: true;
     }
     
-    a:hover {
-      color: var(--primary-dark);
+    @property --mouse-y {
+      syntax: '<percentage>';
+      initial-value: 50%;
+      inherits: true;
     }
     
-    /* Typography Refinement */
+    html {
+      font-size: clamp(14px, 1vw, 18px);
+      scroll-behavior: smooth;
+      min-height: 100%;
+      background: var(--darker);
+      overflow-x: hidden;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--darker);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background: radial-gradient(
+        ellipse at calc(var(--mouse-x)) calc(var(--mouse-y)),
+        rgba(0, 113, 227, 0.15),
+        rgba(10, 10, 18, 0) 50%
+      );
+      background-size: 200% 200%;
+      background-position: calc(var(--mouse-x)) calc(var(--mouse-y));
+      min-height: 100vh;
+      position: relative;
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--primary), var(--accent));
+      border-radius: var(--radius-full);
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(var(--primary-light), var(--accent-light));
+    }
+    
+    /* Selection styling */
+    ::selection {
+      background: var(--primary);
+      color: white;
+      text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+    
+    /* Typography */
     h1, h2, h3, h4, h5, h6 {
-      font-weight: 600;
-      line-height: 1.2;
-      margin-bottom: var(--space-md);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: var(--size-5);
+      transform-style: preserve-3d;
     }
     
     h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      margin-bottom: var(--space-lg);
-      background: -webkit-linear-gradient(90deg, var(--primary), var(--accent));
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      color: transparent;
-      line-height: 1.2;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--size-8);
+      position: relative;
+      transform-style: preserve-3d;
+      perspective: 1000px;
     }
     
-    /* Safari fallback for gradient text */
-    @media not all and (min-resolution:.001dpcm) { 
-      @supports (-webkit-appearance:none) {
-        h1 {
-          color: var(--primary);
-        }
+    .title-word {
+      display: inline-block;
+      background: var(--text-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(50px);
+      filter: blur(10px);
+    }
+    
+    .title-word.visible {
+      animation: titleWordReveal 1.5s forwards;
+    }
+    
+    @keyframes titleWordReveal {
+      0% {
+        opacity: 0;
+        transform: translateY(50px);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    
+    /* Text animation that constructs itself */
+    .title-character {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(50px);
+      filter: blur(5px);
+      background: var(--text-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .title-character.visible {
+      animation: characterReveal 0.5s forwards;
+    }
+    
+    @keyframes characterReveal {
+      0% {
+        opacity: 0;
+        transform: translateY(50px);
+        filter: blur(5px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
       }
     }
     
     h2 {
-      font-size: 2.25rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      margin-bottom: var(--space-lg);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 700;
+      background: var(--text-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+      margin-bottom: var(--size-8);
     }
     
     h3 {
-      font-size: 1.75rem;
-      font-weight: 600;
-      margin-bottom: var(--space-md);
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      margin-bottom: var(--size-3);
     }
     
     p {
-      font-size: 1.125rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
       line-height: 1.7;
       color: var(--text-secondary);
-      margin-bottom: var(--space-lg);
+      margin-bottom: var(--size-5);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
     
-    /* Properly styled bullet points */
+    /* Links */
+    a {
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: all var(--time-fast) var(--ease-3);
+      position: relative;
+    }
+    
+    a:hover {
+      color: var(--accent-light);
+    }
+    
+    a:focus {
+      outline: none;
+      box-shadow: var(--shadow-focus);
+    }
+    
+    a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--primary-transparent), var(--primary), var(--primary-transparent));
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform var(--time-fast) var(--ease-3);
+    }
+    
+    a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
+    /* Lists with advanced styling */
     ul {
       list-style-type: none;
-      margin: var(--space-xl) auto;
-      max-width: 600px;
-      padding: 0;
-      text-align: left;
+      margin: var(--size-8) auto;
+      max-width: 700px;
+      counter-reset: list-counter;
+      perspective: 500px;
     }
     
     li {
-      font-size: 1.125rem;
+      font-size: 1.1rem;
       color: var(--text-secondary);
-      margin-bottom: 10px;
-      padding-left: 25px;
+      margin-bottom: var(--size-5);
+      padding-left: var(--size-8);
       position: relative;
       text-align: left;
+      opacity: 0.8;
+      transform-style: preserve-3d;
+      transition: all var(--time-medium) var(--ease-3);
+      transform: translateZ(0);
     }
     
     li:before {
       content: "";
       position: absolute;
-      left: 10px;
-      top: 10px;
+      left: 0;
+      top: 0.6em;
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+      transform: translateZ(10px);
+      animation: pulseGlow 2s infinite alternate ease-in-out;
     }
     
-    /* Animations with Safari-specific prefixes */
-    .fade-in {
+    li:hover {
+      transform: translateX(5px) translateZ(5px);
+      opacity: 1;
+    }
+    
+    /* Layout Components */
+    .container {
+      width: min(95%, var(--max-width));
+      margin: 0 auto;
+      position: relative;
+      z-index: var(--z-flat);
+    }
+    
+    /* Space background elements */
+    .space-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: var(--z-below);
+      overflow: hidden;
+      pointer-events: none;
+      background-color: var(--darker);
+    }
+    
+    .space-background::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, rgba(30, 30, 40, 0.2) 0%, var(--darker) 70%);
+    }
+    
+    .star {
+      position: absolute;
+      border-radius: 50%;
       opacity: 0;
-      transform: translateY(20px);
-      -webkit-transform: translateY(20px);
-      animation: fadeInUp 1s forwards;
-      -webkit-animation: fadeInUp 1s forwards;
-      will-change: opacity, transform;
+      z-index: 1;
     }
     
-    @keyframes fadeInUp { 
-      to { opacity: 1; transform: translateY(0); } 
+    .star-dust {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+CiAgPGRlZnM+CiAgICA8ZmlsdGVyIGlkPSJub2lzZSIgeD0iMCUiIHk9IjAlIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj4KICAgICAgPGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHJlc3VsdD0ibm9pc2UiLz4KICAgICAgPGZlQ29sb3JNYXRyaXggdHlwZT0ibWF0cml4IiB2YWx1ZXM9IjEgMCAwIDAgMCAwIDEgMCAwIDAgMCAwIDEgMCAwIDAgMCAwIDAuMDUgMCIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiLz4KPC9zdmc+');
+      opacity: 0.25;
+      mix-blend-mode: screen;
     }
     
-    @-webkit-keyframes fadeInUp { 
-      to { opacity: 1; -webkit-transform: translateY(0); } 
+    .space-aurora {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 400px;
+      background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 113, 227, 0.1) 50%, rgba(0,0,0,0) 100%);
+      filter: blur(40px);
+      opacity: 0.5;
+      transform: translateY(-50%);
+      animation: auroraFloat 15s infinite alternate ease-in-out;
     }
     
-    .delay-1 { 
-      animation-delay: 0.5s; 
-      -webkit-animation-delay: 0.5s; 
-    }
-    .delay-2 { 
-      animation-delay: 1s; 
-      -webkit-animation-delay: 1s; 
-    }
-    .delay-3 { 
-      animation-delay: 1.5s; 
-      -webkit-animation-delay: 1.5s; 
+    .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.15;
+      transform-origin: center;
+      animation: nebulaFloat 30s infinite alternate ease-in-out;
     }
     
-    /* Enhanced Micro-interactions */
-    .btn {
-      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-      -webkit-transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    .nebula-1 {
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse at center, rgba(0, 113, 227, 0.3), transparent 70%);
+      top: 10%;
+      left: -100px;
+      animation-delay: 0s;
+    }
+    
+    .nebula-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(ellipse at center, rgba(76, 201, 240, 0.3), transparent 70%);
+      bottom: 5%;
+      right: -100px;
+      animation-delay: 5s;
+    }
+    
+    .nebula-3 {
+      width: 400px;
+      height: 300px;
+      background: radial-gradient(ellipse at center, rgba(255, 193, 7, 0.2), transparent 70%);
+      bottom: 30%;
+      left: 20%;
+      animation-delay: 10s;
+    }
+    
+    @keyframes nebulaFloat {
+      0%, 100% {
+        transform: scale(1) translate(0, 0) rotate(0deg);
+        opacity: 0.15;
+      }
+      50% {
+        transform: scale(1.1) translate(20px, -20px) rotate(5deg);
+        opacity: 0.2;
+      }
+    }
+    
+    /* Grid System */
+    .grid-system {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: var(--z-below);
+      opacity: 0.5;
+      perspective: 1000px;
+      transform-style: preserve-3d;
+      transform: rotateX(60deg) translateZ(-100px) scale(1.5);
+    }
+    
+    /* Scroll Progress */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        var(--primary), 
+        var(--accent)
+      );
+      z-index: var(--z-highest);
+      transform-origin: 0 50%;
+      transform: scaleX(var(--scroll-progress));
+    }
+    
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 var(--size-5);
+      z-index: var(--z-sticky);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: rgba(10, 10, 18, 0.75);
+      box-shadow: var(--shadow-md);
+      transition: all var(--time-fast) var(--ease-3);
+    }
+    
+    .navbar-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+      max-width: var(--max-width);
+      padding: 0 var(--size-5);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: var(--size-5);
+      align-items: center;
+      transform-style: preserve-3d;
+      perspective: 300px;
+    }
+    
+    .nav-links a {
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: var(--size-2) var(--size-3);
+      border-radius: var(--radius-full);
+      transition: all var(--time-fast) var(--ease-3);
+      position: relative;
+      transform-style: preserve-3d;
+    }
+    
+    .nav-links a::after {
+      display: none;
+    }
+    
+    .nav-links a::before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transform: translateX(-50%);
+      transition: width var(--time-medium) var(--ease-3);
+      box-shadow: 0 0 8px var(--primary);
+    }
+    
+    .nav-links a:hover {
+      color: var(--text-primary);
+      transform: translateY(-2px) translateZ(5px);
+    }
+    
+    .nav-links a:hover::before {
+      width: 80%;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 0;
+      padding-top: 120px;
       position: relative;
       overflow: hidden;
     }
     
-    .btn:after {
+    .hero-content {
+      position: relative;
+      z-index: var(--z-lifted);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 var(--size-5);
+    }
+    
+    .hero-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: var(--size-13);
+      transform-style: preserve-3d;
+      transition: transform var(--time-medium) var(--ease-3);
+      filter: drop-shadow(0 0 15px rgba(0, 113, 227, 0.5));
+    }
+    
+    .hero-logo img {
+      max-width: 250px;
+      height: auto;
+      transform-style: preserve-3d;
+      transition: all var(--time-medium) var(--ease-bounce);
+      transform: translateZ(50px);
+      animation: logoFloat 4s infinite ease-in-out;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% {
+        transform: translateZ(50px) translateY(0);
+      }
+      50% {
+        transform: translateZ(50px) translateY(-10px);
+      }
+    }
+    
+    .hero-logo:hover img {
+      transform: translateZ(50px) scale(1.1);
+      filter: drop-shadow(0 0 15px rgba(0, 113, 227, 0.8));
+    }
+    
+    .hero-subtitle {
+      margin-bottom: var(--size-8);
+      color: var(--text-secondary);
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s 2s forwards;
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Button Styling */
+    .cta-button {
+      display: inline-block;
+      padding: var(--size-3) var(--size-8);
+      background: var(--primary-gradient);
+      color: white !important;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 15px var(--primary-ghost), inset 0 1px rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none !important;
+      transition: all var(--time-medium) var(--ease-bounce);
+      transform-style: preserve-3d;
+      transform: translateZ(0);
+      animation: buttonPulse 3s infinite alternate ease-in-out;
+      opacity: 0;
+      animation: fadeInUp 1s 2.5s forwards;
+    }
+    
+    .cta-button::after {
+      display: none;
+    }
+    
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+      mix-blend-mode: overlay;
+      transform: rotate(30deg);
+      transition: all var(--time-fast) var(--ease-3);
+      pointer-events: none;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-5px) translateZ(10px);
+      box-shadow: 0 7px 25px rgba(0, 113, 227, 0.4), 0 0 20px var(--primary-ghost), inset 0 1px rgba(255, 255, 255, 0.3);
+    }
+    
+    .cta-button:hover::before {
+      transform: rotate(0deg);
+    }
+    
+    .cta-button:active {
+      transform: translateY(-2px) translateZ(5px);
+      box-shadow: 0 4px 15px rgba(0, 113, 227, 0.4);
+    }
+    
+    @keyframes buttonPulse {
+      0%, 100% {
+        box-shadow: 0 0 15px var(--primary-ghost), inset 0 1px rgba(255, 255, 255, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 25px var(--primary-ghost), 0 0 40px rgba(0, 113, 227, 0.1), inset 0 1px rgba(255, 255, 255, 0.3);
+      }
+    }
+    
+    /* Video Containers */
+    .video-container {
+      width: 100%;
+      max-width: 900px;
+      margin: var(--size-13) auto 0;
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl), 0 0 30px var(--primary-ghost);
+      transform-style: preserve-3d;
+      transform: translateZ(0);
+      transition: all var(--time-medium) var(--ease-3);
+      opacity: 0;
+      animation: fadeInUp 1s 3s forwards;
+    }
+    
+    .video-container:nth-of-type(2) {
+      animation-delay: 3.5s;
+    }
+    
+    .video-container:hover {
+      transform: scale(1.02) translateZ(10px);
+      box-shadow: var(--shadow-xl), 0 0 40px var(--primary-ghost);
+    }
+    
+    .video-container::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateX(-100%);
-      -webkit-transform: translateX(-100%);
-      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-      -webkit-transition: -webkit-transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+      background: radial-gradient(circle at center, rgba(0, 113, 227, 0.1), transparent 70%);
+      pointer-events: none;
+      z-index: 1;
     }
     
-    .btn:hover:after {
-      transform: translateX(0);
-      -webkit-transform: translateX(0);
-    }
-    
-    .btn:hover {
-      transform: translateY(-3px);
-      -webkit-transform: translateY(-3px);
-      box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn:active {
-      transform: translateY(-1px);
-      -webkit-transform: translateY(-1px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Enhanced Card Design */
-    .card {
-      background: white;
-      border-radius: var(--radius-md);
-      padding: var(--space-xl);
-      box-shadow: var(--card-shadow);
-      transition: transform var(--transition), box-shadow var(--transition);
-      -webkit-transition: -webkit-transform var(--transition), box-shadow var(--transition);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      height: 100%;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      -webkit-transform: translateY(-5px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Superior Navbar - optimized for Safari */
-    .navbar {
-      position: fixed;
-      top: 0; 
-      left: 0; 
-      right: 0;
-      background: rgba(250,250,250,0.8);
-      backdrop-filter: blur(10px); /* Reduced for Safari performance */
+    .video-container h2 {
+      position: absolute;
+      top: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      background: var(--dark-glass);
+      padding: 0.5rem 1.5rem;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 20px 60px;
-      display: flex;
-      justify-content: center;
-      border-bottom: 0.5px solid rgba(0,0,0,0.03);
-      z-index: 1000;
-      animation: fadeInDown 1s forwards;
-      -webkit-animation: fadeInDown 1s forwards;
-      white-space: nowrap;
-      overflow-x: auto;
-      will-change: transform, opacity;
+      font-size: 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
     
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @-webkit-keyframes fadeInDown {
-      from { opacity: 0; -webkit-transform: translateY(-20px); }
-      to { opacity: 1; -webkit-transform: translateY(0); }
-    }
-    
-    .navbar a {
-      font-size: 15px;
-      font-weight: 400;
-      padding: 10px 15px;
-      letter-spacing: 1px;
-      transition: color 0.3s ease, transform 0.2s ease;
-      -webkit-transition: color 0.3s ease, -webkit-transform 0.2s ease;
-      color: inherit;
-    }
-    
-    .navbar a:hover { 
-      color: var(--primary); 
-      transform: translateY(-2px); 
-      -webkit-transform: translateY(-2px); 
-    }
-    
-    /* Main Content Layout */
-    .container {
-      max-width: 960px;
-      margin: 140px auto 80px;
-      padding: 40px;
-      background: var(--bg-white);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
-      -webkit-transition: -webkit-transform 0.3s ease;
-    }
-    
-    /* Hero Section with Original Logo Implementation */
-    .hero-section { 
-      margin-bottom: 60px;
-      text-align: center;
-    }
-    
-    /* IMPORTANT: Keeping the original logo container and hover effect */
-    .hero-logo { 
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: center;
-    }
-    
-    .hero-logo img { 
-      max-width: 200px; 
-      width: 200px; /* Explicit width for Safari */
-      height: auto;
-      margin-bottom: 20px; 
-      transition: transform 0.3s ease; 
-      -webkit-transition: -webkit-transform 0.3s ease; 
-    }
-    
-    .hero-logo img:hover { 
-      transform: scale(1.05); 
-      -webkit-transform: scale(1.05); 
-    }
-    
-    /* Video Container Enhancements - optimized for Safari */
-    .intro-video, .demo-video {
-      margin: var(--space-xxl) 0;
-      position: relative;
+    .video-container iframe {
       width: 100%;
-      overflow: hidden;
-    }
-    
-    iframe {
-      max-width: 100%;
-      border: none;
-      border-radius: 8px;
-      margin-top: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
       aspect-ratio: 16/9;
-      width: 100%;
-      /* Explicit fallback for Safari */
-      height: 500px;
+      border: none;
+      vertical-align: middle;
+      transform: scale(1.01);
     }
     
-    /* Section Styling */
+    /* Content Sections */
     .section {
-      padding: 60px 20px;
       position: relative;
+      padding: var(--section-spacing) var(--size-5);
       text-align: center;
+      overflow: hidden;
+      transform-style: preserve-3d;
     }
     
-    .section:last-child { 
-      border-bottom: none; 
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent
+      );
     }
     
-    .dark-section { 
-      background-color: var(--bg-dark); 
-      color: var(--text-light); 
+    /* Section background elements */
+    .section-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.4;
+      filter: blur(40px);
+      transform: translateZ(-50px);
+      mix-blend-mode: screen;
+      pointer-events: none;
     }
     
-    .dark-section h2, 
-    .dark-section p { 
-      color: var(--text-light); 
+    .section-bg.gradient-1 {
+      background: radial-gradient(
+        circle at 20% 30%,
+        rgba(0, 113, 227, 0.4),
+        transparent 70%
+      );
     }
     
-    .dark-section li { 
-      color: rgba(255, 255, 255, 0.8); 
+    .section-bg.gradient-2 {
+      background: radial-gradient(
+        circle at 80% 70%,
+        rgba(255, 193, 7, 0.3),
+        transparent 70%
+      );
     }
     
-    .dark-section li:before {
-      background: var(--accent);
+    .dark-section {
+      background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.8),
+        rgba(20, 20, 30, 0.9)
+      );
+      position: relative;
+      color: var(--text-primary);
     }
     
-    /* Text alignment for paragraphs in sections */
-    .section p {
-      text-align: center;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+    .dark-section::before,
+    .dark-section::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent
+      );
     }
     
-    /* Team Section - optimized for Safari */
-    .team-members { 
-      display: flex; 
-      justify-content: center; 
-      flex-wrap: wrap; 
-      margin-top: 30px;
-      gap: 40px;
+    .dark-section::before {
+      top: 0;
     }
     
-    .team-member { 
-      flex: 0 1 var(--team-width); 
+    .dark-section::after {
+      bottom: 0;
+    }
+    
+    .dark-section .section-bg.gradient-1 {
+      background: radial-gradient(
+        circle at 20% 30%,
+        rgba(0, 113, 227, 0.2),
+        transparent 60%
+      );
+    }
+    
+    .dark-section .section-bg.gradient-2 {
+      background: radial-gradient(
+        circle at 80% 70%,
+        rgba(255, 193, 7, 0.15),
+        transparent 60%
+      );
+    }
+    
+    /* 3D Tilt Cards */
+    .tilt-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg);
+      padding: var(--size-5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: var(--shadow-md);
+      transition: all var(--time-medium) var(--ease-3);
+      transform-style: preserve-3d;
+      transform: perspective(1000px) rotateX(var(--card-rotation-x)) rotateY(var(--card-rotation-y)) translateZ(0);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .tilt-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(
+        circle at var(--mouse-x) var(--mouse-y),
+        rgba(255, 255, 255, 0.15),
+        transparent 80%
+      );
+      opacity: 0;
+      transition: opacity var(--time-fast) linear;
+    }
+    
+    .tilt-card:hover::before {
+      opacity: 1;
+    }
+    
+    .tilt-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent
+      );
+    }
+    
+    /* Team Section */
+    .team-section {
+      position: relative;
+    }
+    
+    .team-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--size-8);
+      margin-top: var(--size-13);
+      perspective: 1000px;
+    }
+    
+    .team-member {
+      flex: 0 1 var(--team-width);
       max-width: var(--team-width);
-      margin-bottom: 40px; 
       text-align: center;
+      margin-bottom: var(--size-8);
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    
+    .team-member.visible {
+      animation: cardEntrance 0.8s forwards;
+    }
+    
+    @keyframes cardEntrance {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .team-member-inner {
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .team-member:hover .team-member-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .team-member-front,
+    .team-member-back {
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      min-height: 350px;
+      padding: var(--size-5);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .team-member-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transform: rotateY(180deg);
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
+      padding: var(--size-8);
     }
     
-    .team-member img {
-      width: 120px; 
-      height: 120px;
+    .team-member-photo {
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
+      margin: 0 auto var(--size-5);
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-md), 0 0 20px var(--primary-ghost);
+      transform-style: preserve-3d;
+      transform: translateZ(20px);
+      position: relative;
+    }
+    
+    .team-member-photo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 113, 227, 0.4), rgba(255, 193, 7, 0.2));
+      mix-blend-mode: overlay;
+      opacity: 0.6;
+      z-index: 1;
+    }
+    
+    .team-member-photo img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      margin-bottom: 15px;
-      transition: transform 0.3s ease;
-      -webkit-transition: -webkit-transform 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: block;
+      transition: transform var(--time-medium) var(--ease-3);
     }
     
-    /* Răzvan's image cropped to focus on head, neck, and shoulders */
-    .razvi-img { 
-      object-fit: cover; 
-      object-position: 50% 55%; 
+    .team-member:hover .team-member-photo img {
+      transform: scale(1.1);
     }
     
-    .team-member img:hover { 
-      transform: scale(1.05); 
-      -webkit-transform: scale(1.05); 
+    .team-member-info {
+      transform-style: preserve-3d;
     }
     
-    .team-member h3 { 
-      font-size: 1.5rem; 
-      margin-bottom: 5px; 
+    .team-member h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--size-1);
+      transform: translateZ(10px);
     }
     
-    .team-member p { 
-      font-size: 0.95rem; 
-      line-height: 1.4; 
-    }
-    
-    /* Role Label Styling */
-    .role {
-      font-size: 0.85rem;
-      color: #555555;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-    
-    /* Download Button Styling - Safari optimized */
-    .download-btn {
+    .team-member-role {
       display: inline-block;
-      background: var(--primary);
-      color: #fff !important;
-      padding: 10px 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      text-transform: uppercase;
+      padding: 0.2rem 0.8rem;
+      background: var(--primary-ghost);
+      color: var(--primary-light);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
       font-weight: 600;
-      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      -webkit-transition: background 0.3s ease, -webkit-transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
+      margin-bottom: var(--size-3);
+      transform: translateZ(5px);
     }
     
-    .download-btn:hover {
-      background: var(--primary-dark);
+    .team-member p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 0;
+      transform: translateZ(5px);
+    }
+    
+    .team-member-connect {
+      margin-top: var(--size-5);
+      display: flex;
+      justify-content: center;
+      gap: var(--size-3);
+    }
+    
+    .contact-btn {
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--primary-ghost);
+      color: var(--primary-light);
+      border: 1px solid rgba(0, 113, 227, 0.2);
+      transition: all var(--time-fast) var(--ease-3);
+    }
+    
+    .contact-btn:hover {
+      background: var(--primary);
+      color: white;
       transform: translateY(-2px);
-      -webkit-transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 113, 227, 0.25);
-      color: #fff !important;
-      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0, 113, 227, 0.4);
     }
     
     /* Contact Section */
     .contact-section {
-      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
     
-    .contact-container {
+    .contact-cards {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 40px;
-      max-width: 800px;
-      margin: 0 auto;
+      gap: var(--size-8);
+      margin-top: var(--size-8);
     }
     
-    .contact-email {
+    .contact-card {
       flex: 0 1 var(--team-width);
       max-width: var(--team-width);
-      margin: 10px 0;
-    }
-    
-    .contact-email h3 {
-      font-size: 1.5rem;
-      margin-bottom: 5px;
-    }
-    
-    .contact-email p {
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-    
-    /* Back to Top Button */
-    #back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: rgba(0,0,0,0.3);
-      color: #fff;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 50px;
-      cursor: pointer;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg);
+      padding: var(--size-5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: var(--shadow-md);
+      transition: all var(--time-medium) var(--ease-3);
+      transform-style: preserve-3d;
+      position: relative;
+      overflow: hidden;
       opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      -webkit-transition: opacity 0.3s ease, visibility 0.3s ease;
-      z-index: 1000;
+      transform: translateY(50px);
     }
     
-    #back-to-top.show {
-      opacity: 1;
-      visibility: visible;
+    .contact-card.visible {
+      animation: cardEntrance 0.8s forwards;
     }
     
-    /* Footer Styling */
-    .footer {
-      background: var(--bg-dark);
-      color: var(--text-light);
-      padding: var(--space-xxl) 0;
-      text-align: center;
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.03),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: cardShimmer 3s infinite linear;
+      pointer-events: none;
     }
     
-    .footer-container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .contact-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg), 0 10px 20px var(--primary-ghost);
+      border-color: rgba(255, 255, 255, 0.1);
     }
     
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: var(--space-lg);
-      margin: var(--space-lg) 0;
-      flex-wrap: wrap;
+    .contact-card h3 {
+      margin-bottom: var(--size-3);
+      position: relative;
+      display: inline-block;
     }
     
-    .footer-links a {
-      color: rgba(255, 255, 255, 0.7);
-      transition: color var(--transition-fast);
-      -webkit-transition: color var(--transition-fast);
+    .contact-card h3::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
     }
     
-    .footer-links a:hover {
+    .contact-email-link {
+      display: block;
+      margin-top: var(--size-3);
+      font-size: 1rem;
+      color: var(--primary-light);
+      transition: all var(--time-fast) var(--ease-3);
+      position: relative;
+      transform-style: preserve-3d;
+    }
+    
+    .contact-email-link::before {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230071e3'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+      background-size: contain;
+      left: -30px;
+      top: 50%;
+      transform: translateY(-50%) translateZ(5px);
+      opacity: 0;
+      transition: all var(--time-fast) var(--ease-3);
+    }
+    
+    .contact-email-link:hover {
       color: white;
+      transform: translateX(15px);
     }
     
-    .copyright {
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.5);
-      text-align: center;
+    .contact-email-link:hover::before {
+      opacity: 1;
+      left: -35px;
     }
     
-    /* Tech Symbols and Geometric Shapes - Safari optimized */
-    .tech-symbol {
-      position: fixed;
-      border-radius: 50%;
-      z-index: -1;
-      filter: blur(30px);
-      -webkit-filter: blur(30px);
-      animation: pulse 8s infinite ease-in-out;
-      -webkit-animation: pulse 8s infinite ease-in-out;
-      will-change: transform, opacity;
+    /* Animations */
+    @keyframes textShimmer {
+      0% {
+        background-position: -100% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
     }
     
-    @keyframes pulse {
-      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
-      50% { transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; }
+    @keyframes textFloat {
+      0%, 100% {
+        transform: translateY(0) translateZ(0);
+      }
+      50% {
+        transform: translateY(-5px) translateZ(15px);
+      }
     }
     
-    @-webkit-keyframes pulse {
-      0%, 100% { -webkit-transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
-      50% { -webkit-transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; }
+    @keyframes pulseGlow {
+      0%, 100% {
+        opacity: 0.7;
+        box-shadow: 0 0 5px var(--primary-ghost);
+      }
+      50% {
+        opacity: 1;
+        box-shadow: 0 0 10px var(--primary), 0 0 15px var(--primary-ghost);
+      }
     }
     
-    #tech-symbol-1 {
-      width: 150px; height: 150px;
-      background: -webkit-radial-gradient(circle, rgba(0,113,227,0.4), rgba(0,113,227,0) 70%);
-      background: radial-gradient(circle, rgba(0,113,227,0.4), rgba(0,113,227,0) 70%);
-      top: -50px; left: -50px;
+    @keyframes auroraFloat {
+      0%, 100% {
+        transform: translateY(-50%) translateX(0%);
+        opacity: 0.4;
+      }
+      50% {
+        transform: translateY(-40%) translateX(5%);
+        opacity: 0.6;
+      }
     }
     
-    #tech-symbol-2 {
-      width: 200px; height: 200px;
-      background: -webkit-radial-gradient(circle, rgba(255,223,150,0.4), rgba(255,223,150,0) 70%);
-      background: radial-gradient(circle, rgba(255,223,150,0.4), rgba(255,223,150,0) 70%);
-      bottom: -70px; right: -70px;
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.2;
+        transform: scale(0.5);
+      }
     }
     
-    #tech-symbol-3 {
-      width: 100px; height: 100px;
-      background: -webkit-radial-gradient(circle, rgba(76,175,80,0.4), rgba(76,175,80,0) 70%);
-      background: radial-gradient(circle, rgba(76,175,80,0.4), rgba(76,175,80,0) 70%);
-      top: 20%; right: -50px;
+    @keyframes cardShimmer {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
     }
     
-    /* Responsive Styles */
-    @media screen and (max-width: 992px) {
-      .container {
-        padding: 30px;
-        margin: 120px auto 60px;
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .navbar {
+        padding: 0 var(--size-3);
       }
       
-      .navbar {
-        padding: 15px 30px;
+      .nav-links {
+        gap: var(--size-3);
+      }
+      
+      .nav-links a {
+        font-size: 0.9rem;
       }
       
       h1 {
-        font-size: 2.5rem;
+        font-size: clamp(2rem, 6vw, 3.5rem);
       }
       
       h2 {
-        font-size: 2rem;
-      }
-      
-      .team-members {
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      .team-member {
-        flex: 0 1 100%;
-        max-width: 400px;
-      }
-      
-      .contact-email {
-        flex: 0 1 100%;
-        max-width: 400px;
-      }
-      
-      iframe {
-        height: 400px;
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
       }
     }
     
-    @media screen and (max-width: 768px) {
-      .container {
-        padding: 25px;
-        border-radius: 12px;
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
       }
       
-      .navbar {
-        padding: 12px 20px;
+      .nav-mobile {
+        display: block;
       }
       
-      .navbar a {
-        padding: 8px 10px;
-        font-size: 14px;
+      .hero-content {
+        padding: 0 var(--size-3);
       }
       
-      h1 {
-        font-size: 2rem;
+      .hero-logo img {
+        max-width: 200px;
       }
       
-      h2 {
-        font-size: 1.75rem;
+      .team-grid, .contact-cards {
+        gap: var(--size-5);
       }
       
-      .section {
-        padding: 40px 15px;
+      .team-member, .contact-card {
+        flex: 0 1 100%;
+        max-width: 400px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      :root {
+        --section-spacing: clamp(2rem, 8vh, 4rem);
       }
       
       .hero-logo img {
         max-width: 150px;
-        width: 150px;
       }
       
-      iframe {
-        height: 350px;
-      }
-    }
-    
-    @media screen and (max-width: 576px) {
-      .container {
-        padding: 20px;
-        margin: 100px auto 40px;
+      .cta-button {
+        font-size: 0.9rem;
+        padding: var(--size-2) var(--size-5);
       }
       
-      .navbar {
-        padding: 10px;
+      .section, .hero-section {
+        padding-left: var(--size-3);
+        padding-right: var(--size-3);
       }
       
-      .navbar a {
-        padding: 5px 8px;
-        font-size: 12px;
-      }
-      
-      h1 {
-        font-size: 1.75rem;
-      }
-      
-      h2 {
-        font-size: 1.5rem;
-      }
-      
-      p, li {
+      .video-container h2 {
         font-size: 1rem;
-      }
-      
-      .hero-logo img {
-        max-width: 120px;
-        width: 120px;
-      }
-      
-      iframe {
-        height: 250px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Tech Symbols -->
-  <div class="tech-symbol" id="tech-symbol-1"></div>
-  <div class="tech-symbol" id="tech-symbol-2"></div>
-  <div class="tech-symbol" id="tech-symbol-3"></div>
-  
-  <!-- Back to Top Button -->
-  <button id="back-to-top" onclick="scrollToTop()">Top</button>
-  
-  <!-- Navbar (Always Visible) -->
-  <div class="navbar" id="navbar">
-    <a href="#about">About</a>
-    <a href="#problem">The Problem</a>
-    <a href="#solution">Our Solution</a>
-    <a href="#how-it-works">How It Works</a>
-    <a href="#technology">Technology</a>
-    <a href="#market">Market</a>
-    <a href="#business">Business Model &amp; Funding</a>
-    <a href="#team">Team</a>
-    <a href="#contact">Contact</a>
+  <!-- Space Background -->
+  <div class="space-background">
+    <div class="star-dust"></div>
+    <div class="space-aurora"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+    <div id="stars-container"></div>
   </div>
   
-  <!-- Main Content -->
-  <div class="container fade-in" id="pitch-content">
-    <!-- Hero Section -->
-    <div class="hero-section fade-in delay-1">
-      <!-- IMPORTANT: Using the exact same hero-logo implementation from original site -->
-      <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" width="200" height="auto">
-      </div>
-      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <!-- Download Button -->
-      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
-      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-      <!-- Intro Video Block -->
-      <div class="intro-video fade-in delay-2">
-        <h2>Who Are We? What's Our Mission?</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      </div>
-      <!-- Demo Video Block -->
-      <div class="demo-video fade-in delay-3">
-        <h2>Demo</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <!-- Grid System -->
+  <div class="grid-system"></div>
+  
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress"></div>
+  
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <div class="nav-links">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#problem" class="nav-link">The Problem</a>
+        <a href="#solution" class="nav-link">Our Solution</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#technology" class="nav-link">Technology</a>
+        <a href="#market" class="nav-link">Market</a>
+        <a href="#business" class="nav-link">Business Model</a>
+        <a href="#team" class="nav-link">Team</a>
+        <a href="#contact" class="nav-link">Contact</a>
       </div>
     </div>
-    
-    <!-- About Our Vision -->
-    <div class="section fade-in" id="about">
-      <h2>About Our Vision</h2>
-      <p>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="hero-content">
+      <div class="hero-logo">
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" id="hero-logo-img">
+      </div>
+      
+      <h1 id="animated-title">
+        <span class="title-word">AI-Powered</span>
+        <span class="title-word">VR</span>
+        <span class="title-word">Therapy:</span>
+        <br>
+        <span class="title-word">The</span>
+        <span class="title-word">Future</span>
+        <span class="title-word">of</span>
+        <span class="title-word">Exposure</span>
+        <span class="title-word">Therapy</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment through cutting-edge AI and immersive VR technology.
+      </p>
+      
+      <a href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx" class="cta-button">
+        Download Pitch Presentation
+      </a>
+      
+      <!-- Intro Video -->
+      <div class="video-container">
+        <h2>Our Mission</h2>
+        <iframe src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+      
+      <!-- Demo Video -->
+      <div class="video-container">
+        <h2>Demo</h2>
+        <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+  
+  <!-- About Section -->
+  <section class="section" id="about">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">About Our Vision</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
       </p>
+      
+      <div class="tilt-card animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <div class="card-glow"></div>
+        <h3>Transforming Mental Health Care</h3>
+        <p>Our innovative approach combines the latest advancements in artificial intelligence with immersive virtual reality, creating a revolutionary platform that adapts to each patient's unique needs.</p>
+      </div>
     </div>
-    
-    <!-- The Problem Section -->
-    <div class="section fade-in" id="problem">
-      <h2>The Problem – Therapy Needs to Evolve</h2>
-      <p>
-        Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios - limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
+  </section>
+  
+  <!-- Problem Section -->
+  <section class="section" id="problem">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">The Problem – Therapy Needs to Evolve</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+        Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios—limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
       </p>
-      <ul>
-        <li>Low immersion and engagement.</li>
-        <li>Inability to adjust therapy in real time.</li>
-        <li>Heavy reliance on imagination or static media.</li>
+      
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <li>Low immersion and engagement, reducing therapeutic effectiveness.</li>
+        <li>Inability to adjust therapy in real time to patient responses.</li>
+        <li>Heavy reliance on imagination or static media, limiting emotional connection.</li>
       </ul>
     </div>
-    
-    <!-- Our Solution Section -->
-    <div class="section fade-in dark-section" id="solution">
-      <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
-      <p>
-        We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback - ensuring every session is personalized for maximum impact.
+  </section>
+  
+  <!-- Solution Section -->
+  <section class="section dark-section" id="solution">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+        We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback—ensuring every session is personalized for maximum impact.
       </p>
-      <ul>
-        <li>Dynamic, AI-generated VR environments.</li>
-        <li>Real-time biofeedback integration.</li>
-        <li>Comprehensive clinical control via a dedicated dashboard.</li>
+      
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <li>Dynamic, AI-generated VR environments that evolve based on real-time inputs.</li>
+        <li>Sophisticated biofeedback integration that monitors and responds to physiological signals.</li>
+        <li>Comprehensive clinical control via an intuitive, powerful dashboard interface.</li>
       </ul>
     </div>
-    
-    <!-- How It Works Section -->
-    <div class="section fade-in" id="how-it-works">
-      <h2>How It Works</h2>
-      <ul>
-        <li>The therapist launches the software on a compatible VR headset.</li>
-        <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-        <li>The AI listens to the therapist's guidance and generates an interactive VR environment.</li>
-        <li>Real-time biofeedback allows for dynamic session adjustments.</li>
-        <li>The system learns and adapts, personalizing future sessions.</li>
+  </section>
+  
+  <!-- How It Works Section -->
+  <section class="section" id="how-it-works">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">How It Works</h2>
+      
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+        <li>The therapist launches our proprietary software on a compatible VR headset.</li>
+        <li>The patient dons the headset along with our sensor-enabled smartwatch for biofeedback.</li>
+        <li>Our AI engine listens to the therapist's guidance and generates an interactive VR environment in real time.</li>
+        <li>Biofeedback data allows for dynamic session adjustments based on patient responses.</li>
+        <li>The system continuously learns and adapts, personalizing future sessions for optimal outcomes.</li>
       </ul>
     </div>
-    
-    <!-- Technology Section -->
-    <div class="section fade-in" id="technology">
-      <h2>Technology</h2>
-      <p>
+  </section>
+  
+  <!-- Technology Section -->
+  <section class="section" id="technology">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Technology</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
       </p>
     </div>
-    
-    <!-- Market Opportunity Section -->
-    <div class="section fade-in" id="market">
-      <h2>Market Opportunity</h2>
-      <p>
+  </section>
+  
+  <!-- Market Section -->
+  <section class="section" id="market">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Market Opportunity</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.
       </p>
     </div>
-    
-    <!-- Business Model & Funding Section -->
-    <div class="section fade-in dark-section" id="business">
-      <h2>Business Model & Funding</h2>
-      <p>
+  </section>
+  
+  <!-- Business Model Section -->
+  <section class="section dark-section" id="business">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Business Model & Funding</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
       </p>
-      <ul>
+      
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
         <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
         <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
         <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
       </ul>
     </div>
-    
-    <!-- Team Section -->
-    <div class="section fade-in" id="team">
-      <h2>Meet the Team</h2>
-      <div class="team-members">
-        <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120">
-          <h3>Matei Seleușan</h3>
-          <p class="role">CEO</p>
-          <p>
-            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
-          </p>
-        </div>
-        <div class="team-member">
-          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120">
-          <h3>Răzvan Crețu</h3>
-          <p class="role">CTO</p>
-          <p>
-            Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
-          </p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Contact Section -->
-    <div class="section fade-in" id="contact">
-      <h2>Contact Us</h2>
-      <div class="contact-container">
-        <div class="contact-email">
-          <h3>Matei Seleușan</h3>
-          <p>
-            <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
-          </p>
-        </div>
-        <div class="contact-email">
-          <h3>Răzvan Crețu</h3>
-          <p>
-            <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a>
-          </p>
-        </div>
-      </div>
-    </div>
-    
-  </div>
+  </section>
   
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-links">
-        <a href="#about">About</a>
-        <a href="#problem">Problem</a>
-        <a href="#solution">Solution</a>
-        <a href="#technology">Technology</a>
-        <a href="#team">Team</a>
-        <a href="#contact">Contact</a>
+  <!-- Team Section -->
+  <section class="section team-section" id="team">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Meet the Team</h2>
+      
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="team-member-inner">
+            <div class="team-member-front">
+              <div class="team-member-photo">
+                <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan">
+              </div>
+              <div class="team-member-info">
+                <h3>Matei Seleușan</h3>
+                <span class="team-member-role">CEO</span>
+                <p>
+                  Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
+                </p>
+              </div>
+            </div>
+            <div class="team-member-back">
+              <h3>Matei Seleușan</h3>
+              <p>
+                Passionate about revolutionizing mental health treatment, Matei brings personal experience and academic expertise to lead our mission of creating more effective therapeutic solutions.
+              </p>
+              <div class="team-member-connect">
+                <a href="mailto:mateiseleusan@gmail.com" class="contact-btn">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="team-member">
+          <div class="team-member-inner">
+            <div class="team-member-front">
+              <div class="team-member-photo">
+                <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu">
+              </div>
+              <div class="team-member-info">
+                <h3>Răzvan Crețu</h3>
+                <span class="team-member-role">CTO</span>
+                <p>
+                  Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
+                </p>
+              </div>
+            </div>
+            <div class="team-member-back">
+              <h3>Răzvan Crețu</h3>
+              <p>
+                A technology innovator with a proven track record, Răzvan leverages his expertise in AI and hardware integration to build our groundbreaking VR therapy platform.
+              </p>
+              <div class="team-member-connect">
+                <a href="mailto:razvanmihaicretu@gmail.com" class="contact-btn">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
     </div>
-  </footer>
+  </section>
+  
+  <!-- Contact Section -->
+  <section class="section contact-section" id="contact">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Contact Us</h2>
+      
+      <div class="contact-cards">
+        <div class="contact-card">
+          <h3>Matei Seleușan</h3>
+          <a href="mailto:mateiseleusan@gmail.com" class="contact-email-link">mateiseleusan@gmail.com</a>
+        </div>
+        
+        <div class="contact-card">
+          <h3>Răzvan Crețu</h3>
+          <a href="mailto:razvanmihaicretu@gmail.com" class="contact-email-link">razvanmihaicretu@gmail.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
   
   <script>
-    // Throttle function to limit how often certain events fire
-    function throttle(func, limit) {
-      let inThrottle;
-      return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-          func.apply(context, args);
-          inThrottle = true;
-          setTimeout(() => inThrottle = false, limit);
-        }
-      };
-    }
-    
-    // Back to Top Button Functionality with throttling
-    window.addEventListener('scroll', throttle(function() {
-      const btn = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
-    }, 100));
-    
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    
-    // Optimized fade-in elements on scroll
+    // Star generation
     document.addEventListener('DOMContentLoaded', function() {
-      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
+      createStars();
+      animateTitle();
+      initScrollAnimation();
+      initTiltEffect();
+      trackScrollProgress();
+      trackMouseMovement();
+    });
+    
+    // Create animated stars in the background
+    function createStars() {
+      const starsContainer = document.getElementById('stars-container');
+      const starCount = 150;
       
-      // Throttled scroll check function
-      const checkScroll = throttle(function() {
-        fadeElements.forEach(element => {
-          const rect = element.getBoundingClientRect();
-          const elementTop = rect.top;
-          const elementBottom = rect.bottom;
-          const elementVisible = 150;
-          
-          // Only process if element is in or near viewport
-          if (elementTop < window.innerHeight + elementVisible && elementBottom > -elementVisible) {
-            element.style.opacity = "1";
-            element.style.transform = "translateY(0)";
-            element.style.webkitTransform = "translateY(0)";
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random size (weighted toward smaller stars)
+        const size = Math.random() * 4;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Random position
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
+        
+        // Random color (mostly white with some blue/yellow hints)
+        const colorRand = Math.random();
+        let color;
+        if (colorRand > 0.9) {
+          color = 'rgba(0, 150, 255, 0.8)'; // Blue
+        } else if (colorRand > 0.8) {
+          color = 'rgba(255, 210, 0, 0.8)'; // Yellow
+        } else {
+          color = 'rgba(255, 255, 255, 0.8)'; // White
+        }
+        star.style.backgroundColor = color;
+        star.style.boxShadow = `0 0 ${size * 2}px ${color}`;
+        
+        // Random timing for appearance/disappearance
+        const delay = Math.random() * 10;
+        const duration = 3 + Math.random() * 7; // 3-10s
+        star.style.animation = `twinkle ${duration}s ${delay}s infinite ease-in-out`;
+        
+        // Random initial opacity
+        star.style.opacity = Math.random();
+        
+        starsContainer.appendChild(star);
+      }
+    }
+    
+    // Animate the title
+    function animateTitle() {
+      const titleWords = document.querySelectorAll('.title-word');
+      
+      // Show words one by one
+      titleWords.forEach((word, index) => {
+        setTimeout(() => {
+          word.classList.add('visible');
+        }, index * 200);
+      });
+    }
+    
+    // Initialize scroll-triggered animations
+    function initScrollAnimation() {
+      const animatedElements = document.querySelectorAll('.animate-on-scroll');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            el.classList.add('visible');
+            
+            // Team members and contact cards need special handling
+            if (el.classList.contains('team-member') || el.classList.contains('contact-card')) {
+              setTimeout(() => {
+                el.classList.add('visible');
+              }, 100 * el.dataset.index || 0);
+            }
+            
+            observer.unobserve(el);
           }
         });
-      }, 100);
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -10% 0px'
+      });
       
-      // Initial check on page load with small delay to help Safari
-      setTimeout(checkScroll, 100);
+      animatedElements.forEach(el => {
+        observer.observe(el);
+      });
       
-      // Check on scroll with throttling
-      window.addEventListener('scroll', checkScroll);
-    });
+      // Observe team members separately
+      const teamMembers = document.querySelectorAll('.team-member');
+      teamMembers.forEach((member, index) => {
+        member.dataset.index = index;
+        observer.observe(member);
+      });
+      
+      // Observe contact cards separately
+      const contactCards = document.querySelectorAll('.contact-card');
+      contactCards.forEach((card, index) => {
+        card.dataset.index = index;
+        observer.observe(card);
+      });
+    }
     
-    // Safari-specific fixes
-    document.addEventListener('DOMContentLoaded', function() {
-      // Check if browser is Safari
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // Initialize 3D tilt effect
+    function initTiltEffect() {
+      const tiltElements = document.querySelectorAll('.tilt-card, .hero-logo');
       
-      if (isSafari) {
-        // Force repaint on Safari to fix potential rendering issues
-        document.body.style.display = 'inline-block';
-        setTimeout(function() {
-          document.body.style.display = '';
-        }, 10);
-        
-        // Ensure gradient text works in Safari
-        const h1Elements = document.querySelectorAll('h1');
-        h1Elements.forEach(function(h1) {
-          h1.style.webkitBackgroundClip = 'text';
-          h1.style.webkitTextFillColor = 'transparent';
+      tiltElements.forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          const xPercent = x / rect.width;
+          const yPercent = y / rect.height;
+          
+          const tiltStrength = window.getComputedStyle(document.documentElement)
+            .getPropertyValue('--tilt-strength')
+            .trim() || 0.25;
+            
+          const rotateY = (xPercent - 0.5) * 20 * tiltStrength;
+          const rotateX = (0.5 - yPercent) * 20 * tiltStrength;
+          
+          el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+          
+          // Update mouse position custom properties for hover effects
+          el.style.setProperty('--mouse-x', `${xPercent * 100}%`);
+          el.style.setProperty('--mouse-y', `${yPercent * 100}%`);
         });
         
-        // Create additional gradient elements specifically for Safari
-        const gradientOverlay = document.createElement('div');
-        gradientOverlay.style.position = 'fixed';
-        gradientOverlay.style.top = '0';
-        gradientOverlay.style.left = '0';
-        gradientOverlay.style.width = '100%';
-        gradientOverlay.style.height = '100%';
-        gradientOverlay.style.background = 'linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(255,193,7,0.08) 100%)';
-        gradientOverlay.style.pointerEvents = 'none';
-        gradientOverlay.style.zIndex = '-1';
-        document.body.appendChild(gradientOverlay);
-      }
-    });
-    
-    // Preload team images to avoid layout shifts
-    window.addEventListener('load', function() {
-      const teamImages = document.querySelectorAll('.team-member img');
-      teamImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (src) {
-          const preloadLink = document.createElement('link');
-          preloadLink.href = src;
-          preloadLink.rel = 'preload';
-          preloadLink.as = 'image';
-          document.head.appendChild(preloadLink);
-        }
+        el.addEventListener('mouseleave', () => {
+          el.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+        });
       });
-    });
+    }
+    
+    // Track scroll progress for the progress bar
+    function trackScrollProgress() {
+      const scrollProgress = document.querySelector('.scroll-progress');
+      
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = scrollTop / docHeight;
+        
+        document.documentElement.style.setProperty('--scroll-progress', scrollPercent);
+      });
+    }
+    
+    // Track mouse movement for background effects
+    function trackMouseMovement() {
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        document.documentElement.style.setProperty('--mouse-x', `${x * 100}%`);
+        document.documentElement.style.setProperty('--mouse-y', `${y * 100}%`);
+      });
+    }
   </script>
 </body>
 </html>
