@@ -115,7 +115,7 @@
     }
     
     ul {
-      text-align: left;
+      text-align: center;
       margin: var(--space-xl) auto;
       max-width: 800px;
       list-style-position: inside;
@@ -126,19 +126,22 @@
       font-size: 1.125rem;
       color: var(--text-secondary);
       position: relative;
-      padding-left: var(--space-lg);
+      padding-left: 0;
       list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     li:before {
       content: "";
-      position: absolute;
-      left: 0;
-      top: 12px;
+      position: relative;
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: var(--primary);
+      display: block;
+      margin-bottom: 8px;
     }
     
     /* Animations */
@@ -256,12 +259,15 @@
     
     /* Hero Section with Original Logo Implementation */
     .hero-section { 
-      margin-bottom: 60px; 
+      margin-bottom: 60px;
+      text-align: center;
     }
     
     /* IMPORTANT: Keeping the original logo container and hover effect */
     .hero-logo { 
       margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
     }
     
     .hero-logo img { 
@@ -296,6 +302,7 @@
     .section {
       padding: 60px 20px;
       position: relative;
+      text-align: center;
     }
     
     .section:last-child { 
@@ -315,20 +322,25 @@
     
     .dark-section li:before {
       background: var(--accent);
+      margin: 0 auto 8px auto;
     }
     
     /* Team Section */
     .team-members { 
       display: flex; 
-      justify-content: space-around; 
+      justify-content: center; 
       flex-wrap: wrap; 
-      margin-top: 30px; 
+      margin-top: 30px;
+      gap: 40px;
     }
     
     .team-member { 
       flex: 0 1 45%; 
       margin-bottom: 40px; 
-      text-align: center; 
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     .team-member img {
