@@ -336,16 +336,16 @@
     /* Lists with advanced styling */
     ul {
       list-style-type: none;
-      margin: var(--size-8) auto;
+      margin: var(--size-5) auto;
       max-width: 700px;
       counter-reset: list-counter;
       perspective: 500px;
     }
     
     li {
-      font-size: 1.1rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
       color: var(--text-secondary);
-      margin-bottom: var(--size-5);
+      margin-bottom: var(--size-3);
       padding-left: var(--size-8);
       position: relative;
       text-align: left;
@@ -353,6 +353,7 @@
       transform-style: preserve-3d;
       transition: all var(--time-medium) var(--ease-3);
       transform: translateZ(0);
+      line-height: 1.7;
     }
     
     li:before {
@@ -898,44 +899,9 @@
       );
     }
     
-    /* Special Section for Mental Health Transformation */
-    .vision-highlight {
-      background: rgba(0, 113, 227, 0.05);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: var(--radius-lg);
-      padding: var(--size-8);
-      margin-top: var(--size-8);
-      border: 1px solid rgba(0, 113, 227, 0.1);
-      box-shadow: var(--shadow-md), 0 0 20px rgba(0, 113, 227, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .vision-highlight::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at center, rgba(0, 113, 227, 0.1), transparent 70%);
-      z-index: -1;
-    }
-    
-    .vision-highlight h3 {
-      margin-bottom: var(--size-5);
-      font-size: 1.8rem;
-      background: var(--text-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      display: inline-block;
-    }
-    
-    .vision-highlight p {
-      font-size: 1.1rem;
-      margin-bottom: 0;
+    /* Solution section with reduced spacing */
+    .solution-section p, .solution-section ul {
+      margin-bottom: var(--size-3);
     }
     
     /* Team Section */
@@ -1209,6 +1175,37 @@
       left: -35px;
     }
     
+    /* Footer */
+    .footer {
+      background: rgba(10, 10, 18, 0.9);
+      padding: var(--size-8) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent
+      );
+    }
+    
+    .footer-content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--size-5);
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+    }
+    
     /* Animations */
     @keyframes textShimmer {
       0% {
@@ -1378,6 +1375,7 @@
     <div class="navbar-container">
       <div class="nav-links">
         <a href="#about" class="nav-link">About</a>
+        <a href="#transformation" class="nav-link">Transformation</a>
         <a href="#problem" class="nav-link">The Problem</a>
         <a href="#solution" class="nav-link">Our Solution</a>
         <a href="#how-it-works" class="nav-link">How It Works</a>
@@ -1440,11 +1438,18 @@
       <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
       </p>
-      
-      <div class="vision-highlight animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
-        <h3>Transforming Mental Health Care</h3>
-        <p>Our innovative approach combines the latest advancements in artificial intelligence with immersive virtual reality, creating a revolutionary platform that adapts to each patient's unique needs.</p>
-      </div>
+    </div>
+  </section>
+
+  <!-- Transforming Mental Health Care Section -->
+  <section class="section" id="transformation">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Transforming Mental Health Care</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+        Our innovative approach combines the latest advancements in artificial intelligence with immersive virtual reality, creating a revolutionary platform that adapts to each patient's unique needs. By leveraging real-time generation and biofeedback, we're setting a new standard for therapeutic engagement and effectiveness.
+      </p>
     </div>
   </section>
   
@@ -1467,7 +1472,7 @@
   </section>
   
   <!-- Solution Section -->
-  <section class="section dark-section" id="solution">
+  <section class="section dark-section solution-section" id="solution">
     <div class="section-bg gradient-1"></div>
     <div class="section-bg gradient-2"></div>
     <div class="container">
@@ -1627,6 +1632,13 @@
     </div>
   </section>
   
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2025 Synaeon. All rights reserved.</p>
+    </div>
+  </footer>
+  
   <script>
     // Star generation
     document.addEventListener('DOMContentLoaded', function() {
@@ -1741,7 +1753,7 @@
     
     // Initialize 3D tilt effect
     function initTiltEffect() {
-      const tiltElements = document.querySelectorAll('.vision-highlight, .hero-logo');
+      const tiltElements = document.querySelectorAll('.card, .hero-logo');
       
       tiltElements.forEach(el => {
         el.addEventListener('mousemove', (e) => {
