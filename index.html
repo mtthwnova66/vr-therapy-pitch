@@ -158,6 +158,39 @@
       background-clip: text;
       color: transparent;
       line-height: 1.2;
+      position: relative; /* Added for cursor positioning */
+    }
+
+    /* Title Character Animation Styles */
+    .title-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px);
+      filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .title-char.active {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    
+    /* Title cursor element */
+    .title-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.2em;
+      background-color: var(--primary);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s infinite;
+      position: absolute;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
     }
     
     /* Safari fallback for gradient text */
@@ -959,7 +992,7 @@
       <div class="hero-logo">
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" width="200" height="auto">
       </div>
-      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <h1 id="animated-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
       <!-- Download Button -->
       <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
       <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
@@ -1156,6 +1189,76 @@
           navLinks.classList.remove('open');
         });
       });
+      
+      // Title Animation
+      function animateTitle() {
+        // Get the title element
+        const titleElement = document.getElementById('animated-title');
+        if (!titleElement) return;
+        
+        // Store the original text
+        const originalText = titleElement.textContent;
+        
+        // Clear the title element
+        titleElement.innerHTML = '';
+        
+        // Add cursor element
+        const cursor = document.createElement('span');
+        cursor.className = 'title-cursor';
+        titleElement.appendChild(cursor);
+        
+        // Split the text into individual characters
+        const chars = originalText.split('');
+        
+        // Create span for each character
+        chars.forEach(char => {
+          const span = document.createElement('span');
+          span.className = 'title-char';
+          span.textContent = char === ' ' ? '\u00A0' : char; // Replace space with non-breaking space
+          titleElement.insertBefore(span, cursor);
+        });
+        
+        // Get all character spans
+        const charSpans = titleElement.querySelectorAll('.title-char');
+        
+        // Animate each character one by one with a slight delay
+        let currentIndex = 0;
+        
+        function animateNextChar() {
+          if (currentIndex < charSpans.length) {
+            // Calculate delay based on character type for more natural typing effect
+            const char = charSpans[currentIndex].textContent;
+            const delay = char === '\u00A0' ? 100 : 
+                          char === ':' || char === '.' || char === ',' ? 300 : 
+                          Math.random() * 50 + 30; // Random delay between 30-80ms for regular chars
+                          
+            // Position cursor after current character
+            const charRect = charSpans[currentIndex].getBoundingClientRect();
+            const titleRect = titleElement.getBoundingClientRect();
+            
+            cursor.style.left = (charRect.right - titleRect.left) + 'px';
+            cursor.style.top = (charRect.top - titleRect.top) + 'px';
+            
+            // Activate the character
+            charSpans[currentIndex].classList.add('active');
+            currentIndex++;
+            
+            // Schedule the next character animation
+            setTimeout(animateNextChar, delay);
+          } else {
+            // Animation complete, hide cursor
+            setTimeout(() => {
+              cursor.style.display = 'none';
+            }, 1000);
+          }
+        }
+        
+        // Start animation after a brief delay
+        setTimeout(animateNextChar, 500);
+      }
+      
+      // Run the title animation
+      animateTitle();
     });
     
     // Optimized fade-in elements on scroll
