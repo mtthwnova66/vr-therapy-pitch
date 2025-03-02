@@ -4,415 +4,447 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI-Powered VR Therapy</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <!-- Fancy CSS for gradients, animations, tilt effects, etc. -->
   <style>
-    /* CSS Variables for Consistent Theming */
+    /* ----------------------------- */
+    /* FANCY THEME & EFFECTS CSS */
+    /* ----------------------------- */
     :root {
-      --primary: #0071e3;
-      --secondary: #005bb5;
-      --accent: #ffc107;
-      --bg-light: #ffffff;
-      --bg: #f9f9f9;
-      --text-color: #1d1d1f;
-      --dark-bg: #1d1d1f;
-      --light-text: #f5f5f7;
+      --primary-hue: 210;
+      --primary-saturation: 100%;
+      --primary-lightness: 45%;
+      --primary: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
+      --primary-dark: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%));
+      --accent: hsl(calc(var(--primary-hue) + 140), 85%, 60%);
+      --bg-dark: #0a0a12;
+      --text-primary: rgba(255, 255, 255, 0.95);
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --radius-xl: 1rem;
+      --size-8: 2rem;
+      --size-13: 3.25rem;
+      --max-width: 1440px;
+      --transition-fast: 0.2s;
     }
     
-    /* Global Reset & System Font Stack Inspired by Apple */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      font-size: clamp(14px, 1vw, 18px);
+      background: var(--bg-dark);
+    }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background: 
-        radial-gradient(circle at top left, rgba(0,113,227,0.1), transparent 70%),
-        radial-gradient(circle at bottom right, rgba(255,193,7,0.1), transparent 70%),
-        linear-gradient(135deg, var(--bg-light), var(--bg));
-      color: var(--text-color);
-      line-height: 1.6;
-      text-align: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
       overflow-x: hidden;
-      position: relative;
-      transition: background 0.3s ease;
     }
-    a { text-decoration: none; color: inherit; }
     
-    /* Animations */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 1s forwards;
-    }
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-    .delay-1 { animation-delay: 0.5s; }
-    .delay-2 { animation-delay: 1s; }
-    .delay-3 { animation-delay: 1.5s; }
-    
-    /* Navbar */
+    /* ----------------------------- */
+    /* NAVIGATION (Upper Bar) */
+    /* ----------------------------- */
     .navbar {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      background: rgba(250,250,250,0.8);
-      backdrop-filter: blur(20px);
-      padding: 20px 60px;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 2rem;
+      background: rgba(10, 10, 18, 0.75);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
       justify-content: center;
-      gap: 20px;
-      border-bottom: 0.5px solid rgba(0,0,0,0.03);
-      z-index: 1000;
-      animation: fadeInDown 1s forwards;
+      /* Note: No company name is included here */
     }
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
     }
-    .navbar a {
-      font-size: 15px;
-      font-weight: 400;
-      padding: 10px 15px;
-      letter-spacing: 1px;
-      transition: color 0.3s ease, transform 0.2s ease;
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color var(--transition-fast);
     }
-    .navbar a:hover { color: var(--primary); transform: translateY(-2px); }
-    
-    /* Container Styling */
-    .container {
-      max-width: 960px;
-      margin: 140px auto 80px;
-      padding: 40px;
-      background: var(--bg-light);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
+    .nav-links a:hover {
+      color: var(--primary);
     }
     
-    /* Hero Section - Increased Logo Size */
-    .hero-section { margin-bottom: 60px; }
-    .hero-logo img { max-width: 200px; margin-bottom: 20px; transition: transform 0.3s ease; }
-    .hero-logo img:hover { transform: scale(1.05); }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    h2 {
-      font-size: 1.75rem;
-      margin-bottom: 15px;
-      font-weight: 400;
-      letter-spacing: 0.5px;
-    }
-    p { font-size: 1rem; margin-bottom: 10px; color: #444; }
-    ul { text-align: left; margin: 20px auto; max-width: 800px; }
-    li { margin-bottom: 10px; }
-    
-    /* Section Styling (No Dividers) */
-    .section {
-      padding: 60px 20px;
+    /* ----------------------------- */
+    /* HERO SECTION (Front Page) */
+    /* ----------------------------- */
+    .hero-section {
       position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding-top: 100px; /* to account for fixed navbar */
+      overflow: hidden;
     }
-    .section:last-child { border-bottom: none; }
-    .dark-section { background-color: var(--dark-bg); color: var(--light-text); }
-    .dark-section h2, .dark-section p, .dark-section li { color: var(--light-text); }
-    iframe {
-      max-width: 100%;
-      border: none;
-      border-radius: 8px;
-      margin-top: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    .hero-content {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
     }
-    
-    /* Team Section */
-    .team-members { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 30px; }
-    .team-member { flex: 0 1 45%; margin-bottom: 40px; text-align: center; }
-    .team-member img {
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 15px;
-      transition: transform 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .hero-logo {
+      margin-bottom: 1.5rem;
     }
-    /* Răzvan’s image cropped to focus on head, neck, and shoulders */
-    .razvi-img { object-fit: cover; object-position: 50% 55%; }
-    .team-member img:hover { transform: scale(1.05); }
-    .team-member h3 { font-size: 1.5rem; margin-bottom: 5px; }
-    .team-member p { font-size: 0.95rem; line-height: 1.4; }
-    /* Role Label Styling - Darker, refined */
-    .role {
-      font-size: 0.85rem;
-      color: #555555;
-      margin-bottom: 10px;
-      font-weight: 600;
+    .hero-logo img {
+      max-width: 250px;
+      transition: transform 0.3s;
     }
-    
-    /* Download Button Styling - Lighter Blue */
-    .download-btn {
+    .hero-logo img:hover {
+      transform: scale(1.05);
+    }
+    .hero-section h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: var(--text-secondary);
+    }
+    .cta-button {
       display: inline-block;
-      background: #66b3ff;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: #fff;
-      padding: 10px 20px;
-      margin: 20px 0;
-      border-radius: 8px;
       text-transform: uppercase;
-      font-weight: 600;
-      transition: background 0.3s ease, transform 0.2s ease;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-xl);
+      transition: transform 0.2s;
+      text-decoration: none;
+      margin-bottom: 2rem;
     }
-    .download-btn:hover {
-      background: #3399ff;
-      transform: translateY(-2px);
-    }
-    
-    /* Geometric Background Shapes – Simple Expansions & Contractions */
-    .tech-symbol {
-      position: fixed;
-      border-radius: 50%;
-      z-index: -1;
-      filter: blur(30px);
-      animation: pulse 8s infinite ease-in-out;
-      will-change: transform;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
-      50% { transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; }
-    }
-    #tech-symbol-1 {
-      width: 150px; height: 150px;
-      background: radial-gradient(circle, rgba(0,113,227,0.4), transparent 70%);
-      top: -50px; left: -50px;
-    }
-    /* Yellow now uses a softer gold tone */
-    #tech-symbol-2 {
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(255,223,150,0.4), transparent 70%);
-      bottom: -70px; right: -70px;
-    }
-    #tech-symbol-3 {
-      width: 100px; height: 100px;
-      background: radial-gradient(circle, rgba(76,175,80,0.4), transparent 70%);
-      top: 20%; right: -50px;
+    .cta-button:hover {
+      transform: translateY(-3px);
     }
     
-    /* Additional Dancing Geometric Shapes with Elaborate Contractions & Expansions */
-    .tech-geom {
-      position: fixed;
-      z-index: -1;
-      filter: blur(25px);
-      opacity: 0.6;
-      animation: dance 25s infinite ease-in-out;
-      will-change: transform;
+    /* ----------------------------- */
+    /* VIDEO CONTAINERS */
+    /* ----------------------------- */
+    .video-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto 0;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 0 30px var(--primary);
     }
-    @keyframes dance {
-      0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      25% { transform: translate(30px, -15px) rotate(3deg) scale(1.2); }
-      50% { transform: translate(-30px, 20px) rotate(-3deg) scale(0.9); }
-      75% { transform: translate(15px, -25px) rotate(5deg) scale(1.15); }
-      100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    .video-container h2 {
+      position: absolute;
+      top: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      background: rgba(10, 10, 18, 0.75);
+      padding: 0.5rem 1.5rem;
+      border-radius: 9999px;
+      font-size: 1.2rem;
     }
-    #tech-geom-1 {
-      width: 120px; height: 120px;
-      background: radial-gradient(circle, rgba(76,175,80,0.4), transparent 70%);
-      top: 150px; left: -60px;
-      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    }
-    #tech-geom-2 {
-      width: 150px; height: 150px;
-      background: radial-gradient(circle, rgba(255,87,34,0.4), transparent 70%);
-      bottom: 100px; right: -70px;
-      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    }
-    #tech-geom-3 {
-      width: 100px; height: 100px;
-      background: radial-gradient(circle, rgba(123,31,162,0.4), transparent 70%);
-      top: 60%; left: -50px;
-      clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
-    }
-    /* Existing Triangle Shape */
-    .tech-triangle {
-      position: fixed;
-      z-index: -1;
-      opacity: 0.5;
-      filter: blur(20px);
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 100px solid rgba(255,87,34,0.4);
-      animation: tumble 18s infinite ease-in-out;
-      will-change: transform;
-    }
-    @keyframes tumble {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(30px, -20px) rotate(10deg); }
-      66% { transform: translate(-30px, 20px) rotate(-10deg); }
-      100% { transform: translate(0, 0) rotate(0deg); }
-    }
-    .tech-triangle#tech-triangle-1 { top: 200px; left: -80px; }
-    .tech-triangle#tech-triangle-2 { bottom: 150px; right: -80px; }
-    
-    /* Back to Top Button - Transparent Grey */
-    #back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: rgba(0,0,0,0.3);
-      color: #fff;
+    .video-container iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
       border: none;
-      padding: 10px 15px;
-      border-radius: 50px;
-      cursor: pointer;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      z-index: 1000;
-    }
-    #back-to-top.show {
-      opacity: 1;
-      visibility: visible;
+      background: transparent; /* Remove black forms/overlays */
     }
     
-    /* Subtle Hover Effects for Sections */
-    .section:hover { background: #fefefe; transition: background 0.3s ease; }
+    /* ----------------------------- */
+    /* GENERIC SECTION STYLING */
+    /* ----------------------------- */
+    .section {
+      position: relative;
+      padding: 3rem 1rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    .section .container {
+      max-width: 960px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    .section-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.4;
+      filter: blur(40px);
+    }
+    .gradient-1 {
+      background: radial-gradient(circle at 20% 30%, var(--primary), transparent 70%);
+    }
+    .gradient-2 {
+      background: radial-gradient(circle at 80% 70%, var(--accent), transparent 70%);
+    }
+    .dark-section {
+      background-color: rgba(10, 10, 18, 0.9);
+      color: var(--text-primary);
+    }
+    .tilt-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* ----------------------------- */
+    /* ANIMATION CLASSES (for scroll effects) */
+    /* ----------------------------- */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.animated {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* ----------------------------- */
+    /* FOOTER */
+    /* ----------------------------- */
+    .footer {
+      background: rgba(10, 10, 18, 0.95);
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+    .footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .footer .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer .footer-links a:hover {
+      color: var(--primary);
+    }
+    .footer p {
+      font-size: 0.9rem;
+    }
+    
+    /* ----------------------------- */
+    /* Responsive Adjustments */
+    /* ----------------------------- */
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 2.5rem;
+      }
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Tech Symbols -->
-  <div class="tech-symbol" id="tech-symbol-1"></div>
-  <div class="tech-symbol" id="tech-symbol-2"></div>
-  <div class="tech-symbol" id="tech-symbol-3"></div>
-  
-  <!-- Additional Dancing Geometric Shapes -->
-  <div class="tech-geom" id="tech-geom-1"></div>
-  <div class="tech-geom" id="tech-geom-2"></div>
-  <div class="tech-geom" id="tech-geom-3"></div>
-  <div class="tech-triangle" id="tech-triangle-1"></div>
-  <div class="tech-triangle" id="tech-triangle-2"></div>
-  
-  <!-- Back to Top Button -->
-  <button id="back-to-top" onclick="scrollToTop()">Top</button>
-  
-  <!-- Navbar (Always Visible) -->
-  <div class="navbar" id="navbar">
-    <a href="#about">About</a>
-    <a href="#problem">The Problem</a>
-    <a href="#solution">Our Solution</a>
-    <a href="#how-it-works">How It Works</a>
-    <a href="#technology">Technology</a>
-    <a href="#market">Market</a>
-    <a href="#business">Business Model &amp; Funding</a>
-    <a href="#team">Team</a>
-    <a href="#contact">Contact</a>
-  </div>
-  
-  <!-- Main Content (No Password) -->
-  <div class="container fade-in" id="pitch-content">
-    <!-- Hero Section -->
-    <div class="hero-section fade-in delay-1">
-      <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo">
+  <!-- NAVIGATION (Upper Bar without company name) -->
+  <nav class="navbar">
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#problem">The Problem</a>
+      <a href="#solution">Our Solution</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#technology">Technology</a>
+      <a href="#market">Market</a>
+      <a href="#business">Business Model &amp; Funding</a>
+      <a href="#team">Team</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION (Moved from the bottom of the fancy page to the front) -->
+  <section class="hero-section" id="home">
+    <div class="hero-content">
+      <div class="hero-logo tilt-element">
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" class="parallax-element" data-depth="0.2">
       </div>
-      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <!-- Download Button -->
-      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
-      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-      <!-- Intro Video Block -->
-      <div class="intro-video fade-in delay-2">
-        <h2>Who Are We? What's Our Mission?</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <h1 class="animate-on-scroll" data-animation="fadeUp">
+        <span class="word" data-delay="0.1">AI-Powered</span>
+        <span class="word" data-delay="0.2">VR</span>
+        <span class="word" data-delay="0.3">Therapy:</span><br>
+        <span class="word" data-delay="0.4">The</span>
+        <span class="word" data-delay="0.5">Future</span>
+        <span class="word" data-delay="0.6">of</span>
+        <span class="word" data-delay="0.7">Exposure</span>
+        <span class="word" data-delay="0.8">Therapy</span>
+      </h1>
+      <p class="hero-subtitle animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment through cutting-edge AI and immersive VR technology.
+      </p>
+      <a href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx" class="cta-button animate-on-scroll" data-animation="fadeUp" data-delay="0.6">
+        Download Pitch Presentation
+      </a>
+      <!-- Video Blocks (with black overlays removed) -->
+      <div class="video-container animate-on-scroll" data-animation="fadeUp" data-delay="0.8">
+        <h2>Our Mission</h2>
+        <iframe src="https://www.youtube.com/embed/XGhYnE62GOk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
-      <!-- Demo Video Block -->
-      <div class="demo-video fade-in delay-3">
+      <div class="video-container animate-on-scroll" data-animation="fadeUp" data-delay="1">
         <h2>Demo</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </div>
-    
-    <!-- About Our Vision -->
-    <div class="section fade-in" id="about">
-      <h2>About Our Vision</h2>
-      <p>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="section" id="about">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">About Our Vision</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
       </p>
+      <div class="tilt-card animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <div class="card-glow"></div>
+        <h3>Transforming Mental Health Care</h3>
+        <p>Our innovative approach combines the latest advancements in artificial intelligence with immersive virtual reality, creating a revolutionary platform that adapts to each patient's unique needs.</p>
+      </div>
     </div>
-    
-    <!-- The Problem Section -->
-    <div class="section fade-in" id="problem">
-      <h2>The Problem – Therapy Needs to Evolve</h2>
-      <p>
-        Traditional exposure therapy often falls short because it relies on a patient’s imagination or static, pre-recorded VR scenarios—limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
+  </section>
+
+  <!-- PROBLEM SECTION -->
+  <section class="section" id="problem">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">The Problem – Therapy Needs to Evolve</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+        Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios—limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
       </p>
-      <ul>
-        <li>Low immersion and engagement.</li>
-        <li>Inability to adjust therapy in real time.</li>
-        <li>Heavy reliance on imagination or static media.</li>
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <li data-index="1">Low immersion and engagement, reducing therapeutic effectiveness.</li>
+        <li data-index="2">Inability to adjust therapy in real time to patient responses.</li>
+        <li data-index="3">Heavy reliance on imagination or static media, limiting emotional connection.</li>
       </ul>
     </div>
-    
-    <!-- Our Solution Section -->
-    <div class="section fade-in dark-section" id="solution">
-      <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
-      <p>
+  </section>
+
+  <!-- SOLUTION SECTION -->
+  <section class="section dark-section" id="solution">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback—ensuring every session is personalized for maximum impact.
       </p>
-      <ul>
-        <li>Dynamic, AI-generated VR environments.</li>
-        <li>Real-time biofeedback integration.</li>
-        <li>Comprehensive clinical control via a dedicated dashboard.</li>
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <li data-index="1">Dynamic, AI-generated VR environments that evolve based on real-time inputs.</li>
+        <li data-index="2">Sophisticated biofeedback integration that monitors and responds to physiological signals.</li>
+        <li data-index="3">Comprehensive clinical control via an intuitive, powerful dashboard interface.</li>
       </ul>
     </div>
-    
-    <!-- How It Works Section -->
-    <div class="section fade-in" id="how-it-works">
-      <h2>How It Works</h2>
-      <ul>
-        <li>The therapist launches the software on a compatible VR headset.</li>
-        <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-        <li>The AI listens to the therapist’s guidance and generates an interactive VR environment.</li>
-        <li>Real-time biofeedback allows for dynamic session adjustments.</li>
-        <li>The system learns and adapts, personalizing future sessions.</li>
+  </section>
+
+  <!-- HOW IT WORKS SECTION -->
+  <section class="section" id="how-it-works">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">How It Works</h2>
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+        <li data-index="1">The therapist launches our proprietary software on a compatible VR headset.</li>
+        <li data-index="2">The patient dons the headset along with our sensor-enabled smartwatch for biofeedback.</li>
+        <li data-index="3">Our AI engine listens to the therapist's guidance and generates an interactive VR environment in real time.</li>
+        <li data-index="4">Biofeedback data allows for dynamic session adjustments based on patient responses.</li>
+        <li data-index="5">The system continuously learns and adapts, personalizing future sessions for optimal outcomes.</li>
       </ul>
     </div>
-    
-    <!-- Technology Section -->
-    <div class="section fade-in" id="technology">
-      <h2>Technology</h2>
-      <p>
+  </section>
+
+  <!-- TECHNOLOGY SECTION -->
+  <section class="section" id="technology">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Technology</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
       </p>
+      <div class="tilt-card animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+        <!-- Additional content can be added here if needed -->
+      </div>
     </div>
-    
-    <!-- Market Opportunity Section -->
-    <div class="section fade-in" id="market">
-      <h2>Market Opportunity</h2>
-      <p>
+  </section>
+
+  <!-- MARKET OPPORTUNITY SECTION -->
+  <section class="section" id="market">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Market Opportunity</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous—especially among early adopters in Europe and North America.
       </p>
     </div>
-    
-    <!-- Business Model & Funding Section -->
-    <div class="section fade-in dark-section" id="business">
-      <h2>Business Model & Funding</h2>
-      <p>
+  </section>
+
+  <!-- BUSINESS MODEL & FUNDING SECTION -->
+  <section class="section dark-section" id="business">
+    <div class="section-bg gradient-1"></div>
+    <div class="section-bg gradient-2"></div>
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Business Model & Funding</h2>
+      <p class="animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
         Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling—providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
       </p>
-      <ul>
+      <ul class="animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
         <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
         <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
         <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
       </ul>
     </div>
-    
-    <!-- Team Section -->
-    <div class="section fade-in" id="team">
-      <h2>Meet the Team</h2>
+  </section>
+
+  <!-- TEAM SECTION -->
+  <section class="section" id="team">
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Meet the Team</h2>
       <div class="team-members">
-        <div class="team-member">
+        <div class="team-member animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
           <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan">
           <h3>Matei Seleușan</h3>
           <p class="role">CEO</p>
           <p>
-            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master’s candidate, now building Synaeon.
+            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
           </p>
         </div>
-        <div class="team-member">
+        <div class="team-member animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
           <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu">
           <h3>Răzvan Crețu</h3>
           <p class="role">CTO</p>
@@ -422,32 +454,57 @@
         </div>
       </div>
     </div>
-    
-    <!-- Contact Section -->
-    <div class="section fade-in" id="contact">
-      <h2>Contact Us</h2>
-      <p>
-        Email: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a> | 
-        Email: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
-      </p>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="section" id="contact">
+    <div class="container">
+      <h2 class="animate-on-scroll" data-animation="fadeUp">Contact Us</h2>
+      <div class="contact-container">
+        <div class="contact-email animate-on-scroll" data-animation="fadeUp" data-delay="0.2">
+          <h3>Matei Seleușan</h3>
+          <p><a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
+        </div>
+        <div class="contact-email animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
+          <h3>Răzvan Crețu</h3>
+          <p><a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
+        </div>
+      </div>
     </div>
-    
-  </div>
-  
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#technology">Technology</a>
+        <a href="#team">Team</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ----------------------------- -->
+  <!-- JavaScript for Scroll Animations -->
+  <!-- ----------------------------- -->
   <script>
-    // Back to Top Button Functionality
-    window.addEventListener('scroll', function() {
-      const btn = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      const animatedEls = document.querySelectorAll('.animate-on-scroll');
+      const animateOnScroll = () => {
+        animatedEls.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 100) {
+            el.classList.add('animated');
+          }
+        });
+      };
+      window.addEventListener('scroll', animateOnScroll);
+      animateOnScroll();
     });
-    
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   </script>
 </body>
 </html>
