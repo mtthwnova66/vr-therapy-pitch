@@ -1,43 +1,4 @@
-  /* Text alignment for paragraphs and lists in sections */
-    .section p {
-      text-align: center;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .section ul {
-      text-align: left;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: 20px;
-    }
-    
-    .section li {
-      text-align: left;
-      padding-left: 20px;
-      margin-bottom: 15px;
-      display: block;
-      position: relative;
-    }
-    
-    .section li:before {
-      position: absolute;
-      left: 0;
-      top: 10px;
-      margin: 0;
-    }    /* Contact Section */
-    .contact-section {
-      text-align: center;
-    }
-    
-    .contact-email {
-      display: inline-block;
-      margin: 10px 0;
-      max-width: 350px;
-      width: 100%;
-    }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -77,6 +38,7 @@
       --space-lg: 24px;
       --space-xl: 32px;
       --space-xxl: 48px;
+      --team-width: 350px;
     }
     
     /* Global Reset & Modern Font Stack */
@@ -153,34 +115,33 @@
       margin-bottom: var(--space-lg);
     }
     
+    /* Properly styled bullet points */
     ul {
-      text-align: center;
+      list-style-type: none;
       margin: var(--space-xl) auto;
-      max-width: 800px;
-      list-style-position: inside;
+      max-width: 600px;
+      padding: 0;
+      text-align: left;
     }
     
     li {
-      margin-bottom: var(--space-md);
       font-size: 1.125rem;
       color: var(--text-secondary);
+      margin-bottom: 10px;
+      padding-left: 25px;
       position: relative;
-      padding-left: 0;
-      list-style-type: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      text-align: left;
     }
     
     li:before {
       content: "";
-      position: relative;
+      position: absolute;
+      left: 10px;
+      top: 10px;
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: var(--primary);
-      display: block;
-      margin-bottom: 8px;
     }
     
     /* Animations */
@@ -354,15 +315,24 @@
     }
     
     .dark-section h2, 
-    .dark-section p, 
-    .dark-section li { 
+    .dark-section p { 
       color: var(--text-light); 
+    }
+    
+    .dark-section li { 
+      color: rgba(255, 255, 255, 0.8); 
     }
     
     .dark-section li:before {
       background: var(--accent);
-      position: absolute;
-      margin: 0;
+    }
+    
+    /* Text alignment for paragraphs in sections */
+    .section p {
+      text-align: center;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
     
     /* Team Section */
@@ -375,8 +345,8 @@
     }
     
     .team-member { 
-      flex: 0 1 350px; 
-      max-width: 350px;
+      flex: 0 1 var(--team-width); 
+      max-width: var(--team-width);
       margin-bottom: 40px; 
       text-align: center;
       display: flex;
@@ -444,6 +414,26 @@
       text-decoration: none;
     }
     
+    /* Contact Section */
+    .contact-section {
+      text-align: center;
+    }
+    
+    .contact-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .contact-email {
+      flex: 0 1 var(--team-width);
+      max-width: var(--team-width);
+      margin: 10px 0;
+    }
+    
     /* Back to Top Button */
     #back-to-top {
       position: fixed;
@@ -464,6 +454,43 @@
     #back-to-top.show {
       opacity: 1;
       visibility: visible;
+    }
+    
+    /* Footer Styling */
+    .footer {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: var(--space-xxl) 0;
+      text-align: center;
+    }
+    
+    .footer-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin: var(--space-lg) 0;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      transition: color var(--transition-fast);
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .copyright {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
     }
     
     /* Tech Symbols and Geometric Shapes */
@@ -524,6 +551,11 @@
       }
       
       .team-member {
+        flex: 0 1 100%;
+        max-width: 400px;
+      }
+      
+      .contact-email {
         flex: 0 1 100%;
         max-width: 400px;
       }
@@ -741,7 +773,7 @@
     <!-- Contact Section -->
     <div class="section fade-in" id="contact">
       <h2>Contact Us</h2>
-      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; max-width: 800px; margin: 0 auto;">
+      <div class="contact-container">
         <div class="contact-email">
           <h3>Matei Seleușan</h3>
           <p>
@@ -761,7 +793,7 @@
   
   <!-- Footer -->
   <footer class="footer">
-    <div class="container" style="margin: 0 auto; box-shadow: none; background: transparent;">
+    <div class="footer-container">
       <div class="footer-links">
         <a href="#about">About</a>
         <a href="#problem">Problem</a>
@@ -811,6 +843,3 @@
       // Check on scroll
       window.addEventListener('scroll', checkScroll);
     });
-  </script>
-</body>
-</html>
