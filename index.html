@@ -538,7 +538,7 @@
     .navbar-container {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       width: 100%;
       max-width: var(--max-width);
       padding: 0 var(--size-5);
@@ -546,20 +546,25 @@
     
     .nav-links {
       display: flex;
-      gap: var(--size-5);
       align-items: center;
+      justify-content: center;
       transform-style: preserve-3d;
       perspective: 300px;
+      width: 100%;
     }
     
     .nav-links a {
       color: var(--text-secondary);
       font-weight: 500;
       padding: var(--size-2) var(--size-3);
+      margin: 0 var(--size-2);
       border-radius: var(--radius-full);
       transition: all var(--time-fast) var(--ease-3);
       position: relative;
       transform-style: preserve-3d;
+      flex: 1;
+      text-align: center;
+      max-width: 150px;
     }
     
     .nav-links a::after {
@@ -765,20 +770,22 @@
       z-index: 1;
     }
     
-    .video-container h2 {
+    .video-label {
       position: absolute;
       top: 1.5rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
-      background: var(--dark-glass);
+      background: rgba(10, 10, 18, 0.6);
       padding: 0.5rem 1.5rem;
       border-radius: var(--radius-full);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       font-size: 1.2rem;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      color: var(--text-primary);
+      font-weight: 600;
     }
     
     .video-container iframe {
@@ -891,52 +898,44 @@
       );
     }
     
-    /* 3D Tilt Cards */
-    .tilt-card {
-      background: rgba(255, 255, 255, 0.03);
+    /* Special Section for Mental Health Transformation */
+    .vision-highlight {
+      background: rgba(0, 113, 227, 0.05);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border-radius: var(--radius-lg);
-      padding: var(--size-5);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: var(--shadow-md);
-      transition: all var(--time-medium) var(--ease-3);
-      transform-style: preserve-3d;
-      transform: perspective(1000px) rotateX(var(--card-rotation-x)) rotateY(var(--card-rotation-y)) translateZ(0);
-      overflow: hidden;
+      padding: var(--size-8);
+      margin-top: var(--size-8);
+      border: 1px solid rgba(0, 113, 227, 0.1);
+      box-shadow: var(--shadow-md), 0 0 20px rgba(0, 113, 227, 0.1);
       position: relative;
+      overflow: hidden;
     }
     
-    .tilt-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background: radial-gradient(
-        circle at var(--mouse-x) var(--mouse-y),
-        rgba(255, 255, 255, 0.15),
-        transparent 80%
-      );
-      opacity: 0;
-      transition: opacity var(--time-fast) linear;
-    }
-    
-    .tilt-card:hover::before {
-      opacity: 1;
-    }
-    
-    .tilt-card::after {
+    .vision-highlight::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.1), 
-        transparent
-      );
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(0, 113, 227, 0.1), transparent 70%);
+      z-index: -1;
+    }
+    
+    .vision-highlight h3 {
+      margin-bottom: var(--size-5);
+      font-size: 1.8rem;
+      background: var(--text-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+    
+    .vision-highlight p {
+      font-size: 1.1rem;
+      margin-bottom: 0;
     }
     
     /* Team Section */
@@ -1278,11 +1277,13 @@
       }
       
       .nav-links {
-        gap: var(--size-3);
+        gap: var(--size-2);
       }
       
       .nav-links a {
         font-size: 0.9rem;
+        padding: var(--size-2) var(--size-2);
+        margin: 0 var(--size-1);
       }
       
       h1 {
@@ -1295,12 +1296,9 @@
     }
     
     @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-      
-      .nav-mobile {
-        display: block;
+      .nav-links a {
+        font-size: 0.8rem;
+        max-width: unset;
       }
       
       .hero-content {
@@ -1318,6 +1316,17 @@
       .team-member, .contact-card {
         flex: 0 1 100%;
         max-width: 400px;
+      }
+    }
+    
+    @media (max-width: 580px) {
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .nav-links a {
+        margin-bottom: var(--size-2);
       }
     }
     
@@ -1340,8 +1349,9 @@
         padding-right: var(--size-3);
       }
       
-      .video-container h2 {
+      .video-label {
         font-size: 1rem;
+        padding: 0.3rem 1rem;
       }
     }
   </style>
@@ -1409,13 +1419,13 @@
       
       <!-- Intro Video -->
       <div class="video-container">
-        <h2>Our Mission</h2>
+        <span class="video-label">Our Mission</span>
         <iframe src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
       
       <!-- Demo Video -->
       <div class="video-container">
-        <h2>Demo</h2>
+        <span class="video-label">Demo</span>
         <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </div>
@@ -1431,8 +1441,7 @@
         Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
       </p>
       
-      <div class="tilt-card animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
-        <div class="card-glow"></div>
+      <div class="vision-highlight animate-on-scroll" data-animation="fadeUp" data-delay="0.4">
         <h3>Transforming Mental Health Care</h3>
         <p>Our innovative approach combines the latest advancements in artificial intelligence with immersive virtual reality, creating a revolutionary platform that adapts to each patient's unique needs.</p>
       </div>
@@ -1732,7 +1741,7 @@
     
     // Initialize 3D tilt effect
     function initTiltEffect() {
-      const tiltElements = document.querySelectorAll('.tilt-card, .hero-logo');
+      const tiltElements = document.querySelectorAll('.vision-highlight, .hero-logo');
       
       tiltElements.forEach(el => {
         el.addEventListener('mousemove', (e) => {
