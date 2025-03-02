@@ -616,15 +616,17 @@
       padding: 0 var(--size-5);
     }
     
+    /* Updated Logo Container */
     .hero-logo {
       display: flex;
       justify-content: center;
       margin-bottom: var(--size-13);
       transform-style: preserve-3d;
       transition: transform var(--time-medium) var(--ease-3);
-      filter: drop-shadow(0 0 15px rgba(0, 113, 227, 0.5));
+      position: relative;
     }
     
+    /* Enhanced styling for the white logo */
     .hero-logo img {
       max-width: 250px;
       height: auto;
@@ -632,20 +634,52 @@
       transition: all var(--time-medium) var(--ease-bounce);
       transform: translateZ(50px);
       animation: logoFloat 4s infinite ease-in-out;
+      filter: drop-shadow(0 0 25px rgba(0, 113, 227, 0.8));
     }
     
+    /* Logo animation and glow effects */
     @keyframes logoFloat {
       0%, 100% {
         transform: translateZ(50px) translateY(0);
+        filter: drop-shadow(0 0 25px rgba(0, 113, 227, 0.8));
       }
       50% {
         transform: translateZ(50px) translateY(-10px);
+        filter: drop-shadow(0 0 35px rgba(0, 113, 227, 0.9)) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
       }
     }
     
     .hero-logo:hover img {
       transform: translateZ(50px) scale(1.1);
-      filter: drop-shadow(0 0 15px rgba(0, 113, 227, 0.8));
+      filter: drop-shadow(0 0 40px rgba(0, 113, 227, 0.9)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+    }
+    
+    /* Logo glow effect */
+    .hero-logo::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.4), transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      filter: blur(30px);
+      opacity: 0.6;
+      animation: logoGlow 4s infinite alternate ease-in-out;
+    }
+    
+    @keyframes logoGlow {
+      0%, 100% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
     }
     
     .hero-subtitle {
@@ -1392,7 +1426,7 @@
   <section class="hero-section" id="home">
     <div class="hero-content">
       <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" id="hero-logo-img">
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/invisible_background.png" alt="Synaeon Logo" id="hero-logo-img">
       </div>
       
       <h1 id="animated-title">
