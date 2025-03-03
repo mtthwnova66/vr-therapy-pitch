@@ -151,19 +151,58 @@
       font-weight: 700;
       letter-spacing: -0.025em;
       margin-bottom: var(--space-lg);
+      line-height: 1.2;
+    }
+    
+    /* Added title animation styles */
+    .title-word {
+      display: inline-block;
       background: -webkit-linear-gradient(90deg, var(--primary), var(--accent));
       background: linear-gradient(90deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       color: transparent;
-      line-height: 1.2;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(50px);
+      filter: blur(10px);
+    }
+    
+    .title-word.visible {
+      animation: titleWordReveal 1.5s forwards;
+    }
+    
+    @keyframes titleWordReveal {
+      0% {
+        opacity: 0;
+        transform: translateY(50px);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    
+    @-webkit-keyframes titleWordReveal {
+      0% {
+        opacity: 0;
+        -webkit-transform: translateY(50px);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        filter: blur(0);
+      }
     }
     
     /* Safari fallback for gradient text */
     @media not all and (min-resolution:.001dpcm) { 
       @supports (-webkit-appearance:none) {
-        h1 {
+        h1, .title-word {
           color: var(--primary);
         }
       }
@@ -959,7 +998,17 @@
       <div class="hero-logo">
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" width="200" height="auto">
       </div>
-      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <!-- Modified title with animated word spans -->
+      <h1 id="animated-title">
+        <span class="title-word">AI-Powered</span>
+        <span class="title-word">VR</span>
+        <span class="title-word">Therapy:</span>
+        <span class="title-word">The</span>
+        <span class="title-word">Future</span>
+        <span class="title-word">of</span>
+        <span class="title-word">Exposure</span>
+        <span class="title-word">Therapy</span>
+      </h1>
       <!-- Download Button -->
       <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
       <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
@@ -1156,7 +1205,22 @@
           navLinks.classList.remove('open');
         });
       });
+      
+      // Title Animation
+      animateTitle();
     });
+    
+    // Title animation function
+    function animateTitle() {
+      const titleWords = document.querySelectorAll('.title-word');
+      
+      // Show words one by one
+      titleWords.forEach((word, index) => {
+        setTimeout(() => {
+          word.classList.add('visible');
+        }, index * 200);
+      });
+    }
     
     // Optimized fade-in elements on scroll
     document.addEventListener('DOMContentLoaded', function() {
