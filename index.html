@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
   
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
+  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
+  <meta name="author" content="Synaeon">
+  <meta property="og:title" content="Synaeon - AI-Powered VR Therapy">
+  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://synaeon.com/">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg">
+  
   <!-- Preconnect to resources for faster loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,10 +147,17 @@
       color: var(--primary);
       transition: color var(--transition-fast), transform var(--transition-fast);
       -webkit-transition: color var(--transition-fast), -webkit-transform var(--transition-fast);
+      position: relative;
     }
     
     a:hover {
       color: var(--primary-dark);
+    }
+    
+    /* Focus state for better accessibility */
+    a:focus, button:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
     }
     
     /* Typography Refinement */
@@ -471,6 +492,12 @@
       width: 100%;
       /* Explicit fallback for Safari */
       height: 500px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    iframe:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
     
     /* Section Styling */
@@ -574,23 +601,48 @@
       display: inline-block;
       background: var(--primary);
       color: #fff !important;
-      padding: 12px 24px;
+      padding: 14px 28px;
       margin: 20px 0;
       border-radius: 8px;
       text-transform: uppercase;
       font-weight: 600;
-      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      -webkit-transition: background 0.3s ease, -webkit-transform 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.3s ease;
+      -webkit-transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .download-btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+      z-index: -1;
     }
     
     .download-btn:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
       -webkit-transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 113, 227, 0.25);
+      box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
       color: #fff !important;
       text-decoration: none;
+    }
+    
+    .download-btn:hover:before {
+      transform: translateX(0);
+    }
+    
+    .download-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 8px rgba(0, 113, 227, 0.2);
     }
     
     /* Contact Section */
@@ -623,6 +675,30 @@
       line-height: 1.4;
     }
     
+    .contact-email a {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .contact-email a:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: var(--primary);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    
+    .contact-email a:hover:after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
     /* Back to Top Button */
     #back-to-top {
       position: fixed;
@@ -636,14 +712,31 @@
       cursor: pointer;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      -webkit-transition: opacity 0.3s ease, visibility 0.3s ease;
+      transition: all 0.3s ease;
+      -webkit-transition: all 0.3s ease;
       z-index: 1000;
     }
     
     #back-to-top.show {
       opacity: 1;
       visibility: visible;
+    }
+    
+    #back-to-top:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      z-index: 1010;
+      transition: width 0.1s;
     }
     
     /* Footer Styling */
@@ -921,17 +1014,20 @@
   </style>
 </head>
 <body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+  
   <!-- Tech Symbols -->
   <div class="tech-symbol" id="tech-symbol-1"></div>
   <div class="tech-symbol" id="tech-symbol-2"></div>
   <div class="tech-symbol" id="tech-symbol-3"></div>
   
   <!-- Back to Top Button -->
-  <button id="back-to-top" onclick="scrollToTop()">Top</button>
+  <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
   
   <!-- Navbar with Hamburger Menu (No Logo) -->
-  <div class="navbar" id="navbar">
-    <div class="hamburger" id="hamburger-menu">
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
+    <div class="hamburger" id="hamburger-menu" aria-label="Menu Toggle" role="button" tabindex="0" aria-expanded="false">
       <span></span>
       <span></span>
       <span></span>
@@ -949,43 +1045,45 @@
       <a href="#team">Team</a>
       <a href="#contact">Contact</a>
     </div>
-  </div>
+  </nav>
   
   <!-- Main Content -->
-  <div class="container fade-in" id="pitch-content">
+  <main class="container fade-in" id="pitch-content" role="main">
     <!-- Hero Section -->
-    <div class="hero-section fade-in delay-1">
+    <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
       <!-- IMPORTANT: Using the exact same hero-logo implementation from original site -->
       <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Company Logo" width="200" height="auto">
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" width="200" height="auto" loading="eager">
       </div>
-      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
       <!-- Download Button -->
-      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
+      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">
+        Download Pitch Presentation
+      </a>
       <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
       <!-- Intro Video Block -->
       <div class="intro-video fade-in delay-2">
         <h2>Who Are We? What's Our Mission?</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
       </div>
       <!-- Demo Video Block -->
       <div class="demo-video fade-in delay-3">
         <h2>Demo</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
       </div>
-    </div>
+    </section>
     
     <!-- About Our Vision -->
-    <div class="section fade-in" id="about">
-      <h2>About Our Vision</h2>
+    <section class="section fade-in" id="about" aria-labelledby="about-title">
+      <h2 id="about-title">About Our Vision</h2>
       <p>
         Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
       </p>
-    </div>
+    </section>
     
     <!-- The Problem Section -->
-    <div class="section fade-in" id="problem">
-      <h2>The Problem – Therapy Needs to Evolve</h2>
+    <section class="section fade-in" id="problem" aria-labelledby="problem-title">
+      <h2 id="problem-title">The Problem – Therapy Needs to Evolve</h2>
       <p>
         Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios - limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
       </p>
@@ -994,11 +1092,11 @@
         <li>Inability to adjust therapy in real time.</li>
         <li>Heavy reliance on imagination or static media.</li>
       </ul>
-    </div>
+    </section>
     
     <!-- Our Solution Section -->
-    <div class="section fade-in dark-section" id="solution">
-      <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+    <section class="section fade-in dark-section" id="solution" aria-labelledby="solution-title">
+      <h2 id="solution-title">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
       <p>
         We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback - ensuring every session is personalized for maximum impact.
       </p>
@@ -1007,11 +1105,11 @@
         <li>Real-time biofeedback integration.</li>
         <li>Comprehensive clinical control via a dedicated dashboard.</li>
       </ul>
-    </div>
+    </section>
     
     <!-- How It Works Section -->
-    <div class="section fade-in" id="how-it-works">
-      <h2>How It Works</h2>
+    <section class="section fade-in" id="how-it-works" aria-labelledby="how-it-works-title">
+      <h2 id="how-it-works-title">How It Works</h2>
       <ul>
         <li>The therapist launches the software on a compatible VR headset.</li>
         <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
@@ -1019,27 +1117,27 @@
         <li>Real-time biofeedback allows for dynamic session adjustments.</li>
         <li>The system learns and adapts, personalizing future sessions.</li>
       </ul>
-    </div>
+    </section>
     
     <!-- Technology Section -->
-    <div class="section fade-in" id="technology">
-      <h2>Technology</h2>
+    <section class="section fade-in" id="technology" aria-labelledby="technology-title">
+      <h2 id="technology-title">Technology</h2>
       <p>
         Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
       </p>
-    </div>
+    </section>
     
     <!-- Market Opportunity Section -->
-    <div class="section fade-in" id="market">
-      <h2>Market Opportunity</h2>
+    <section class="section fade-in" id="market" aria-labelledby="market-title">
+      <h2 id="market-title">Market Opportunity</h2>
       <p>
         With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.
       </p>
-    </div>
+    </section>
     
     <!-- Business Model & Funding Section -->
-    <div class="section fade-in dark-section" id="business">
-      <h2>Business Model & Funding</h2>
+    <section class="section fade-in dark-section" id="business" aria-labelledby="business-title">
+      <h2 id="business-title">Business Model & Funding</h2>
       <p>
         Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
       </p>
@@ -1048,14 +1146,14 @@
         <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
         <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
       </ul>
-    </div>
+    </section>
     
     <!-- Team Section -->
-    <div class="section fade-in" id="team">
-      <h2>Meet the Team</h2>
+    <section class="section fade-in" id="team" aria-labelledby="team-title">
+      <h2 id="team-title">Meet the Team</h2>
       <div class="team-members">
         <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120">
+          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
           <h3>Matei Seleușan</h3>
           <p class="role">CEO</p>
           <p>
@@ -1063,7 +1161,7 @@
           </p>
         </div>
         <div class="team-member">
-          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120">
+          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120" loading="lazy">
           <h3>Răzvan Crețu</h3>
           <p class="role">CTO</p>
           <p>
@@ -1071,11 +1169,11 @@
           </p>
         </div>
       </div>
-    </div>
+    </section>
     
     <!-- Contact Section -->
-    <div class="section fade-in" id="contact">
-      <h2>Contact Us</h2>
+    <section class="section fade-in" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact Us</h2>
       <div class="contact-container">
         <div class="contact-email">
           <h3>Matei Seleușan</h3>
@@ -1090,12 +1188,12 @@
           </p>
         </div>
       </div>
-    </div>
+    </section>
     
-  </div>
+  </main>
   
   <!-- Footer -->
-  <footer class="footer">
+  <footer class="footer" role="contentinfo">
     <div class="footer-container">
       <div class="footer-links">
         <a href="#about">About</a>
@@ -1108,6 +1206,37 @@
       <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
     </div>
   </footer>
+  
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Synaeon",
+      "url": "https://synaeon.com",
+      "logo": "https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg",
+      "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
+      "founder": [
+        {
+          "@type": "Person",
+          "name": "Matei Seleușan",
+          "jobTitle": "CEO",
+          "email": "mateiseleusan@gmail.com"
+        },
+        {
+          "@type": "Person",
+          "name": "Răzvan Crețu",
+          "jobTitle": "CTO",
+          "email": "razvanmihaicretu@gmail.com"
+        }
+      ],
+      "foundingDate": "2025",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "Romania"
+      }
+    }
+  </script>
   
   <script>
     // Throttle function to limit how often certain events fire
@@ -1124,66 +1253,147 @@
       };
     }
     
+    // Debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+    
     // Back to Top Button Functionality with throttling
-    window.addEventListener('scroll', throttle(function() {
+    function updateBackToTopButton() {
       const btn = document.getElementById('back-to-top');
       if (window.pageYOffset > 300) {
         btn.classList.add('show');
       } else {
         btn.classList.remove('show');
       }
+    }
+    
+    // Update scroll progress bar
+    function updateScrollProgress() {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("scroll-progress").style.width = scrolled + "%";
+    }
+    
+    // Combine scroll handlers with throttling
+    window.addEventListener('scroll', throttle(function() {
+      updateBackToTopButton();
+      updateScrollProgress();
     }, 100));
     
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    // Hamburger Menu Toggle
+    // Use Intersection Observer for fade-in animations instead of scroll events
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
+      
+      // Create the observer with options
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          // Add the active class if element is intersecting
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.webkitTransform = "translateY(0)";
+            // Once animated, no need to observe anymore
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        root: null, // viewport
+        threshold: 0.1, // trigger when 10% of the element is visible
+        rootMargin: '0px 0px -50px 0px' // slight offset to trigger earlier
+      });
+      
+      // Start observing each element
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+      
+      // Initialize progress bar
+      updateScrollProgress();
+    });
+    
+    // Hamburger Menu Toggle with improved accessibility
     document.addEventListener('DOMContentLoaded', function() {
       const hamburger = document.getElementById('hamburger-menu');
       const navLinks = document.getElementById('nav-links');
       
-      hamburger.addEventListener('click', function() {
+      function toggleMenu() {
+        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', !isExpanded);
         hamburger.classList.toggle('open');
         navLinks.classList.toggle('open');
+      }
+      
+      hamburger.addEventListener('click', toggleMenu);
+      
+      // Enable keyboard navigation
+      hamburger.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
       });
       
       // Close menu when clicking on a link
       const navItems = document.querySelectorAll('.nav-links a');
       navItems.forEach(item => {
         item.addEventListener('click', function() {
+          hamburger.setAttribute('aria-expanded', 'false');
           hamburger.classList.remove('open');
           navLinks.classList.remove('open');
         });
       });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        const isClickInsideMenu = navLinks.contains(event.target);
+        const isClickOnHamburger = hamburger.contains(event.target);
+        
+        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
+      });
     });
     
-    // Optimized fade-in elements on scroll
+    // Better image loading with error handling
     document.addEventListener('DOMContentLoaded', function() {
-      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
+      const images = document.querySelectorAll('img');
       
-      // Throttled scroll check function
-      const checkScroll = throttle(function() {
-        fadeElements.forEach(element => {
-          const rect = element.getBoundingClientRect();
-          const elementTop = rect.top;
-          const elementBottom = rect.bottom;
-          const elementVisible = 150;
-          
-          // Only process if element is in or near viewport
-          if (elementTop < window.innerHeight + elementVisible && elementBottom > -elementVisible) {
-            element.style.opacity = "1";
-            element.style.transform = "translateY(0)";
-            element.style.webkitTransform = "translateY(0)";
-          }
+      images.forEach(img => {
+        img.addEventListener('error', function() {
+          console.error(`Failed to load image: ${img.src}`);
+          // Fallback behavior - add a placeholder or class
+          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
+          img.classList.add('image-load-error');
         });
-      }, 100);
-      
-      // Initial check on page load with small delay to help Safari
-      setTimeout(checkScroll, 100);
-      
-      // Check on scroll with throttling
-      window.addEventListener('scroll', checkScroll);
+      });
+    });
+    
+    // Preload team images to avoid layout shifts
+    window.addEventListener('load', function() {
+      const teamImages = document.querySelectorAll('.team-member img');
+      teamImages.forEach(img => {
+        const src = img.getAttribute('src');
+        if (src) {
+          const preloadLink = document.createElement('link');
+          preloadLink.href = src;
+          preloadLink.rel = 'preload';
+          preloadLink.as = 'image';
+          document.head.appendChild(preloadLink);
+        }
+      });
     });
     
     // Safari-specific fixes
@@ -1225,23 +1435,14 @@
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
     
-    window.addEventListener('resize', setMobileHeight);
+    window.addEventListener('resize', debounce(setMobileHeight, 100));
     window.addEventListener('orientationchange', setMobileHeight);
     setMobileHeight();
     
-    // Preload team images to avoid layout shifts
-    window.addEventListener('load', function() {
-      const teamImages = document.querySelectorAll('.team-member img');
-      teamImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (src) {
-          const preloadLink = document.createElement('link');
-          preloadLink.href = src;
-          preloadLink.rel = 'preload';
-          preloadLink.as = 'image';
-          document.head.appendChild(preloadLink);
-        }
-      });
+    // Error handling for critical operations
+    window.addEventListener('error', function(e) {
+      console.error('Global error handler:', e.message);
+      // Could implement a more sophisticated error tracking system here
     });
   </script>
 </body>
