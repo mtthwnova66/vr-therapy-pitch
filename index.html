@@ -172,20 +172,34 @@
       font-weight: 700;
       letter-spacing: -0.025em;
       margin-bottom: var(--space-lg);
+      line-height: 1.2;
+    }
+    
+    /* Split title styling */
+    h1 .title-black {
+      color: var(--text-primary);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      -webkit-text-fill-color: initial;
+      background: none;
+    }
+
+    h1 .title-gradient {
       background: -webkit-linear-gradient(90deg, var(--primary), var(--accent));
       background: linear-gradient(90deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       color: transparent;
-      line-height: 1.2;
     }
     
     /* Safari fallback for gradient text */
     @media not all and (min-resolution:.001dpcm) { 
       @supports (-webkit-appearance:none) {
-        h1 {
+        h1 .title-gradient {
           color: var(--primary);
+        }
+        h1 .title-black {
+          color: var(--text-primary);
         }
       }
     }
@@ -1057,7 +1071,7 @@
       <div class="hero-logo">
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" width="200" height="auto" loading="eager">
       </div>
-      <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <h1 id="hero-title"><span class="title-black">AI-Powered VR Therapy:</span> <span class="title-gradient">The Future of Exposure Therapy</span></h1>
       <!-- Download Button -->
       <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">
         Download Pitch Presentation
@@ -1411,10 +1425,10 @@
         }, 10);
         
         // Ensure gradient text works in Safari
-        const h1Elements = document.querySelectorAll('h1');
-        h1Elements.forEach(function(h1) {
-          h1.style.webkitBackgroundClip = 'text';
-          h1.style.webkitTextFillColor = 'transparent';
+        const gradientElements = document.querySelectorAll('.title-gradient');
+        gradientElements.forEach(function(el) {
+          el.style.webkitBackgroundClip = 'text';
+          el.style.webkitTextFillColor = 'transparent';
         });
         
         // Create additional gradient elements specifically for Safari
