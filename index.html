@@ -1469,422 +1469,92 @@
 <script type="module">
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
   import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
-  import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
 
-  let scene, camera, renderer, mixer, spider, clock, controls;
-  let debugMode = true; // Enable debug mode to show helpers
-
-  // Make sure the container is properly styled for THREE.js
+  // Debug directly on page
   const container = document.getElementById('spider-container');
-  container.style.position = 'relative'; // Ensure position relative for absolute children
-  container.style.backgroundColor = '#222'; // Visible background to confirm container rendering
   
-  const canvas = document.getElementById('spider-scene');
-
-  function showDebugInfo(message) {
-    console.log("[SPIDER DEBUG]", message);
-    
-    const debugElement = document.createElement('div');
-    debugElement.className = 'debug-info';
-    debugElement.textContent = message;
-    debugElement.style = 'position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 4px; z-index: 100; font-size: 12px;';
-    
-    const existing = container.querySelector('.debug-info');
-    if (existing) container.removeChild(existing);
-    
-    container.appendChild(debugElement);
-  }
-
-  function showLoadingIndicator(show, message = 'Loading spider model...') {
-    const container = document.getElementById('spider-container');
-    
-    // Remove any existing message
-    const existingMessage = container.querySelector('.loading-message');
-    if (existingMessage) {
-      container.removeChild(existingMessage);
-    }
-    
-    if (show) {
-      const loadingMessage = document.createElement('div');
-      loadingMessage.className = 'loading-message';
-      loadingMessage.textContent = message;
-      loadingMessage.style = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 4px; z-index: 10;';
-      container.appendChild(loadingMessage);
-    }
-  }
-
-  function initScene() {
-    showDebugInfo("Initializing THREE.js scene");
-    
-    // Create scene
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222222); // Dark gray background
-    
-    clock = new THREE.Clock();
-
-    // Setup camera
-    camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 1, 5); // Start further back to see the scene
-    
-    // Create renderer
-    renderer = new THREE.WebGLRenderer({ 
-      canvas, 
-      antialias: true,
-      alpha: true 
-    });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.shadowMap.enabled = true;
-    renderer.outputEncoding = THREE.sRGBEncoding;
-
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-    scene.add(ambientLight);
-    
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    dirLight.position.set(5, 5, 5);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
-    scene.add(dirLight);
-    
-    // Add a point light to highlight the spider
-    const pointLight = new THREE.PointLight(0xffffff, 1.0);
-    pointLight.position.set(0, 2, 2);
-    scene.add(pointLight);
-
-    // Initialize controls
-    controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0.5, 0);
-    controls.update();
-    
-    // Add a grid for better orientation
-    if (debugMode) {
-      const gridHelper = new THREE.GridHelper(10, 10);
-      scene.add(gridHelper);
-      
-      // Add a simple sphere as a reference point
-      const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(0.2, 16, 16),
-        new THREE.MeshStandardMaterial({ color: 0xff0000 })
-      );
-      sphere.position.set(0, 0.5, 0);
-      scene.add(sphere);
-      
-      // Add axes helper
-      const axesHelper = new THREE.AxesHelper(5);
-      scene.add(axesHelper);
-    }
-    
-    showDebugInfo("Scene initialized successfully");
-  }
-
-  function loadLevel(level) {
-    showDebugInfo(`Loading level ${level}`);
-    
-    // Clean up existing spider
-    if (spider) {
-      scene.remove(spider);
-      spider.traverse((child) => {
-        if (child.isMesh) {
-          child.geometry.dispose();
-          if (Array.isArray(child.material)) {
-            child.material.forEach((mat) => mat.dispose());
-          } else {
-            child.material.dispose();
-          }
-        }
-      });
-      spider = null;
-    }
-
-    showLoadingIndicator(true, `Loading Level ${level} spider...`);
-    
-    // Attempt to load the 3D model
-    const loader = new GLTFLoader();
-    
-    // Primary model URL
-    const modelUrl = 'https://cdn.jsdelivr.net/gh/mtthwnova66/vr-therapy-pitch@preview-edits/spider_with_animation.glb';
-    
-    // Alternate model URL if the primary one fails
-    const backupModelUrl = 'https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/preview-edits/spider_with_animation.glb';
-    
-    loader.load(
-      modelUrl,
-      (gltf) => {
-        showLoadingIndicator(false);
-        
-        spider = gltf.scene;
-        spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
-        spider.position.set(0, 0, 0);
-        
-        // Make spider visible and cast shadows
-        spider.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            
-            // Ensure materials are properly configured
-            if (child.material) {
-              child.material.side = THREE.DoubleSide;
-              child.material.needsUpdate = true;
-            }
-          }
-        });
-        
-        scene.add(spider);
-        
-        // Add a box helper to visualize the spider's bounding box
-        if (debugMode) {
-          const box = new THREE.BoxHelper(spider, 0xff0000);
-          scene.add(box);
-          
-          // Add a sphere to mark the origin
-          const origin = new THREE.Mesh(
-            new THREE.SphereGeometry(0.05, 8, 8),
-            new THREE.MeshBasicMaterial({ color: 0xffff00 })
-          );
-          origin.position.set(0, 0, 0);
-          scene.add(origin);
-        }
-        
-        // Play animation if available
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(spider);
-          gltf.animations.forEach((clip) => {
-            mixer.clipAction(clip).play();
-          });
-          showDebugInfo(`Playing ${gltf.animations.length} animations`);
-        } else {
-          showDebugInfo("No animations found in model");
-        }
-
-        // Reset camera based on level
-        camera.position.set(0, 1, level === 1 ? 5 : 2);
-        controls.target.set(0, 0.5, 0);
-        controls.update();
-        
-        showDebugInfo(`Level ${level} loaded successfully`);
-      },
-      // Progress callback
-      (xhr) => {
-        const percent = xhr.loaded / xhr.total * 100;
-        console.log(`${Math.round(percent)}% loaded`);
-        showLoadingIndicator(true, `Loading spider... ${Math.round(percent)}%`);
-      },
-      // Error callback - try backup URL if primary fails
-      (error) => {
-        console.error('Error loading model from primary URL:', error);
-        showDebugInfo(`Primary model load failed, trying backup URL...`);
-        
-        // Try the backup URL
-        loader.load(
-          backupModelUrl,
-          (gltf) => {
-            // Same processing as above
-            showLoadingIndicator(false);
-            
-            spider = gltf.scene;
-            spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
-            spider.position.set(0, 0, 0);
-            
-            spider.traverse((child) => {
-              if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-              }
-            });
-            
-            scene.add(spider);
-            
-            if (gltf.animations && gltf.animations.length > 0) {
-              mixer = new THREE.AnimationMixer(spider);
-              gltf.animations.forEach((clip) => {
-                mixer.clipAction(clip).play();
-              });
-            }
-            
-            camera.position.set(0, 1, level === 1 ? 5 : 2);
-            controls.target.set(0, 0.5, 0);
-            controls.update();
-            
-            showDebugInfo(`Level ${level} loaded from backup URL`);
-          },
-          // Progress callback for backup
-          (xhr) => {
-            const percent = xhr.loaded / xhr.total * 100;
-            showLoadingIndicator(true, `Loading backup... ${Math.round(percent)}%`);
-          },
-          // Final error callback - create a placeholder if both URLs fail
-          (backupError) => {
-            console.error('Error loading from backup URL:', backupError);
-            showLoadingIndicator(false);
-            
-            // Create a simple spider placeholder using primitives
-            createPlaceholderSpider(level);
-            
-            // Show error message to user
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'loading-message error';
-            errorMessage.innerHTML = `
-              <p>Failed to load spider model. Using placeholder instead.</p>
-              <p>Error: ${backupError.message}</p>
-            `;
-            errorMessage.style = 'position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.85); color: white; padding: 10px; border-radius: 4px; z-index: 10; max-width: 80%;';
-            container.appendChild(errorMessage);
-          }
-        );
-      }
-    );
-  }
-
-  // Create a basic placeholder spider if model loading fails
-  function createPlaceholderSpider(level) {
-    showDebugInfo("Creating placeholder spider");
-    
-    // Create a simple spider placeholder using spheres and cylinders
-    const spiderGroup = new THREE.Group();
-    
-    // Body
-    const body = new THREE.Mesh(
-      new THREE.SphereGeometry(0.3, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0x222222 })
-    );
-    spiderGroup.add(body);
-    
-    // Head
-    const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.2, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0x222222 })
-    );
-    head.position.set(0, 0, 0.3);
-    spiderGroup.add(head);
-    
-    // Eyes
-    const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-    const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-    
-    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    leftEye.position.set(0.1, 0.1, 0.4);
-    spiderGroup.add(leftEye);
-    
-    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    rightEye.position.set(-0.1, 0.1, 0.4);
-    spiderGroup.add(rightEye);
-    
-    // Legs
-    const legGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.6);
-    const legMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
-    
-    for (let i = 0; i < 8; i++) {
-      const leg = new THREE.Group();
-      
-      const legUpper = new THREE.Mesh(legGeometry, legMaterial);
-      legUpper.position.set(0, 0.3, 0);
-      leg.add(legUpper);
-      
-      const legLower = new THREE.Mesh(legGeometry, legMaterial);
-      legLower.position.set(0, -0.3, 0);
-      leg.add(legLower);
-      
-      leg.rotation.z = Math.PI / 2;
-      
-      leg.position.set(
-        0.4 * Math.cos((i * Math.PI) / 4),
-        0,
-        0.4 * Math.sin((i * Math.PI) / 4)
-      );
-      
-      leg.rotation.y = (i * Math.PI) / 4;
-      
-      spiderGroup.add(leg);
-    }
-    
-    // Scale based on level
-    spiderGroup.scale.setScalar(level === 1 ? 0.3 : 0.6);
-    
-    // Position on the ground
-    spiderGroup.position.set(0, 0.3, 0);
-    
-    // Add to scene
-    scene.add(spiderGroup);
-    spider = spiderGroup;
-    
-    showDebugInfo("Placeholder spider created");
-  }
-
-  function animate() {
-    requestAnimationFrame(animate);
-    const delta = clock.getDelta();
-    
-    if (mixer) mixer.update(delta);
-    if (controls) controls.update();
-    
-    if (renderer && scene && camera) {
-      renderer.render(scene, camera);
-    }
-  }
-
-  // Initialize everything when DOM is loaded
-  function init() {
-    showDebugInfo("DOM loaded, starting initialization");
-    try {
-      initScene();
-      loadLevel(1);
-      animate();
-      showDebugInfo("Spider demo initialized successfully");
-    } catch (e) {
-      console.error("Initialization error:", e);
-      showDebugInfo(`Error: ${e.message}`);
-      
-      // Show error to user
-      showLoadingIndicator(false);
-      const errorDiv = document.createElement('div');
-      errorDiv.style = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 8px; max-width: 80%; text-align: center;';
-      errorDiv.innerHTML = `
-        <h3 style="margin-top:0;">WebGL Error</h3>
-        <p>Sorry, we couldn't initialize the 3D scene.</p>
-        <p style="font-size:12px;color:#aaa;">${e.message}</p>
-        <button onclick="window.location.reload()" style="padding:8px 16px;margin-top:10px;cursor:pointer;">Reload Page</button>
-      `;
-      container.appendChild(errorDiv);
-    }
-  }
-
-  // Set up resize handler
-  window.addEventListener('resize', () => {
-    if (!camera || !renderer) return;
-    
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    
-    showDebugInfo(`Window resized: ${container.clientWidth}x${container.clientHeight}`);
-  });
-
-  // Make functions available to window
-  window.loadLevel = loadLevel;
+  // Add a status element to the container
+  const statusEl = document.createElement('div');
+  statusEl.style = 'position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; z-index: 100; font-family: monospace;';
+  container.appendChild(statusEl);
   
-  // Check WebGL availability
-  if (window.WebGLRenderingContext) {
-    // WebGL is supported
-    // Wait for DOM to be fully loaded
-    if (document.readyState === "loading") {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      // DOM already loaded
-      init();
-    }
+  function log(message) {
+    console.log('DEBUG:', message);
+    statusEl.innerHTML += message + '<br>';
+  }
+
+  // Verify container exists and has proper style
+  if (!container) {
+    log('ERROR: spider-container not found!');
   } else {
-    // WebGL not supported
-    const errorDiv = document.createElement('div');
-    errorDiv.style = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 8px; max-width: 80%; text-align: center;';
-    errorDiv.innerHTML = `
-      <h3 style="margin-top:0;">WebGL Not Supported</h3>
-      <p>Sorry, your browser doesn't support WebGL which is required for 3D content.</p>
-      <p>Please try a modern browser like Chrome, Firefox, Safari, or Edge.</p>
-    `;
-    container.appendChild(errorDiv);
+    log('Found container: ' + container.id);
+    
+    // Set container style explicitly
+    container.style.position = 'relative';
+    container.style.backgroundColor = '#333333';
+    
+    // Get or create canvas
+    let canvas = document.getElementById('spider-scene');
+    if (!canvas) {
+      log('Canvas not found, creating one');
+      canvas = document.createElement('canvas');
+      canvas.id = 'spider-scene';
+      container.appendChild(canvas);
+    }
+    
+    try {
+      log('Initializing THREE.js');
+      
+      // Basic THREE.js setup
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x222222);
+      
+      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0, 5);
+      
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      
+      log('Creating a simple test cube');
+      
+      // Create a simple red cube
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+      
+      // Add a light
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(1, 1, 1);
+      scene.add(light);
+      
+      // Add ambient light
+      const ambientLight = new THREE.AmbientLight(0x404040);
+      scene.add(ambientLight);
+      
+      // Add orbit controls
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.update();
+      
+      log('Starting animation loop');
+      
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        // Rotate the cube
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        
+        renderer.render(scene, camera);
+      }
+      
+      animate();
+      log('Animation started - you should see a red cube');
+      
+    } catch (error) {
+      log('ERROR initializing THREE.js: ' + error.message);
+    }
   }
 </script>
 </body>
