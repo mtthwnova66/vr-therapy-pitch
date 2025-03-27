@@ -1472,6 +1472,23 @@
   });
 
   function initSpiderDemo() {
+    if (!window.WebGLRenderingContext) {
+  container.innerHTML = '<p style="padding: 20px;">Your browser does not support WebGL. Please try a different browser.</p>';
+  return;
+}
+
+try {
+  // Create a temporary canvas to test WebGL
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) {
+    throw new Error('WebGL not supported');
+  }
+} catch (e) {
+  container.innerHTML = '<p style="padding: 20px;">WebGL initialization failed. This may be due to hardware or browser settings. Please try a different browser.</p>';
+  console.error('WebGL Error:', e);
+  return;
+}
     // Get the container element
     const container = document.getElementById('arachnophobia-demo');
     if (!container) {
