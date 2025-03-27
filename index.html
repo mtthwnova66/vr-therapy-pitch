@@ -1469,12 +1469,14 @@
   import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.150.1/three.module.min.js';
   import { OrbitControls } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.150.1/examples/jsm/controls/OrbitControls.js';
 
-  // Wait for the DOM to be fully loaded
+  // Wait for the window to fully load
   window.addEventListener('load', () => {
+    console.log('Window loaded, initializing spider demo...');
     initSpiderDemo();
   });
 
   function initSpiderDemo() {
+    // Get the container
     const container = document.getElementById('arachnophobia-demo');
     if (!container) {
       console.error('Container not found: #arachnophobia-demo');
@@ -1482,8 +1484,10 @@
     }
 
     // Check for WebGL support
+    console.log('Checking WebGL support...');
     if (!window.WebGLRenderingContext) {
       container.innerHTML = '<p style="padding: 20px; text-align: center;">Your browser does not support WebGL. Please try a different browser.</p>';
+      console.error('WebGL not supported: window.WebGLRenderingContext is not available.');
       return;
     }
 
@@ -1492,10 +1496,11 @@
       const canvas = document.createElement('canvas');
       gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       if (!gl) {
-        throw new Error('WebGL not supported');
+        throw new Error('WebGL context could not be created.');
       }
+      console.log('WebGL supported:', gl);
     } catch (e) {
-      container.innerHTML = '<p style="padding: 20px; text-align: center;">WebGL initialization failed. This may be due to hardware or browser settings. Please try a different browser.</p>';
+      container.innerHTML = '<p style="padding: 20px; text-align: center;">WebGL initialization failed. This may be due to hardware, browser settings, or driver issues. Please try a different browser.</p>';
       console.error('WebGL Error:', e);
       return;
     }
@@ -1504,59 +1509,76 @@
     const loadingMessage = document.getElementById('loading-message');
     if (loadingMessage) {
       loadingMessage.style.display = 'none';
+    } else {
+      console.warn('Loading message element not found.');
     }
 
     // Create the scene
+    console.log('Creating Three.js scene...');
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
     // Set up the camera
+    console.log('Setting up camera...');
     const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 1.5, 3); // Adjusted for better view
+    camera.position.set(0, 1.5, 3);
+    camera.lookAt(0, 0.75, 0);
 
     // Set up the renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0xf0f0f0, 1); // Ensure background matches scene
-    container.appendChild(renderer.domElement);
+    console.log('Setting up renderer...');
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setClearColor(0xf0f0f0, 1);
+      container.appendChild(renderer.domElement);
+      console.log('Renderer initialized successfully:', renderer);
+    } catch (e) {
+      container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to initialize WebGL renderer. Please check your browser settings or try a different browser.</p>';
+      console.error('Renderer Error:', e);
+      return;
+    }
 
     // Add controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0.75, 0);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 1.5;
-    controls.maxDistance = 8;
-    controls.update();
+    console.log('Setting up OrbitControls...');
+    let controls;
+    try {
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0.75, 0);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 1.5;
+      controls.maxDistance = 8;
+      controls.update();
+      console.log('OrbitControls initialized successfully.');
+    } catch (e) {
+      console.error('OrbitControls Error:', e);
+    }
 
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Add basic lighting
+    console.log('Adding lighting...');
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(5, 10, 5);
-    dirLight.castShadow = true;
     scene.add(dirLight);
 
-    // Create a ground plane
-    const groundGeo = new THREE.PlaneGeometry(20, 20);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0xcccccc });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = 0;
-    ground.receiveShadow = true;
-    scene.add(ground);
+    // Create a simple test object (a red cube) to ensure rendering works
+    console.log('Adding test cube...');
+    const cubeGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const cube = new THREE.Mesh(cubeGeo, cubeMat);
+    cube.position.set(0, 0.25, 0);
+    scene.add(cube);
 
-    // Create glass jar
-    const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      metalness: 0,
-      roughness: 0.1,
-      transmission: 0.95,
+    // Create glass jar (simplified material)
+    console.log('Creating glass jar...');
+    const glassMat = new THREE.MeshBasicMaterial({
+      color: 0xaaaaaa,
       transparent: true,
-      opacity: 0.8,
-      thickness: 0.5,
+      opacity: 0.3,
       side: THREE.DoubleSide,
     });
 
@@ -1565,46 +1587,43 @@
       glassMat
     );
     jar.position.y = 0.75;
-    jar.castShadow = true;
-    jar.receiveShadow = true;
     scene.add(jar);
 
     // Add jar lid
+    console.log('Adding jar lid...');
     const lid = new THREE.Mesh(
       new THREE.CircleGeometry(0.8, 32),
-      new THREE.MeshStandardMaterial({ color: 0x666666 })
+      new THREE.MeshBasicMaterial({ color: 0x666666 })
     );
     lid.rotation.x = -Math.PI / 2;
     lid.position.set(0, 1.5, 0);
-    lid.castShadow = true;
     scene.add(lid);
 
     // Create spider
+    console.log('Creating spider...');
     const spider = new THREE.Group();
 
     // Spider body
     const body = new THREE.Mesh(
-      new THREE.SphereGeometry(0.2, 32, 16),
-      new THREE.MeshStandardMaterial({ color: 0x333333 })
+      new THREE.SphereGeometry(0.2, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0x333333 })
     );
     body.position.y = 0.2;
-    body.castShadow = true;
     spider.add(body);
 
     // Spider head
     const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.12, 32, 16),
-      new THREE.MeshStandardMaterial({ color: 0x333333 })
+      new THREE.SphereGeometry(0.12, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0x333333 })
     );
     head.position.set(0, 0.2, 0.15);
-    head.castShadow = true;
     spider.add(head);
 
     // Add spider legs
     for (let i = 0; i < 8; i++) {
       const leg = new THREE.Mesh(
         new THREE.CylinderGeometry(0.02, 0.01, 0.5, 8),
-        new THREE.MeshStandardMaterial({ color: 0x333333 })
+        new THREE.MeshBasicMaterial({ color: 0x333333 })
       );
 
       const angle = (Math.PI / 4) * (i % 4);
@@ -1614,32 +1633,28 @@
       leg.position.set(xDir, 0.2, zDir);
       leg.rotation.z = (i < 4 ? 0.8 : -0.8);
       leg.rotation.y = angle + (i < 4 ? 0 : Math.PI);
-      leg.castShadow = true;
       spider.add(leg);
     }
 
-    // Position the spider in the jar
     spider.position.y = 0.4;
-    spider.castShadow = true;
     scene.add(spider);
 
-    // Enable shadows
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
     // Handle window resize
+    console.log('Setting up resize handler...');
     function onResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
+      console.log('Resized renderer to:', width, 'x', height);
     }
 
     window.addEventListener('resize', onResize);
     onResize();
 
     // Simple spider animation
+    console.log('Setting up spider animation...');
     function animateSpider() {
       const time = Date.now() * 0.001;
       spider.rotation.y = Math.sin(time) * 0.1;
@@ -1647,17 +1662,34 @@
     }
 
     // Render loop
+    console.log('Starting render loop...');
+    let isRendering = false;
     function animate() {
-      requestAnimationFrame(animate);
-      animateSpider();
-      controls.update();
-      renderer.render(scene, camera);
+      try {
+        requestAnimationFrame(animate);
+        animateSpider();
+        if (controls) controls.update();
+        renderer.render(scene, camera);
+        if (!isRendering) {
+          console.log('First successful render!');
+          isRendering = true;
+        }
+      } catch (e) {
+        console.error('Render Error:', e);
+        container.innerHTML = '<p style="padding: 20px; text-align: center;">Rendering failed. Please check the console for details.</p>';
+      }
     }
 
     // Start the animation
-    animate();
+    try {
+      animate();
+    } catch (e) {
+      console.error('Animation Start Error:', e);
+      container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to start animation. Please check the console for details.</p>';
+    }
 
     // Add a fullscreen button
+    console.log('Adding fullscreen button...');
     const fullscreenButton = document.createElement('button');
     fullscreenButton.textContent = '⛶';
     fullscreenButton.style.position = 'absolute';
