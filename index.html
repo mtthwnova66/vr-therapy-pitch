@@ -1468,20 +1468,22 @@
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
   import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
   import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/RGBELoader.js';
+  import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
   import { PMREMGenerator } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/pmrem/PMREMGenerator.js';
 
-  let scene, camera, renderer, spider, light, controls;
+  let scene, camera, renderer, spider, mixer, clock, controls;
   const canvas = document.getElementById('spider-scene');
   const container = document.getElementById('spider-container');
 
   function initScene() {
+    clock = new THREE.Clock();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    // Environment lighting (HDR)
+    // Environment HDR
     const pmremGenerator = new PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
 
@@ -1495,11 +1497,11 @@
         pmremGenerator.dispose();
       });
 
-    // Ambient + Directional Light
-    light = new THREE.DirectionalLight(0xffffff, 1.2);
-    light.position.set(5, 5, 5);
+    // Lighting
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-    scene.add(light);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -1513,31 +1515,41 @@
     // Clear previous spider
     if (spider) {
       scene.remove(spider);
-      spider.geometry.dispose();
-      spider.material.dispose();
+      spider.traverse(obj => {
+        if (obj.isMesh) {
+          obj.geometry.dispose();
+          obj.material.dispose();
+        }
+      });
       spider = null;
     }
 
-    // Adjust camera for level
-    camera.position.set(0, 1.5, level === 1 ? 6 : 2);
-    camera.lookAt(0, 1, 0);
+    const loader = new GLTFLoader();
+    loader.load('https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/preview-edits/spider_with_animation.glb', (gltf) => {
+      spider = gltf.scene;
+      spider.position.set(0, 0, 0);
+      scene.add(spider);
 
-    // Create spider (placeholder geometry)
-    const spiderGeometry = new THREE.SphereGeometry(level === 1 ? 0.3 : 0.6, 64, 64);
-    const spiderMaterial = new THREE.MeshStandardMaterial({
-      color: 0x111111,
-      roughness: 0.2,
-      metalness: 0.8,
+      // Adjust scale if needed
+      spider.scale.set(level === 1 ? 0.3 : 0.6, level === 1 ? 0.3 : 0.6, level === 1 ? 0.3 : 0.6);
+
+      // Animation
+      mixer = new THREE.AnimationMixer(spider);
+      gltf.animations.forEach(clip => {
+        mixer.clipAction(clip).play();
+      });
+
+      // Camera
+      camera.position.set(0, 1.5, level === 1 ? 6 : 2);
+      camera.lookAt(0, 1, 0);
     });
-
-    spider = new THREE.Mesh(spiderGeometry, spiderMaterial);
-    spider.position.set(0, 1, 0);
-    scene.add(spider);
   }
 
   function animate() {
     requestAnimationFrame(animate);
+    const delta = clock.getDelta();
     controls.update();
+    if (mixer) mixer.update(delta);
     renderer.render(scene, camera);
   }
 
