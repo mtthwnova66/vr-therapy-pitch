@@ -1143,39 +1143,35 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('arachnophobia-demo');
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf0f0f0);
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f0f0);
 
-const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
-camera.position.set(0, 1.5, 4);
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 1.5, 4);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-container.appendChild(renderer.domElement);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    container.appendChild(renderer.domElement);
 
-// ✅ Now renderer is defined before OrbitControls
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 0.75, 0);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.minDistance = 2;
-controls.maxDistance = 10;
-controls.enablePan = true;
-controls.update();
-    
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-container.appendChild(renderer.domElement);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0.75, 0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 2;
+    controls.maxDistance = 10;
+    controls.enablePan = true;
+    controls.update();
 
-    // Responsive
     window.addEventListener('resize', () => {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    // Lights
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.1);
     hemiLight.position.set(0, 20, 0);
     scene.add(hemiLight);
@@ -1184,7 +1180,6 @@ container.appendChild(renderer.domElement);
     dirLight.position.set(-3, 10, -10);
     scene.add(dirLight);
 
-    // Ground
     const groundGeo = new THREE.PlaneGeometry(20, 20);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
     const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -1192,30 +1187,18 @@ container.appendChild(renderer.domElement);
     ground.position.y = 0;
     scene.add(ground);
 
-    const debugBox = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshStandardMaterial({ color: 0xff0000 })
-);
-debugBox.position.y = 0.5;
-scene.add(debugBox);
-
-    // Jar (cylinder + glass material)
     const glassMat = new THREE.MeshPhysicalMaterial({
-  color: 0xffffff,
-  metalness: 0,
-  roughness: 0,
-  transmission: 1, // this needs WebGLRenderer with `renderer.outputEncoding` and `toneMapping`
-  transparent: true,
-  opacity: 0.6,
-  thickness: 0.2,
-  side: THREE.DoubleSide,
-  clearcoat: 1,
-  clearcoatRoughness: 0.05,
-});
-    renderer.physicallyCorrectLights = true;
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+      color: 0xffffff,
+      metalness: 0,
+      roughness: 0,
+      transmission: 1,
+      transparent: true,
+      opacity: 0.6,
+      thickness: 0.2,
+      side: THREE.DoubleSide,
+      clearcoat: 1,
+      clearcoatRoughness: 0.05,
+    });
 
     const jar = new THREE.Mesh(
       new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 1, true),
@@ -1223,13 +1206,6 @@ renderer.toneMappingExposure = 1.0;
     );
     jar.position.y = 0.75;
     scene.add(jar);
-
-    const debugBox = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshStandardMaterial({ color: 0xff0000 })
-);
-debugBox.position.y = 0.5;
-scene.add(debugBox);
 
     const lid = new THREE.Mesh(
       new THREE.CircleGeometry(0.8, 64),
@@ -1239,7 +1215,6 @@ scene.add(debugBox);
     lid.position.set(0, 1.5, 0);
     scene.add(lid);
 
-    // Spider (basic geometry for now - stylized placeholder)
     const spider = new THREE.Group();
     const body = new THREE.Mesh(
       new THREE.SphereGeometry(0.2, 32, 32),
@@ -1264,349 +1239,14 @@ scene.add(debugBox);
     spider.position.y = 0.75;
     scene.add(spider);
 
-    const axesHelper = new THREE.AxesHelper(2);
-scene.add(axesHelper);
-
-    // Controls
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 2;
-    controls.maxDistance = 10;
-    controls.enablePan = true;
-
-    // Animate
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
     }
+
     animate();
   });
 </script>
-   
-    
-    
-    
-    
-    
-    <!-- Market Opportunity Section -->
-    <section class="section fade-in" id="market" aria-labelledby="market-title">
-      <h2 id="market-title">Market Opportunity</h2>
-      <p>
-        With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.
-      </p>
-    </section>
-    
-    <!-- Business Model & Funding Section -->
-    <section class="section fade-in dark-section" id="business" aria-labelledby="business-title">
-      <h2 id="business-title">Business Model & Funding</h2>
-      <p>
-        Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
-      </p>
-      <ul>
-        <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
-        <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
-        <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
-      </ul>
-    </section>
-    
-    <!-- Team Section -->
-    <section class="section fade-in" id="team" aria-labelledby="team-title">
-      <h2 id="team-title">Meet the Team</h2>
-      <div class="team-members">
-        <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
-          <h3>Matei Seleușan</h3>
-          <p class="role">CEO</p>
-          <p>
-            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
-          </p>
-        </div>
-        <div class="team-member">
-          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120" loading="lazy">
-          <h3>Răzvan Crețu</h3>
-          <p class="role">CTO</p>
-          <p>
-            Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
-          </p>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section class="section fade-in" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Contact Us</h2>
-      <div class="contact-container">
-        <div class="contact-email">
-          <h3>Matei Seleușan</h3>
-          <p>
-            <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
-          </p>
-        </div>
-        <div class="contact-email">
-          <h3>Răzvan Crețu</h3>
-          <p>
-            <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a>
-          </p>
-        </div>
-      </div>
-    </section>
-    
-  </main>
-  
-  <!-- Footer -->
-  <footer class="footer" role="contentinfo">
-    <div class="footer-container">
-      <div class="footer-links">
-        <a href="#about">About</a>
-        <a href="#problem">Problem</a>
-        <a href="#solution">Solution</a>
-        <a href="#technology">Technology</a>
-        <a href="#team">Team</a>
-        <a href="#contact">Contact</a>
-      </div>
-      <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
-    </div>
-  </footer>
-  
-  <!-- Structured Data for SEO -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Synaeon",
-      "url": "https://synaeon.com",
-      "logo": "https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg",
-      "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
-      "founder": [
-        {
-          "@type": "Person",
-          "name": "Matei Seleușan",
-          "jobTitle": "CEO",
-          "email": "mateiseleusan@gmail.com"
-        },
-        {
-          "@type": "Person",
-          "name": "Răzvan Crețu",
-          "jobTitle": "CTO",
-          "email": "razvanmihaicretu@gmail.com"
-        }
-      ],
-      "foundingDate": "2025",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "Romania"
-      }
-    }
-  </script>
-  
-  <script>
-    // Throttle function to limit how often certain events fire
-    function throttle(func, limit) {
-      let inThrottle;
-      return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-          func.apply(context, args);
-          inThrottle = true;
-          setTimeout(() => inThrottle = false, limit);
-        }
-      };
-    }
-    
-    // Debounce function
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
-        const context = this, args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
-      };
-    }
-    
-    // Back to Top Button Functionality with throttling
-    function updateBackToTopButton() {
-      const btn = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
-    }
-    
-    // Update scroll progress bar
-    function updateScrollProgress() {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById("scroll-progress").style.width = scrolled + "%";
-    }
-    
-    // Combine scroll handlers with throttling
-    window.addEventListener('scroll', throttle(function() {
-      updateBackToTopButton();
-      updateScrollProgress();
-    }, 100));
-    
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    
-    // Use Intersection Observer for fade-in animations instead of scroll events
-    document.addEventListener('DOMContentLoaded', function() {
-      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
-      
-      // Create the observer with options
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          // Add the active class if element is intersecting
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
-            entry.target.style.webkitTransform = "translateY(0)";
-            // Once animated, no need to observe anymore
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        root: null, // viewport
-        threshold: 0.1, // trigger when 10% of the element is visible
-        rootMargin: '0px 0px -50px 0px' // slight offset to trigger earlier
-      });
-      
-      // Start observing each element
-      fadeElements.forEach(element => {
-        observer.observe(element);
-      });
-      
-      // Initialize progress bar
-      updateScrollProgress();
-    });
-    
-    // Hamburger Menu Toggle with improved accessibility
-    document.addEventListener('DOMContentLoaded', function() {
-      const hamburger = document.getElementById('hamburger-menu');
-      const navLinks = document.getElementById('nav-links');
-      
-      function toggleMenu() {
-        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', !isExpanded);
-        hamburger.classList.toggle('open');
-        navLinks.classList.toggle('open');
-      }
-      
-      hamburger.addEventListener('click', toggleMenu);
-      
-      // Enable keyboard navigation
-      hamburger.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleMenu();
-        }
-      });
-      
-      // Close menu when clicking on a link
-      const navItems = document.querySelectorAll('.nav-links a');
-      navItems.forEach(item => {
-        item.addEventListener('click', function() {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        });
-      });
-      
-      // Close menu when clicking outside
-      document.addEventListener('click', function(event) {
-        const isClickInsideMenu = navLinks.contains(event.target);
-        const isClickOnHamburger = hamburger.contains(event.target);
-        
-        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        }
-      });
-    });
-    
-    // Better image loading with error handling
-    document.addEventListener('DOMContentLoaded', function() {
-      const images = document.querySelectorAll('img');
-      
-      images.forEach(img => {
-        img.addEventListener('error', function() {
-          console.error(`Failed to load image: ${img.src}`);
-          // Fallback behavior - add a placeholder or class
-          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
-          img.classList.add('image-load-error');
-        });
-      });
-    });
-    
-    // Preload team images to avoid layout shifts
-    window.addEventListener('load', function() {
-      const teamImages = document.querySelectorAll('.team-member img');
-      teamImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (src) {
-          const preloadLink = document.createElement('link');
-          preloadLink.href = src;
-          preloadLink.rel = 'preload';
-          preloadLink.as = 'image';
-          document.head.appendChild(preloadLink);
-        }
-      });
-    });
-    
-    // Safari-specific fixes
-    document.addEventListener('DOMContentLoaded', function() {
-      // Check if browser is Safari
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      
-      if (isSafari) {
-        // Force repaint on Safari to fix potential rendering issues
-        document.body.style.display = 'inline-block';
-        setTimeout(function() {
-          document.body.style.display = '';
-        }, 10);
-        
-        // Ensure gradient text works in Safari
-        const h1Elements = document.querySelectorAll('h1');
-        h1Elements.forEach(function(h1) {
-          h1.style.webkitBackgroundClip = 'text';
-          h1.style.webkitTextFillColor = 'transparent';
-        });
-        
-        // Create additional gradient elements specifically for Safari
-        const gradientOverlay = document.createElement('div');
-        gradientOverlay.style.position = 'fixed';
-        gradientOverlay.style.top = '0';
-        gradientOverlay.style.left = '0';
-        gradientOverlay.style.width = '100%';
-        gradientOverlay.style.height = '100%';
-        gradientOverlay.style.background = 'linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(255,193,7,0.08) 100%)';
-        gradientOverlay.style.pointerEvents = 'none';
-        gradientOverlay.style.zIndex = '-1';
-        document.body.appendChild(gradientOverlay);
-      }
-    });
-    
-    // Fix viewport height issue on mobile browsers
-    function setMobileHeight() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    
-    window.addEventListener('resize', debounce(setMobileHeight, 100));
-    window.addEventListener('orientationchange', setMobileHeight);
-    setMobileHeight();
-    
-    // Error handling for critical operations
-    window.addEventListener('error', function(e) {
-      console.error('Global error handler:', e.message);
-      // Could implement a more sophisticated error tracking system here
-    });
-  </script>
 </body>
 </html>
