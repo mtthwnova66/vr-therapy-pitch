@@ -1143,7 +1143,7 @@
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js';
   import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/controls/OrbitControls.js';
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('arachnophobia-demo');
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
@@ -1182,10 +1182,9 @@
     dirLight.position.set(-3, 10, -10);
     scene.add(dirLight);
 
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(20, 20),
-      new THREE.MeshStandardMaterial({ color: 0xeeeeee })
-    );
+    const groundGeo = new THREE.PlaneGeometry(20, 20);
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = 0;
     scene.add(ground);
