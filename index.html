@@ -1458,8 +1458,8 @@
       // Could implement a more sophisticated error tracking system here
     });
 
-
- <script type="module">
+  </script>
+<script type="module">
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js';
   import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/controls/OrbitControls.js';
 
@@ -1474,9 +1474,6 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
     container.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -1569,6 +1566,5 @@
 
     animate();
   });
-</script>
 </body>
 </html>
