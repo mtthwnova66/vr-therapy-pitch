@@ -1524,6 +1524,8 @@
         spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
         spider.position.set(0, 0, 0);
         scene.add(spider);
+        const box = new THREE.BoxHelper(spider, 0xff0000);
+scene.add(box);
 
         // Play animation if available
         if (gltf.animations && gltf.animations.length > 0) {
