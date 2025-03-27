@@ -1148,6 +1148,8 @@
 
     const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.5, 4);
+controls.target.set(0, 0.75, 0); // Focus on center of jar
+controls.update();
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -1229,8 +1231,11 @@
       spider.add(leg);
     }
 
-    spider.position.y = 0.1;
+    spider.position.y = 0.75;
     scene.add(spider);
+
+    const axesHelper = new THREE.AxesHelper(2);
+scene.add(axesHelper);
 
     // Controls
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
