@@ -1128,23 +1128,23 @@
         Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
       </p>
     </section>
-    <!-- Arachnophobia Therapy Demo Section -->
+    <!-- Arachnophobia Therapy Demo Section - FIXED -->
 <section class="section fade-in" id="arachnophobia-demo" aria-labelledby="arachnophobia-title">
   <h2 id="arachnophobia-title">Arachnophobia Exposure Therapy</h2>
   <p>This is a live demo of our Level 1 and Level 2 exposure scenarios using interactive 3D environments.</p>
   
   <!-- Level Toggle Buttons -->
   <div style="margin-bottom: 20px;">
-    <button onclick="loadLevel(1)" class="btn">Level 1: Distant Spider</button>
-    <button onclick="loadLevel(2)" class="btn">Level 2: Closer Spider</button>
+    <button onclick="loadLevel(1)" style="padding: 10px 15px; background-color: var(--primary); color: white; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">Level 1: Distant Spider</button>
+    <button onclick="loadLevel(2)" style="padding: 10px 15px; background-color: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">Level 2: Closer Spider</button>
   </div>
 
-  <!-- Canvas Container -->
-  <div id="spider-container" style="width: 100%; height: 500px; border-radius: 12px; overflow: hidden;">
-    <canvas id="spider-scene"></canvas>
+  <!-- Canvas Container with fixed dimensions -->
+  <div id="spider-container" style="width: 100%; height: 500px; border-radius: 12px; overflow: hidden; position: relative; background-color: #222;">
+    <canvas id="spider-scene" style="width: 100%; height: 100%;"></canvas>
+    <!-- Status indicator will be added by JavaScript -->
   </div>
 </section>
-
     
     <!-- Market Opportunity Section -->
     <section class="section fade-in" id="market" aria-labelledby="market-title">
