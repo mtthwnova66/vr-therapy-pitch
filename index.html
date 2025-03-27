@@ -1305,7 +1305,7 @@
     }
     
     // Use Intersection Observer for fade-in animations instead of scroll events
-    document.addEventListener('DOMContentLoaded', function() {
+   window.addEventListener('load', function () {
       const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
       
       // Create the observer with options
