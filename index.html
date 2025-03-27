@@ -1467,171 +1467,97 @@
   <script type="module">
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
   import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
-  import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/RGBELoader.js';
   import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
-  import { PMREMGenerator } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/pmrem/PMREMGenerator.js';
 
-  let scene, camera, renderer, spider, mixer, clock, controls;
-  const canvas = document.getElementById('spider-scene');
+  let scene, camera, renderer, mixer, spider, clock, controls;
+
   const container = document.getElementById('spider-container');
+  const canvas = document.getElementById('spider-scene');
 
   function initScene() {
-    clock = new THREE.Clock();
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    clock = new THREE.Clock();
+
+    camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 1, 5);
+
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-
-    // Environment HDR
-    const pmremGenerator = new PMREMGenerator(renderer);
-    pmremGenerator.compileEquirectangularShader();
-
-    new RGBELoader()
-      .setDataType(THREE.FloatType)
-      .load('https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/studio_small_09_2k.hdr', function (hdrEquirect) {
-        const envMap = pmremGenerator.fromEquirectangular(hdrEquirect).texture;
-        scene.environment = envMap;
-        scene.background = envMap;
-        hdrEquirect.dispose();
-        pmremGenerator.dispose();
-      });
+    renderer.shadowMap.enabled = true;
 
     // Lighting
-scene.add(new THREE.AmbientLight(0xffffff, 1));
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
-directionalLight.position.set(2, 5, 2);
-scene.add(directionalLight);
-    
+    scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight.position.set(2, 4, 2);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
 
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
-    controls.enableZoom = false;
-
-    animate();
+    controls.target.set(0, 0.5, 0);
+    controls.update();
   }
 
   function loadLevel(level) {
-  // Clean up previous model
-  if (spider) {
-    scene.remove(spider);
-    spider.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry.dispose();
-        if (Array.isArray(child.material)) {
-          child.material.forEach(mat => mat.dispose());
-        } else {
-          child.material.dispose();
-        }
-      }
-    });
-    spider = null;
-  }
-
-  const loader = new GLTFLoader();
-  const glbURL = 'https://cdn.jsdelivr.net/gh/mtthwnova66/vr-therapy-pitch@preview-edits/spider_with_animation.glb';
-
-  loader.load(
-    glbURL,
-    (gltf) => {
-      spider = gltf.scene;
-      spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
-      spider.position.set(0, 0, 0);
-      scene.add(spider);
-
-      // Make sure all parts of the model are visible
+    if (spider) {
+      scene.remove(spider);
       spider.traverse((child) => {
         if (child.isMesh) {
-          child.material.transparent = false;
-          child.visible = true;
-          child.castShadow = true;
-          child.receiveShadow = true;
+          child.geometry.dispose();
+          if (Array.isArray(child.material)) {
+            child.material.forEach((mat) => mat.dispose());
+          } else {
+            child.material.dispose();
+          }
         }
       });
-
-      // Animation
-      if (gltf.animations && gltf.animations.length > 0) {
-        mixer = new THREE.AnimationMixer(spider);
-        gltf.animations.forEach((clip) => {
-          mixer.clipAction(clip).play();
-        });
-      }
-
-      // Camera position
-      camera.position.set(0, 1, level === 1 ? 5 : 2);
-      controls.target.set(0, 0.5, 0);
-      controls.update();
-    },
-    undefined,
-    (error) => {
-      console.error("Failed to load GLB model:", error);
-    }
-  );
-}
-  }
-
-  const loader = new GLTFLoader();
-  loader.load('https://cdn.jsdelivr.net/gh/mtthwnova66/vr-therapy-pitch@preview-edits/spider_with_animation.glb', (gltf) => {
-    spider = gltf.scene;
-    spider.position.set(0, 0, 0);
-    spider.scale.set(level === 1 ? 0.3 : 0.6, level === 1 ? 0.3 : 0.6, level === 1 ? 0.3 : 0.6);
-    scene.add(spider);
-
-    // Ensure visibility of all spider parts
-    spider.traverse(child => {
-      if (child.isMesh) {
-        child.material.transparent = false;
-        child.visible = true;
-      }
-    });
-
-    // Animation
-    mixer = new THREE.AnimationMixer(spider);
-    gltf.animations.forEach(clip => {
-      mixer.clipAction(clip).play();
-    });
-
-    // Camera setup
-    camera.position.set(0, 1, level === 1 ? 3 : 1.5);
-    controls.target.set(0, 0.5, 0); // Ensure it looks at spider
-    controls.update();
-  },
-  undefined,
-  function (error) {
-    console.error('Failed to load model:', error);
-  });
-}
+      spider = null;
     }
 
     const loader = new GLTFLoader();
-    loader.load('https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/preview-edits/spider_with_animation.glb', (gltf) => {
-      spider = gltf.scene;
-      spider.position.set(0, 0, 0);
-      scene.add(spider);
+    const modelUrl = 'https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/preview-edits/spider_with_animation.glb';
 
-      // Adjust scale if needed
-      spider.scale.set(level === 1 ? 0.3 : 0.6, level === 1 ? 0.3 : 0.6, level === 1 ? 0.3 : 0.6);
+    loader.load(
+      modelUrl,
+      (gltf) => {
+        spider = gltf.scene;
+        spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
+        spider.position.set(0, 0, 0);
+        scene.add(spider);
 
-      // Animation
-      mixer = new THREE.AnimationMixer(spider);
-      gltf.animations.forEach(clip => {
-        mixer.clipAction(clip).play();
-      });
+        // Play animation if available
+        if (gltf.animations && gltf.animations.length > 0) {
+          mixer = new THREE.AnimationMixer(spider);
+          gltf.animations.forEach((clip) => {
+            mixer.clipAction(clip).play();
+          });
+        }
 
-      // Camera
-      camera.position.set(0, 1.5, level === 1 ? 6 : 2);
-      camera.lookAt(0, 1, 0);
-    });
+        // Reset camera based on level
+        camera.position.set(0, 1, level === 1 ? 5 : 2);
+        controls.target.set(0, 0.5, 0);
+        controls.update();
+      },
+      undefined,
+      (err) => {
+        console.error('Error loading model:', err);
+      }
+    );
   }
 
   function animate() {
     requestAnimationFrame(animate);
     const delta = clock.getDelta();
-    controls.update();
     if (mixer) mixer.update(delta);
+    controls.update();
     renderer.render(scene, camera);
   }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    initScene();
+    loadLevel(1);
+    animate();
+  });
 
   window.addEventListener('resize', () => {
     if (!camera || !renderer) return;
@@ -1640,10 +1566,7 @@ scene.add(directionalLight);
     renderer.setSize(container.clientWidth, container.clientHeight);
   });
 
-  window.addEventListener('DOMContentLoaded', () => {
-    initScene();
-    loadLevel(1);
-  });
+  window.loadLevel = loadLevel;
 </script>
 </body>
 </html>
