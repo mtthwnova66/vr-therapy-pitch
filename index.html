@@ -1470,8 +1470,8 @@
       return;
     }
 
-    // Ensure container has height
-    container.style.minHeight = '600px';
+    container.style.minHeight = '600px'; // Ensure space
+    container.style.background = '#f0f0f0'; // Temporarily color the background
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
@@ -1490,10 +1490,6 @@
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0.75, 0);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 2;
-    controls.maxDistance = 10;
-    controls.enablePan = true;
     controls.update();
 
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.1);
@@ -1504,9 +1500,10 @@
     dirLight.position.set(-3, 10, -10);
     scene.add(dirLight);
 
-    const groundGeo = new THREE.PlaneGeometry(20, 20);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(20, 20),
+      new THREE.MeshStandardMaterial({ color: 0xeeeeee })
+    );
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = 0;
     scene.add(ground);
@@ -1566,16 +1563,14 @@
     function onResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
-      if (height === 0) return; // Avoid division by zero
-
+      if (height === 0) return;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
-      controls.update();
     }
 
     window.addEventListener('resize', onResize);
-    onResize(); // initial sizing
+    onResize();
 
     function animate() {
       requestAnimationFrame(animate);
@@ -1586,6 +1581,5 @@
     animate();
   });
 </script>
-
 </body>
 </html>
