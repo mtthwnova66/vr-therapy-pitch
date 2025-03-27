@@ -1463,8 +1463,16 @@
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js';
   import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/controls/OrbitControls.js';
 
-  document.addEventListener('DOMContentLoaded', function () {
+  window.addEventListener('load', () => {
     const container = document.getElementById('arachnophobia-demo');
+    if (!container) {
+      console.error('Container not found: #arachnophobia-demo');
+      return;
+    }
+
+    // Ensure container has height
+    container.style.minHeight = '600px';
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
@@ -1474,6 +1482,9 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
     container.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -1484,12 +1495,6 @@
     controls.maxDistance = 10;
     controls.enablePan = true;
     controls.update();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    });
 
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.1);
     hemiLight.position.set(0, 20, 0);
@@ -1558,6 +1563,20 @@
     spider.position.y = 0.75;
     scene.add(spider);
 
+    function onResize() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (height === 0) return; // Avoid division by zero
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+      controls.update();
+    }
+
+    window.addEventListener('resize', onResize);
+    onResize(); // initial sizing
+
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
@@ -1565,8 +1584,8 @@
     }
 
     animate();
-window.dispatchEvent(new Event('resize'));
   });
-  </script>
+</script>
+
 </body>
 </html>
