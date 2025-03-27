@@ -22,223 +22,1621 @@
   <!-- Preconnect to resources for faster loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://www.youtube.com">
   
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js and OrbitControls Scripts -->
-  <script defer src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js" 
-          id="three-js-script" 
-          onload="threeLoaded = true; checkScriptsLoaded();" 
-          onerror="console.error('Failed to load Three.js')"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/controls/OrbitControls.js" 
-          id="orbit-controls-script" 
-          onload="orbitControlsLoaded = true; checkScriptsLoaded();" 
-          onerror="console.error('Failed to load OrbitControls')"></script>
+  <!-- Add Three.js and OrbitControls scripts with defer and onload handlers -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js" id="three-js-script"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/examples/js/controls/OrbitControls.js" id="orbit-controls-script"></script>
 
   <style>
+    /* Modern CSS Variables for Enhanced Theming */
+    :root {
+      --primary: #0071e3;
+      --primary-dark: #005bb5;
+      --primary-light: #47a0ff;
+      --accent: #ffc107;
+      --accent-dark: #e6a800;
+      --accent-light: #ffdb66;
+      --success: #34c759;
+      --bg-white: #ffffff;
+      --bg-light: #f5f5f7;
+      --bg-dark: #000000;
+      --text-primary: #1d1d1f;
+      --text-secondary: #222222;
+      --text-light: #f5f5f7;
+      --border-light: rgba(0,0,0,0.1);
+      --card-shadow: 0 12px 24px rgba(0,0,0,0.08);
+      --transition-fast: 0.2s ease;
+      --transition: 0.3s ease;
+      --transition-slow: 0.5s ease;
+      --container-width: 1200px;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-xxl: 48px;
+      --team-width: 350px;
+    }
+    
+    /* Global Reset & Modern Font Stack */
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    html { 
+      scroll-behavior: smooth; 
+      font-size: 16px;
+    }
+    
     body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    .section {
-      padding: 40px 20px;
-      text-align: center;
-    }
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-    p {
-      font-size: 1.1rem;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      /* Use explicit rgba values and add Safari-specific prefixes */
+      background: 
+        -webkit-radial-gradient(top left, rgba(0,113,227,0.1), rgba(0,113,227,0) 70%),
+        -webkit-radial-gradient(bottom right, rgba(255,193,7,0.1), rgba(255,193,7,0) 70%),
+        -webkit-linear-gradient(135deg, var(--bg-white), var(--bg-light));
+      background: 
+        radial-gradient(circle at top left, rgba(0,113,227,0.1), rgba(0,113,227,0) 70%),
+        radial-gradient(circle at bottom right, rgba(255,193,7,0.1), rgba(255,193,7,0) 70%),
+        linear-gradient(135deg, var(--bg-white), var(--bg-light));
+      color: var(--text-primary);
       line-height: 1.6;
-      max-width: 800px;
-      margin: 0 auto 20px;
-    }
-    #arachnophobia-demo {
+      overflow-x: hidden;
       position: relative;
-      width: 100%;
-      max-width: 800px;
-      height: 500px;
-      margin: 20px auto;
-      background-color: #e0e0e0;
-      border-radius: 10px;
+      transition: background var(--transition);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Safari-specific background fix */
+    @media not all and (min-resolution:.001dpcm) { 
+      @supports (-webkit-appearance:none) {
+        body {
+          /* More intense colors for Safari */
+          background: 
+            -webkit-radial-gradient(top left, rgba(0,113,227,0.25), rgba(0,113,227,0) 70%),
+            -webkit-radial-gradient(bottom right, rgba(255,193,7,0.25), rgba(255,193,7,0) 70%),
+            -webkit-linear-gradient(135deg, #ffffff, #f5f5f7) !important;
+          /* Add a more pronounced color wash for Safari */
+          position: relative;
+        }
+        
+        /* Additional Safari-only overlay to ensure gradient visibility */
+        body:before {
+          content: "";
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            -webkit-radial-gradient(20% 20%, rgba(0,113,227,0.15), rgba(0,113,227,0) 60%),
+            -webkit-radial-gradient(80% 80%, rgba(255,193,7,0.15), rgba(255,193,7,0) 60%);
+          pointer-events: none;
+          z-index: -1;
+        }
+        
+        /* Make tech symbols more visible in Safari */
+        .tech-symbol {
+          opacity: 0.9;
+          -webkit-filter: blur(20px); /* Less blur for Safari */
+        }
+        
+        #tech-symbol-1 {
+          background: -webkit-radial-gradient(circle, rgba(0,113,227,0.6), rgba(0,113,227,0) 70%);
+        }
+        
+        #tech-symbol-2 {
+          background: -webkit-radial-gradient(circle, rgba(255,193,7,0.6), rgba(255,193,7,0) 70%);
+        }
+        
+        #tech-symbol-3 {
+          background: -webkit-radial-gradient(circle, rgba(76,175,80,0.6), rgba(76,175,80,0) 70%);
+        }
+      }
+    }
+    
+    a { 
+      text-decoration: none; 
+      color: var(--primary);
+      transition: color var(--transition-fast), transform var(--transition-fast);
+      -webkit-transition: color var(--transition-fast), -webkit-transform var(--transition-fast);
+      position: relative;
+    }
+    
+    a:hover {
+      color: var(--primary-dark);
+    }
+    
+    /* Focus state for better accessibility */
+    a:focus, button:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+    }
+    
+    /* Typography Refinement */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: var(--space-md);
+    }
+    
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: var(--space-lg);
+      background: -webkit-linear-gradient(90deg, var(--primary), var(--accent));
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.2;
+    }
+    
+    /* Safari fallback for gradient text */
+    @media not all and (min-resolution:.001dpcm) { 
+      @supports (-webkit-appearance:none) {
+        h1 {
+          color: var(--primary);
+        }
+      }
+    }
+    
+    h2 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: var(--space-lg);
+    }
+    
+    h3 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+    }
+    
+    p {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: #000000;
+      margin-bottom: var(--space-lg);
+      font-weight: 400;
+    }
+    
+    /* Properly styled bullet points */
+    ul {
+      list-style-type: none;
+      margin: var(--space-xl) auto;
+      max-width: 600px;
+      padding: 0;
+      text-align: left;
+    }
+    
+    li {
+      font-size: 1.125rem;
+      color: #000000;
+      margin-bottom: 10px;
+      padding-left: 25px;
+      position: relative;
+      text-align: left;
+      font-weight: 400;
+    }
+    
+    li:before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    
+    /* Animations with Safari-specific prefixes */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      -webkit-transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+      -webkit-animation: fadeInUp 1s forwards;
+      will-change: opacity, transform;
+    }
+    
+    @keyframes fadeInUp { 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    
+    @-webkit-keyframes fadeInUp { 
+      to { opacity: 1; -webkit-transform: translateY(0); } 
+    }
+    
+    .delay-1 { 
+      animation-delay: 0.5s; 
+      -webkit-animation-delay: 0.5s; 
+    }
+    .delay-2 { 
+      animation-delay: 1s; 
+      -webkit-animation-delay: 1s; 
+    }
+    .delay-3 { 
+      animation-delay: 1.5s; 
+      -webkit-animation-delay: 1.5s; 
+    }
+    
+    /* Enhanced Micro-interactions */
+    .btn {
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      -webkit-transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      position: relative;
       overflow: hidden;
     }
+    
+    .btn:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+      -webkit-transition: -webkit-transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    
+    .btn:hover:after {
+      transform: translateX(0);
+      -webkit-transform: translateX(0);
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      -webkit-transform: translateY(-3px);
+      box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn:active {
+      transform: translateY(-1px);
+      -webkit-transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Enhanced Card Design */
+    .card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+      box-shadow: var(--card-shadow);
+      transition: transform var(--transition), box-shadow var(--transition);
+      -webkit-transition: -webkit-transform var(--transition), box-shadow var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      height: 100%;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      -webkit-transform: translateY(-5px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Mobile-friendly Navigation */
+    .navbar {
+      position: fixed;
+      top: 0; 
+      left: 0; 
+      right: 0;
+      background: rgba(250,250,250,0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: center;
+      border-bottom: 0.5px solid rgba(0,0,0,0.03);
+      z-index: 1000;
+      animation: fadeInDown 1s forwards;
+      -webkit-animation: fadeInDown 1s forwards;
+      will-change: transform, opacity;
+      transition: all var(--transition);
+    }
+    
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .navbar a {
+      font-size: 15px;
+      font-weight: 400;
+      padding: 10px 15px;
+      letter-spacing: 1px;
+      transition: color 0.3s ease, transform 0.2s ease;
+      -webkit-transition: color 0.3s ease, -webkit-transform 0.2s ease;
+      color: inherit;
+    }
+    
+    .navbar a:hover { 
+      color: var(--primary); 
+      transform: translateY(-2px); 
+      -webkit-transform: translateY(-2px); 
+    }
+    
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      width: 30px;
+      height: 20px;
+      position: relative;
+      margin-left: auto;
+    }
+    
+    .hamburger span {
+      display: block;
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      background: var(--text-primary);
+      border-radius: 2px;
+      opacity: 1;
+      left: 0;
+      transform: rotate(0deg);
+      transition: .25s ease-in-out;
+    }
+    
+    .hamburger span:nth-child(1) {
+      top: 0px;
+    }
+    
+    .hamburger span:nth-child(2), .hamburger span:nth-child(3) {
+      top: 9px;
+    }
+    
+    .hamburger span:nth-child(4) {
+      top: 18px;
+    }
+    
+    .hamburger.open span:nth-child(1) {
+      top: 9px;
+      width: 0%;
+      left: 50%;
+    }
+    
+    .hamburger.open span:nth-child(2) {
+      transform: rotate(45deg);
+    }
+    
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg);
+    }
+    
+    .hamburger.open span:nth-child(4) {
+      top: 9px;
+      width: 0%;
+      left: 50%;
+    }
+    
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @-webkit-keyframes fadeInDown {
+      from { opacity: 0; -webkit-transform: translateY(-20px); }
+      to { opacity: 1; -webkit-transform: translateY(0); }
+    }
+    
+    /* Main Content Layout */
+    .container {
+      max-width: 1200px;
+      margin: 140px auto 80px;
+      padding: 40px;
+      background: var(--bg-white);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+      -webkit-transition: -webkit-transform 0.3s ease;
+    }
+    
+    /* Hero Section with Original Logo Implementation */
+    .hero-section { 
+      margin-bottom: 60px;
+      text-align: center;
+    }
+    
+    /* IMPORTANT: Keeping the original logo container and hover effect */
+    .hero-logo { 
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .hero-logo img { 
+      max-width: 200px; 
+      width: 200px; /* Explicit width for Safari */
+      height: auto;
+      margin-bottom: 20px; 
+      transition: transform 0.3s ease; 
+      -webkit-transition: -webkit-transform 0.3s ease; 
+    }
+    
+    .hero-logo img:hover { 
+      transform: scale(1.05); 
+      -webkit-transform: scale(1.05); 
+    }
+    
+    /* Video Container Enhancements - optimized for Safari */
+    .intro-video, .demo-video {
+      margin: var(--space-xxl) 0;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    iframe {
+      max-width: 100%;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      aspect-ratio: 16/9;
+      width: 100%;
+      /* Explicit fallback for Safari */
+      height: 500px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    iframe:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    /* Section Styling */
+    .section {
+      padding: 60px 20px;
+      position: relative;
+      text-align: center;
+    }
+    
+    .section:last-child { 
+      border-bottom: none; 
+    }
+    
+    .dark-section { 
+      background-color: var(--bg-dark); 
+      color: var(--text-light); 
+    }
+    
+    .dark-section h2, 
+    .dark-section p { 
+      color: var(--text-light); 
+    }
+    
+    .dark-section li { 
+      color: rgba(255, 255, 255, 0.9); 
+    }
+    
+    .dark-section li:before {
+      background: var(--accent);
+    }
+    
+    /* Text alignment for paragraphs in sections */
+    .section p {
+      text-align: center;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* Team Section - optimized for Safari */
+    .team-members { 
+      display: flex; 
+      justify-content: center; 
+      flex-wrap: wrap; 
+      margin-top: 30px;
+      gap: 40px;
+    }
+    
+    .team-member { 
+      flex: 0 1 var(--team-width); 
+      max-width: var(--team-width);
+      margin-bottom: 40px; 
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .team-member img {
+      width: 120px; 
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+      -webkit-transition: -webkit-transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    /* Răzvan's image cropped to focus on head, neck, and shoulders */
+    .razvi-img { 
+      object-fit: cover; 
+      object-position: 50% 55%; 
+    }
+    
+    .team-member img:hover { 
+      transform: scale(1.05); 
+      -webkit-transform: scale(1.05); 
+    }
+    
+    .team-member h3 { 
+      font-size: 1.5rem; 
+      margin-bottom: 5px; 
+    }
+    
+    .team-member p { 
+      font-size: 0.95rem; 
+      line-height: 1.4; 
+    }
+    
+    /* Role Label Styling */
+    .role {
+      font-size: 0.85rem;
+      color: #555555;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    /* Download Button Styling - Safari optimized */
+    .download-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff !important;
+      padding: 14px 28px;
+      margin: 20px 0;
+      border-radius: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      -webkit-transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .download-btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+      z-index: -1;
+    }
+    
+    .download-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      -webkit-transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
+      color: #fff !important;
+      text-decoration: none;
+    }
+    
+    .download-btn:hover:before {
+      transform: translateX(0);
+    }
+    
+    .download-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 8px rgba(0, 113, 227, 0.2);
+    }
+    
+    /* Contact Section */
+    .contact-section {
+      text-align: center;
+    }
+    
+    .contact-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .contact-email {
+      flex: 0 1 var(--team-width);
+      max-width: var(--team-width);
+      margin: 10px 0;
+    }
+    
+    .contact-email h3 {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+    
+    .contact-email p {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    
+    .contact-email a {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .contact-email a:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: var(--primary);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    
+    .contact-email a:hover:after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
+    /* Back to Top Button */
+    #back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      border: none;
+      padding: 12px 15px;
+      border-radius: 50px;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      -webkit-transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    #back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    #back-to-top:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      z-index: 1010;
+      transition: width 0.1s;
+    }
+    
+    /* Footer Styling */
+    .footer {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: var(--space-xxl) 0;
+      text-align: center;
+    }
+    
+    .footer-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin: var(--space-lg) 0;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      transition: color var(--transition-fast);
+      -webkit-transition: color var(--transition-fast);
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .copyright {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+    }
+    
+    /* Tech Symbols and Geometric Shapes - Safari optimized */
+    .tech-symbol {
+      position: fixed;
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(30px);
+      -webkit-filter: blur(30px);
+      animation: pulse 8s infinite ease-in-out;
+      -webkit-animation: pulse 8s infinite ease-in-out;
+      will-change: transform, opacity;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
+      50% { transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; }
+    }
+    
+    @-webkit-keyframes pulse {
+      0%, 100% { -webkit-transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
+      50% { -webkit-transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; }
+    }
+    
+    #tech-symbol-1 {
+      width: 150px; height: 150px;
+      background: -webkit-radial-gradient(circle, rgba(0,113,227,0.4), rgba(0,113,227,0) 70%);
+      background: radial-gradient(circle, rgba(0,113,227,0.4), rgba(0,113,227,0) 70%);
+      top: -50px; left: -50px;
+    }
+    
+    #tech-symbol-2 {
+      width: 200px; height: 200px;
+      background: -webkit-radial-gradient(circle, rgba(255,223,150,0.4), rgba(255,223,150,0) 70%);
+      background: radial-gradient(circle, rgba(255,223,150,0.4), rgba(255,223,150,0) 70%);
+      bottom: -70px; right: -70px;
+    }
+    
+    #tech-symbol-3 {
+      width: 100px; height: 100px;
+      background: -webkit-radial-gradient(circle, rgba(76,175,80,0.4), rgba(76,175,80,0) 70%);
+      background: radial-gradient(circle, rgba(76,175,80,0.4), rgba(76,175,80,0) 70%);
+      top: 20%; right: -50px;
+    }
+    
+    /* Arachnophobia Demo Container Styling */
+    #arachnophobia-demo {
+      width: 100%;
+      height: 600px;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #f5f5f7;
+      position: relative;
+      z-index: 1;
+    }
+    
     #loading-message {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 1.2rem;
-      color: #666;
+      color: #555;
+      font-size: 1rem;
     }
-    .team-member {
-      margin: 20px;
-      display: inline-block;
+    
+    /* Enhanced Responsive Styles for Mobile */
+    @media screen and (max-width: 1280px) {
+      .container {
+        max-width: 90%;
+        padding: 35px;
+      }
     }
-    .team-member img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
+    
+    @media screen and (max-width: 992px) {
+      .container {
+        padding: 30px;
+        margin: 120px auto 60px;
+      }
+      
+      .navbar {
+        padding: 15px 20px;
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      h2 {
+        font-size: 2rem;
+      }
+      
+      .team-members {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .team-member {
+        flex: 0 1 100%;
+        max-width: 400px;
+      }
+      
+      .contact-email {
+        flex: 0 1 100%;
+        max-width: 400px;
+      }
+      
+      iframe {
+        height: 400px;
+      }
+      
+      #arachnophobia-demo {
+        height: 500px;
+      }
     }
-    .contact-info {
-      margin: 20px;
+    
+    /* Tablet styles */
+    @media screen and (max-width: 768px) {
+      .container {
+        padding: 25px;
+        border-radius: 12px;
+        margin: 100px auto 40px;
+      }
+      
+      .navbar {
+        padding: 12px 20px;
+        justify-content: space-between;
+      }
+      
+      .hamburger {
+        display: block;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+      }
+      
+      .nav-links.open {
+        transform: translateY(0);
+      }
+      
+      .navbar a {
+        padding: 15px;
+        font-size: 16px;
+        width: 100%;
+        text-align: center;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      h2 {
+        font-size: 1.75rem;
+      }
+      
+      .section {
+        padding: 40px 15px;
+      }
+      
+      .hero-logo img {
+        max-width: 150px;
+        width: 150px;
+      }
+      
+      iframe {
+        height: 350px;
+      }
+      
+      #arachnophobia-demo {
+        height: 400px;
+      }
+      
+      #back-to-top {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 13px;
+      }
+    }
+    
+    /* Mobile styles */
+    @media screen and (max-width: 576px) {
+      .container {
+        padding: 20px;
+        margin: 80px auto 30px;
+        border-radius: 10px;
+      }
+      
+      .navbar {
+        padding: 10px 15px;
+      }
+      
+      .navbar a {
+        padding: 12px 0;
+        font-size: 15px;
+      }
+      
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: var(--space-md);
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: var(--space-md);
+      }
+      
+      h3 {
+        font-size: 1.25rem;
+      }
+      
+      p, li {
+        font-size: 1rem;
+        margin-bottom: var(--space-md);
+      }
+      
+      .hero-logo img {
+        max-width: 120px;
+        width: 120px;
+      }
+      
+      .section {
+        padding: 30px 15px;
+      }
+      
+      iframe {
+        height: 200px;
+      }
+      
+      #arachnophobia-demo {
+        height: 300px;
+      }
+      
+      .download-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+      
+      ul {
+        margin: var(--space-lg) auto;
+      }
+      
+      li {
+        padding-left: 20px;
+        margin-bottom: 8px;
+      }
+      
+      .team-member img, .razvi-img {
+        width: 100px;
+        height: 100px;
+      }
+      
+      #back-to-top {
+        bottom: 15px;
+        right: 15px;
+        padding: 8px 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- About Section -->
-  <section class="section" id="about" aria-labelledby="about-title">
-    <h2 id="about-title">About Synaeon</h2>
-    <p>Synaeon is at the forefront of mental health innovation, leveraging AI and VR to create immersive, adaptive exposure therapy experiences. Our mission is to make mental health treatment more accessible, effective, and engaging.</p>
-  </section>
-
-  <!-- The Problem Section -->
-  <section class="section" id="problem" aria-labelledby="problem-title">
-    <h2 id="problem-title">The Problem</h2>
-    <p>Traditional exposure therapy relies heavily on imagination or static scenarios, which can limit engagement and effectiveness. Many patients struggle with immersion, leading to high dropout rates and suboptimal outcomes.</p>
-  </section>
-
-  <!-- Solution Section -->
-  <section class="section" id="solution" aria-labelledby="solution-title">
-    <h2 id="solution-title">Our Solution</h2>
-    <p>Synaeon’s AI-powered VR therapy creates dynamic, real-time environments that adapt to therapist input and patient biofeedback. This ensures a personalized, immersive experience that enhances engagement and therapeutic outcomes.</p>
-  </section>
-
-  <!-- How It Works Section -->
-  <section class="section" id="how-it-works" aria-labelledby="how-it-works-title">
-    <h2 id="how-it-works-title">How It Works</h2>
-    <p>Therapists use our platform to generate VR scenarios based on their guidance, while real-time biofeedback from the patient allows for dynamic adjustments. The system learns and adapts, making each session more effective.</p>
-  </section>
-
-  <!-- Technology Section -->
-  <section class="section" id="technology" aria-labelledby="technology-title">
-    <h2 id="technology-title">Technology</h2>
-    <p>Our platform leverages speech-to-video AI to transform spoken words into immersive 360° VR environments. Integrated biofeedback and cloud analytics support leading VR devices like Meta Quest and HTC Vive.</p>
-  </section>
-
-  <!-- Try It Yourself Section -->
-  <section class="section" id="try-it-yourself" aria-labelledby="try-title">
-    <h2 id="try-title">Try It Yourself – Experience Exposure</h2>
-    <p>Start your journey through exposure therapy by interacting with a 3D environment. This is Level 1 for Arachnophobia – a spider safely enclosed in a jar.</p>
-    <div id="arachnophobia-demo">
-      <div id="loading-message">Loading 3D Simulation...</div>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+  
+  <!-- Tech Symbols -->
+  <div class="tech-symbol" id="tech-symbol-1"></div>
+  <div class="tech-symbol" id="tech-symbol-2"></div>
+  <div class="tech-symbol" id="tech-symbol-3"></div>
+  
+  <!-- Back to Top Button -->
+  <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
+  
+  <!-- Navbar with Hamburger Menu (No Logo) -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
+    <div class="hamburger" id="hamburger-menu" aria-label="Menu Toggle" role="button" tabindex="0" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
-    <p style="font-size: 0.9rem; margin-top: 1rem; color: gray;">Click the fullscreen icon in the corner to expand the experience. You can zoom, rotate, and pan to explore the scene.</p>
-  </section>
-
-  <!-- Market Section -->
-  <section class="section" id="market" aria-labelledby="market-title">
-    <h2 id="market-title">Market Opportunity</h2>
-    <p>The global VR therapy market is valued at $11.3B with a projected 34% CAGR. With over 4.4M therapists worldwide, Synaeon is positioned to capture a significant share, especially in Europe and North America.</p>
-  </section>
-
-  <!-- Business Model Section -->
-  <section class="section" id="business" aria-labelledby="business-title">
-    <h2 id="business-title">Business Model</h2>
-    <p>Synaeon operates on a B2B SaaS model with hardware bundling, offering pre-configured VR headsets and smartwatches. We’re seeking $500K in pre-seed funding to accelerate development and market validation.</p>
-  </section>
-
-  <!-- Team Section -->
-  <section class="section" id="team" aria-labelledby="team-title">
-    <h2 id="team-title">Meet the Team</h2>
-    <div class="team-member">
-      <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="100" height="100">
-      <h3>Matei Seleușan</h3>
-      <p>CEO - Biomedical expert with clinical insights and personal experience in exposure therapy.</p>
+    
+    <div class="nav-links" id="nav-links">
+      <a href="#about">About</a>
+      <a href="#problem">The Problem</a>
+      <a href="#solution">Our Solution</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#technology">Technology</a>
+      <a href="#try-it-yourself">Try It Yourself</a>
+      <a href="#market">Market</a>
+      <a href="#business">Business Model</a>
+      <a href="#team">Team</a>
+      <a href="#contact">Contact</a>
     </div>
-    <div class="team-member">
-      <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="100" height="100">
-      <h3>Răzvan Crețu</h3>
-      <p>CTO - Hardware and AI integration specialist with a background in robotics and sensor fusion.</p>
+  </nav>
+  
+  <!-- Main Content -->
+  <main class="container fade-in" id="pitch-content" role="main">
+    <!-- Hero Section -->
+    <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
+      <!-- IMPORTANT: Using the exact same hero-logo implementation from original site -->
+      <div class="hero-logo">
+        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" width="200" height="auto" loading="eager">
+      </div>
+      <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <!-- Download Button -->
+      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">
+        Download Pitch Presentation
+      </a>
+      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
+      <!-- Intro Video Block -->
+      <div class="intro-video fade-in delay-2">
+        <h2>Who Are We? What's Our Mission?</h2>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <!-- Demo Video Block -->
+      <div class="demo-video fade-in delay-3">
+        <h2>Demo</h2>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </section>
+    
+    <!-- About Our Vision -->
+    <section class="section fade-in" id="about" aria-labelledby="about-title">
+      <h2 id="about-title">About Our Vision</h2>
+      <p>
+        Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
+      </p>
+    </section>
+    
+    <!-- The Problem Section -->
+    <section class="section fade-in" id="problem" aria-labelledby="problem-title">
+      <h2 id="problem-title">The Problem – Therapy Needs to Evolve</h2>
+      <p>
+        Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios - limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
+      </p>
+      <ul>
+        <li>Low immersion and engagement.</li>
+        <li>Inability to adjust therapy in real time.</li>
+        <li>Heavy reliance on imagination or static media.</li>
+      </ul>
+    </section>
+    
+    <!-- Our Solution Section -->
+    <section class="section fade-in dark-section" id="solution" aria-labelledby="solution-title">
+      <h2 id="solution-title">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+      <p>
+        We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback - ensuring every session is personalized for maximum impact.
+      </p>
+      <ul>
+        <li>Dynamic, AI-generated VR environments.</li>
+        <li>Real-time biofeedback integration.</li>
+        <li>Comprehensive clinical control via a dedicated dashboard.</li>
+      </ul>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section class="section fade-in" id="how-it-works" aria-labelledby="how-it-works-title">
+      <h2 id="how-it-works-title">How It Works</h2>
+      <ul>
+        <li>The therapist launches the software on a compatible VR headset.</li>
+        <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
+        <li>The AI listens to the therapist's guidance and generates an interactive VR environment.</li>
+        <li>Real-time biofeedback allows for dynamic session adjustments.</li>
+        <li>The system learns and adapts, personalizing future sessions.</li>
+      </ul>
+    </section>
+    
+    <!-- Technology Section -->
+    <section class="section fade-in" id="technology" aria-labelledby="technology-title">
+      <h2 id="technology-title">Technology</h2>
+      <p>
+        Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
+      </p>
+    </section>
+    
+    <!-- Try It Yourself Section: Arachnophobia Level 1 -->
+    <section class="section fade-in" id="try-it-yourself" aria-labelledby="try-title">
+      <h2 id="try-title">Try It Yourself – Experience Exposure</h2>
+      <p>Start your journey through exposure therapy by interacting with a 3D environment. This is Level 1 for Arachnophobia – a spider safely enclosed in a jar.</p>
+      <div id="arachnophobia-demo">
+        <div id="loading-message">Loading 3D Simulation...</div>
+      </div>
+      <p style="font-size: 0.9rem; margin-top: 1rem; color: gray;">Click the fullscreen icon in the corner to expand the experience. You can zoom, rotate, and pan to explore the scene.</p>
+    </section>
+    
+    <!-- Market Opportunity Section -->
+    <section class="section fade-in" id="market" aria-labelledby="market-title">
+      <h2 id="market-title">Market Opportunity</h2>
+      <p>
+        With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.
+      </p>
+    </section>
+    
+    <!-- Business Model & Funding Section -->
+    <section class="section fade-in dark-section" id="business" aria-labelledby="business-title">
+      <h2 id="business-title">Business Model & Funding</h2>
+      <p>
+        Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
+      </p>
+      <ul>
+        <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
+        <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
+        <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
+      </ul>
+    </section>
+    
+    <!-- Team Section -->
+    <section class="section fade-in" id="team" aria-labelledby="team-title">
+      <h2 id="team-title">Meet the Team</h2>
+      <div class="team-members">
+        <div class="team-member">
+          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
+          <h3>Matei Seleușan</h3>
+          <p class="role">CEO</p>
+          <p>
+            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
+          </p>
+        </div>
+        <div class="team-member">
+          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120" loading="lazy">
+          <h3>Răzvan Crețu</h3>
+          <p class="role">CTO</p>
+          <p>
+            Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
+          </p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section class="section fade-in" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact Us</h2>
+      <div class="contact-container">
+        <div class="contact-email">
+          <h3>Matei Seleușan</h3>
+          <p>
+            <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
+          </p>
+        </div>
+        <div class="contact-email">
+          <h3>Răzvan Crețu</h3>
+          <p>
+            <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a>
+          </p>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+  
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-container">
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#technology">Technology</a>
+        <a href="#team">Team</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
     </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section class="section" id="contact" aria-labelledby="contact-title">
-    <h2 id="contact-title">Contact Us</h2>
-    <div class="contact-info">
-      <p><a href="mailto:mateiseleusan@gmail.com">Matei Seleușan</a></p>
-      <p><a href="mailto:razvanmihaicretu@gmail.com">Răzvan Crețu</a></p>
-    </div>
-  </section>
-
-  <!-- Main Script for Simulation -->
-  <script>
-    // Script loading flags
-    let threeLoaded = false;
-    let orbitControlsLoaded = false;
-
-    // Check if both scripts are loaded before initializing
-    function checkScriptsLoaded() {
-      if (threeLoaded && orbitControlsLoaded) {
-        initSpiderDemo();
+  </footer>
+  
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Synaeon",
+      "url": "https://synaeon.com",
+      "logo": "https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg",
+      "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
+      "founder": [
+        {
+          "@type": "Person",
+          "name": "Matei Seleușan",
+          "jobTitle": "CEO",
+          "email": "mateiseleusan@gmail.com"
+        },
+        {
+          "@type": "Person",
+          "name": "Răzvan Crețu",
+          "jobTitle": "CTO",
+          "email": "razvanmihaicretu@gmail.com"
+        }
+      ],
+      "foundingDate": "2025",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "Romania"
       }
     }
-
-    // Fallback if scripts don’t load within 10 seconds
-    setTimeout(() => {
-      if (!threeLoaded || !orbitControlsLoaded) {
-        const container = document.getElementById('arachnophobia-demo');
-        if (container) {
-          container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D simulation libraries after multiple attempts. Please check your network connection and try again.</p>';
+  </script>
+  
+  <script>
+    // Throttle function to limit how often certain events fire
+    function throttle(func, limit) {
+      let inThrottle;
+      return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
         }
+      };
+    }
+    
+    // Debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+    
+    // Back to Top Button Functionality with throttling
+    function updateBackToTopButton() {
+      const btn = document.getElementById('back-to-top');
+      if (window.pageYOffset > 300) {
+        btn.classList.add('show');
+      } else {
+        btn.classList.remove('show');
       }
-    }, 10000);
+    }
+    
+    // Update scroll progress bar
+    function updateScrollProgress() {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("scroll-progress").style.width = scrolled + "%";
+    }
+    
+    // Combine scroll handlers with throttling
+    window.addEventListener('scroll', throttle(function() {
+      updateBackToTopButton();
+      updateScrollProgress();
+    }, 100));
+    
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // Use Intersection Observer for fade-in animations instead of scroll events
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
+      
+      // Create the observer with options
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          // Add the active class if element is intersecting
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.webkitTransform = "translateY(0)";
+            // Once animated, no need to observe anymore
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        root: null, // viewport
+        threshold: 0.1, // trigger when 10% of the element is visible
+        rootMargin: '0px 0px -50px 0px' // slight offset to trigger earlier
+      });
+      
+      // Start observing each element
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+      
+      // Initialize progress bar
+      updateScrollProgress();
+    });
+    
+    // Hamburger Menu Toggle with improved accessibility
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
+      
+      function toggleMenu() {
+        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', !isExpanded);
+        hamburger.classList.toggle('open');
+        navLinks.classList.toggle('open');
+      }
+      
+      hamburger.addEventListener('click', toggleMenu);
+      
+      // Enable keyboard navigation
+      hamburger.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+      
+      // Close menu when clicking on a link
+      const navItems = document.querySelectorAll('.nav-links a');
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.classList.remove('open');
+          navLinks.classList.remove('open');
+        });
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        const isClickInsideMenu = navLinks.contains(event.target);
+        const isClickOnHamburger = hamburger.contains(event.target);
+        
+        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
+      });
+    });
+    
+    // Better image loading with error handling
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('img');
+      
+      images.forEach(img => {
+        img.addEventListener('error', function() {
+          console.error(`Failed to load image: ${img.src}`);
+          // Fallback behavior - add a placeholder or class
+          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
+          img.classList.add('image-load-error');
+        });
+      });
+    });
+    
+    // Preload team images to avoid layout shifts
+    window.addEventListener('load', function() {
+      const teamImages = document.querySelectorAll('.team-member img');
+      teamImages.forEach(img => {
+        const src = img.getAttribute('src');
+        if (src) {
+          const preloadLink = document.createElement('link');
+          preloadLink.href = src;
+          preloadLink.rel = 'preload';
+          preloadLink.as = 'image';
+          document.head.appendChild(preloadLink);
+        }
+      });
+    });
+    
+    // Safari-specific fixes
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if browser is Safari
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
+      if (isSafari) {
+        // Force repaint on Safari to fix potential rendering issues
+        document.body.style.display = 'inline-block';
+        setTimeout(function() {
+          document.body.style.display = '';
+        }, 10);
+        
+        // Ensure gradient text works in Safari
+        const h1Elements = document.querySelectorAll('h1');
+        h1Elements.forEach(function(h1) {
+          h1.style.webkitBackgroundClip = 'text';
+          h1.style.webkitTextFillColor = 'transparent';
+        });
+        
+        // Create additional gradient elements specifically for Safari
+        const gradientOverlay = document.createElement('div');
+        gradientOverlay.style.position = 'fixed';
+        gradientOverlay.style.top = '0';
+        gradientOverlay.style.left = '0';
+        gradientOverlay.style.width = '100%';
+        gradientOverlay.style.height = '100%';
+        gradientOverlay.style.background = 'linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(255,193,7,0.08) 100%)';
+        gradientOverlay.style.pointerEvents = 'none';
+        gradientOverlay.style.zIndex = '-1';
+        document.body.appendChild(gradientOverlay);
+      }
+    });
+    
+    // Fix viewport height issue on mobile browsers
+    function setMobileHeight() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    window.addEventListener('resize', debounce(setMobileHeight, 100));
+    window.addEventListener('orientationchange', setMobileHeight);
+    setMobileHeight();
+    
+    // Error handling for critical operations
+    window.addEventListener('error', function(e) {
+      console.error('Global error handler:', e.message);
+      // Could implement a more sophisticated error tracking system here
+    });
+  </script>
 
-    // Initialize the 3D simulation
+  <!-- Three.js Script for Arachnophobia Demo (Wait for Scripts to Load) -->
+  <script>
+    // Function to check if scripts are loaded
+    function waitForScripts(callback, maxAttempts = 10, interval = 500) {
+      let attempts = 0;
+      const checkScripts = setInterval(() => {
+        attempts++;
+        console.log(`Checking if scripts are loaded (Attempt ${attempts}/${maxAttempts})...`);
+        
+        if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls !== 'undefined') {
+          console.log('Three.js and OrbitControls loaded successfully.');
+          clearInterval(checkScripts);
+          callback();
+        } else if (attempts >= maxAttempts) {
+          console.error('Failed to load Three.js and/or OrbitControls after maximum attempts.');
+          clearInterval(checkScripts);
+          const container = document.getElementById('arachnophobia-demo');
+          if (container) {
+            container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D simulation libraries after multiple attempts. Please check your network connection and try again.</p>';
+          }
+        }
+      }, interval);
+    }
+
+    // Initialize the demo only after scripts are loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM fully loaded, waiting for Three.js and OrbitControls to load...');
+      waitForScripts(() => {
+        console.log('Initializing spider demo...');
+        initSpiderDemo();
+      });
+    });
+
     function initSpiderDemo() {
+      // Get the container
       const container = document.getElementById('arachnophobia-demo');
-      if (!container) return;
-
-      // Check if Three.js is loaded
-      if (typeof THREE === 'undefined') {
-        console.error('Three.js is not loaded.');
-        container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load Three.js library. Please check your network connection and try again.</p>';
+      if (!container) {
+        console.error('Container not found: #arachnophobia-demo');
         return;
       }
 
-      // Check if OrbitControls is loaded
+      // Ensure container is visible and properly styled
+      container.style.position = 'relative';
+      container.style.zIndex = '1';
+
+      // Check if THREE is loaded (redundant due to waitForScripts, but kept for safety)
+      if (typeof THREE === 'undefined') {
+        container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load Three.js library. Please check your network connection and try again.</p>';
+        console.error('Three.js is not loaded.');
+        return;
+      }
+
+      // Check if OrbitControls is loaded (redundant due to waitForScripts, but kept for safety)
       if (typeof THREE.OrbitControls === 'undefined') {
-        console.error('OrbitControls is not loaded.');
         container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load OrbitControls library. Please check your network connection and try again.</p>';
+        console.error('OrbitControls is not loaded.');
+        return;
+      }
+
+      // Check for WebGL support
+      console.log('Checking WebGL support...');
+      if (!window.WebGLRenderingContext) {
+        container.innerHTML = '<p style="padding: 20px; text-align: center;">Your browser does not support WebGL. Please try a different browser.</p>';
+        console.error('WebGL not supported: window.WebGLRenderingContext is not available.');
+        return;
+      }
+
+      let gl;
+      try {
+        const canvas = document.createElement('canvas');
+        gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) {
+          throw new Error('WebGL context could not be created.');
+        }
+        console.log('WebGL supported:', gl);
+      } catch (e) {
+        container.innerHTML = '<p style="padding: 20px; text-align: center;">WebGL initialization failed. This may be due to hardware, browser settings, or driver issues. Please try a different browser.</p>';
+        console.error('WebGL Error:', e);
         return;
       }
 
       // Hide loading message
       const loadingMessage = document.getElementById('loading-message');
-      if (loadingMessage) loadingMessage.style.display = 'none';
+      if (loadingMessage) {
+        loadingMessage.style.display = 'none';
+      } else {
+        console.warn('Loading message element not found.');
+      }
 
       // Create the scene
+      console.log('Creating Three.js scene...');
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xf0f0f0);
 
       // Set up the camera
+      console.log('Setting up camera...');
       const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
       camera.position.set(0, 1.5, 3);
       camera.lookAt(0, 0.75, 0);
 
       // Set up the renderer
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      container.appendChild(renderer.domElement);
+      console.log('Setting up renderer...');
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0xf0f0f0, 1);
+        container.appendChild(renderer.domElement);
+        console.log('Renderer initialized successfully:', renderer);
+        // Ensure canvas is visible
+        renderer.domElement.style.position = 'absolute';
+        renderer.domElement.style.top = '0';
+        renderer.domElement.style.left = '0';
+        renderer.domElement.style.width = '100%';
+        renderer.domElement.style.height = '100%';
+        renderer.domElement.style.zIndex = '2';
+      } catch (e) {
+        container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to initialize WebGL renderer. Please check your browser settings or try a different browser.</p>';
+        console.error('Renderer Error:', e);
+        return;
+      }
 
       // Add controls for interaction
-      const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0.75, 0);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.minDistance = 1.5;
-      controls.maxDistance = 8;
-      controls.update();
+      console.log('Setting up OrbitControls...');
+      let controls;
+      try {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 0.75, 0);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 1.5;
+        controls.maxDistance = 8;
+        controls.update();
+        console.log('OrbitControls initialized successfully.');
+      } catch (e) {
+        console.error('OrbitControls Error:', e);
+      }
 
       // Add basic lighting
+      console.log('Adding lighting...');
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
       scene.add(ambientLight);
 
@@ -246,13 +1644,15 @@
       dirLight.position.set(5, 10, 5);
       scene.add(dirLight);
 
-      // Create glass jar (simplified)
+      // Create glass jar (simplified material)
+      console.log('Creating glass jar...');
       const glassMat = new THREE.MeshBasicMaterial({
         color: 0xaaaaaa,
         transparent: true,
         opacity: 0.3,
         side: THREE.DoubleSide,
       });
+
       const jar = new THREE.Mesh(
         new THREE.CylinderGeometry(0.8, 0.8, 1.5, 32, 1, true),
         glassMat
@@ -261,6 +1661,7 @@
       scene.add(jar);
 
       // Add jar lid
+      console.log('Adding jar lid...');
       const lid = new THREE.Mesh(
         new THREE.CircleGeometry(0.8, 32),
         new THREE.MeshBasicMaterial({ color: 0x666666 })
@@ -270,6 +1671,7 @@
       scene.add(lid);
 
       // Create spider
+      console.log('Creating spider...');
       const spider = new THREE.Group();
 
       // Spider body
@@ -294,9 +1696,11 @@
           new THREE.CylinderGeometry(0.02, 0.01, 0.5, 8),
           new THREE.MeshBasicMaterial({ color: 0x333333 })
         );
+
         const angle = (Math.PI / 4) * (i % 4);
         const xDir = Math.cos(angle) * 0.25;
         const zDir = Math.sin(angle) * 0.25;
+
         leg.position.set(xDir, 0.2, zDir);
         leg.rotation.z = (i < 4 ? 0.8 : -0.8);
         leg.rotation.y = angle + (i < 4 ? 0 : Math.PI);
@@ -307,17 +1711,21 @@
       scene.add(spider);
 
       // Handle window resize
+      console.log('Setting up resize handler...');
       function onResize() {
         const width = container.clientWidth;
         const height = container.clientHeight;
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
         renderer.setSize(width, height);
+        console.log('Resized renderer to:', width, 'x', height);
       }
+
       window.addEventListener('resize', onResize);
       onResize();
 
       // Simple spider animation
+      console.log('Setting up spider animation...');
       function animateSpider() {
         const time = Date.now() * 0.001;
         spider.rotation.y = Math.sin(time) * 0.1;
@@ -325,17 +1733,34 @@
       }
 
       // Render loop
+      console.log('Starting render loop...');
+      let isRendering = false;
       function animate() {
-        requestAnimationFrame(animate);
-        animateSpider();
-        controls.update();
-        renderer.render(scene, camera);
+        try {
+          requestAnimationFrame(animate);
+          animateSpider();
+          if (controls) controls.update();
+          renderer.render(scene, camera);
+          if (!isRendering) {
+            console.log('First successful render!');
+            isRendering = true;
+          }
+        } catch (e) {
+          console.error('Render Error:', e);
+          container.innerHTML = '<p style="padding: 20px; text-align: center;">Rendering failed. Please check the console for details.</p>';
+        }
       }
 
       // Start the animation
-      animate();
+      try {
+        animate();
+      } catch (e) {
+        console.error('Animation Start Error:', e);
+        container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to start animation. Please check the console for details.</p>';
+      }
 
-      // Add fullscreen button
+      // Add a fullscreen button
+      console.log('Adding fullscreen button...');
       const fullscreenButton = document.createElement('button');
       fullscreenButton.textContent = '⛶';
       fullscreenButton.style.position = 'absolute';
