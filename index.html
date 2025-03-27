@@ -1153,10 +1153,11 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0.75, 0); // ✅ Now works
 controls.update();
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
+    const container = document.getElementById('arachnophobia-demo');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
 
     // Responsive
     window.addEventListener('resize', () => {
@@ -1182,19 +1183,30 @@ controls.update();
     ground.position.y = 0;
     scene.add(ground);
 
+    const debugBox = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshStandardMaterial({ color: 0xff0000 })
+);
+debugBox.position.y = 0.5;
+scene.add(debugBox);
+
     // Jar (cylinder + glass material)
     const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      metalness: 0,
-      roughness: 0,
-      transmission: 1,
-      transparent: true,
-      opacity: 0.6,
-      thickness: 0.2,
-      side: THREE.DoubleSide,
-      clearcoat: 1,
-      clearcoatRoughness: 0.05,
-    });
+  color: 0xffffff,
+  metalness: 0,
+  roughness: 0,
+  transmission: 1, // this needs WebGLRenderer with `renderer.outputEncoding` and `toneMapping`
+  transparent: true,
+  opacity: 0.6,
+  thickness: 0.2,
+  side: THREE.DoubleSide,
+  clearcoat: 1,
+  clearcoatRoughness: 0.05,
+});
+    renderer.physicallyCorrectLights = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
 
     const jar = new THREE.Mesh(
       new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 1, true),
