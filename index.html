@@ -26,12 +26,19 @@
   <link rel="preconnect" href="https://raw.githubusercontent.com">
   <link rel="preconnect" href="https://www.youtube.com">
   <link rel="dns-prefetch" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Add Three.js and OrbitControls scripts with defer and onload handlers -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js" id="three-js-script"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/examples/js/controls/OrbitControls.js" id="orbit-controls-script"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js" 
+          id="three-js-script" 
+          onload="threeLoaded = true; checkScriptsLoaded();" 
+          onerror="console.error('Failed to load Three.js')"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/controls/OrbitControls.js" 
+          id="orbit-controls-script" 
+          onload="orbitControlsLoaded = true; checkScriptsLoaded();" 
+          onerror="console.error('Failed to load OrbitControls')"></script>
 
   <style>
     /* Modern CSS Variables for Enhanced Theming */
@@ -1496,38 +1503,31 @@
     });
   </script>
 
-  <!-- Three.js Script for Arachnophobia Demo (Wait for Scripts to Load) -->
+  <!-- Three.js Script for Arachnophobia Demo -->
   <script>
-    // Function to check if scripts are loaded
-    function waitForScripts(callback, maxAttempts = 10, interval = 500) {
-      let attempts = 0;
-      const checkScripts = setInterval(() => {
-        attempts++;
-        console.log(`Checking if scripts are loaded (Attempt ${attempts}/${maxAttempts})...`);
-        
-        if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls !== 'undefined') {
-          console.log('Three.js and OrbitControls loaded successfully.');
-          clearInterval(checkScripts);
-          callback();
-        } else if (attempts >= maxAttempts) {
-          console.error('Failed to load Three.js and/or OrbitControls after maximum attempts.');
-          clearInterval(checkScripts);
-          const container = document.getElementById('arachnophobia-demo');
-          if (container) {
-            container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D simulation libraries after multiple attempts. Please check your network connection and try again.</p>';
-          }
-        }
-      }, interval);
+    // Script loading flags
+    let threeLoaded = false;
+    let orbitControlsLoaded = false;
+
+    // Check if both scripts are loaded before initializing
+    function checkScriptsLoaded() {
+      console.log('Checking script load status:', { threeLoaded, orbitControlsLoaded });
+      if (threeLoaded && orbitControlsLoaded) {
+        console.log('Both scripts loaded, initializing spider demo...');
+        initSpiderDemo();
+      }
     }
 
-    // Initialize the demo only after scripts are loaded
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM fully loaded, waiting for Three.js and OrbitControls to load...');
-      waitForScripts(() => {
-        console.log('Initializing spider demo...');
-        initSpiderDemo();
-      });
-    });
+    // Fallback if scripts don’t load within 10 seconds
+    setTimeout(() => {
+      if (!threeLoaded || !orbitControlsLoaded) {
+        console.error('Timeout: Scripts failed to load within 10 seconds.', { threeLoaded, orbitControlsLoaded });
+        const container = document.getElementById('arachnophobia-demo');
+        if (container) {
+          container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D simulation libraries after multiple attempts. Please check your network connection and try again.</p>';
+        }
+      }
+    }, 10000);
 
     function initSpiderDemo() {
       // Get the container
@@ -1541,14 +1541,14 @@
       container.style.position = 'relative';
       container.style.zIndex = '1';
 
-      // Check if THREE is loaded (redundant due to waitForScripts, but kept for safety)
+      // Check if THREE is loaded
       if (typeof THREE === 'undefined') {
         container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load Three.js library. Please check your network connection and try again.</p>';
         console.error('Three.js is not loaded.');
         return;
       }
 
-      // Check if OrbitControls is loaded (redundant due to waitForScripts, but kept for safety)
+      // Check if OrbitControls is loaded
       if (typeof THREE.OrbitControls === 'undefined') {
         container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load OrbitControls library. Please check your network connection and try again.</p>';
         console.error('OrbitControls is not loaded.');
