@@ -1224,6 +1224,13 @@ renderer.toneMappingExposure = 1.0;
     jar.position.y = 0.75;
     scene.add(jar);
 
+    const debugBox = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshStandardMaterial({ color: 0xff0000 })
+);
+debugBox.position.y = 0.5;
+scene.add(debugBox);
+
     const lid = new THREE.Mesh(
       new THREE.CircleGeometry(0.8, 64),
       new THREE.MeshStandardMaterial({ color: 0x999999 })
