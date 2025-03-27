@@ -1498,10 +1498,11 @@
       });
 
     // Lighting
-scene.add(new THREE.AmbientLight(0xffffff, 1.0)); // Bright ambient
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0); // Stronger
-directionalLight.position.set(5, 5, 5);
+scene.add(new THREE.AmbientLight(0xffffff, 1));
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
+directionalLight.position.set(2, 5, 2);
 scene.add(directionalLight);
+    
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
