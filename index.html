@@ -1523,6 +1523,8 @@
         spider = gltf.scene;
         spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
         spider.position.set(0, 0, 0);
+        console.log("SPIDER POSITION:", spider.position);
+console.log("SPIDER SCALE:", spider.scale);
         scene.add(spider);
         const box = new THREE.BoxHelper(spider, 0xff0000);
 scene.add(box);
