@@ -1512,16 +1512,62 @@ scene.add(directionalLight);
   }
 
   function loadLevel(level) {
-  // Clear previous spider
+  // Clean up previous model
   if (spider) {
     scene.remove(spider);
-    spider.traverse(obj => {
-      if (obj.isMesh) {
-        obj.geometry.dispose();
-        obj.material.dispose();
+    spider.traverse((child) => {
+      if (child.isMesh) {
+        child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach(mat => mat.dispose());
+        } else {
+          child.material.dispose();
+        }
       }
     });
     spider = null;
+  }
+
+  const loader = new GLTFLoader();
+  const glbURL = 'https://cdn.jsdelivr.net/gh/mtthwnova66/vr-therapy-pitch@preview-edits/spider_with_animation.glb';
+
+  loader.load(
+    glbURL,
+    (gltf) => {
+      spider = gltf.scene;
+      spider.scale.setScalar(level === 1 ? 0.3 : 0.6);
+      spider.position.set(0, 0, 0);
+      scene.add(spider);
+
+      // Make sure all parts of the model are visible
+      spider.traverse((child) => {
+        if (child.isMesh) {
+          child.material.transparent = false;
+          child.visible = true;
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      // Animation
+      if (gltf.animations && gltf.animations.length > 0) {
+        mixer = new THREE.AnimationMixer(spider);
+        gltf.animations.forEach((clip) => {
+          mixer.clipAction(clip).play();
+        });
+      }
+
+      // Camera position
+      camera.position.set(0, 1, level === 1 ? 5 : 2);
+      controls.target.set(0, 0.5, 0);
+      controls.update();
+    },
+    undefined,
+    (error) => {
+      console.error("Failed to load GLB model:", error);
+    }
+  );
+}
   }
 
   const loader = new GLTFLoader();
