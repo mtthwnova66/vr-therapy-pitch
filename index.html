@@ -1128,6 +1128,23 @@
         Leveraging instantaneous speech-to-video AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
       </p>
     </section>
+    <!-- Arachnophobia Therapy Demo Section -->
+<section class="section fade-in" id="arachnophobia-demo" aria-labelledby="arachnophobia-title">
+  <h2 id="arachnophobia-title">Arachnophobia Exposure Therapy</h2>
+  <p>This is a live demo of our Level 1 and Level 2 exposure scenarios using interactive 3D environments.</p>
+  
+  <!-- Level Toggle Buttons -->
+  <div style="margin-bottom: 20px;">
+    <button onclick="loadLevel(1)" class="btn">Level 1: Distant Spider</button>
+    <button onclick="loadLevel(2)" class="btn">Level 2: Closer Spider</button>
+  </div>
+
+  <!-- Canvas Container -->
+  <div id="spider-container" style="width: 100%; height: 500px; border-radius: 12px; overflow: hidden;">
+    <canvas id="spider-scene"></canvas>
+  </div>
+</section>
+
     
     <!-- Market Opportunity Section -->
     <section class="section fade-in" id="market" aria-labelledby="market-title">
@@ -1447,5 +1464,77 @@
       // Could implement a more sophisticated error tracking system here
     });
   </script>
+  <script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+  import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
+
+  let scene, camera, renderer, spider, light, controls;
+  const canvas = document.getElementById('spider-scene');
+  const container = document.getElementById('spider-container');
+
+  function initScene() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Ambient Light + Directional Light
+    light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+    scene.add(light);
+
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+    controls.enableZoom = false;
+
+    animate();
+  }
+
+  function loadLevel(level) {
+    // Clear previous spider if any
+    if (spider) {
+      scene.remove(spider);
+      spider.geometry.dispose();
+      spider.material.dispose();
+      spider = null;
+    }
+
+    // Set camera position
+    camera.position.set(0, 1.5, level === 1 ? 6 : 2);
+    camera.lookAt(0, 1, 0);
+
+    // Create a fake spider using geometry
+    const spiderGeometry = new THREE.SphereGeometry(level === 1 ? 0.3 : 0.6, 32, 32);
+    const spiderMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+    spider = new THREE.Mesh(spiderGeometry, spiderMaterial);
+
+    // Spider position
+    spider.position.set(0, 1, 0);
+    scene.add(spider);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  // Resize Handling
+  window.addEventListener('resize', () => {
+    if (!camera || !renderer) return;
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+
+  // Initialize and Load Level 1 by default
+  window.addEventListener('DOMContentLoaded', () => {
+    initScene();
+    loadLevel(1);
+  });
+</script>
 </body>
 </html>
