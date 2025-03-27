@@ -1481,6 +1481,20 @@ import { PMREMGenerator } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examp
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
+    const pmremGenerator = new PMREMGenerator(renderer);
+pmremGenerator.compileEquirectangularShader();
+
+// Load HDRI environment
+new RGBELoader()
+  .setDataType(THREE.FloatType)
+  .load('https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/studio_small_09_2k.hdr', function(hdrEquirect) {
+    const envMap = pmremGenerator.fromEquirectangular(hdrEquirect).texture;
+    scene.environment = envMap;
+    hdrEquirect.dispose();
+    pmremGenerator.dispose();
+  });
+    
+    
     // Ambient Light + Directional Light
     light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(5, 5, 5);
