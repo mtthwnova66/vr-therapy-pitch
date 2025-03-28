@@ -14,6 +14,9 @@ function initLevel2() {
     return;
   }
 
+  // Clear the container first
+  container.innerHTML = '';
+
   // Create loading message
   const loadingElement = document.createElement('div');
   loadingElement.id = 'loading-status';
@@ -30,15 +33,13 @@ function initLevel2() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.set(0, 1.2, 2.0); // Closer to spider
+  camera.position.set(0, 1.2, 2.0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputEncoding = THREE.sRGBEncoding;
-  container.innerHTML = '';
   container.appendChild(renderer.domElement);
-  container.appendChild(loadingElement);
 
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.6, 0);
@@ -71,30 +72,23 @@ function initLevel2() {
       });
       scene.add(model);
 
+      let mixer;
       if (gltf.animations && gltf.animations.length > 0) {
-        const mixer = new THREE.AnimationMixer(model);
+        mixer = new THREE.AnimationMixer(model);
         const action = mixer.clipAction(gltf.animations[0]);
         action.timeScale = 0.5;
         action.play();
-
-        const clock = new THREE.Clock();
-        function animate() {
-          requestAnimationFrame(animate);
-          mixer.update(clock.getDelta());
-          controls.update();
-          renderer.render(scene, camera);
-        }
-        animate();
-      } else {
-        function animate() {
-          requestAnimationFrame(animate);
-          controls.update();
-          renderer.render(scene, camera);
-        }
-        animate();
       }
 
-      // Remove loading message
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        if (mixer) mixer.update(clock.getDelta());
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Scene loaded!';
         setTimeout(() => {
@@ -114,4 +108,16 @@ function initLevel2() {
       loadingElement.textContent = 'Failed to load spider model.';
     }
   );
-}  // end of initLevel2
+
+  // Resize logic
+  function handleResize() {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+  window.addEventListener('resize', handleResize);
+  handleResize();
+}
+// end of initLevel2
