@@ -32,12 +32,12 @@
 
   <!-- Add Three.js and OrbitControls scripts with defer and onload handlers -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Add these two new lines right here -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
 
   <style>
     /* Modern CSS Variables for Enhanced Theming */
@@ -86,22 +86,22 @@
     }
 
     
-  body { margin: 0; background: #f5f5f7; font-family: sans-serif; }
-  .level-container { width: 100%; height: 600px; position: relative; margin-bottom: 2rem; display: none; }
-  #level-buttons { text-align: center; margin-bottom: 1.5rem; }
-  #level-buttons button {
-    background-color: #0071e3;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 10px;
-    font-size: 16px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  #level-buttons button:hover {
-    background-color: #005bb5;
-  }
+    body { margin: 0; background: #f5f5f7; font-family: sans-serif; }
+    .level-container { width: 100%; height: 600px; position: relative; margin-bottom: 2rem; display: none; }
+    #level-buttons { text-align: center; margin-bottom: 1.5rem; }
+    #level-buttons button {
+      background-color: #0071e3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #level-buttons button:hover {
+      background-color: #005bb5;
+    }
 
     
     body {
@@ -485,7 +485,7 @@
       text-align: center;
     }
     
-    /* IMPORTANT: Keeping the original logo container and hover effect */
+    /* IMPORTANT: Using the exact same hero-logo implementation from original site */
     .hero-logo { 
       margin-bottom: 20px;
       display: flex;
@@ -863,6 +863,16 @@
       z-index: 1;
     }
     
+    #arachnophobia-level2 {
+      width: 100%;
+      height: 600px;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #f5f5f7;
+      position: relative;
+      z-index: 1;
+    }
+    
     #loading-message {
       position: absolute;
       top: 50%;
@@ -917,7 +927,7 @@
         height: 400px;
       }
       
-      #arachnophobia-demo {
+      #arachnophobia-demo, #arachnophobia-level2 {
         height: 500px;
       }
     }
@@ -986,7 +996,7 @@
         height: 350px;
       }
       
-      #arachnophobia-demo {
+      #arachnophobia-demo, #arachnophobia-level2 {
         height: 400px;
       }
       
@@ -1046,7 +1056,7 @@
         height: 200px;
       }
       
-      #arachnophobia-demo {
+      #arachnophobia-demo, #arachnophobia-level2 {
         height: 300px;
       }
       
@@ -1116,22 +1126,18 @@
   <main class="container fade-in" id="pitch-content" role="main">
     <!-- Hero Section -->
     <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
-      <!-- IMPORTANT: Using the exact same hero-logo implementation from original site -->
       <div class="hero-logo">
         <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" width="200" height="auto" loading="eager">
       </div>
       <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <!-- Download Button -->
       <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">
         Download Pitch Presentation
       </a>
       <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-      <!-- Intro Video Block -->
       <div class="intro-video fade-in delay-2">
         <h2>Who Are We? What's Our Mission?</h2>
         <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
       </div>
-      <!-- Demo Video Block -->
       <div class="demo-video fade-in delay-3">
         <h2>Demo</h2>
         <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
@@ -1192,20 +1198,19 @@
       </p>
     </section>
     
+    <!-- Try It Yourself Section (Updated) -->
     <section class="section fade-in" id="try-it-yourself">
-  <h2 id="try-title">Try It Yourself – Experience Exposure</h2>
-<p>Start your journey through exposure therapy by interacting with a 3D environment. Select your level of intensity below:</p>
-
-<div id="level-buttons">
-  <button onclick="showLevel('level1')">Level 1</button>
-  <button onclick="showLevel('level2')">Level 2</button>
-  <button onclick="showLevel('level3')">Level 3</button>
-</div>
-
-<div id="arachnophobia-demo" class="level-container"></div>
-<div id="arachnophobia-level2" class="level-container"></div>
-<div id="arachnophobia-level3" class="level-container"></div>
-</section>
+      <h2 id="try-title">Try It Yourself – Arachnophobia Simulation Experience</h2>
+      <p>
+        This simulation experience is designed for arachnophobia exposure therapy. Confront realistic spider interactions in a controlled, safe virtual environment. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom.
+      </p>
+      <div id="level-buttons">
+        <button onclick="showLevel('level1')">Level 1</button>
+        <button onclick="showLevel('level2')">Level 2</button>
+      </div>
+      <div id="arachnophobia-demo" class="level-container"></div>
+      <div id="arachnophobia-level2" class="level-container"></div>
+    </section>
     
     <!-- Market Opportunity Section -->
     <section class="section fade-in" id="market" aria-labelledby="market-title">
@@ -1269,7 +1274,7 @@
         </div>
       </div>
     </section>
-    
+  
   </main>
   
   <!-- Footer -->
@@ -1317,7 +1322,6 @@
       }
     }
   </script>
-  
   <script>
     // Throttle function to limit how often certain events fire
     function throttle(func, limit) {
@@ -1388,17 +1392,15 @@
           }
         });
       }, {
-        root: null, // viewport
-        threshold: 0.1, // trigger when 10% of the element is visible
-        rootMargin: '0px 0px -50px 0px' // slight offset to trigger earlier
+        root: null,
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
       });
       
-      // Start observing each element
       fadeElements.forEach(element => {
         observer.observe(element);
       });
       
-      // Initialize progress bar
       updateScrollProgress();
     });
     
@@ -1416,7 +1418,6 @@
       
       hamburger.addEventListener('click', toggleMenu);
       
-      // Enable keyboard navigation
       hamburger.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -1424,7 +1425,6 @@
         }
       });
       
-      // Close menu when clicking on a link
       const navItems = document.querySelectorAll('.nav-links a');
       navItems.forEach(item => {
         item.addEventListener('click', function() {
@@ -1434,7 +1434,6 @@
         });
       });
       
-      // Close menu when clicking outside
       document.addEventListener('click', function(event) {
         const isClickInsideMenu = navLinks.contains(event.target);
         const isClickOnHamburger = hamburger.contains(event.target);
@@ -1454,7 +1453,6 @@
       images.forEach(img => {
         img.addEventListener('error', function() {
           console.error(`Failed to load image: ${img.src}`);
-          // Fallback behavior - add a placeholder or class
           img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
           img.classList.add('image-load-error');
         });
@@ -1478,24 +1476,20 @@
     
     // Safari-specific fixes
     document.addEventListener('DOMContentLoaded', function() {
-      // Check if browser is Safari
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       
       if (isSafari) {
-        // Force repaint on Safari to fix potential rendering issues
         document.body.style.display = 'inline-block';
         setTimeout(function() {
           document.body.style.display = '';
         }, 10);
         
-        // Ensure gradient text works in Safari
         const h1Elements = document.querySelectorAll('h1');
         h1Elements.forEach(function(h1) {
           h1.style.webkitBackgroundClip = 'text';
           h1.style.webkitTextFillColor = 'transparent';
         });
         
-        // Create additional gradient elements specifically for Safari
         const gradientOverlay = document.createElement('div');
         gradientOverlay.style.position = 'fixed';
         gradientOverlay.style.top = '0';
@@ -1519,25 +1513,23 @@
     window.addEventListener('orientationchange', setMobileHeight);
     setMobileHeight();
     
-    // Error handling for critical operations
+    // Global error handler
     window.addEventListener('error', function(e) {
       console.error('Global error handler:', e.message);
-      // Could implement a more sophisticated error tracking system here
     });
   </script>
 
   <!-- Three.js Script for Arachnophobia Demo -->
-<script>
-  function showLevel(level) {
-    document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-    document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
-    document.getElementById('arachnophobia-level3').style.display = level === 'level3' ? 'block' : 'none';
+  <script>
+    function showLevel(level) {
+      document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
+      document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
 
-    if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
-    if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-  }
-</script>
-<script src="main.js"></script>
-<script src="main_level2.js"></script>
+      if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
+      if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
+    }
+  </script>
+  <script src="main.js"></script>
+  <script src="main_level2.js"></script>
 </body>
 </html>
