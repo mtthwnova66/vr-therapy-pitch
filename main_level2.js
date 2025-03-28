@@ -640,4 +640,57 @@ function initLevel2() {
         level2Renderer.setSize(width, height);
       }
       
-      // Listen for resize
+      // Listen for resize events
+      window.addEventListener('resize', handleResize);
+      
+      // Set flag to indicate level 2 is initialized
+      window.level2Initialized = true;
+      
+      console.log('Level 2 scene setup completed');
+    }
+    
+    // If textures fail to load, start anyway with fallbacks after timeout
+    setTimeout(() => {
+      if (texturesLoaded < requiredTextures) {
+        console.warn('Not all textures loaded in time, proceeding with fallbacks');
+        
+        // Fallback materials
+        woodTextures.map = woodTextures.map || new THREE.Texture();
+        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
+        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
+        
+        createTable();
+      }
+    }, 5000); // 5 second timeout
+  } catch (error) {
+    console.error('Error creating Level 2 scene:', error);
+    const container = document.getElementById('arachnophobia-level2');
+    if (container) {
+      container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+    }
+  }
+}
+
+// Function to refresh Level 2 if already initialized
+function refreshLevel2() {
+  const container = document.getElementById('arachnophobia-level2');
+  if (!container) return;
+  
+  // Make sure the container is displayed
+  container.style.display = 'block';
+  
+  // Force a resize event to refresh the renderer
+  if (level2Renderer && level2Camera) {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    level2Camera.aspect = width / height;
+    level2Camera.updateProjectionMatrix();
+    level2Renderer.setSize(width, height);
+    
+    // Re-render once
+    if (level2Scene) {
+      level2Renderer.render(level2Scene, level2Camera);
+    }
+  }
+}
