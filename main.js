@@ -1,11 +1,21 @@
+// Spider Simulation - Level 1 (Mild Exposure)
 // Wait for the DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing photorealistic Three.js scene...');
+let level1Scene, level1Camera, level1Renderer, level1Controls;
+
+function initLevel1() {
+  console.log('Initializing Level 1 spider simulation');
   
   // Get the container
   const container = document.getElementById('arachnophobia-demo');
   if (!container) {
     console.error('Container not found: #arachnophobia-demo');
+    return;
+  }
+  
+  // Create a flag to track initialization
+  if (window.level1Initialized) {
+    console.log('Level 1 already initialized, refreshing instead');
+    refreshLevel1();
     return;
   }
   
@@ -16,83 +26,81 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Check if GLTFLoader is available
-  if (typeof THREE.GLTFLoader === 'undefined') {
-    console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
-    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
-    return;
-  }
+  // Add a loading status element
+  const loadingStatus = document.createElement('div');
+  loadingStatus.className = 'loading-status';
+  loadingStatus.innerHTML = `
+    <div class="loading-spinner"></div>
+    <p>Loading photorealistic scene...</p>
+  `;
+  loadingStatus.style.position = 'absolute';
+  loadingStatus.style.top = '50%';
+  loadingStatus.style.left = '50%';
+  loadingStatus.style.transform = 'translate(-50%, -50%)';
+  loadingStatus.style.textAlign = 'center';
+  loadingStatus.style.zIndex = '100';
+  
+  // Clear the container and add loading message
+  container.innerHTML = '';
+  container.appendChild(loadingStatus);
   
   try {
-    // Create loading message
-    const loadingElement = document.createElement('div');
-    loadingElement.id = 'loading-status';
-    loadingElement.style.position = 'absolute';
-    loadingElement.style.top = '50%';
-    loadingElement.style.left = '50%';
-    loadingElement.style.transform = 'translate(-50%, -50%)';
-    loadingElement.style.color = '#333';
-    loadingElement.style.fontSize = '16px';
-    loadingElement.style.fontWeight = 'bold';
-    loadingElement.textContent = 'Loading photorealistic scene...';
-    loadingElement.style.zIndex = '100';
-    container.appendChild(loadingElement);
-    
     // Scene setup
-    const scene = new THREE.Scene();
+    level1Scene = new THREE.Scene();
+    level1Scene.background = new THREE.Color(0xf5f5f7);
     
-    // Camera setup
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 1.2, 3.5);
+    // Camera setup - closer initial view
+    level1Camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    level1Camera.position.set(0, 1.2, 3.0); // Zoomed in closer than original (was 3.5)
     
     // Enhanced renderer with physically-based settings
-    const renderer = new THREE.WebGLRenderer({ 
+    level1Renderer = new THREE.WebGLRenderer({ 
       antialias: true,
       alpha: true
     });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    level1Renderer.setSize(container.clientWidth, container.clientHeight);
+    level1Renderer.setPixelRatio(window.devicePixelRatio);
     
     // Advanced rendering features - enable as browser supports
     try {
-      renderer.physicallyCorrectLights = true;
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.0;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      level1Renderer.physicallyCorrectLights = true;
+      level1Renderer.outputEncoding = THREE.sRGBEncoding;
+      level1Renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      level1Renderer.toneMappingExposure = 1.0;
+      level1Renderer.shadowMap.enabled = true;
+      level1Renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
       console.warn('Advanced rendering features not fully supported in this browser', e);
     }
     
-    // Clear the container and add canvas
-    container.innerHTML = '';
-    container.appendChild(renderer.domElement);
-    container.appendChild(loadingElement); // Re-add the loading element
+    // Add canvas to container
+    container.appendChild(level1Renderer.domElement);
     
     // Ensure the renderer's canvas uses correct styles for fullscreen
-    renderer.domElement.style.width = '100%';
-    renderer.domElement.style.height = '100%';
-    renderer.domElement.style.display = 'block';
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0';
-    renderer.domElement.style.left = '0';
+    level1Renderer.domElement.style.width = '100%';
+    level1Renderer.domElement.style.height = '100%';
+    level1Renderer.domElement.style.display = 'block';
+    level1Renderer.domElement.style.position = 'absolute';
+    level1Renderer.domElement.style.top = '0';
+    level1Renderer.domElement.style.left = '0';
     
     // Add OrbitControls
-    let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0.6, 0); // Lower target to look more at the bottom of the jar
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.minDistance = 2;
-      controls.maxDistance = 10;
-      controls.autoRotate = false;
-      controls.autoRotateSpeed = 0.5;
-      controls.update();
+      level1Controls = new THREE.OrbitControls(level1Camera, level1Renderer.domElement);
+      level1Controls.target.set(0, 0.6, 0); // Lower target to look more at the bottom of the jar
+      level1Controls.enableDamping = true;
+      level1Controls.dampingFactor = 0.05;
+      level1Controls.minDistance = 2;
+      level1Controls.maxDistance = 10;
+      level1Controls.autoRotate = false;
+      level1Controls.autoRotateSpeed = 0.5;
+      level1Controls.update();
     } else {
       console.warn('OrbitControls not available');
     }
+    
+    // Add simulation controls
+    addSimControls(container, true);
     
     // Texture loader
     const textureLoader = new THREE.TextureLoader();
@@ -112,8 +120,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       
-      // Set as scene environment and background
-      scene.environment = envMap;
+      // Set as scene environment
+      level1Scene.environment = envMap;
       
       // Create a subtle background
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
@@ -123,17 +131,17 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
       background.position.z = -20;
-      scene.add(background);
+      level1Scene.add(background);
       
     } catch (e) {
       console.warn('Environment mapping not fully supported', e);
-      scene.background = new THREE.Color(0xf5f5f7);
+      level1Scene.background = new THREE.Color(0xf5f5f7);
     }
     
     // Create Lights
     // Ambient light (subtle)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-    scene.add(ambientLight);
+    level1Scene.add(ambientLight);
     
     // Key light (main light)
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -148,29 +156,32 @@ document.addEventListener('DOMContentLoaded', function() {
     keyLight.shadow.camera.top = 5;
     keyLight.shadow.camera.bottom = -5;
     keyLight.shadow.bias = -0.0005;
-    scene.add(keyLight);
+    level1Scene.add(keyLight);
     
     // Fill light (softer, from opposite side)
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-3, 4, -3);
-    scene.add(fillLight);
+    level1Scene.add(fillLight);
     
-    // Add an extra light for the right side of the jar (new)
+    // Add an extra light for the right side of the jar
     const rightLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rightLight.position.set(6, 2, 0); // Position to the right side
-    scene.add(rightLight);
+    level1Scene.add(rightLight);
     
     // Rim light (highlight edges)
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rimLight.position.set(0, 5, -5);
-    scene.add(rimLight);
+    level1Scene.add(rimLight);
     
     // Setup loading manager for tracking load progress
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round(loaded / total * 100);
-      if(loadingElement && loadingElement.parentNode) {
-        loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      if(loadingStatus) {
+        loadingStatus.innerHTML = `
+          <div class="loading-spinner"></div>
+          <p>Loading scene assets... ${percent}%</p>
+        `;
       }
     };
     
@@ -236,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
       table.position.y = -0.1; // Slightly below the jar
       table.receiveShadow = true;
-      scene.add(table);
+      level1Scene.add(table);
       
       // Now that table is loaded, create the jar
       createJar();
@@ -265,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
       jar.position.y = 0.75;
       jar.castShadow = true;
       jar.receiveShadow = true;
-      scene.add(jar);
+      level1Scene.add(jar);
       
       // Jar lid with metallic look
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
@@ -278,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const lid = new THREE.Mesh(lidGeometry, lidMaterial);
       lid.position.set(0, 1.55, 0);
       lid.castShadow = true;
-      scene.add(lid);
+      level1Scene.add(lid);
       
       // Now load the spider model
       loadSpiderModel();
@@ -286,8 +297,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load the spider model
     function loadSpiderModel() {
-      if(loadingElement && loadingElement.parentNode) {
-        loadingElement.textContent = 'Loading spider model...';
+      if(loadingStatus) {
+        loadingStatus.innerHTML = `
+          <div class="loading-spinner"></div>
+          <p>Loading spider model...</p>
+        `;
       }
       
       // Create a GLTFLoader instance
@@ -300,9 +314,9 @@ document.addEventListener('DOMContentLoaded', function() {
         gltfLoader.setDRACOLoader(dracoLoader);
       }
       
-      // Load the spider model
+      // Try to load the spider model (note: this URL would need to be changed to your actual model location)
       gltfLoader.load(
-        // Model path - adjust this to your file location
+        // Model URL - falls back to procedural spider if this fails
         'spider_with_animation.glb',
         
         // Success callback
@@ -346,21 +360,16 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           
           // Add to scene
-          scene.add(spiderModel);
+          level1Scene.add(spiderModel);
           
           // Handle animations if available
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Model has ${gltf.animations.length} animations`);
             
-            // Log animation names for debugging
-            gltf.animations.forEach((clip, index) => {
-              console.log(`Animation ${index}: ${clip.name || 'unnamed'}`);
-            });
-            
             // Create an animation mixer
             mixer = new THREE.AnimationMixer(spiderModel);
             
-            // Get the first animation (or pick a specific one)
+            // Get the first animation
             const idleAnimation = gltf.animations[0];
             
             // Create an animation action
@@ -371,8 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Play the animation
             action.play();
-          } else {
-            console.log('No animations found in the model');
           }
           
           // Add dust particles and finalize
@@ -380,32 +387,28 @@ document.addEventListener('DOMContentLoaded', function() {
           finalizeScene();
           
           // Update loading status
-          if(loadingElement && loadingElement.parentNode) {
-            loadingElement.textContent = 'Scene loaded!';
-            
-            // Hide loading message after a short delay
+          if(loadingStatus && loadingStatus.parentNode) {
+            loadingStatus.style.opacity = '0';
+            loadingStatus.style.transition = 'opacity 1s ease';
             setTimeout(() => {
-              loadingElement.style.opacity = '0';
-              loadingElement.style.transition = 'opacity 1s ease';
-              setTimeout(() => {
-                if(loadingElement && loadingElement.parentNode) {
-                  loadingElement.remove();
-                }
-              }, 1000);
+              if(loadingStatus && loadingStatus.parentNode) {
+                loadingStatus.remove();
+              }
             }, 1000);
           }
         },
         
-        // Progress callback
-        function(xhr) {
-          // This is handled by the loadingManager
-        },
+        // Progress callback - handled by loading manager
+        undefined,
         
         // Error callback
         function(error) {
           console.error('Error loading spider model:', error);
-          if(loadingElement && loadingElement.parentNode) {
-            loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          if(loadingStatus) {
+            loadingStatus.innerHTML = `
+              <div class="loading-spinner"></div>
+              <p>Using fallback spider model...</p>
+            `;
           }
           
           // Create a fallback procedural spider
@@ -459,23 +462,20 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Position spider in jar - slightly raised from bottom for better visibility
       spider.position.y = 0.05;
-      scene.add(spider);
+      level1Scene.add(spider);
       
       // Continue with dust particles and scene finalization
       addDustParticles();
       finalizeScene();
       
       // Update loading status
-      if(loadingElement && loadingElement.parentNode) {
-        loadingElement.textContent = 'Scene loaded (using fallback spider)';
+      if(loadingStatus && loadingStatus.parentNode) {
+        loadingStatus.style.opacity = '0';
+        loadingStatus.style.transition = 'opacity 1s ease';
         setTimeout(() => {
-          loadingElement.style.opacity = '0';
-          loadingElement.style.transition = 'opacity 1s ease';
-          setTimeout(() => {
-            if(loadingElement && loadingElement.parentNode) {
-              loadingElement.remove();
-            }
-          }, 1000);
+          if(loadingStatus && loadingStatus.parentNode) {
+            loadingStatus.remove();
+          }
         }, 1000);
       }
     }
@@ -508,17 +508,105 @@ document.addEventListener('DOMContentLoaded', function() {
       
       const particles = new THREE.Points(particleGeometry, particleMaterial);
       particles.position.y = 0.75; // Center of jar
-      scene.add(particles);
+      level1Scene.add(particles);
       
       // Store for animation
-      window.dustParticles = particles;
+      window.level1DustParticles = particles;
     }
     
-    // Finalize the scene setup
+    // Add simulation controls (instructions, fullscreen button, rotation toggle)
+    function addSimControls(container, isLevel1) {
+      const prefix = isLevel1 ? 'level1' : 'level2';
+      
+      // Add instructions
+      const instructions = document.createElement('div');
+      instructions.className = 'sim-instructions';
+      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+      instructions.id = `${prefix}-instructions`;
+      container.appendChild(instructions);
+      
+      // Hide instructions after 5 seconds
+      setTimeout(() => {
+        instructions.style.opacity = '0';
+      }, 5000);
+      
+      // Add control buttons container
+      const controlsDiv = document.createElement('div');
+      controlsDiv.className = 'sim-controls';
+      controlsDiv.id = `${prefix}-controls`;
+      
+      // Add fullscreen button
+      const fullscreenButton = document.createElement('button');
+      fullscreenButton.innerHTML = '⛶';
+      fullscreenButton.title = 'Toggle fullscreen';
+      fullscreenButton.id = `${prefix}-fullscreen`;
+      fullscreenButton.addEventListener('click', () => toggleFullscreen(container));
+      
+      // Add rotation toggle button
+      const rotateButton = document.createElement('button');
+      rotateButton.innerHTML = '↻';
+      rotateButton.title = 'Toggle auto-rotation';
+      rotateButton.id = `${prefix}-rotate`;
+      rotateButton.addEventListener('click', () => {
+        const controls = isLevel1 ? level1Controls : level2Controls;
+        if (controls) {
+          controls.autoRotate = !controls.autoRotate;
+          rotateButton.style.background = controls.autoRotate ? 
+            'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
+          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
+        }
+      });
+      
+      // Add buttons to controls div
+      controlsDiv.appendChild(rotateButton);
+      controlsDiv.appendChild(fullscreenButton);
+      
+      // Add controls to container
+      container.appendChild(controlsDiv);
+    }
+    
+    // Toggle fullscreen function
+    function toggleFullscreen(container) {
+      if (!document.fullscreenElement) {
+        // Going fullscreen
+        if (container.requestFullscreen) {
+          container.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+          });
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        } else if (container.mozRequestFullScreen) {
+          container.mozRequestFullScreen();
+        } else if (container.msRequestFullscreen) {
+          container.msRequestFullscreen();
+        }
+      } else {
+        // Exiting fullscreen
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => {
+            console.error(`Error attempting to exit fullscreen: ${err.message}`);
+          });
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+    }
+    
+    // Finalize the scene setup and start animation
     function finalizeScene() {
       // Animation loop
       function animate() {
-        requestAnimationFrame(animate);
+        // Check if canvas is still in the DOM (prevents errors if switching tabs during animation)
+        if (!level1Renderer.domElement.isConnected) {
+          console.log('Level 1 canvas removed from DOM, stopping animation loop');
+          return;
+        }
+        
+        window.level1AnimationFrame = requestAnimationFrame(animate);
         
         const delta = clock.getDelta();
         
@@ -528,8 +616,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Animate dust particles
-        if (window.dustParticles) {
-          const positions = window.dustParticles.geometry.attributes.position.array;
+        if (window.level1DustParticles) {
+          const positions = window.level1DustParticles.geometry.attributes.position.array;
           
           for (let i = 0; i < positions.length; i += 3) {
             // Slow floating motion
@@ -540,163 +628,43 @@ document.addEventListener('DOMContentLoaded', function() {
             if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
           }
           
-          window.dustParticles.geometry.attributes.position.needsUpdate = true;
-          window.dustParticles.rotation.y += delta * 0.01;
+          window.level1DustParticles.geometry.attributes.position.needsUpdate = true;
+          window.level1DustParticles.rotation.y += delta * 0.01;
         }
         
         // Update controls
-        if (controls) controls.update();
+        if (level1Controls) level1Controls.update();
         
         // Render
-        renderer.render(scene, camera);
+        level1Renderer.render(level1Scene, level1Camera);
       }
       
       // Start animation
       animate();
       
-      // Add a fullscreen button
-      const fullscreenButton = document.createElement('button');
-      fullscreenButton.textContent = '⛶';
-      fullscreenButton.style.position = 'absolute';
-      fullscreenButton.style.bottom = '10px';
-      fullscreenButton.style.right = '10px';
-      fullscreenButton.style.fontSize = '20px';
-      fullscreenButton.style.padding = '5px 10px';
-      fullscreenButton.style.background = 'rgba(255,255,255,0.7)';
-      fullscreenButton.style.border = 'none';
-      fullscreenButton.style.borderRadius = '5px';
-      fullscreenButton.style.cursor = 'pointer';
-      fullscreenButton.style.zIndex = '10';
-      fullscreenButton.title = 'Toggle fullscreen';
-      
-      fullscreenButton.addEventListener('click', function() {
-        if (!document.fullscreenElement) {
-          // Ensure container styles are correct before going fullscreen
-          container.style.width = '100%';
-          container.style.height = '100%';
-          container.style.margin = '0';
-          container.style.padding = '0';
-          container.style.overflow = 'hidden';
-          container.style.position = 'relative';
-          
-          // Fix for handling fullscreen properly across browsers
-          try {
-            // Try standard method first
-            container.requestFullscreen().catch(err => {
-              console.error(`Error attempting to enable fullscreen: ${err.message}`);
-            });
-          } catch (e) {
-            // Fallbacks for various browsers
-            try {
-              if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
-              else if (container.mozRequestFullScreen) container.mozRequestFullScreen();
-              else if (container.msRequestFullscreen) container.msRequestFullscreen();
-            } catch (innerErr) {
-              console.error('Fullscreen API not supported', innerErr);
-            }
-          }
-          
-          // Force resize after going fullscreen
-          setTimeout(() => {
-            handleResize();
-          }, 100);
-        } else {
-          document.exitFullscreen().catch(err => {
-            console.error(`Error attempting to exit fullscreen: ${err.message}`);
-          });
-        }
-      });
-      
-      container.appendChild(fullscreenButton);
-      
-      // Add auto-rotate toggle
-      const rotateButton = document.createElement('button');
-      rotateButton.textContent = '↻';
-      rotateButton.style.position = 'absolute';
-      rotateButton.style.bottom = '10px';
-      rotateButton.style.right = '60px';
-      rotateButton.style.fontSize = '20px';
-      rotateButton.style.padding = '5px 10px';
-      rotateButton.style.background = 'rgba(255,255,255,0.7)';
-      rotateButton.style.border = 'none';
-      rotateButton.style.borderRadius = '5px';
-      rotateButton.style.cursor = 'pointer';
-      rotateButton.style.zIndex = '10';
-      rotateButton.title = 'Toggle auto-rotation';
-      
-      rotateButton.addEventListener('click', function() {
-        if (controls) {
-          controls.autoRotate = !controls.autoRotate;
-          rotateButton.style.background = controls.autoRotate ? 
-            'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
-          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
-        }
-      });
-      
-      container.appendChild(rotateButton);
-      
-      // Add instructions
-      const instructions = document.createElement('div');
-      instructions.style.position = 'absolute';
-      instructions.style.top = '10px';
-      instructions.style.left = '10px';
-      instructions.style.padding = '10px';
-      instructions.style.background = 'rgba(255,255,255,0.7)';
-      instructions.style.borderRadius = '5px';
-      instructions.style.fontSize = '14px';
-      instructions.style.zIndex = '10';
-      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
-      container.appendChild(instructions);
-      
-      // Hide instructions after 5 seconds
-      setTimeout(() => {
-        instructions.style.opacity = '0';
-        instructions.style.transition = 'opacity 1s ease';
-      }, 5000);
-      
-      // Handle window resize and fullscreen changes
+      // Handle resizing
       function handleResize() {
-        // If in fullscreen, use screen dimensions
-        let width, height;
+        const container = document.getElementById('arachnophobia-demo');
+        if (!container) return;
         
-        if (document.fullscreenElement === container) {
-          width = window.innerWidth; 
-          height = window.innerHeight;
-          
-          // Ensure the canvas fills the entire fullscreen space
-          renderer.domElement.style.width = "100vw";
-          renderer.domElement.style.height = "100vh";
-          
-          // Additional styles to fix fullscreen issues
-          document.body.style.overflow = "hidden";
-        } else {
-          width = container.clientWidth;
-          height = container.clientHeight;
-          renderer.domElement.style.width = "100%";
-          renderer.domElement.style.height = "100%";
-          document.body.style.overflow = "";
-        }
+        const width = container.clientWidth;
+        const height = container.clientHeight;
         
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
+        // Update camera aspect ratio
+        level1Camera.aspect = width / height;
+        level1Camera.updateProjectionMatrix();
         
-        console.log(`Resized to: ${width}x${height}`);
+        // Update renderer size
+        level1Renderer.setSize(width, height);
       }
       
       // Listen for resize events
       window.addEventListener('resize', handleResize);
       
-      // Listen for fullscreen change events
-      document.addEventListener('fullscreenchange', handleResize);
-      document.addEventListener('webkitfullscreenchange', handleResize);
-      document.addEventListener('mozfullscreenchange', handleResize);
-      document.addEventListener('MSFullscreenChange', handleResize);
+      // Set flag to indicate level 1 is initialized
+      window.level1Initialized = true;
       
-      // Initial resize
-      handleResize();
-      
-      console.log('Scene setup completed');
+      console.log('Level 1 scene setup completed');
     }
     
     // If textures fail to load, start anyway with fallbacks after timeout
@@ -712,9 +680,35 @@ document.addEventListener('DOMContentLoaded', function() {
         createTable();
       }
     }, 5000); // 5 second timeout
-    
   } catch (error) {
-    console.error('Error creating photorealistic scene:', error);
-    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+    console.error('Error creating Level 1 scene:', error);
+    const container = document.getElementById('arachnophobia-demo');
+    if (container) {
+      container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+    }
   }
-});
+}
+
+// Function to refresh Level 1 if already initialized
+function refreshLevel1() {
+  const container = document.getElementById('arachnophobia-demo');
+  if (!container) return;
+  
+  // Make sure the container is displayed
+  container.style.display = 'block';
+  
+  // Force a resize event to refresh the renderer
+  if (level1Renderer && level1Camera) {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    level1Camera.aspect = width / height;
+    level1Camera.updateProjectionMatrix();
+    level1Renderer.setSize(width, height);
+    
+    // Re-render once
+    if (level1Scene) {
+      level1Renderer.render(level1Scene, level1Camera);
+    }
+  }
+}
