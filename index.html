@@ -1174,18 +1174,18 @@
     </section>
     
     <section class="section fade-in" id="try-it-yourself">
-  <h2 style="text-align: center;">Try It Yourself – Experience Exposure</h2>
-  <p style="text-align: center;">Start your journey through exposure therapy. Choose a level below:</p>
+  <h2 id="try-title">Try It Yourself – Experience Exposure</h2>
+<p>Start your journey through exposure therapy by interacting with a 3D environment. Select your level of intensity below:</p>
 
-  <div style="text-align: center; margin-bottom: 2rem;">
-    <button onclick="showLevel('level1')" class="download-btn">Level 1</button>
-    <button onclick="showLevel('level2')" class="download-btn">Level 2</button>
-    <button onclick="showLevel('level3')" class="download-btn">Level 3</button>
-  </div>
+<div id="level-buttons">
+  <button onclick="showLevel('level1')">Level 1</button>
+  <button onclick="showLevel('level2')">Level 2</button>
+  <button onclick="showLevel('level3')">Level 3</button>
+</div>
 
-  <div id="arachnophobia-demo" style="display: block;"></div>
-  <div id="arachnophobia-level2" style="display: none;"></div>
-  <div id="arachnophobia-level3" style="display: none;"></div>
+<div id="arachnophobia-demo" class="level-container"></div>
+<div id="arachnophobia-level2" class="level-container"></div>
+<div id="arachnophobia-level3" class="level-container"></div>
 </section>
     
     <!-- Market Opportunity Section -->
@@ -1508,7 +1508,18 @@
   </script>
 
   <!-- Three.js Script for Arachnophobia Demo -->
- <script src="main.js"></script>
-  <script src="main_level2.js"></script>
+ <script>
+  function showLevel(level) {
+    document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
+    document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
+    document.getElementById('arachnophobia-level3').style.display = level === 'level3' ? 'block' : 'none';
+
+    if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
+    if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
+    // Optional: implement initLevel3 later
+  }
+</script>
+<script src="main.js"></script>
+<script src="main_level2.js"></script>
 </body>
 </html>
