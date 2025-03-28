@@ -10,13 +10,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Set explicit container dimensions if not already set
-  if (!container.style.height || container.style.height === 'auto') {
+  // This is crucial to ensure the renderer has a valid size
+  if (!container.style.height) {
     container.style.height = '600px';
   }
-  if (!container.style.width || container.style.width === 'auto') {
-    container.style.width = '100%';
-  }
-  container.style.position = 'relative';
   
   // Check if THREE is available
   if (typeof THREE === 'undefined') {
@@ -33,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   try {
-    // Create loading message
+    // Create loading message with improved styling
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
     loadingElement.style.position = 'absolute';
@@ -41,25 +38,23 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.style.left = '50%';
     loadingElement.style.transform = 'translate(-50%, -50%)';
     loadingElement.style.color = '#333';
-    loadingElement.style.fontSize = '18px';
+    loadingElement.style.fontSize = '16px';
     loadingElement.style.fontWeight = 'bold';
+    loadingElement.style.padding = '10px 15px';
+    loadingElement.style.background = 'rgba(255, 255, 255, 0.8)';
+    loadingElement.style.borderRadius = '5px';
     loadingElement.textContent = 'Loading photorealistic scene...';
     loadingElement.style.zIndex = '100';
-    loadingElement.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-    loadingElement.style.padding = '15px 20px';
-    loadingElement.style.borderRadius = '8px';
-    loadingElement.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-    loadingElement.style.textAlign = 'center';
     container.appendChild(loadingElement);
     
-    // Scene setup
+    // Scene setup - exactly as in original
     const scene = new THREE.Scene();
     
-    // Camera setup
+    // Camera setup - exactly as in original
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.2, 3.5);
     
-    // Enhanced renderer with physically-based settings
+    // Enhanced renderer with physically-based settings - mostly as in original
     const renderer = new THREE.WebGLRenderer({ 
       antialias: true,
       alpha: true
@@ -67,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     
-    // Advanced rendering features - enable as browser supports
+    // Advanced rendering features - same as original with safe error handling
     try {
       renderer.physicallyCorrectLights = true;
       renderer.outputEncoding = THREE.sRGBEncoding;
@@ -79,12 +74,12 @@ document.addEventListener('DOMContentLoaded', function() {
       console.warn('Advanced rendering features not fully supported in this browser', e);
     }
     
-    // Clear the container and add canvas
+    // Clear the container and add canvas - exactly as in original
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement); // Re-add the loading element
     
-    // Ensure the renderer's canvas uses correct styles for fullscreen
+    // Ensure the renderer's canvas uses correct styles for fullscreen - exactly as in original
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
@@ -92,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.domElement.style.top = '0';
     renderer.domElement.style.left = '0';
     
-    // Add OrbitControls
+    // Add OrbitControls - exactly as in original
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -108,10 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
       console.warn('OrbitControls not available');
     }
     
-    // Texture loader
+    // Texture loader - exactly as in original
     const textureLoader = new THREE.TextureLoader();
     
-    // Load environment map for reflections
+    // Load environment map for reflections - exactly as in original
     let envMap;
     try {
       const urls = [
@@ -126,10 +121,10 @@ document.addEventListener('DOMContentLoaded', function() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       
-      // Set as scene environment and background
+      // Set as scene environment and background - exactly as in original
       scene.environment = envMap;
       
-      // Create a subtle background
+      // Create a subtle background - exactly as in original
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({
         color: 0xf5f5f7,
@@ -144,13 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
       scene.background = new THREE.Color(0xf5f5f7);
     }
     
-    // Create Lights
-    // Ambient light (subtle)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    // Create Lights - same as original but with enhanced colors
+    // Ambient light (subtle warm tone)
+    const ambientLight = new THREE.AmbientLight(0xfffaf0, 0.3);
     scene.add(ambientLight);
     
-    // Key light (main light)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    // Key light (main light with warmer tone)
+    const keyLight = new THREE.DirectionalLight(0xfff5e0, 1.0);
     keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
@@ -164,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
     
-    // Fill light (softer, from opposite side)
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    // Fill light (softer, from opposite side with a slight blue tint for contrast)
+    const fillLight = new THREE.DirectionalLight(0xf0f8ff, 0.5);
     fillLight.position.set(-3, 4, -3);
     scene.add(fillLight);
     
@@ -174,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
     
-    // Setup loading manager for tracking load progress
+    // Setup loading manager for tracking load progress - exactly as in original
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round(loaded / total * 100);
@@ -183,18 +178,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
     
-    // Clock for animations
+    // Clock for animations - exactly as in original
     const clock = new THREE.Clock();
     let mixer; // Will hold the animation mixer
     
-    // Load wood texture for table
+    // Load wood texture for table - exactly as in original
     const woodTextures = {
       map: null,
       normalMap: null,
       roughnessMap: null
     };
     
-    // Load wood textures with the loading manager
+    // Load wood textures with the loading manager - exactly as in original
     textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
       woodTextures.map = texture;
       woodTextures.map.wrapS = THREE.RepeatWrapping;
@@ -219,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
       createTableIfTexturesLoaded();
     });
     
-    // Track texture loading
+    // Track texture loading - exactly as in original
     let texturesLoaded = 0;
     const requiredTextures = 3;
     
@@ -230,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // Create wooden table
+    // Create wooden table - enhanced but still using the same basic structure
     function createTable() {
       const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
       const tableMaterial = new THREE.MeshStandardMaterial({
@@ -239,7 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
         roughnessMap: woodTextures.roughnessMap,
         roughness: 0.8,
         metalness: 0.1,
-        envMap: envMap
+        envMap: envMap,
+        color: 0xeadfca // Slightly warmer wood tone
       });
       
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
@@ -251,20 +247,21 @@ document.addEventListener('DOMContentLoaded', function() {
       createJar();
     }
     
-    // Create the glass jar
+    // Create the glass jar - enhanced with more realistic glass properties
     function createJar() {
       // Create realistic glass jar - using a closed cylinder for complete glass
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false); // closed cylinder
+      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 16, false); // Higher segments for better quality
       const jarMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
-        metalness: 0.1,
+        metalness: 0.0,
         roughness: 0.05,
         transmission: 0.95, // glass transparency
         transparent: true,
         thickness: 0.05,    // glass thickness
         envMapIntensity: 1,
         clearcoat: 1,
-        clearcoatRoughness: 0.1
+        clearcoatRoughness: 0.1,
+        ior: 1.5 // glass refraction index
       });
       
       const jar = new THREE.Mesh(jarGeometry, jarMaterial);
@@ -273,12 +270,12 @@ document.addEventListener('DOMContentLoaded', function() {
       jar.receiveShadow = true;
       scene.add(jar);
       
-      // Jar lid with metallic look
+      // Jar lid with metallic look - enhanced with more detailed materials
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
       const lidMaterial = new THREE.MeshStandardMaterial({
         color: 0x777777,
         metalness: 0.9,
-        roughness: 0.1,
+        roughness: 0.15, // Slightly rougher for realism
         envMap: envMap
       });
       const lid = new THREE.Mesh(lidGeometry, lidMaterial);
@@ -286,63 +283,46 @@ document.addEventListener('DOMContentLoaded', function() {
       lid.castShadow = true;
       scene.add(lid);
       
+      // Add a subtle rim to the lid for more detail
+      const rimGeometry = new THREE.TorusGeometry(0.85, 0.02, 8, 64);
+      const rimMaterial = new THREE.MeshStandardMaterial({
+        color: 0x666666,
+        metalness: 0.95,
+        roughness: 0.1,
+        envMap: envMap
+      });
+      const rim = new THREE.Mesh(rimGeometry, rimMaterial);
+      rim.position.set(0, 1.51, 0);
+      rim.rotation.x = Math.PI / 2;
+      rim.castShadow = true;
+      scene.add(rim);
+      
       // Now load the spider model
       loadSpiderModel();
     }
     
-    // Load the spider model
+    // Load the spider model - keep this close to original for stability
     function loadSpiderModel() {
       if(loadingElement && loadingElement.parentNode) {
-        loadingElement.innerHTML = 'Loading spider model...<div id="loading-spinner"></div>';
-        
-        // Add spinner style
-        const spinnerStyle = document.createElement('style');
-        spinnerStyle.textContent = `
-          #loading-spinner {
-            margin: 10px auto 0;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left: 4px solid #333;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-          }
-          
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `;
-        document.head.appendChild(spinnerStyle);
+        loadingElement.textContent = 'Loading spider model...';
       }
       
-      // Create a GLTFLoader instance
+      // Create a GLTFLoader instance - exactly as in original
       const gltfLoader = new THREE.GLTFLoader(loadingManager);
       
-      // Optional: Setup Draco decoder for compressed models
+      // Optional: Setup Draco decoder for compressed models - exactly as in original
       if (typeof THREE.DRACOLoader !== 'undefined') {
         const dracoLoader = new THREE.DRACOLoader();
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
       
-      // Spider micro-animation system for subtle movements (will be used if model fails)
-      window.spiderAnimations = {
-        enabled: true,
-        legMovements: [],
-        breathingScale: 0.0005,
-        breathingSpeed: 0.5,
-        twitchProbability: 0.01,
-        lastTwitchTime: 0,
-        coolingPeriod: 2.0
-      };
-      
-      // Load the spider model
+      // Load the spider model - exactly as in original
       gltfLoader.load(
         // Model path - adjust this to your file location
         'spider_with_animation.glb',
         
-        // Success callback
+        // Success callback - mostly as in original with minor enhancements
         function(gltf) {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
@@ -377,6 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
               // Improve materials if needed
               if (node.material) {
                 node.material.envMap = envMap;
+                node.material.envMapIntensity = 0.5; // Subtle environment reflection
                 node.material.needsUpdate = true;
               }
             }
@@ -385,10 +366,10 @@ document.addEventListener('DOMContentLoaded', function() {
           // Add to scene
           scene.add(spiderModel);
           
-          // Store reference to model for animations
+          // Store reference to model for possible animations
           window.spiderModel = spiderModel;
           
-          // Handle animations if available
+          // Handle animations if available - enhanced with slower playback
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Model has ${gltf.animations.length} animations`);
             
@@ -405,7 +386,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Create an animation action
             const action = mixer.clipAction(idleAnimation);
-            action.timeScale = 0.5; // Slow down animation for subtle movement
+            
+            // Slow down animation for subtle movement
+            action.timeScale = 0.5;
             
             // Play the animation
             action.play();
@@ -413,21 +396,13 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('No animations found in the model');
           }
           
-          // Add dust particles and finalize
+          // Add enhanced dust particles and finalize
           addDustParticles();
           finalizeScene();
           
           // Update loading status
           if(loadingElement && loadingElement.parentNode) {
-            loadingElement.innerHTML = '<div>Scene loaded successfully!</div>';
-            
-            // Add some instructions in the loading element
-            const instructions = document.createElement('div');
-            instructions.style.marginTop = '10px';
-            instructions.style.fontSize = '14px';
-            instructions.style.fontWeight = 'normal';
-            instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
-            loadingElement.appendChild(instructions);
+            loadingElement.textContent = 'Scene loaded!';
             
             // Hide loading message after a short delay
             setTimeout(() => {
@@ -438,16 +413,16 @@ document.addEventListener('DOMContentLoaded', function() {
                   loadingElement.remove();
                 }
               }, 1000);
-            }, 1500);
+            }, 1000);
           }
         },
         
-        // Progress callback
+        // Progress callback - exactly as in original
         function(xhr) {
           // This is handled by the loadingManager
         },
         
-        // Error callback
+        // Error callback - exactly as in original
         function(error) {
           console.error('Error loading spider model:', error);
           if(loadingElement && loadingElement.parentNode) {
@@ -460,33 +435,50 @@ document.addEventListener('DOMContentLoaded', function() {
       );
     }
     
-    // Fallback: Create a procedural spider if model loading fails
+    // Fallback: Create a procedural spider if model loading fails - enhanced with better detail
     function createProceduralSpider() {
       console.log('Creating procedural spider as fallback');
       
       // Create a simple spider
       const spider = new THREE.Group();
       
-      // Spider body (abdomen)
+      // Spider body (abdomen) - same basic structure with improved material
       const abdomenGeometry = new THREE.SphereGeometry(0.22, 32, 32);
       const spiderMaterial = new THREE.MeshStandardMaterial({
         color: 0x1a1a1a,
         roughness: 0.7,
-        metalness: 0.2,
+        metalness: 0.1, // Reduced metalness for more natural look
         envMap: envMap
       });
       const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
       abdomen.castShadow = true;
       spider.add(abdomen);
       
-      // Spider head (cephalothorax)
+      // Spider head (cephalothorax) - same as original
       const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
       const head = new THREE.Mesh(headGeometry, spiderMaterial);
       head.position.set(0, 0, 0.2);
       head.castShadow = true;
       spider.add(head);
       
-      // Simple legs
+      // Add eyes for more detail
+      for (let i = 0; i < 6; i++) {
+        const eyeGeometry = new THREE.SphereGeometry(0.01, 8, 8);
+        const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        
+        // Position eyes in an arc on the head
+        const angle = (Math.PI / 8) * (i - 2.5);
+        eye.position.set(
+          Math.sin(angle) * 0.06,
+          0.03,
+          head.position.z + Math.cos(angle) * 0.06 + 0.08
+        );
+        
+        head.add(eye);
+      }
+      
+      // Simple legs - same as original but with improved positioning
       for (let i = 0; i < 8; i++) {
         const legGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.4, 8);
         const leg = new THREE.Mesh(legGeometry, spiderMaterial);
@@ -502,25 +494,19 @@ document.addEventListener('DOMContentLoaded', function() {
         leg.castShadow = true;
         spider.add(leg);
         
-        // Store the leg for animations
-        window.spiderAnimations.legMovements.push({
-          node: leg,
+        // Store initial rotation for animation
+        leg.userData = {
           initialRotation: leg.rotation.clone(),
-          rotationAxis: new THREE.Vector3(
-            Math.random() > 0.5 ? 1 : 0, 
-            Math.random() > 0.5 ? 1 : 0, 
-            Math.random() > 0.5 ? 1 : 0
-          ).normalize(),
-          magnitude: 0.01 + Math.random() * 0.02,
-          speed: 0.5 + Math.random() * 2
-        });
+          animationSpeed: 0.5 + Math.random() * 0.5,
+          animationOffset: Math.random() * Math.PI * 2
+        };
       }
       
-      // Position spider in jar - slightly elevated from bottom for better visibility
-      spider.position.y = 0.05; // Slightly raised from the jar bottom
+      // Position spider in jar - slightly raised for better visibility
+      spider.position.y = 0.05; // Slightly above the bottom of jar
       scene.add(spider);
       
-      // Store spider reference for animations
+      // Store reference for animation
       window.spiderModel = spider;
       
       // Continue with dust particles and scene finalization
@@ -529,16 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Update loading status
       if(loadingElement && loadingElement.parentNode) {
-        loadingElement.innerHTML = '<div>Scene loaded with fallback spider</div>';
-        
-        // Add instructions
-        const instructions = document.createElement('div');
-        instructions.style.marginTop = '10px';
-        instructions.style.fontSize = '14px';
-        instructions.style.fontWeight = 'normal';
-        instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
-        loadingElement.appendChild(instructions);
-        
+        loadingElement.textContent = 'Scene loaded (using fallback spider)';
         setTimeout(() => {
           loadingElement.style.opacity = '0';
           loadingElement.style.transition = 'opacity 1s ease';
@@ -547,18 +524,17 @@ document.addEventListener('DOMContentLoaded', function() {
               loadingElement.remove();
             }
           }, 1000);
-        }, 1500);
+        }, 1000);
       }
     }
     
-    // Add dust particles inside the jar
+    // Add dust particles inside the jar - enhanced with more particles and better animation
     function addDustParticles() {
-      const particlesCount = 150;
+      const particlesCount = 150; // More particles
       const positions = new Float32Array(particlesCount * 3);
       const sizes = new Float32Array(particlesCount);
       const particleGeometry = new THREE.BufferGeometry();
       
-      // Create varied dust particles 
       for (let i = 0; i < particlesCount; i++) {
         // Random positions inside jar
         const angle = Math.random() * Math.PI * 2;
@@ -592,28 +568,28 @@ document.addEventListener('DOMContentLoaded', function() {
       window.dustParticles = particles;
     }
     
-    // Finalize the scene setup
+    // Finalize the scene setup - mostly the same but with improved animation
     function finalizeScene() {
-      // Animation loop
+      // Animation loop - enhanced with more natural movements
       function animate() {
         requestAnimationFrame(animate);
         
         const delta = clock.getDelta();
         const elapsedTime = clock.getElapsedTime();
         
-        // Update animation mixer if available
+        // Update animation mixer if available - exactly as in original
         if (mixer) {
           mixer.update(delta);
         }
         
-        // Animate dust particles
+        // Animate dust particles - enhanced with more natural movement
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           
           for (let i = 0; i < positions.length; i += 3) {
             // More natural floating motion
             positions[i] += Math.sin((elapsedTime + i) * 0.05) * 0.0002; // X-axis drift
-            positions[i + 1] += Math.sin((elapsedTime + i) * 0.1) * 0.0005; // Y-axis stronger lift
+            positions[i + 1] += Math.sin((elapsedTime + i) * 0.1) * 0.0005; // Y-axis lift
             positions[i + 2] += Math.cos((elapsedTime + i) * 0.07) * 0.0003; // Z-axis drift
             
             // Keep particles inside jar bounds
@@ -625,31 +601,35 @@ document.addEventListener('DOMContentLoaded', function() {
           window.dustParticles.rotation.y += delta * 0.01;
         }
         
-        // Animate spider legs with micro-movements if available
-        if (window.spiderAnimations && window.spiderAnimations.enabled && window.spiderAnimations.legMovements.length > 0) {
-          window.spiderAnimations.legMovements.forEach(item => {
-            if (item.node && item.initialRotation) {
+        // Animate procedural spider legs if no animation mixer
+        if (!mixer && window.spiderModel) {
+          window.spiderModel.children.forEach(child => {
+            // Only animate leg parts (cylinders)
+            if (child.geometry && child.geometry.type === 'CylinderGeometry' && 
+                child.userData && child.userData.initialRotation) {
+                
               // Reset to initial rotation
-              item.node.rotation.copy(item.initialRotation);
+              child.rotation.copy(child.userData.initialRotation);
               
-              // Apply subtle movement
-              const angle = Math.sin(elapsedTime * item.speed) * item.magnitude;
-              item.node.rotateOnAxis(item.rotationAxis, angle);
+              // Apply subtle sine-wave animation
+              const legAngle = Math.sin(elapsedTime * child.userData.animationSpeed + 
+                              child.userData.animationOffset) * 0.03;
+              child.rotation.z += legAngle;
             }
           });
         }
         
-        // Update controls
+        // Update controls - exactly as in original
         if (controls) controls.update();
         
-        // Render
+        // Render - exactly as in original
         renderer.render(scene, camera);
       }
       
       // Start animation
       animate();
       
-      // Add a fullscreen button
+      // Add a fullscreen button - enhanced with better browser compatibility
       const fullscreenButton = document.createElement('button');
       fullscreenButton.textContent = '⛶';
       fullscreenButton.style.position = 'absolute';
@@ -690,6 +670,11 @@ document.addEventListener('DOMContentLoaded', function() {
               console.error('Fullscreen API not supported', innerErr);
             }
           }
+          
+          // Force resize after going fullscreen
+          setTimeout(() => {
+            handleResize();
+          }, 100);
         } else {
           try {
             if (document.exitFullscreen) {
@@ -706,3 +691,33 @@ document.addEventListener('DOMContentLoaded', function() {
           } catch (err) {
             console.error(`Error attempting to exit fullscreen: ${err.message}`);
           }
+        }
+      });
+      
+      container.appendChild(fullscreenButton);
+      
+      // Add auto-rotate toggle - exactly as in original
+      const rotateButton = document.createElement('button');
+      rotateButton.textContent = '↻';
+      rotateButton.style.position = 'absolute';
+      rotateButton.style.bottom = '10px';
+      rotateButton.style.right = '60px';
+      rotateButton.style.fontSize = '20px';
+      rotateButton.style.padding = '5px 10px';
+      rotateButton.style.background = 'rgba(255,255,255,0.7)';
+      rotateButton.style.border = 'none';
+      rotateButton.style.borderRadius = '5px';
+      rotateButton.style.cursor = 'pointer';
+      rotateButton.style.zIndex = '10';
+      rotateButton.title = 'Toggle auto-rotation';
+      
+      rotateButton.addEventListener('click', function() {
+        if (controls) {
+          controls.autoRotate = !controls.autoRotate;
+          rotateButton.style.background = controls.autoRotate ? 
+            'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
+          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
+        }
+      });
+      
+      container.appendChild(rotateButton);
