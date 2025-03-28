@@ -1,6 +1,6 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing photorealistic Three.js scene...');
+  console.log('DOM loaded, initializing hyperrealistic Three.js scene...');
   
   // Get the container
   const container = document.getElementById('arachnophobia-demo');
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.style.color = '#333';
     loadingElement.style.fontSize = '16px';
     loadingElement.style.fontWeight = 'bold';
-    loadingElement.textContent = 'Loading photorealistic scene...';
+    loadingElement.textContent = 'Loading hyperrealistic scene...';
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
     
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
       renderer.physicallyCorrectLights = true;
       renderer.outputEncoding = THREE.sRGBEncoding;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.0;
+      renderer.toneMappingExposure = 1.2; // Increased exposure for better brightness
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
@@ -131,8 +131,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Create Enhanced Lights
-    // Ambient light (subtle)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    // Ambient light (increased for better overall illumination)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
     
     // Enhanced key light (main light)
@@ -162,6 +162,18 @@ document.addEventListener('DOMContentLoaded', function() {
     rightLight.shadow.mapSize.width = 1024;
     rightLight.shadow.mapSize.height = 1024;
     scene.add(rightLight);
+    
+    // Add a front-facing light for better illumination of spider from viewer's perspective
+    const frontLight = new THREE.SpotLight(0xfffaf0, 0.8); // Warm white spotlight
+    frontLight.position.set(0, 1.2, 5); // Position in front of jar
+    frontLight.angle = Math.PI / 6; // Narrow angle
+    frontLight.penumbra = 0.2; // Soft edge
+    frontLight.decay = 1.5;
+    frontLight.distance = 10;
+    frontLight.castShadow = true;
+    frontLight.shadow.mapSize.width = 1024;
+    frontLight.shadow.mapSize.height = 1024;
+    scene.add(frontLight);
     
     // Rim light (highlight edges)
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
@@ -193,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.map = texture;
       woodTextures.map.wrapS = THREE.RepeatWrapping;
       woodTextures.map.wrapT = THREE.RepeatWrapping;
-      woodTextures.map.repeat.set(2, 2);
+      woodTextures.map.repeat.set(3, 3); // Increased repeat for finer grain
       createTableIfTexturesLoaded();
     });
     
@@ -201,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.normalMap = texture;
       woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
       woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
-      woodTextures.normalMap.repeat.set(2, 2);
+      woodTextures.normalMap.repeat.set(3, 3);
       createTableIfTexturesLoaded();
     });
     
@@ -209,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.roughnessMap = texture;
       woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
       woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
-      woodTextures.roughnessMap.repeat.set(2, 2);
+      woodTextures.roughnessMap.repeat.set(3, 3);
       createTableIfTexturesLoaded();
     });
     
@@ -226,7 +238,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create wooden table with enhanced properties
     function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
+      // Create a slightly uneven table for more realism
+      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3, 1, 1, 1);
+      
+      // Add very subtle random height variations to vertices
+      const positionAttribute = tableGeometry.getAttribute('position');
+      for (let i = 0; i < positionAttribute.count; i++) {
+        // Only modify y positions slightly for top vertices
+        if (positionAttribute.getY(i) > 0.09) {
+          positionAttribute.setY(
+            i, 
+            positionAttribute.getY(i) + (Math.random() * 0.005 - 0.0025)
+          );
+        }
+      }
+      tableGeometry.computeVertexNormals();
+      
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
@@ -242,14 +269,86 @@ document.addEventListener('DOMContentLoaded', function() {
       table.receiveShadow = true;
       scene.add(table);
       
+      // Add subtle dust to the table
+      addTableDust();
+      
       // Now that table is loaded, create the jar
       createJar();
+    }
+    
+    // Add subtle dust on the table
+    function addTableDust() {
+      // Create a subtle dust plane on the table
+      const dustGeometry = new THREE.PlaneGeometry(4.8, 2.8);
+      
+      // Create a canvas for the dust texture
+      const dustCanvas = document.createElement('canvas');
+      dustCanvas.width = 512;
+      dustCanvas.height = 512;
+      const dustCtx = dustCanvas.getContext('2d');
+      
+      // Fill with transparent base
+      dustCtx.fillStyle = 'rgba(255, 255, 255, 0)';
+      dustCtx.fillRect(0, 0, 512, 512);
+      
+      // Add random dust spots
+      for (let i = 0; i < 2000; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const size = Math.random() * 2;
+        
+        dustCtx.fillStyle = `rgba(245, 245, 245, ${Math.random() * 0.03})`;
+        dustCtx.fillRect(x, y, size, size);
+      }
+      
+      const dustTexture = new THREE.CanvasTexture(dustCanvas);
+      
+      const dustMaterial = new THREE.MeshBasicMaterial({
+        map: dustTexture,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      
+      const dust = new THREE.Mesh(dustGeometry, dustMaterial);
+      dust.rotation.x = -Math.PI / 2; // Lay flat on table
+      dust.position.y = -0.09; // Just above the table
+      dust.position.z = 0; // Center
+      
+      scene.add(dust);
     }
     
     // Create the glass jar
     function createJar() {
       // Create realistic glass jar - using a closed cylinder for complete glass
       const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 16, false); // Higher segments for better quality
+      
+      // Add subtle imperfections to jar
+      const jarPositionAttribute = jarGeometry.getAttribute('position');
+      for (let i = 0; i < jarPositionAttribute.count; i++) {
+        // Get current position
+        const x = jarPositionAttribute.getX(i);
+        const y = jarPositionAttribute.getY(i);
+        const z = jarPositionAttribute.getZ(i);
+        
+        // Calculate distance from center axis
+        const dist = Math.sqrt(x * x + z * z);
+        
+        // Only modify if point is on the outer surface (not top/bottom)
+        if (dist > 0.7 && y > -0.7 && y < 0.7) {
+          // Add subtle imperfection
+          const noise = (Math.random() - 0.5) * 0.01;
+          
+          // Normalize x,z to get direction
+          const nx = x / dist;
+          const nz = z / dist;
+          
+          // Apply noise in the radial direction
+          jarPositionAttribute.setX(i, x + nx * noise);
+          jarPositionAttribute.setZ(i, z + nz * noise);
+        }
+      }
+      jarGeometry.computeVertexNormals();
       
       // Enhanced glass material
       const jarMaterial = new THREE.MeshPhysicalMaterial({
@@ -262,7 +361,9 @@ document.addEventListener('DOMContentLoaded', function() {
         envMapIntensity: 1.2, // Slightly stronger reflections
         clearcoat: 1,
         clearcoatRoughness: 0.1,
-        ior: 1.5 // Add realistic refraction index for glass
+        ior: 1.5, // Add realistic refraction index for glass
+        attenuationDistance: 5.0, // Distance that light travels through glass
+        attenuationColor: new THREE.Color(0xf1f8ff) // Very subtle blue tint
       });
       
       const jar = new THREE.Mesh(jarGeometry, jarMaterial);
@@ -271,7 +372,32 @@ document.addEventListener('DOMContentLoaded', function() {
       jar.receiveShadow = true;
       scene.add(jar);
       
-      // Jar lid with metallic look
+      // Add condensation effect inside jar
+      const condensationGeometry = new THREE.CylinderGeometry(0.79, 0.79, 1.49, 64, 16, true);
+      const condensationMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        roughness: 0.9,
+        metalness: 0.0,
+        transmission: 0.7,
+        transparent: true,
+        opacity: 0.03, // Very subtle
+        side: THREE.BackSide // Only render inside
+      });
+      
+      const condensation = new THREE.Mesh(condensationGeometry, condensationMaterial);
+      condensation.position.copy(jar.position);
+      scene.add(condensation);
+      
+      // Create a realistic metal lid
+      createDetailedLid();
+      
+      // Now load the spider model
+      loadSpiderModel();
+    }
+    
+    // Create a detailed jar lid with realistic features
+    function createDetailedLid() {
+      // Main lid body
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
       const lidMaterial = new THREE.MeshStandardMaterial({
         color: 0x777777,
@@ -284,8 +410,47 @@ document.addEventListener('DOMContentLoaded', function() {
       lid.castShadow = true;
       scene.add(lid);
       
-      // Now load the spider model
-      loadSpiderModel();
+      // Add a rim around the lid
+      const lidRimGeometry = new THREE.TorusGeometry(0.85, 0.03, 8, 64);
+      const lidRimMaterial = new THREE.MeshStandardMaterial({
+        color: 0x666666,
+        metalness: 0.9,
+        roughness: 0.2,
+        envMap: envMap
+      });
+      const lidRim = new THREE.Mesh(lidRimGeometry, lidRimMaterial);
+      lidRim.position.set(0, 1.51, 0);
+      lidRim.rotation.x = Math.PI / 2;
+      lidRim.castShadow = true;
+      scene.add(lidRim);
+      
+      // Add a top plate to the lid
+      const lidTopGeometry = new THREE.CircleGeometry(0.8, 32);
+      const lidTopMaterial = new THREE.MeshStandardMaterial({
+        color: 0x777777,
+        metalness: 0.9,
+        roughness: 0.15,
+        envMap: envMap
+      });
+      const lidTop = new THREE.Mesh(lidTopGeometry, lidTopMaterial);
+      lidTop.position.set(0, 1.601, 0);
+      lidTop.rotation.x = -Math.PI / 2;
+      scene.add(lidTop);
+      
+      // Add concentric circles to the top of the lid
+      for (let i = 0; i < 3; i++) {
+        const radius = 0.7 - (i * 0.2);
+        const circleGeometry = new THREE.TorusGeometry(radius, 0.01, 4, 32);
+        const circleMaterial = new THREE.MeshStandardMaterial({
+          color: 0x666666,
+          metalness: 0.9,
+          roughness: 0.3
+        });
+        const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+        circle.position.set(0, 1.602, 0);
+        circle.rotation.x = Math.PI / 2;
+        scene.add(circle);
+      }
     }
     
     // Load the spider model
@@ -314,8 +479,8 @@ document.addEventListener('DOMContentLoaded', function() {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale - making it 1.2 times larger (more proportional to jar)
-          spiderModel.scale.set(1.2, 1.2, 1.2);
+          // Make the spider larger - increased scale from 1.2 to 1.8
+          spiderModel.scale.set(1.8, 1.8, 1.8);
           
           // First, get the bounding box to properly position the spider
           const boundingBox = new THREE.Box3().setFromObject(spiderModel);
@@ -345,11 +510,24 @@ document.addEventListener('DOMContentLoaded', function() {
               if (node.material) {
                 node.material.envMap = envMap;
                 node.material.envMapIntensity = 0.6; // Enhanced environment reflections
-                // Subtle subsurface effect for organic look
-                if (node.material.color && node.material.color.getHex() === 0x000000) {
-                  // For black parts, add slight sheen
-                  node.material.roughness = 0.75;
+                
+                // Add eye glints if this might be an eye part
+                if (node.name.toLowerCase().includes('eye') || 
+                    (node.material.color && node.material.color.getHex() === 0x000000 && 
+                     node.geometry.type === 'SphereGeometry')) {
+                  // Make eyes slightly reflective
+                  node.material.roughness = 0.3;
+                  node.material.envMapIntensity = 1.2;
+                } 
+                // For regular body parts
+                else {
+                  // Subtle subsurface effect for organic look
+                  if (node.material.color && node.material.color.getHex() === 0x000000) {
+                    // For black parts, add slight sheen
+                    node.material.roughness = 0.75;
+                  }
                 }
+                
                 node.material.needsUpdate = true;
               }
             }
@@ -376,6 +554,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create an animation action
             const action = mixer.clipAction(idleAnimation);
             
+            // Slow down animation for more natural movement
+            action.timeScale = 0.3;
+            
             // Play the animation
             action.play();
           } else {
@@ -384,6 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Add dust particles and finalize
           addDustParticles();
+          addWebStrands();
           finalizeScene();
           
           // Update loading status
@@ -429,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const spider = new THREE.Group();
       
       // Spider body (abdomen)
-      const abdomenGeometry = new THREE.SphereGeometry(0.22, 32, 32);
+      const abdomenGeometry = new THREE.SphereGeometry(0.3, 32, 32); // Increased size
       const spiderMaterial = new THREE.MeshStandardMaterial({
         color: 0x1a1a1a,
         roughness: 0.7,
@@ -441,22 +623,67 @@ document.addEventListener('DOMContentLoaded', function() {
       spider.add(abdomen);
       
       // Spider head (cephalothorax)
-      const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+      const headGeometry = new THREE.SphereGeometry(0.22, 32, 32); // Increased size
       const head = new THREE.Mesh(headGeometry, spiderMaterial);
-      head.position.set(0, 0, 0.2);
+      head.position.set(0, 0, 0.3); // Adjusted position for larger spider
       head.castShadow = true;
       spider.add(head);
       
+      // Add eyes
+      for (let i = 0; i < 8; i++) {
+        const eyeSize = 0.02 + (i < 2 ? 0.01 : 0); // Two slightly larger front eyes
+        const eyeGeometry = new THREE.SphereGeometry(eyeSize, 16, 16);
+        const eyeMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x000000,
+          roughness: 0.1,
+          metalness: 0.0,
+          envMap: envMap,
+          envMapIntensity: 1.5,
+          clearcoat: 1.0
+        });
+        
+        const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        
+        // Position eyes in a pattern on the head
+        const row = Math.floor(i / 4); // 0 for first row, 1 for second row
+        const col = i % 4; // 0-3 for position in row
+        
+        // Calculate eye position
+        const angle = (Math.PI / 8) * (col - 1.5); // Spread eyes across the front
+        const radius = row === 0 ? 0.18 : 0.16; // Front row further out
+        const height = row === 0 ? 0.04 : 0.02; // Front row higher
+        
+        eye.position.set(
+          Math.sin(angle) * 0.1,
+          height,
+          head.position.z + Math.cos(angle) * 0.1 + 0.1
+        );
+        
+        head.add(eye);
+        
+        // Add subtle eye glint (catch-light)
+        const glintGeometry = new THREE.SphereGeometry(eyeSize * 0.2, 8, 8);
+        const glintMaterial = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.7
+        });
+        
+        const glint = new THREE.Mesh(glintGeometry, glintMaterial);
+        glint.position.set(eyeSize * 0.3, eyeSize * 0.3, eyeSize * 0.5);
+        eye.add(glint);
+      }
+      
       // Simple legs
       for (let i = 0; i < 8; i++) {
-        const legGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.4, 8);
+        const legGeometry = new THREE.CylinderGeometry(0.03, 0.015, 0.6, 8); // Increased size
         const leg = new THREE.Mesh(legGeometry, spiderMaterial);
         
         const angle = (Math.PI / 4) * (i % 4);
         const isLeftSide = i < 4;
         const sideSign = isLeftSide ? 1 : -1;
         
-        leg.position.set(Math.cos(angle) * 0.2 * sideSign, 0, Math.sin(angle) * 0.2);
+        leg.position.set(Math.cos(angle) * 0.3 * sideSign, 0, Math.sin(angle) * 0.3);
         leg.rotation.z = sideSign * Math.PI / 4;
         leg.rotation.y = angle;
         
@@ -477,6 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Continue with dust particles and scene finalization
       addDustParticles();
+      addWebStrands();
       finalizeScene();
       
       // Update loading status
@@ -494,9 +722,98 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
+    // Add spider web strands inside the jar for realism
+    function addWebStrands() {
+      const webCount = 5 + Math.floor(Math.random() * 5);
+      const webGroup = new THREE.Group();
+      webGroup.position.y = 0.75; // Same center as jar
+      
+      for (let i = 0; i < webCount; i++) {
+        // Create a thin line for web strand
+        const points = [];
+        const segmentCount = 5 + Math.floor(Math.random() * 5);
+        
+        // Starting point - higher in the jar
+        const startY = 0.3 + Math.random() * 0.7;
+        const startAngle = Math.random() * Math.PI * 2;
+        const startRadius = Math.random() * 0.6;
+        const startPoint = new THREE.Vector3(
+          Math.cos(startAngle) * startRadius,
+          startY,
+          Math.sin(startAngle) * startRadius
+        );
+        
+        // End point - lower in the jar, near spider
+        const endY = -0.6 + Math.random() * 0.6;
+        const endAngle = startAngle + (Math.random() * Math.PI/2 - Math.PI/4);
+        const endRadius = Math.random() * 0.7;
+        const endPoint = new THREE.Vector3(
+          Math.cos(endAngle) * endRadius,
+          endY,
+          Math.sin(endAngle) * endRadius
+        );
+        
+        // Create intermediate points for a curved strand
+        points.push(startPoint);
+        
+        for (let j = 1; j < segmentCount; j++) {
+          const t = j / segmentCount;
+          
+          // Base interpolation
+          const x = startPoint.x * (1 - t) + endPoint.x * t;
+          const y = startPoint.y * (1 - t) + endPoint.y * t;
+          const z = startPoint.z * (1 - t) + endPoint.z * t;
+          
+          // Add a slight curve with sine wave
+          const sag = Math.sin(t * Math.PI) * (0.05 + Math.random() * 0.15);
+          const sagPoint = new THREE.Vector3(
+            x - Math.sin(startAngle) * sag,
+            y - sag,
+            z - Math.cos(startAngle) * sag
+          );
+          
+          points.push(sagPoint);
+        }
+        
+        points.push(endPoint);
+        
+        // Create the strand
+        const webGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        const webMaterial = new THREE.LineBasicMaterial({ 
+          color: 0xf8f8f8,
+          transparent: true,
+          opacity: 0.4 + Math.random() * 0.3
+        });
+        
+        const webStrand = new THREE.Line(webGeometry, webMaterial);
+        webGroup.add(webStrand);
+        
+        // Occasionally add a small droplet of moisture along the web
+        if (Math.random() > 0.7) {
+          const dropletPosition = points[Math.floor(Math.random() * points.length)];
+          const dropletGeometry = new THREE.SphereGeometry(0.01 + Math.random() * 0.02, 8, 8);
+          const dropletMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            roughness: 0,
+            metalness: 0,
+            transmission: 0.98,
+            transparent: true,
+            ior: 1.4
+          });
+          
+          const droplet = new THREE.Mesh(dropletGeometry, dropletMaterial);
+          droplet.position.copy(dropletPosition);
+          webGroup.add(droplet);
+        }
+      }
+      
+      scene.add(webGroup);
+      window.webGroup = webGroup;
+    }
+    
     // Enhanced dust particles
     function addDustParticles() {
-      const particlesCount = 150; // More particles for realism
+      const particlesCount = 200; // More particles for realism
       const positions = new Float32Array(particlesCount * 3);
       const sizes = new Float32Array(particlesCount); // Add variable sizes
       const particleGeometry = new THREE.BufferGeometry();
@@ -535,7 +852,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Finalize the scene setup
     function finalizeScene() {
-      // Animation loop with enhanced dust animation
+      // Animation loop with enhanced dust and web animation
       function animate() {
         requestAnimationFrame(animate);
         
@@ -566,6 +883,21 @@ document.addEventListener('DOMContentLoaded', function() {
           window.dustParticles.rotation.y += delta * 0.01;
         }
         
+        // Animate web strands with subtle movement
+        if (window.webGroup) {
+          // Gentle sway of web
+          window.webGroup.rotation.y = Math.sin(elapsedTime * 0.1) * 0.01;
+          
+          // Animate droplets on web
+          window.webGroup.children.forEach((child) => {
+            if (child.isMesh) {
+              // Animate water droplets
+              child.rotation.x = Math.sin(elapsedTime * 0.5) * 0.2;
+              child.rotation.z = Math.cos(elapsedTime * 0.3) * 0.2;
+            }
+          });
+        }
+        
         // Animate procedural spider legs if available
         if (mixer === undefined) {
           // Only animate spider legs if no animation mixer (means using procedural spider)
@@ -581,6 +913,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
         }
+        
+        // Add subtle camera breathing motion
+        const cameraBreathing = Math.sin(elapsedTime * 0.5) * 0.0005;
+        camera.position.y += cameraBreathing;
         
         // Update controls
         if (controls) controls.update();
@@ -639,9 +975,21 @@ document.addEventListener('DOMContentLoaded', function() {
             handleResize();
           }, 100);
         } else {
-          document.exitFullscreen().catch(err => {
+          try {
+            if (document.exitFullscreen) {
+              document.exitFullscreen().catch(err => {
+                console.error(`Error attempting to exit fullscreen: ${err.message}`);
+              });
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          } catch (err) {
             console.error(`Error attempting to exit fullscreen: ${err.message}`);
-          });
+          }
         }
       });
       
@@ -673,6 +1021,36 @@ document.addEventListener('DOMContentLoaded', function() {
       
       container.appendChild(rotateButton);
       
+      // Add a light toggle button for "flashlight" effect
+      const lightButton = document.createElement('button');
+      lightButton.textContent = '💡';
+      lightButton.style.position = 'absolute';
+      lightButton.style.bottom = '10px';
+      lightButton.style.right = '110px';
+      lightButton.style.fontSize = '20px';
+      lightButton.style.padding = '5px 10px';
+      lightButton.style.background = 'rgba(255,255,255,0.7)';
+      lightButton.style.border = 'none';
+      lightButton.style.borderRadius = '5px';
+      lightButton.style.cursor = 'pointer';
+      lightButton.style.zIndex = '10';
+      lightButton.title = 'Toggle extra light';
+      
+      // Track whether extra light is on
+      let extraLightOn = true;
+      
+      lightButton.addEventListener('click', function() {
+        extraLightOn = !extraLightOn;
+        lightButton.style.background = extraLightOn ? 
+          'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
+        lightButton.style.color = extraLightOn ? '#fff' : '#000';
+        
+        // Toggle the front-facing light
+        frontLight.intensity = extraLightOn ? 0.8 : 0;
+      });
+      
+      container.appendChild(lightButton);
+      
       // Add instructions
       const instructions = document.createElement('div');
       instructions.style.position = 'absolute';
@@ -683,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
       instructions.style.borderRadius = '5px';
       instructions.style.fontSize = '14px';
       instructions.style.zIndex = '10';
-      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom<br>Use buttons for special effects';
       container.appendChild(instructions);
       
       // Hide instructions after 5 seconds
@@ -725,34 +1103,27 @@ document.addEventListener('DOMContentLoaded', function() {
       // Listen for resize events
       window.addEventListener('resize', handleResize);
       
-      // Listen for fullscreen change events
-      document.addEventListener('fullscreenchange', handleResize);
-      document.addEventListener('webkitfullscreenchange', handleResize);
-      document.addEventListener('mozfullscreenchange', handleResize);
-      document.addEventListener('MSFullscreenChange', handleResize);
+      // Listen for fullscreen change events with additional fix for exiting fullscreen
+      document.addEventListener('fullscreenchange', function() {
+        handleResize();
+        // Force additional resize after slight delay to catch any browser quirks
+        setTimeout(handleResize, 100);
+      });
+      document.addEventListener('webkitfullscreenchange', function() {
+        handleResize();
+        setTimeout(handleResize, 100);
+      });
+      document.addEventListener('mozfullscreenchange', function() {
+        handleResize();
+        setTimeout(handleResize, 100);
+      });
+      document.addEventListener('MSFullscreenChange', function() {
+        handleResize();
+        setTimeout(handleResize, 100);
+      });
       
       // Initial resize
       handleResize();
       
       console.log('Scene setup completed');
     }
-    
-    // If textures fail to load, start anyway with fallbacks after timeout
-    setTimeout(() => {
-      if (texturesLoaded < requiredTextures) {
-        console.warn('Not all textures loaded in time, proceeding with fallbacks');
-        
-        // Fallback materials
-        woodTextures.map = woodTextures.map || new THREE.Texture();
-        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
-        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
-        
-        createTable();
-      }
-    }, 5000); // 5 second timeout
-    
-  } catch (error) {
-    console.error('Error creating photorealistic scene:', error);
-    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
-  }
-});
