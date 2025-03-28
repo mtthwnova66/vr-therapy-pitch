@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.style.fontSize = '16px';
     loadingElement.style.fontWeight = 'bold';
     loadingElement.textContent = 'Loading photorealistic scene...';
+    loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
     
     // Scene setup
@@ -68,6 +69,14 @@ document.addEventListener('DOMContentLoaded', function() {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement); // Re-add the loading element
+    
+    // Ensure the renderer's canvas uses correct styles for fullscreen
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
     
     // Add OrbitControls
     let controls;
@@ -155,7 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round(loaded / total * 100);
-      loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      }
     };
     
     // Clock for animations
@@ -267,7 +278,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load the spider model
     function loadSpiderModel() {
-      loadingElement.textContent = 'Loading spider model...';
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Loading spider model...';
+      }
       
       // Create a GLTFLoader instance
       const gltfLoader = new THREE.GLTFLoader(loadingManager);
@@ -289,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function() {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale - making it 4x larger
-          spiderModel.scale.set(0.8, 0.8, 0.8);
+          // Adjust scale - making it 8x larger (2x larger than before)
+          spiderModel.scale.set(1.6, 1.6, 1.6);
           
           // Position at the bottom of the jar
           spiderModel.position.set(0, 0.1, 0);
@@ -351,16 +364,20 @@ document.addEventListener('DOMContentLoaded', function() {
           finalizeScene();
           
           // Update loading status
-          loadingElement.textContent = 'Scene loaded!';
-          
-          // Hide loading message after a short delay
-          setTimeout(() => {
-            loadingElement.style.opacity = '0';
-            loadingElement.style.transition = 'opacity 1s ease';
+          if(loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Scene loaded!';
+            
+            // Hide loading message after a short delay
             setTimeout(() => {
-              loadingElement.remove();
+              loadingElement.style.opacity = '0';
+              loadingElement.style.transition = 'opacity 1s ease';
+              setTimeout(() => {
+                if(loadingElement && loadingElement.parentNode) {
+                  loadingElement.remove();
+                }
+              }, 1000);
             }, 1000);
-          }, 1000);
+          }
         },
         
         // Progress callback
@@ -371,7 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Error callback
         function(error) {
           console.error('Error loading spider model:', error);
-          loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          if(loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          }
           
           // Create a fallback procedural spider
           createProceduralSpider();
@@ -431,14 +450,18 @@ document.addEventListener('DOMContentLoaded', function() {
       finalizeScene();
       
       // Update loading status
-      loadingElement.textContent = 'Scene loaded (using fallback spider)';
-      setTimeout(() => {
-        loadingElement.style.opacity = '0';
-        loadingElement.style.transition = 'opacity 1s ease';
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Scene loaded (using fallback spider)';
         setTimeout(() => {
-          loadingElement.remove();
+          loadingElement.style.opacity = '0';
+          loadingElement.style.transition = 'opacity 1s ease';
+          setTimeout(() => {
+            if(loadingElement && loadingElement.parentNode) {
+              loadingElement.remove();
+            }
+          }, 1000);
         }, 1000);
-      }, 1000);
+      }
     }
     
     // Add dust particles inside the jar
@@ -532,11 +555,39 @@ document.addEventListener('DOMContentLoaded', function() {
       
       fullscreenButton.addEventListener('click', function() {
         if (!document.fullscreenElement) {
-          container.requestFullscreen().catch(err => {
-            console.error(`Error attempting to enable fullscreen: ${err.message}`);
-          });
+          // Ensure container styles are correct before going fullscreen
+          container.style.width = '100%';
+          container.style.height = '100%';
+          container.style.margin = '0';
+          container.style.padding = '0';
+          container.style.overflow = 'hidden';
+          container.style.position = 'relative';
+          
+          // Fix for handling fullscreen properly across browsers
+          try {
+            // Try standard method first
+            container.requestFullscreen().catch(err => {
+              console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+          } catch (e) {
+            // Fallbacks for various browsers
+            try {
+              if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+              else if (container.mozRequestFullScreen) container.mozRequestFullScreen();
+              else if (container.msRequestFullscreen) container.msRequestFullscreen();
+            } catch (innerErr) {
+              console.error('Fullscreen API not supported', innerErr);
+            }
+          }
+          
+          // Force resize after going fullscreen
+          setTimeout(() => {
+            handleResize();
+          }, 100);
         } else {
-          document.exitFullscreen();
+          document.exitFullscreen().catch(err => {
+            console.error(`Error attempting to exit fullscreen: ${err.message}`);
+          });
         }
       });
       
@@ -587,14 +638,47 @@ document.addEventListener('DOMContentLoaded', function() {
         instructions.style.transition = 'opacity 1s ease';
       }, 5000);
       
-      // Handle window resize
-      window.addEventListener('resize', function() {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
+      // Handle window resize and fullscreen changes
+      function handleResize() {
+        // If in fullscreen, use screen dimensions
+        let width, height;
+        
+        if (document.fullscreenElement === container) {
+          width = window.innerWidth; 
+          height = window.innerHeight;
+          
+          // Ensure the canvas fills the entire fullscreen space
+          renderer.domElement.style.width = "100vw";
+          renderer.domElement.style.height = "100vh";
+          
+          // Additional styles to fix fullscreen issues
+          document.body.style.overflow = "hidden";
+        } else {
+          width = container.clientWidth;
+          height = container.clientHeight;
+          renderer.domElement.style.width = "100%";
+          renderer.domElement.style.height = "100%";
+          document.body.style.overflow = "";
+        }
+        
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
         renderer.setSize(width, height);
-      });
+        
+        console.log(`Resized to: ${width}x${height}`);
+      }
+      
+      // Listen for resize events
+      window.addEventListener('resize', handleResize);
+      
+      // Listen for fullscreen change events
+      document.addEventListener('fullscreenchange', handleResize);
+      document.addEventListener('webkitfullscreenchange', handleResize);
+      document.addEventListener('mozfullscreenchange', handleResize);
+      document.addEventListener('MSFullscreenChange', handleResize);
+      
+      // Initial resize
+      handleResize();
       
       console.log('Scene setup completed');
     }
