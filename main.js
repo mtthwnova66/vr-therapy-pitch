@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
+  // Set the container dimensions if not already set
+  if (!container.style.height || container.style.height === 'auto') {
+    container.style.height = '600px';
+  }
+  if (!container.style.width || container.style.width === 'auto') {
+    container.style.width = '100%';
+  }
+  container.style.position = 'relative';
+  
   // Check if THREE is available
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
@@ -32,10 +41,15 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.style.left = '50%';
     loadingElement.style.transform = 'translate(-50%, -50%)';
     loadingElement.style.color = '#333';
-    loadingElement.style.fontSize = '16px';
+    loadingElement.style.fontSize = '18px';
     loadingElement.style.fontWeight = 'bold';
-    loadingElement.textContent = 'Loading hyperrealistic scene...';
+    loadingElement.textContent = 'Loading hyperrealistic spider scene...';
     loadingElement.style.zIndex = '100';
+    loadingElement.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    loadingElement.style.padding = '15px 20px';
+    loadingElement.style.borderRadius = '8px';
+    loadingElement.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+    loadingElement.style.textAlign = 'center';
     container.appendChild(loadingElement);
     
     // Scene setup
