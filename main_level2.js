@@ -1,99 +1,117 @@
+// Wait for the DOM to be fully loaded
 function initLevel2() {
-  const container = document.getElementById('arachnophobia-level2');
-  container.innerHTML = '';
+  console.log('Initializing Level 2 scene...');
 
-  // Create and show loading message
-  const loadingMessage = document.createElement('div');
-  loadingMessage.id = 'loading-message';
-  loadingMessage.textContent = 'Loading 3D Simulation...';
-  loadingMessage.style.position = 'absolute';
-  loadingMessage.style.top = '50%';
-  loadingMessage.style.left = '50%';
-  loadingMessage.style.transform = 'translate(-50%, -50%)';
-  loadingMessage.style.color = '#555';
-  loadingMessage.style.fontSize = '1rem';
-  container.appendChild(loadingMessage);
+  const container = document.getElementById('arachnophobia-level2');
+  if (!container) {
+    console.error('Container not found: #arachnophobia-level2');
+    return;
+  }
+
+  if (typeof THREE === 'undefined') {
+    console.error('THREE is not defined. Make sure Three.js is loaded.');
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries. Please check your browser settings or try a different browser.</p>';
+    return;
+  }
+
+  // Create loading message
+  const loadingElement = document.createElement('div');
+  loadingElement.id = 'loading-status';
+  loadingElement.style.position = 'absolute';
+  loadingElement.style.top = '50%';
+  loadingElement.style.left = '50%';
+  loadingElement.style.transform = 'translate(-50%, -50%)';
+  loadingElement.style.color = '#333';
+  loadingElement.style.fontSize = '16px';
+  loadingElement.style.fontWeight = 'bold';
+  loadingElement.textContent = 'Loading photorealistic scene...';
+  loadingElement.style.zIndex = '100';
+  container.appendChild(loadingElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf5f5f7);
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.set(0, 1.2, 2.0); // Closer to spider
 
-  const camera = new THREE.PerspectiveCamera(
-    60,
-    container.clientWidth / container.clientHeight,
-    0.1,
-    100
-  );
-  camera.position.set(0, 1.2, 2.8);
-
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  container.innerHTML = '';
   container.appendChild(renderer.domElement);
+  container.appendChild(loadingElement);
 
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 0.6, 0);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
+  controls.update();
 
-  const light = new THREE.DirectionalLight(0xffffff, 1);
-  light.position.set(5, 10, 7.5);
-  scene.add(light);
-
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(3, 6, 3);
+  scene.add(directionalLight);
+
+  const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
+  const tableMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+  const table = new THREE.Mesh(tableGeometry, tableMaterial);
+  table.position.y = -0.1;
+  scene.add(table);
 
   const loader = new THREE.GLTFLoader();
-
-  const dracoLoader = new THREE.DRACOLoader();
-  dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
-  loader.setDRACOLoader(dracoLoader);
-
-  let spider;
-  let clock = new THREE.Clock();
-
   loader.load(
     'spider2.glb',
     function (gltf) {
-      spider = gltf.scene;
-      spider.scale.set(1.8, 1.8, 1.8);
-      spider.position.set(0, 0, 0);
-      scene.add(spider);
+      const model = gltf.scene;
+      model.scale.set(1.5, 1.5, 1.5);
+      model.position.set(0, 0.2, 0);
+      model.traverse(node => {
+        if (node.isMesh) {
+          node.castShadow = true;
+        }
+      });
+      scene.add(model);
+
+      if (gltf.animations && gltf.animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(model);
+        const action = mixer.clipAction(gltf.animations[0]);
+        action.timeScale = 0.5;
+        action.play();
+
+        const clock = new THREE.Clock();
+        function animate() {
+          requestAnimationFrame(animate);
+          mixer.update(clock.getDelta());
+          controls.update();
+          renderer.render(scene, camera);
+        }
+        animate();
+      } else {
+        function animate() {
+          requestAnimationFrame(animate);
+          controls.update();
+          renderer.render(scene, camera);
+        }
+        animate();
+      }
 
       // Remove loading message
-      container.removeChild(loadingMessage);
-
-      animate();
-    },
-    function (xhr) {
-      // Optional: update loading message with percent
-      if (xhr.lengthComputable) {
-        const percentComplete = (xhr.loaded / xhr.total) * 100;
-        loadingMessage.textContent = `Loading 3D Simulation... ${Math.round(percentComplete)}%`;
+      if (loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Scene loaded!';
+        setTimeout(() => {
+          loadingElement.style.opacity = '0';
+          loadingElement.style.transition = 'opacity 1s ease';
+          setTimeout(() => {
+            if (loadingElement && loadingElement.parentNode) {
+              loadingElement.remove();
+            }
+          }, 1000);
+        }, 1000);
       }
     },
+    undefined,
     function (error) {
-      console.error('An error occurred loading spider2.glb:', error);
-      loadingMessage.textContent = 'Failed to load model.';
+      console.error('Error loading spider2.glb', error);
+      loadingElement.textContent = 'Failed to load spider model.';
     }
   );
-
-  function animate() {
-    requestAnimationFrame(animate);
-
-    const elapsed = clock.getElapsedTime();
-
-    if (spider) {
-      spider.rotation.y = elapsed * 0.2;
-      spider.position.y = Math.sin(elapsed * 1.5) * 0.05;
-    }
-
-    controls.update();
-    renderer.render(scene, camera);
-  }
-
-  window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-  });
-}
-
+}  // end of initLevel2
