@@ -130,13 +130,13 @@ document.addEventListener('DOMContentLoaded', function() {
       scene.background = new THREE.Color(0xf5f5f7);
     }
     
-    // Create Lights
+    // Create Enhanced Lights
     // Ambient light (subtle)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
     
-    // Key light (main light)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    // Enhanced key light (main light)
+    const keyLight = new THREE.DirectionalLight(0xfff5e0, 1.1); // Warmer, slightly brighter
     keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
@@ -154,6 +154,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-3, 4, -3);
     scene.add(fillLight);
+    
+    // Add an extra light for the right side of the jar
+    const rightLight = new THREE.DirectionalLight(0xffefd5, 0.7); // Warm light for right side
+    rightLight.position.set(6, 2, 0); // Position to the right side
+    rightLight.castShadow = true;
+    rightLight.shadow.mapSize.width = 1024;
+    rightLight.shadow.mapSize.height = 1024;
+    scene.add(rightLight);
     
     // Rim light (highlight edges)
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
@@ -216,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // Create wooden table
+    // Create wooden table with enhanced properties
     function createTable() {
       const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
       const tableMaterial = new THREE.MeshStandardMaterial({
@@ -225,7 +233,8 @@ document.addEventListener('DOMContentLoaded', function() {
         roughnessMap: woodTextures.roughnessMap,
         roughness: 0.8,
         metalness: 0.1,
-        envMap: envMap
+        envMap: envMap,
+        color: 0xeadfca // Slightly warmer wood tone for realism
       });
       
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
@@ -240,17 +249,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create the glass jar
     function createJar() {
       // Create realistic glass jar - using a closed cylinder for complete glass
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false); // closed cylinder
+      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 16, false); // Higher segments for better quality
+      
+      // Enhanced glass material
       const jarMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
-        metalness: 0.1,
+        metalness: 0.0, // Reduced metalness for better glass look
         roughness: 0.05,
         transmission: 0.95, // glass transparency
         transparent: true,
         thickness: 0.05,    // glass thickness
-        envMapIntensity: 1,
+        envMapIntensity: 1.2, // Slightly stronger reflections
         clearcoat: 1,
-        clearcoatRoughness: 0.1
+        clearcoatRoughness: 0.1,
+        ior: 1.5 // Add realistic refraction index for glass
       });
       
       const jar = new THREE.Mesh(jarGeometry, jarMaterial);
@@ -264,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const lidMaterial = new THREE.MeshStandardMaterial({
         color: 0x777777,
         metalness: 0.9,
-        roughness: 0.1,
+        roughness: 0.15, // Slightly rougher for realism
         envMap: envMap
       });
       const lid = new THREE.Mesh(lidGeometry, lidMaterial);
@@ -329,9 +341,15 @@ document.addEventListener('DOMContentLoaded', function() {
               node.castShadow = true;
               node.receiveShadow = true;
               
-              // Improve materials if needed
+              // Improve materials with enhanced reflections
               if (node.material) {
                 node.material.envMap = envMap;
+                node.material.envMapIntensity = 0.6; // Enhanced environment reflections
+                // Subtle subsurface effect for organic look
+                if (node.material.color && node.material.color.getHex() === 0x000000) {
+                  // For black parts, add slight sheen
+                  node.material.roughness = 0.75;
+                }
                 node.material.needsUpdate = true;
               }
             }
@@ -415,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const spiderMaterial = new THREE.MeshStandardMaterial({
         color: 0x1a1a1a,
         roughness: 0.7,
-        metalness: 0.2,
+        metalness: 0.1, // Slightly reduced metalness for more natural look
         envMap: envMap
       });
       const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
@@ -444,10 +462,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         leg.castShadow = true;
         spider.add(leg);
+        
+        // Store initial rotation for animation
+        leg.userData = {
+          initialRotation: leg.rotation.clone(),
+          animationSpeed: 0.5 + Math.random() * 0.5,
+          animationOffset: Math.random() * Math.PI * 2
+        };
       }
       
       // Position spider in jar - exactly on the bottom
-      spider.position.y = 0.0; // Place exactly at the bottom of jar
+      spider.position.y = 0.05; // Slightly raised for better visibility
       scene.add(spider);
       
       // Continue with dust particles and scene finalization
@@ -469,30 +494,35 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // Add dust particles inside the jar
+    // Enhanced dust particles
     function addDustParticles() {
-      const particlesCount = 100;
+      const particlesCount = 150; // More particles for realism
       const positions = new Float32Array(particlesCount * 3);
+      const sizes = new Float32Array(particlesCount); // Add variable sizes
       const particleGeometry = new THREE.BufferGeometry();
       
       for (let i = 0; i < particlesCount; i++) {
-        // Random positions inside jar
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.random() * 0.7;
         
         positions[i * 3] = Math.cos(angle) * radius; // x
         positions[i * 3 + 1] = Math.random() * 1.4 + 0.05; // y (within jar height)
         positions[i * 3 + 2] = Math.sin(angle) * radius; // z
+        
+        // Varied particle sizes for realism
+        sizes[i] = 0.002 + Math.random() * 0.005;
       }
       
       particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
       
       const particleMaterial = new THREE.PointsMaterial({
         color: 0xffffff,
         size: 0.005,
         transparent: true,
         opacity: 0.3,
-        blending: THREE.AdditiveBlending
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true // Size based on distance for realism
       });
       
       const particles = new THREE.Points(particleGeometry, particleMaterial);
@@ -505,24 +535,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Finalize the scene setup
     function finalizeScene() {
-      // Animation loop
+      // Animation loop with enhanced dust animation
       function animate() {
         requestAnimationFrame(animate);
         
         const delta = clock.getDelta();
+        const elapsedTime = clock.getElapsedTime();
         
         // Update animation mixer if available
         if (mixer) {
           mixer.update(delta);
         }
         
-        // Animate dust particles
+        // Enhanced dust animation
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           
           for (let i = 0; i < positions.length; i += 3) {
-            // Slow floating motion
-            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
+            // More natural 3D floating motion
+            positions[i] += Math.sin((elapsedTime + i) * 0.05) * 0.0002; // X-axis drift
+            positions[i + 1] += Math.sin((elapsedTime + i) * 0.1) * 0.0005; // Y-axis lift
+            positions[i + 2] += Math.cos((elapsedTime + i) * 0.07) * 0.0002; // Z-axis drift
             
             // Keep particles inside jar bounds
             if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
@@ -531,6 +564,22 @@ document.addEventListener('DOMContentLoaded', function() {
           
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
+        }
+        
+        // Animate procedural spider legs if available
+        if (mixer === undefined) {
+          // Only animate spider legs if no animation mixer (means using procedural spider)
+          scene.traverse(function(child) {
+            if (child.isMesh && child.userData && child.userData.initialRotation) {
+              // Reset to initial rotation
+              child.rotation.copy(child.userData.initialRotation);
+              
+              // Apply subtle sine-wave animation
+              const legAngle = Math.sin(elapsedTime * child.userData.animationSpeed + 
+                              child.userData.animationOffset) * 0.03;
+              child.rotation.z += legAngle;
+            }
+          });
         }
         
         // Update controls
