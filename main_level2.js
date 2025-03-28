@@ -10,8 +10,8 @@ function initLevel2() {
     container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries. Please check your browser settings or try a different browser.</p>';
     return;
   }
-  
-  // Wait for container to be visible
+
+  // Wait until the container is visible
   function waitForVisibility(element, callback) {
     if (element.offsetWidth > 0 && element.offsetHeight > 0) {
       callback();
@@ -19,7 +19,7 @@ function initLevel2() {
       setTimeout(() => waitForVisibility(element, callback), 100);
     }
   }
-  
+
   waitForVisibility(container, function() {
     // Create loading message element
     const loadingElement = document.createElement('div');
@@ -34,14 +34,14 @@ function initLevel2() {
     loadingElement.textContent = 'Loading photorealistic scene...';
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
-    
+
     // Scene setup
     const scene = new THREE.Scene();
-    
+
     // Camera setup – slightly closer for a zoomed-in view
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.2, 2.0);
-    
+
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -56,18 +56,18 @@ function initLevel2() {
     } catch (e) {
       console.warn('Advanced rendering features not fully supported in this browser', e);
     }
-    
+
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
-    
+
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0';
     renderer.domElement.style.left = '0';
-    
+
     // Add OrbitControls
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
@@ -83,8 +83,8 @@ function initLevel2() {
     } else {
       console.warn('OrbitControls not available');
     }
-    
-    // Environment map for reflections and background
+
+    // Environment map (same as Level 1)
     let envMap;
     try {
       const urls = [
@@ -98,6 +98,7 @@ function initLevel2() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       scene.environment = envMap;
+
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xf5f5f7, side: THREE.DoubleSide });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
@@ -107,11 +108,11 @@ function initLevel2() {
       console.warn('Environment mapping not fully supported', e);
       scene.background = new THREE.Color(0xf5f5f7);
     }
-    
-    // Lighting setup
+
+    // Lighting setup (matching Level 1)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
-    
+
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
     keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
@@ -125,32 +126,32 @@ function initLevel2() {
     keyLight.shadow.camera.bottom = -5;
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
-    
+
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-3, 4, -3);
     scene.add(fillLight);
-    
+
     const rightLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rightLight.position.set(6, 2, 0);
     scene.add(rightLight);
-    
+
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
-    
-    // Load wood textures and create table (same as Level 1)
+
+    // Load wood textures for table (same as Level 1)
     const textureLoader = new THREE.TextureLoader();
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
-    
+
     function createTableIfTexturesLoaded() {
       texturesLoaded++;
       if (texturesLoaded >= requiredTextures) {
         createTable();
       }
     }
-    
+
     textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
       woodTextures.map = texture;
       woodTextures.map.wrapS = THREE.RepeatWrapping;
@@ -172,7 +173,7 @@ function initLevel2() {
       woodTextures.roughnessMap.repeat.set(2, 2);
       createTableIfTexturesLoaded();
     });
-    
+
     function createTable() {
       const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
       const tableMaterial = new THREE.MeshStandardMaterial({
@@ -189,7 +190,7 @@ function initLevel2() {
       scene.add(table);
       createJar();
     }
-    
+
     function createJar() {
       const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false);
       const jarMaterial = new THREE.MeshPhysicalMaterial({
@@ -209,7 +210,7 @@ function initLevel2() {
       jar.castShadow = true;
       jar.receiveShadow = true;
       scene.add(jar);
-      
+
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
       const lidMaterial = new THREE.MeshStandardMaterial({
         color: 0x777777,
@@ -221,10 +222,10 @@ function initLevel2() {
       lid.position.set(0, 1.55, 0);
       lid.castShadow = true;
       scene.add(lid);
-      
+
       loadSpiderModel();
     }
-    
+
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -235,22 +236,21 @@ function initLevel2() {
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
-      
+
       gltfLoader.load(
         'spider2.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
-          // Center the spider model on the jar
           const boundingBox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           boundingBox.getCenter(center);
           const minY = boundingBox.min.y;
           const heightOffset = -minY;
           spiderModel.position.set(-center.x, 0 + heightOffset, -center.z);
-          // Rotate the spider 180° to orient it diagonally opposite to Level 1
-          spiderModel.rotation.y = Math.PI;
-          
+          // Rotate spider diagonally (–45° rotation)
+          spiderModel.rotation.y = -Math.PI / 4;
+
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -261,9 +261,9 @@ function initLevel2() {
               }
             }
           });
-          
+
           scene.add(spiderModel);
-          
+
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Model has ${gltf.animations.length} animations`);
             const mixer = new THREE.AnimationMixer(spiderModel);
@@ -275,10 +275,10 @@ function initLevel2() {
           } else {
             console.log('No animations found in the model');
           }
-          
+
           addDustParticles();
           finalizeScene();
-          
+
           if (loadingElement && loadingElement.parentNode) {
             loadingElement.textContent = 'Scene loaded!';
             setTimeout(() => {
@@ -301,7 +301,7 @@ function initLevel2() {
         }
       );
     }
-    
+
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
@@ -326,7 +326,7 @@ function initLevel2() {
       scene.add(particles);
       window.dustParticles = particles;
     }
-    
+
     function finalizeScene() {
       // Fullscreen button
       const fullscreenButton = document.createElement('button');
@@ -361,8 +361,8 @@ function initLevel2() {
         }
       });
       container.appendChild(fullscreenButton);
-      
-      // Auto-rotate (rotation) button
+
+      // Auto-rotate button
       const rotateButton = document.createElement('button');
       rotateButton.textContent = '↻';
       rotateButton.style.position = 'absolute';
@@ -384,7 +384,7 @@ function initLevel2() {
         }
       });
       container.appendChild(rotateButton);
-      
+
       // Instructions
       const instructions = document.createElement('div');
       instructions.style.position = 'absolute';
@@ -401,8 +401,7 @@ function initLevel2() {
         instructions.style.opacity = '0';
         instructions.style.transition = 'opacity 1s ease';
       }, 5000);
-      
-      // Resize handler
+
       function handleResize() {
         let width, height;
         if (document.fullscreenElement === container) {
@@ -425,14 +424,14 @@ function initLevel2() {
         renderer.setSize(width, height);
         console.log(`Resized to: ${width}x${height}`);
       }
-      
+
       window.addEventListener('resize', handleResize);
       document.addEventListener('fullscreenchange', handleResize);
       document.addEventListener('webkitfullscreenchange', handleResize);
       document.addEventListener('mozfullscreenchange', handleResize);
       document.addEventListener('MSFullscreenChange', handleResize);
       handleResize();
-      
+
       const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
@@ -454,11 +453,11 @@ function initLevel2() {
         renderer.render(scene, camera);
       }
       animate();
-      
+
       console.log('Level 2 scene setup completed');
-    }
-    
-    // Fallback: if textures fail to load within 10 seconds
+    });
+
+    // Fallback: If textures are not loaded within 10 seconds, proceed with fallbacks.
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, proceeding with fallbacks');
