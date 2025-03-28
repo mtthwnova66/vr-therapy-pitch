@@ -1,6 +1,6 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing hyperrealistic Three.js scene...');
+  console.log('DOM loaded, initializing photorealistic Three.js scene...');
   
   // Get the container
   const container = document.getElementById('arachnophobia-demo');
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Set the container dimensions if not already set
+  // Set explicit container dimensions if not already set
   if (!container.style.height || container.style.height === 'auto') {
     container.style.height = '600px';
   }
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Check if required loaders are available
+  // Check if GLTFLoader is available
   if (typeof THREE.GLTFLoader === 'undefined') {
     console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
     container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.style.color = '#333';
     loadingElement.style.fontSize = '18px';
     loadingElement.style.fontWeight = 'bold';
-    loadingElement.textContent = 'Loading hyperrealistic spider scene...';
+    loadingElement.textContent = 'Loading photorealistic scene...';
     loadingElement.style.zIndex = '100';
     loadingElement.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
     loadingElement.style.padding = '15px 20px';
@@ -55,26 +55,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Scene setup
     const scene = new THREE.Scene();
     
-    // Camera setup with improved depth of field settings
+    // Camera setup
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.2, 3.5);
     
     // Enhanced renderer with physically-based settings
     const renderer = new THREE.WebGLRenderer({ 
       antialias: true,
-      alpha: true,
-      precision: 'highp', // High precision for better visual quality
-      powerPreference: 'high-performance' // Request high performance GPU
+      alpha: true
     });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap at 2x to avoid performance issues
+    renderer.setPixelRatio(window.devicePixelRatio);
     
     // Advanced rendering features - enable as browser supports
     try {
       renderer.physicallyCorrectLights = true;
       renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping; // Better tone mapping for photorealism
-      renderer.toneMappingExposure = 1.1; // Slightly brighter exposure
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
@@ -94,178 +92,48 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.domElement.style.top = '0';
     renderer.domElement.style.left = '0';
     
-    // Add OrbitControls with improved settings
+    // Add OrbitControls
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0.7, 0); // Target the jar better
+      controls.target.set(0, 0.6, 0); // Lower target to look more at the bottom of the jar
       controls.enableDamping = true;
-      controls.dampingFactor = 0.07; // Increased for smoother movement
+      controls.dampingFactor = 0.05;
       controls.minDistance = 2;
-      controls.maxDistance = 8;
-      controls.maxPolarAngle = Math.PI * 0.85; // Limit how far down user can look
+      controls.maxDistance = 10;
       controls.autoRotate = false;
-      controls.autoRotateSpeed = 0.3; // Slower for more cinematic rotation
+      controls.autoRotateSpeed = 0.5;
       controls.update();
     } else {
       console.warn('OrbitControls not available');
     }
     
-    // Texture loader with better mipmap settings
+    // Texture loader
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.crossOrigin = 'anonymous';
     
-    // Setup Post-Processing
-    let composer;
-    let effectFXAA;
-    let bloomPass;
-    let filmPass;
-    let bokehPass;
-    
-    // Initialize post-processing
-    function setupPostProcessing() {
-      // Check if required post-processing components are available
-      if (typeof THREE.EffectComposer === 'undefined' || 
-          typeof THREE.RenderPass === 'undefined' ||
-          typeof THREE.UnrealBloomPass === 'undefined' ||
-          typeof THREE.FilmPass === 'undefined' || 
-          typeof THREE.BokehPass === 'undefined' ||
-          typeof THREE.ShaderPass === 'undefined' ||
-          typeof THREE.FXAAShader === 'undefined') {
-        console.warn('Post-processing libraries not fully available, using standard renderer');
-        return false;
-      }
-      
-      try {
-        // Create composer
-        composer = new THREE.EffectComposer(renderer);
-        const renderPass = new THREE.RenderPass(scene, camera);
-        composer.addPass(renderPass);
-        
-        // Add UnrealBloomPass for realistic glow
-        bloomPass = new THREE.UnrealBloomPass(
-          new THREE.Vector2(container.clientWidth, container.clientHeight),
-          0.15,  // strength (subtle bloom)
-          0.3,   // radius
-          0.85   // threshold
-        );
-        composer.addPass(bloomPass);
-        
-        // Add FilmPass for grain and scanlines
-        filmPass = new THREE.FilmPass(
-          0.15,  // noise intensity
-          0.025, // scanline intensity 
-          648,   // scanline count
-          0      // grayscale (0 = color)
-        );
-        filmPass.renderToScreen = false;
-        composer.addPass(filmPass);
-        
-        // Add Bokeh (depth of field) pass
-        const bokehParams = {
-          focus: 3.0,
-          aperture: 0.00045,
-          maxblur: 0.01,
-          width: container.clientWidth,
-          height: container.clientHeight
-        };
-        
-        bokehPass = new THREE.BokehPass(scene, camera, bokehParams);
-        bokehPass.renderToScreen = false;
-        composer.addPass(bokehPass);
-        
-        // Add FXAA pass for anti-aliasing
-        effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
-        effectFXAA.uniforms.resolution.value.set(
-          1 / (container.clientWidth * renderer.getPixelRatio()),
-          1 / (container.clientHeight * renderer.getPixelRatio())
-        );
-        effectFXAA.renderToScreen = true;
-        composer.addPass(effectFXAA);
-        
-        return true;
-      } catch (e) {
-        console.warn('Error setting up post-processing', e);
-        return false;
-      }
-    }
-    
-    // Flag to track if post-processing is enabled
-    const postProcessingEnabled = setupPostProcessing();
-    
-    // Camera jitter for handheld effect
-    let cameraJitter = {
-      enabled: true,
-      originalPosition: new THREE.Vector3(),
-      jitterAmount: 0.005,
-      breathingAmount: 0.001,
-      breathingSpeed: 0.5
-    };
-    
-    // Store the camera's original position
-    cameraJitter.originalPosition.copy(camera.position);
-    
-    // Load HDRI environment map for reflections
+    // Load environment map for reflections
     let envMap;
     try {
-      // Use an HDRI loader if available (more realistic)
-      if (typeof THREE.RGBELoader !== 'undefined') {
-        const rgbeLoader = new THREE.RGBELoader();
-        rgbeLoader.setDataType(THREE.HalfFloatType);
-        
-        rgbeLoader.load('https://threejs.org/examples/textures/equirectangular/royal_esplanade_1k.hdr', function(texture) {
-          texture.mapping = THREE.EquirectangularReflectionMapping;
-          scene.environment = texture;
-          
-          // Apply HDRI to background with subtle blur
-          if (typeof THREE.PMREMGenerator !== 'undefined') {
-            const pmremGenerator = new THREE.PMREMGenerator(renderer);
-            pmremGenerator.compileEquirectangularShader();
-            
-            const envScene = pmremGenerator.fromEquirectangular(texture).texture;
-            scene.background = envScene;
-            
-            pmremGenerator.dispose();
-          } else {
-            scene.background = texture;
-          }
-          
-          // Update all materials that need the environment map
-          scene.traverse((node) => {
-            if (node.isMesh && node.material) {
-              if (node.material.envMap !== undefined) {
-                node.material.envMap = texture;
-                node.material.needsUpdate = true;
-              }
-            }
-          });
-        });
-      } else {
-        // Fallback to cubemap
-        const urls = [
-          'https://threejs.org/examples/textures/cube/pisa/px.png',
-          'https://threejs.org/examples/textures/cube/pisa/nx.png',
-          'https://threejs.org/examples/textures/cube/pisa/py.png',
-          'https://threejs.org/examples/textures/cube/pisa/ny.png',
-          'https://threejs.org/examples/textures/cube/pisa/pz.png',
-          'https://threejs.org/examples/textures/cube/pisa/nz.png'
-        ];
-        
-        const cubeTextureLoader = new THREE.CubeTextureLoader();
-        envMap = cubeTextureLoader.load(urls);
-        
-        // Set as scene environment and background
-        scene.environment = envMap;
-        scene.background = envMap;
-      }
+      const urls = [
+        'https://threejs.org/examples/textures/cube/pisa/px.png',
+        'https://threejs.org/examples/textures/cube/pisa/nx.png',
+        'https://threejs.org/examples/textures/cube/pisa/py.png',
+        'https://threejs.org/examples/textures/cube/pisa/ny.png',
+        'https://threejs.org/examples/textures/cube/pisa/pz.png',
+        'https://threejs.org/examples/textures/cube/pisa/nz.png'
+      ];
       
-      // Create a subtle backdrop (visible if HDRI fails)
+      const cubeTextureLoader = new THREE.CubeTextureLoader();
+      envMap = cubeTextureLoader.load(urls);
+      
+      // Set as scene environment and background
+      scene.environment = envMap;
+      
+      // Create a subtle background
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({
         color: 0xf5f5f7,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.8
+        side: THREE.DoubleSide
       });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
       background.position.z = -20;
@@ -276,20 +144,17 @@ document.addEventListener('DOMContentLoaded', function() {
       scene.background = new THREE.Color(0xf5f5f7);
     }
     
-    // Create enhanced lighting for photorealism
-    
+    // Create Lights
     // Ambient light (subtle)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
     
-    // Key light (main light) - improved with IES profile
-    const keyLight = new THREE.DirectionalLight(0xffefd5, 1.2); // Warm light
+    // Key light (main light)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
     keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
-    
-    // Enhanced shadow quality
-    keyLight.shadow.mapSize.width = 2048; // Doubled for better quality
-    keyLight.shadow.mapSize.height = 2048;
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
     keyLight.shadow.camera.near = 0.1;
     keyLight.shadow.camera.far = 20;
     keyLight.shadow.camera.left = -5;
@@ -297,44 +162,17 @@ document.addEventListener('DOMContentLoaded', function() {
     keyLight.shadow.camera.top = 5;
     keyLight.shadow.camera.bottom = -5;
     keyLight.shadow.bias = -0.0005;
-    keyLight.shadow.normalBias = 0.02; // Reduce shadow acne
-    keyLight.shadow.radius = 2; // Soft shadows
     scene.add(keyLight);
     
-    // Fill light (softer, from opposite side) - with slight blue tint for contrast
-    const fillLight = new THREE.DirectionalLight(0xe1f5fe, 0.6);
+    // Fill light (softer, from opposite side)
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-3, 4, -3);
-    fillLight.castShadow = true;
-    fillLight.shadow.mapSize.width = 1024;
-    fillLight.shadow.mapSize.height = 1024;
-    fillLight.shadow.camera.near = 0.1;
-    fillLight.shadow.camera.far = 20;
-    fillLight.shadow.camera.left = -5;
-    fillLight.shadow.camera.right = 5;
-    fillLight.shadow.camera.top = 5;
-    fillLight.shadow.camera.bottom = -5;
-    fillLight.shadow.bias = -0.0005;
     scene.add(fillLight);
     
     // Rim light (highlight edges)
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
-    
-    // Add a subtle spotlight to highlight the spider
-    const spotlight = new THREE.SpotLight(0xffffeb, 0.8);
-    spotlight.position.set(0, 3, 2);
-    spotlight.angle = Math.PI / 6;
-    spotlight.penumbra = 0.5;
-    spotlight.decay = 2;
-    spotlight.distance = 10;
-    spotlight.castShadow = true;
-    spotlight.shadow.mapSize.width = 1024;
-    spotlight.shadow.mapSize.height = 1024;
-    spotlight.shadow.bias = -0.0005;
-    spotlight.target.position.set(0, 0.5, 0); // Target the spider
-    scene.add(spotlight);
-    scene.add(spotlight.target);
     
     // Setup loading manager for tracking load progress
     const loadingManager = new THREE.LoadingManager();
@@ -349,13 +187,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const clock = new THREE.Clock();
     let mixer; // Will hold the animation mixer
     
-    // Load textures for wood table with added imperfections
+    // Load wood texture for table
     const woodTextures = {
       map: null,
       normalMap: null,
-      roughnessMap: null,
-      aoMap: null, // Added ambient occlusion for realism
-      bumpMap: null // Added bump map for additional texture
+      roughnessMap: null
     };
     
     // Load wood textures with the loading manager
@@ -363,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.map = texture;
       woodTextures.map.wrapS = THREE.RepeatWrapping;
       woodTextures.map.wrapT = THREE.RepeatWrapping;
-      woodTextures.map.repeat.set(3, 3); // More repeats for finer grain
+      woodTextures.map.repeat.set(2, 2);
       createTableIfTexturesLoaded();
     });
     
@@ -371,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.normalMap = texture;
       woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
       woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
-      woodTextures.normalMap.repeat.set(3, 3);
+      woodTextures.normalMap.repeat.set(2, 2);
       createTableIfTexturesLoaded();
     });
     
@@ -379,137 +215,13 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.roughnessMap = texture;
       woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
       woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
-      woodTextures.roughnessMap.repeat.set(3, 3);
+      woodTextures.roughnessMap.repeat.set(2, 2);
       createTableIfTexturesLoaded();
     });
-    
-    // Load additional maps for realism
-    textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
-      woodTextures.aoMap = texture; // Reuse as AO map
-      woodTextures.aoMap.wrapS = THREE.RepeatWrapping;
-      woodTextures.aoMap.wrapT = THREE.RepeatWrapping;
-      woodTextures.aoMap.repeat.set(3, 3);
-      createTableIfTexturesLoaded();
-    });
-    
-    textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
-      woodTextures.bumpMap = texture; // Reuse as bump map
-      woodTextures.bumpMap.wrapS = THREE.RepeatWrapping;
-      woodTextures.bumpMap.wrapT = THREE.RepeatWrapping;
-      woodTextures.bumpMap.repeat.set(3, 3);
-      createTableIfTexturesLoaded();
-    });
-    
-    // Load smudge and fingerprint textures for glass
-    const glassImperfections = {
-      smudgeMap: null,
-      fingerprintMap: null
-    };
-    
-    // Synthetic smudge map (fallback if real textures unavailable)
-    const smudgeCanvas = document.createElement('canvas');
-    smudgeCanvas.width = 512;
-    smudgeCanvas.height = 512;
-    const smudgeCtx = smudgeCanvas.getContext('2d');
-    smudgeCtx.fillStyle = '#ffffff';
-    smudgeCtx.fillRect(0, 0, 512, 512);
-    
-    // Generate random smudges
-    for (let i = 0; i < 10; i++) {
-      const x = Math.random() * 512;
-      const y = Math.random() * 512;
-      const radius = 20 + Math.random() * 80;
-      const gradient = smudgeCtx.createRadialGradient(x, y, 0, x, y, radius);
-      const alpha = 0.1 + Math.random() * 0.2;
-      gradient.addColorStop(0, `rgba(200, 200, 200, ${alpha})`);
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      smudgeCtx.fillStyle = gradient;
-      smudgeCtx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-    }
-    
-    // Create texture from canvas
-    glassImperfections.smudgeMap = new THREE.CanvasTexture(smudgeCanvas);
-    
-    // Fingerprint map (similarly generated)
-    const fingerprintCanvas = document.createElement('canvas');
-    fingerprintCanvas.width = 512;
-    fingerprintCanvas.height = 512;
-    const fpCtx = fingerprintCanvas.getContext('2d');
-    fpCtx.fillStyle = '#ffffff';
-    fpCtx.fillRect(0, 0, 512, 512);
-    
-    // Generate subtle fingerprint-like patterns
-    for (let i = 0; i < 15; i++) {
-      const x = Math.random() * 512;
-      const y = Math.random() * 512;
-      
-      // Create fingerprint-like pattern
-      const size = 10 + Math.random() * 30;
-      const alpha = 0.05 + Math.random() * 0.15;
-      
-      fpCtx.save();
-      fpCtx.translate(x, y);
-      fpCtx.rotate(Math.random() * Math.PI * 2);
-      
-      // Draw curved lines for fingerprint
-      fpCtx.strokeStyle = `rgba(100, 100, 100, ${alpha})`;
-      fpCtx.lineWidth = 1;
-      
-      for (let j = 0; j < 5 + Math.random() * 8; j++) {
-        fpCtx.beginPath();
-        const startX = -size / 2;
-        const startY = j * 2 - size / 2 + Math.random() * 4;
-        
-        fpCtx.moveTo(startX, startY);
-        
-        // Create a curved line
-        const cp1x = -size / 6 + Math.random() * 5;
-        const cp1y = startY + Math.random() * 10 - 5;
-        const cp2x = size / 6 + Math.random() * 5;
-        const cp2y = startY + Math.random() * 10 - 5;
-        const endX = size / 2;
-        const endY = startY + Math.random() * 10 - 5;
-        
-        fpCtx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-        fpCtx.stroke();
-      }
-      
-      fpCtx.restore();
-    }
-    
-    // Create texture from canvas
-    glassImperfections.fingerprintMap = new THREE.CanvasTexture(fingerprintCanvas);
-    
-    // Create scratch texture for metal lid
-    const scratchCanvas = document.createElement('canvas');
-    scratchCanvas.width = 1024;
-    scratchCanvas.height = 1024;
-    const scratchCtx = scratchCanvas.getContext('2d');
-    scratchCtx.fillStyle = '#ffffff';
-    scratchCtx.fillRect(0, 0, 1024, 1024);
-    
-    // Add random scratches
-    for (let i = 0; i < 50; i++) {
-      const x1 = Math.random() * 1024;
-      const y1 = Math.random() * 1024;
-      const length = 5 + Math.random() * 40;
-      const angle = Math.random() * Math.PI * 2;
-      const x2 = x1 + Math.cos(angle) * length;
-      const y2 = y1 + Math.sin(angle) * length;
-      
-      scratchCtx.beginPath();
-      scratchCtx.moveTo(x1, y1);
-      scratchCtx.lineTo(x2, y2);
-      scratchCtx.strokeStyle = `rgba(100, 100, 100, ${0.1 + Math.random() * 0.3})`;
-      scratchCtx.lineWidth = 0.5 + Math.random();
-      scratchCtx.stroke();
-    }
-    
-    const scratchMap = new THREE.CanvasTexture(scratchCanvas);
     
     // Track texture loading
     let texturesLoaded = 0;
-    const requiredTextures = 5; // Updated count
+    const requiredTextures = 3;
     
     function createTableIfTexturesLoaded() {
       texturesLoaded++;
@@ -518,173 +230,479 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // Create wooden table with imperfections
+    // Create wooden table
     function createTable() {
-      // Create a slightly uneven table geometry for more realism
-      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3, 64, 4, 32);
-      
-      // Add slight imperfections to the table geometry
-      const positionAttribute = tableGeometry.getAttribute('position');
-      for (let i = 0; i < positionAttribute.count; i++) {
-        // Only modify top vertices slightly (y near 0.1) for a worn look
-        if (positionAttribute.getY(i) > 0.09) {
-          // Add very small random offsets
-          positionAttribute.setY(
-            i, 
-            positionAttribute.getY(i) + (Math.random() * 0.005 - 0.0025)
-          );
-        }
-      }
-      
-      // Update normals after modifying vertices
-      tableGeometry.computeVertexNormals();
-      
-      // Create a more realistic table material
+      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
-        normalScale: new THREE.Vector2(1.5, 1.5), // Enhance normal effect
         roughnessMap: woodTextures.roughnessMap,
-        roughness: 0.85, // Slightly rougher
-        metalness: 0.05,
-        aoMap: woodTextures.aoMap,
-        aoMapIntensity: 1.0,
-        bumpMap: woodTextures.bumpMap,
-        bumpScale: 0.01,
-        envMap: scene.environment || envMap,
-        envMapIntensity: 0.5,
-        color: 0xeadfca // Slightly warmer wood tone
+        roughness: 0.8,
+        metalness: 0.1,
+        envMap: envMap
       });
       
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
       table.position.y = -0.1; // Slightly below the jar
       table.receiveShadow = true;
-      table.castShadow = true;
       scene.add(table);
-      
-      // Add subtle dust to the table
-      addTableDust(table);
       
       // Now that table is loaded, create the jar
       createJar();
     }
     
-    // Add subtle dust to the table surface
-    function addTableDust(table) {
-      // Create a subtle dust layer on the table
-      const dustGeometry = new THREE.PlaneGeometry(4.8, 2.8);
-      
-      // Create a canvas for the dust texture
-      const dustCanvas = document.createElement('canvas');
-      dustCanvas.width = 512;
-      dustCanvas.height = 512;
-      const dustCtx = dustCanvas.getContext('2d');
-      
-      // Fill with transparent base
-      dustCtx.fillStyle = 'rgba(255, 255, 255, 0)';
-      dustCtx.fillRect(0, 0, 512, 512);
-      
-      // Add random dust spots
-      for (let i = 0; i < 1000; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
-        const size = Math.random() * 2;
-        
-        dustCtx.fillStyle = `rgba(245, 245, 245, ${Math.random() * 0.05})`;
-        dustCtx.fillRect(x, y, size, size);
-      }
-      
-      // Add a few larger dust clumps
-      for (let i = 0; i < 20; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
-        const radius = 1 + Math.random() * 3;
-        const gradient = dustCtx.createRadialGradient(x, y, 0, x, y, radius);
-        
-        gradient.addColorStop(0, 'rgba(245, 245, 245, 0.1)');
-        gradient.addColorStop(1, 'rgba(245, 245, 245, 0)');
-        
-        dustCtx.fillStyle = gradient;
-        dustCtx.beginPath();
-        dustCtx.arc(x, y, radius, 0, Math.PI * 2);
-        dustCtx.fill();
-      }
-      
-      const dustTexture = new THREE.CanvasTexture(dustCanvas);
-      
-      const dustMaterial = new THREE.MeshBasicMaterial({
-        map: dustTexture,
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-      });
-      
-      const dust = new THREE.Mesh(dustGeometry, dustMaterial);
-      dust.rotation.x = -Math.PI / 2; // Lay flat on table
-      dust.position.y = 0.01; // Just above the table
-      dust.position.z = 0; // Center
-      
-      scene.add(dust);
-    }
-    
-    // Create the glass jar with hyperrealistic details
+    // Create the glass jar
     function createJar() {
-      // Create more detailed jar - higher poly count for better reflections
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 128, 64, false);
-      
-      // Add subtle imperfections to jar
-      const jarPositionAttribute = jarGeometry.getAttribute('position');
-      for (let i = 0; i < jarPositionAttribute.count; i++) {
-        // Get the current position
-        const x = jarPositionAttribute.getX(i);
-        const y = jarPositionAttribute.getY(i);
-        const z = jarPositionAttribute.getZ(i);
-        
-        // Calculate distance from center axis (for cylindrical distortion)
-        const dist = Math.sqrt(x * x + z * z);
-        
-        // Only modify if point is on the outer surface (not top/bottom)
-        if (dist > 0.75 && y > -0.7 && y < 0.7) {
-          // Add very subtle random variations for imperfections
-          const noise = (Math.random() - 0.5) * 0.01;
-          
-          // Normalize x,z to get direction
-          const nx = x / dist;
-          const nz = z / dist;
-          
-          // Apply noise in the radial direction
-          jarPositionAttribute.setX(i, x + nx * noise);
-          jarPositionAttribute.setZ(i, z + nz * noise);
-        }
-      }
-      
-      // Recompute normals after vertex modifications
-      jarGeometry.computeVertexNormals();
-      
-      // Create advanced glass material with imperfections
+      // Create realistic glass jar - using a closed cylinder for complete glass
+      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false); // closed cylinder
       const jarMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
-        metalness: 0.0,
+        metalness: 0.1,
         roughness: 0.05,
         transmission: 0.95, // glass transparency
         transparent: true,
         thickness: 0.05,    // glass thickness
-        envMapIntensity: 1.2,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.03,
-        ior: 1.5, // glass IOR
-        specularIntensity: 1.0,
-        specularColor: 0xffffff,
-        envMap: scene.environment || envMap,
-        side: THREE.DoubleSide, // For proper refraction
-        depthWrite: false, // Help with transparency sorting
-        attenuationColor: new THREE.Color(0xcceeff), // Subtle blue glass tint
-        attenuationDistance: 5.0, // How far light travels through glass
-        reflectivity: 0.2 // Glass reflectivity
+        envMapIntensity: 1,
+        clearcoat: 1,
+        clearcoatRoughness: 0.1
       });
       
-      // Add imperfections if textures were created
-      if (glassImperfections.smudgeMap) {
-        jarMaterial.roughnessMap = glassImperfections.smudgeMap;
-        jarMaterial.clearcoatRoughnessMap = glassImperfections.fingerprintMap;
-        jarMaterial.clearcoatNormalScale = new THREE.Vector2(0.05, 0.05); // Subtle normal effect
+      const jar = new THREE.Mesh(jarGeometry, jarMaterial);
+      jar.position.y = 0.75;
+      jar.castShadow = true;
+      jar.receiveShadow = true;
+      scene.add(jar);
+      
+      // Jar lid with metallic look
+      const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
+      const lidMaterial = new THREE.MeshStandardMaterial({
+        color: 0x777777,
+        metalness: 0.9,
+        roughness: 0.1,
+        envMap: envMap
+      });
+      const lid = new THREE.Mesh(lidGeometry, lidMaterial);
+      lid.position.set(0, 1.55, 0);
+      lid.castShadow = true;
+      scene.add(lid);
+      
+      // Now load the spider model
+      loadSpiderModel();
+    }
+    
+    // Load the spider model
+    function loadSpiderModel() {
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.innerHTML = 'Loading spider model...<div id="loading-spinner"></div>';
+        
+        // Add spinner style
+        const spinnerStyle = document.createElement('style');
+        spinnerStyle.textContent = `
+          #loading-spinner {
+            margin: 10px auto 0;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #333;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `;
+        document.head.appendChild(spinnerStyle);
+      }
+      
+      // Create a GLTFLoader instance
+      const gltfLoader = new THREE.GLTFLoader(loadingManager);
+      
+      // Optional: Setup Draco decoder for compressed models
+      if (typeof THREE.DRACOLoader !== 'undefined') {
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+        gltfLoader.setDRACOLoader(dracoLoader);
+      }
+      
+      // Spider micro-animation system for subtle movements (will be used if model fails)
+      window.spiderAnimations = {
+        enabled: true,
+        legMovements: [],
+        breathingScale: 0.0005,
+        breathingSpeed: 0.5,
+        twitchProbability: 0.01,
+        lastTwitchTime: 0,
+        coolingPeriod: 2.0
+      };
+      
+      // Load the spider model
+      gltfLoader.load(
+        // Model path - adjust this to your file location
+        'spider_with_animation.glb',
+        
+        // Success callback
+        function(gltf) {
+          // Get the model from the loaded gltf file
+          const spiderModel = gltf.scene;
+          
+          // Adjust scale - making it 1.2 times larger (more proportional to jar)
+          spiderModel.scale.set(1.2, 1.2, 1.2);
+          
+          // First, get the bounding box to properly position the spider
+          const boundingBox = new THREE.Box3().setFromObject(spiderModel);
+          const size = new THREE.Vector3();
+          boundingBox.getSize(size);
+          const center = new THREE.Vector3();
+          boundingBox.getCenter(center);
+          
+          // Calculate appropriate position to make the spider sit on jar bottom
+          // Position at the bottom of the jar (0 is jar bottom), adjust based on model's min Y
+          const minY = boundingBox.min.y;
+          const heightOffset = -minY;  // This moves the bottom of the model to Y=0
+          
+          spiderModel.position.set(
+            -center.x,  // Center horizontally
+            0.05 + heightOffset, // Place slightly above the bottom for better visibility
+            -center.z   // Center horizontally
+          );
+          
+          // Apply shadows and improve materials
+          spiderModel.traverse(function(node) {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+              
+              // Improve materials if needed
+              if (node.material) {
+                node.material.envMap = envMap;
+                node.material.needsUpdate = true;
+              }
+            }
+          });
+          
+          // Add to scene
+          scene.add(spiderModel);
+          
+          // Store reference to model for animations
+          window.spiderModel = spiderModel;
+          
+          // Handle animations if available
+          if (gltf.animations && gltf.animations.length > 0) {
+            console.log(`Model has ${gltf.animations.length} animations`);
+            
+            // Log animation names for debugging
+            gltf.animations.forEach((clip, index) => {
+              console.log(`Animation ${index}: ${clip.name || 'unnamed'}`);
+            });
+            
+            // Create an animation mixer
+            mixer = new THREE.AnimationMixer(spiderModel);
+            
+            // Get the first animation (or pick a specific one)
+            const idleAnimation = gltf.animations[0];
+            
+            // Create an animation action
+            const action = mixer.clipAction(idleAnimation);
+            action.timeScale = 0.5; // Slow down animation for subtle movement
+            
+            // Play the animation
+            action.play();
+          } else {
+            console.log('No animations found in the model');
+          }
+          
+          // Add dust particles and finalize
+          addDustParticles();
+          finalizeScene();
+          
+          // Update loading status
+          if(loadingElement && loadingElement.parentNode) {
+            loadingElement.innerHTML = '<div>Scene loaded successfully!</div>';
+            
+            // Add some instructions in the loading element
+            const instructions = document.createElement('div');
+            instructions.style.marginTop = '10px';
+            instructions.style.fontSize = '14px';
+            instructions.style.fontWeight = 'normal';
+            instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+            loadingElement.appendChild(instructions);
+            
+            // Hide loading message after a short delay
+            setTimeout(() => {
+              loadingElement.style.opacity = '0';
+              loadingElement.style.transition = 'opacity 1s ease';
+              setTimeout(() => {
+                if(loadingElement && loadingElement.parentNode) {
+                  loadingElement.remove();
+                }
+              }, 1000);
+            }, 1500);
+          }
+        },
+        
+        // Progress callback
+        function(xhr) {
+          // This is handled by the loadingManager
+        },
+        
+        // Error callback
+        function(error) {
+          console.error('Error loading spider model:', error);
+          if(loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          }
+          
+          // Create a fallback procedural spider
+          createProceduralSpider();
+        }
+      );
+    }
+    
+    // Fallback: Create a procedural spider if model loading fails
+    function createProceduralSpider() {
+      console.log('Creating procedural spider as fallback');
+      
+      // Create a simple spider
+      const spider = new THREE.Group();
+      
+      // Spider body (abdomen)
+      const abdomenGeometry = new THREE.SphereGeometry(0.22, 32, 32);
+      const spiderMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a1a1a,
+        roughness: 0.7,
+        metalness: 0.2,
+        envMap: envMap
+      });
+      const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
+      abdomen.castShadow = true;
+      spider.add(abdomen);
+      
+      // Spider head (cephalothorax)
+      const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+      const head = new THREE.Mesh(headGeometry, spiderMaterial);
+      head.position.set(0, 0, 0.2);
+      head.castShadow = true;
+      spider.add(head);
+      
+      // Simple legs
+      for (let i = 0; i < 8; i++) {
+        const legGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.4, 8);
+        const leg = new THREE.Mesh(legGeometry, spiderMaterial);
+        
+        const angle = (Math.PI / 4) * (i % 4);
+        const isLeftSide = i < 4;
+        const sideSign = isLeftSide ? 1 : -1;
+        
+        leg.position.set(Math.cos(angle) * 0.2 * sideSign, 0, Math.sin(angle) * 0.2);
+        leg.rotation.z = sideSign * Math.PI / 4;
+        leg.rotation.y = angle;
+        
+        leg.castShadow = true;
+        spider.add(leg);
+        
+        // Store the leg for animations
+        window.spiderAnimations.legMovements.push({
+          node: leg,
+          initialRotation: leg.rotation.clone(),
+          rotationAxis: new THREE.Vector3(
+            Math.random() > 0.5 ? 1 : 0, 
+            Math.random() > 0.5 ? 1 : 0, 
+            Math.random() > 0.5 ? 1 : 0
+          ).normalize(),
+          magnitude: 0.01 + Math.random() * 0.02,
+          speed: 0.5 + Math.random() * 2
+        });
+      }
+      
+      // Position spider in jar - slightly elevated from bottom for better visibility
+      spider.position.y = 0.05; // Slightly raised from the jar bottom
+      scene.add(spider);
+      
+      // Store spider reference for animations
+      window.spiderModel = spider;
+      
+      // Continue with dust particles and scene finalization
+      addDustParticles();
+      finalizeScene();
+      
+      // Update loading status
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.innerHTML = '<div>Scene loaded with fallback spider</div>';
+        
+        // Add instructions
+        const instructions = document.createElement('div');
+        instructions.style.marginTop = '10px';
+        instructions.style.fontSize = '14px';
+        instructions.style.fontWeight = 'normal';
+        instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+        loadingElement.appendChild(instructions);
+        
+        setTimeout(() => {
+          loadingElement.style.opacity = '0';
+          loadingElement.style.transition = 'opacity 1s ease';
+          setTimeout(() => {
+            if(loadingElement && loadingElement.parentNode) {
+              loadingElement.remove();
+            }
+          }, 1000);
+        }, 1500);
+      }
+    }
+    
+    // Add dust particles inside the jar
+    function addDustParticles() {
+      const particlesCount = 150;
+      const positions = new Float32Array(particlesCount * 3);
+      const sizes = new Float32Array(particlesCount);
+      const particleGeometry = new THREE.BufferGeometry();
+      
+      // Create varied dust particles 
+      for (let i = 0; i < particlesCount; i++) {
+        // Random positions inside jar
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * 0.7;
+        
+        positions[i * 3] = Math.cos(angle) * radius; // x
+        positions[i * 3 + 1] = Math.random() * 1.4 + 0.05; // y (within jar height)
+        positions[i * 3 + 2] = Math.sin(angle) * radius; // z
+        
+        // Varied particle sizes
+        sizes[i] = 0.002 + Math.random() * 0.005;
+      }
+      
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+      
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.005,
+        transparent: true,
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true
+      });
+      
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      particles.position.y = 0.75; // Center of jar
+      scene.add(particles);
+      
+      // Store for animation
+      window.dustParticles = particles;
+    }
+    
+    // Finalize the scene setup
+    function finalizeScene() {
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta();
+        const elapsedTime = clock.getElapsedTime();
+        
+        // Update animation mixer if available
+        if (mixer) {
+          mixer.update(delta);
+        }
+        
+        // Animate dust particles
+        if (window.dustParticles) {
+          const positions = window.dustParticles.geometry.attributes.position.array;
+          
+          for (let i = 0; i < positions.length; i += 3) {
+            // More natural floating motion
+            positions[i] += Math.sin((elapsedTime + i) * 0.05) * 0.0002; // X-axis drift
+            positions[i + 1] += Math.sin((elapsedTime + i) * 0.1) * 0.0005; // Y-axis stronger lift
+            positions[i + 2] += Math.cos((elapsedTime + i) * 0.07) * 0.0003; // Z-axis drift
+            
+            // Keep particles inside jar bounds
+            if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
+            if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
+          }
+          
+          window.dustParticles.geometry.attributes.position.needsUpdate = true;
+          window.dustParticles.rotation.y += delta * 0.01;
+        }
+        
+        // Animate spider legs with micro-movements if available
+        if (window.spiderAnimations && window.spiderAnimations.enabled && window.spiderAnimations.legMovements.length > 0) {
+          window.spiderAnimations.legMovements.forEach(item => {
+            if (item.node && item.initialRotation) {
+              // Reset to initial rotation
+              item.node.rotation.copy(item.initialRotation);
+              
+              // Apply subtle movement
+              const angle = Math.sin(elapsedTime * item.speed) * item.magnitude;
+              item.node.rotateOnAxis(item.rotationAxis, angle);
+            }
+          });
+        }
+        
+        // Update controls
+        if (controls) controls.update();
+        
+        // Render
+        renderer.render(scene, camera);
+      }
+      
+      // Start animation
+      animate();
+      
+      // Add a fullscreen button
+      const fullscreenButton = document.createElement('button');
+      fullscreenButton.textContent = '⛶';
+      fullscreenButton.style.position = 'absolute';
+      fullscreenButton.style.bottom = '10px';
+      fullscreenButton.style.right = '10px';
+      fullscreenButton.style.fontSize = '20px';
+      fullscreenButton.style.padding = '5px 10px';
+      fullscreenButton.style.background = 'rgba(255,255,255,0.7)';
+      fullscreenButton.style.border = 'none';
+      fullscreenButton.style.borderRadius = '5px';
+      fullscreenButton.style.cursor = 'pointer';
+      fullscreenButton.style.zIndex = '10';
+      fullscreenButton.title = 'Toggle fullscreen';
+      
+      fullscreenButton.addEventListener('click', function() {
+        if (!document.fullscreenElement) {
+          // Ensure container styles are correct before going fullscreen
+          container.style.width = '100%';
+          container.style.height = '100%';
+          container.style.margin = '0';
+          container.style.padding = '0';
+          container.style.overflow = 'hidden';
+          container.style.position = 'relative';
+          
+          // Fix for handling fullscreen properly across browsers
+          try {
+            // Try standard method first
+            container.requestFullscreen().catch(err => {
+              console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+          } catch (e) {
+            // Fallbacks for various browsers
+            try {
+              if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+              else if (container.mozRequestFullScreen) container.mozRequestFullScreen();
+              else if (container.msRequestFullscreen) container.msRequestFullscreen();
+            } catch (innerErr) {
+              console.error('Fullscreen API not supported', innerErr);
+            }
+          }
+        } else {
+          try {
+            if (document.exitFullscreen) {
+              document.exitFullscreen().catch(err => {
+                console.error(`Error attempting to exit fullscreen: ${err.message}`);
+              });
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          } catch (err) {
+            console.error(`Error attempting to exit fullscreen: ${err.message}`);
+          }
