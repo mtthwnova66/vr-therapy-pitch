@@ -228,8 +228,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create the glass jar
     function createJar() {
-      // Create realistic glass jar
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, true);
+      // Create realistic glass jar - using a closed cylinder for complete glass
+      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false); // closed cylinder
       const jarMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         metalness: 0.1,
@@ -247,13 +247,6 @@ document.addEventListener('DOMContentLoaded', function() {
       jar.castShadow = true;
       jar.receiveShadow = true;
       scene.add(jar);
-      
-      // Add jar bottom (glass base)
-      const jarBottomGeometry = new THREE.CircleGeometry(0.8, 64);
-      const jarBottom = new THREE.Mesh(jarBottomGeometry, jarMaterial);
-      jarBottom.rotation.x = -Math.PI / 2;
-      jarBottom.position.set(0, 0, 0);
-      scene.add(jarBottom);
       
       // Jar lid with metallic look
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
@@ -296,11 +289,21 @@ document.addEventListener('DOMContentLoaded', function() {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale if needed - you might need to adjust this value
-          spiderModel.scale.set(0.2, 0.2, 0.2);
+          // Adjust scale - making it 4x larger
+          spiderModel.scale.set(0.8, 0.8, 0.8);
           
-          // Position in jar
-          spiderModel.position.set(0, 0.4, 0);
+          // Position at the bottom of the jar
+          spiderModel.position.set(0, 0.1, 0);
+          
+          // Get bounding box to help with positioning
+          const boundingBox = new THREE.Box3().setFromObject(spiderModel);
+          const center = new THREE.Vector3();
+          boundingBox.getCenter(center);
+          
+          // Adjust position to center horizontally but keep at bottom of jar
+          spiderModel.position.x -= center.x;
+          spiderModel.position.z -= center.z;
+          // Keep Y position at jar bottom
           
           // Apply shadows and improve materials
           spiderModel.traverse(function(node) {
@@ -321,6 +324,13 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Handle animations if available
           if (gltf.animations && gltf.animations.length > 0) {
+            console.log(`Model has ${gltf.animations.length} animations`);
+            
+            // Log animation names for debugging
+            gltf.animations.forEach((clip, index) => {
+              console.log(`Animation ${index}: ${clip.name || 'unnamed'}`);
+            });
+            
             // Create an animation mixer
             mixer = new THREE.AnimationMixer(spiderModel);
             
@@ -332,6 +342,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Play the animation
             action.play();
+          } else {
+            console.log('No animations found in the model');
           }
           
           // Add dust particles and finalize
@@ -411,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Position spider in jar
-      spider.position.y = 0.4;
+      spider.position.y = 0.1; // Place at the bottom of jar
       scene.add(spider);
       
       // Continue with dust particles and scene finalization
