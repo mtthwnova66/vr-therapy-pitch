@@ -155,6 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
     fillLight.position.set(-3, 4, -3);
     scene.add(fillLight);
     
+    // Add an extra light for the right side of the jar (new)
+    const rightLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    rightLight.position.set(6, 2, 0); // Position to the right side
+    scene.add(rightLight);
+    
     // Rim light (highlight edges)
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rimLight.position.set(0, 5, -5);
@@ -241,16 +246,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function createJar() {
       // Create realistic glass jar - using a closed cylinder for complete glass
       const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false); // closed cylinder
+      
+      // Enhanced glass material (improved properties)
       const jarMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
-        metalness: 0.1,
+        metalness: 0.0, // Reduced metalness for better glass look
         roughness: 0.05,
         transmission: 0.95, // glass transparency
         transparent: true,
         thickness: 0.05,    // glass thickness
         envMapIntensity: 1,
         clearcoat: 1,
-        clearcoatRoughness: 0.1
+        clearcoatRoughness: 0.1,
+        ior: 1.5 // Added for better refraction
       });
       
       const jar = new THREE.Mesh(jarGeometry, jarMaterial);
@@ -302,8 +310,8 @@ document.addEventListener('DOMContentLoaded', function() {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale - making it 1.2 times larger (more proportional to jar)
-          spiderModel.scale.set(1.2, 1.2, 1.2);
+          // Adjust scale - increased from 1.2 to 1.5 times larger
+          spiderModel.scale.set(1.5, 1.5, 1.5);
           
           // First, get the bounding box to properly position the spider
           const boundingBox = new THREE.Box3().setFromObject(spiderModel);
@@ -358,6 +366,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create an animation action
             const action = mixer.clipAction(idleAnimation);
             
+            // Slow down animation for more realism
+            action.timeScale = 0.5;
+            
             // Play the animation
             action.play();
           } else {
@@ -410,8 +421,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Create a simple spider
       const spider = new THREE.Group();
       
-      // Spider body (abdomen)
-      const abdomenGeometry = new THREE.SphereGeometry(0.22, 32, 32);
+      // Spider body (abdomen) - increased size
+      const abdomenGeometry = new THREE.SphereGeometry(0.28, 32, 32);
       const spiderMaterial = new THREE.MeshStandardMaterial({
         color: 0x1a1a1a,
         roughness: 0.7,
@@ -422,23 +433,23 @@ document.addEventListener('DOMContentLoaded', function() {
       abdomen.castShadow = true;
       spider.add(abdomen);
       
-      // Spider head (cephalothorax)
-      const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+      // Spider head (cephalothorax) - increased size
+      const headGeometry = new THREE.SphereGeometry(0.2, 32, 32);
       const head = new THREE.Mesh(headGeometry, spiderMaterial);
-      head.position.set(0, 0, 0.2);
+      head.position.set(0, 0, 0.25); // Adjusted position
       head.castShadow = true;
       spider.add(head);
       
-      // Simple legs
+      // Simple legs - increased size and length
       for (let i = 0; i < 8; i++) {
-        const legGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.4, 8);
+        const legGeometry = new THREE.CylinderGeometry(0.025, 0.015, 0.5, 8);
         const leg = new THREE.Mesh(legGeometry, spiderMaterial);
         
         const angle = (Math.PI / 4) * (i % 4);
         const isLeftSide = i < 4;
         const sideSign = isLeftSide ? 1 : -1;
         
-        leg.position.set(Math.cos(angle) * 0.2 * sideSign, 0, Math.sin(angle) * 0.2);
+        leg.position.set(Math.cos(angle) * 0.25 * sideSign, 0, Math.sin(angle) * 0.25);
         leg.rotation.z = sideSign * Math.PI / 4;
         leg.rotation.y = angle;
         
@@ -446,8 +457,8 @@ document.addEventListener('DOMContentLoaded', function() {
         spider.add(leg);
       }
       
-      // Position spider in jar - exactly on the bottom
-      spider.position.y = 0.0; // Place exactly at the bottom of jar
+      // Position spider in jar - slightly raised from bottom for better visibility
+      spider.position.y = 0.05;
       scene.add(spider);
       
       // Continue with dust particles and scene finalization
