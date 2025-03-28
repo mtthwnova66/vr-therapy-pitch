@@ -1173,18 +1173,20 @@
       </p>
     </section>
     
-    <!-- Try It Yourself Section: Arachnophobia Level 1 -->
-    <section class="section fade-in" id="try-it-yourself" aria-labelledby="try-title">
-      <h2 id="try-title">Try It Yourself – Experience Exposure</h2>
-      <p>Start your journey through exposure therapy by interacting with a 3D environment. This is Level 1 for Arachnophobia – a spider safely enclosed in a jar.</p>
-      <div id="arachnophobia-demo">
-        <div id="loading-message">Loading 3D Simulation...</div>
-      </div>
-      <p style="font-size: 0.9rem; margin-top: 1rem; color: gray;">Click the fullscreen icon in the corner to expand the experience. You can zoom, rotate, and pan to explore the scene.</p>
-    </section>
+    <section class="section fade-in" id="try-it-yourself">
+  <h2 style="text-align: center;">Try It Yourself – Experience Exposure</h2>
+  <p style="text-align: center;">Start your journey through exposure therapy. Choose a level below:</p>
 
-    <h2 style="text-align: center">Try It Yourself – Level 2</h2>
-<div id="arachnophobia-level2"></div>
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <button onclick="showLevel('level1')" class="download-btn">Level 1</button>
+    <button onclick="showLevel('level2')" class="download-btn">Level 2</button>
+    <button onclick="showLevel('level3')" class="download-btn">Level 3</button>
+  </div>
+
+  <div id="arachnophobia-demo" style="display: block;"></div>
+  <div id="arachnophobia-level2" style="display: none;"></div>
+  <div id="arachnophobia-level3" style="display: none;"></div>
+</section>
     
     <!-- Market Opportunity Section -->
     <section class="section fade-in" id="market" aria-labelledby="market-title">
