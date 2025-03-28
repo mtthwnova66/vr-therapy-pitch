@@ -16,9 +16,17 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
+  // Check if GLTFLoader is available
+  if (typeof THREE.GLTFLoader === 'undefined') {
+    console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
+    return;
+  }
+  
   try {
     // Create loading message
     const loadingElement = document.createElement('div');
+    loadingElement.id = 'loading-status';
     loadingElement.style.position = 'absolute';
     loadingElement.style.top = '50%';
     loadingElement.style.left = '50%';
@@ -59,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear the container and add canvas
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
+    container.appendChild(loadingElement); // Re-add the loading element
     
     // Add OrbitControls
     let controls;
@@ -142,30 +151,31 @@ document.addEventListener('DOMContentLoaded', function() {
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
     
-    // Load wood texture for table asynchronously
+    // Setup loading manager for tracking load progress
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onProgress = function(url, loaded, total) {
+      const percent = Math.round(loaded / total * 100);
+      loadingElement.textContent = `Loading scene assets... ${percent}%`;
+    };
+    
+    // Clock for animations
+    const clock = new THREE.Clock();
+    let mixer; // Will hold the animation mixer
+    
+    // Load wood texture for table
     const woodTextures = {
       map: null,
       normalMap: null,
       roughnessMap: null
     };
     
-    let texturesLoaded = 0;
-    const requiredTextures = 3;
-    
-    function checkAllTexturesLoaded() {
-      texturesLoaded++;
-      if (texturesLoaded >= requiredTextures) {
-        createTable();
-      }
-    }
-    
-    // Load wood textures
+    // Load wood textures with the loading manager
     textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
       woodTextures.map = texture;
       woodTextures.map.wrapS = THREE.RepeatWrapping;
       woodTextures.map.wrapT = THREE.RepeatWrapping;
       woodTextures.map.repeat.set(2, 2);
-      checkAllTexturesLoaded();
+      createTableIfTexturesLoaded();
     });
     
     textureLoader.load('https://threejs.org/examples/textures/hardwood2_normal.jpg', function(texture) {
@@ -173,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
       woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
       woodTextures.normalMap.repeat.set(2, 2);
-      checkAllTexturesLoaded();
+      createTableIfTexturesLoaded();
     });
     
     textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
@@ -181,8 +191,19 @@ document.addEventListener('DOMContentLoaded', function() {
       woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
       woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
       woodTextures.roughnessMap.repeat.set(2, 2);
-      checkAllTexturesLoaded();
+      createTableIfTexturesLoaded();
     });
+    
+    // Track texture loading
+    let texturesLoaded = 0;
+    const requiredTextures = 3;
+    
+    function createTableIfTexturesLoaded() {
+      texturesLoaded++;
+      if (texturesLoaded >= requiredTextures) {
+        createTable();
+      }
+    }
     
     // Create wooden table
     function createTable() {
@@ -201,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
       table.receiveShadow = true;
       scene.add(table);
       
-      // Now that table is loaded, create other elements
+      // Now that table is loaded, create the jar
       createJar();
     }
     
@@ -247,13 +268,110 @@ document.addEventListener('DOMContentLoaded', function() {
       lid.castShadow = true;
       scene.add(lid);
       
-      // Now create the spider
-      createSpider();
+      // Now load the spider model
+      loadSpiderModel();
     }
     
-    // Create the realistic spider
-    function createSpider() {
-      // Create a realistic spider
+    // Load the spider model
+    function loadSpiderModel() {
+      loadingElement.textContent = 'Loading spider model...';
+      
+      // Create a GLTFLoader instance
+      const gltfLoader = new THREE.GLTFLoader(loadingManager);
+      
+      // Optional: Setup Draco decoder for compressed models
+      if (typeof THREE.DRACOLoader !== 'undefined') {
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+        gltfLoader.setDRACOLoader(dracoLoader);
+      }
+      
+      // Load the spider model
+      gltfLoader.load(
+        // Model path - adjust this to your file location
+        'spider_with_animation.glb',
+        
+        // Success callback
+        function(gltf) {
+          // Get the model from the loaded gltf file
+          const spiderModel = gltf.scene;
+          
+          // Adjust scale if needed - you might need to adjust this value
+          spiderModel.scale.set(0.2, 0.2, 0.2);
+          
+          // Position in jar
+          spiderModel.position.set(0, 0.4, 0);
+          
+          // Apply shadows and improve materials
+          spiderModel.traverse(function(node) {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+              
+              // Improve materials if needed
+              if (node.material) {
+                node.material.envMap = envMap;
+                node.material.needsUpdate = true;
+              }
+            }
+          });
+          
+          // Add to scene
+          scene.add(spiderModel);
+          
+          // Handle animations if available
+          if (gltf.animations && gltf.animations.length > 0) {
+            // Create an animation mixer
+            mixer = new THREE.AnimationMixer(spiderModel);
+            
+            // Get the first animation (or pick a specific one)
+            const idleAnimation = gltf.animations[0];
+            
+            // Create an animation action
+            const action = mixer.clipAction(idleAnimation);
+            
+            // Play the animation
+            action.play();
+          }
+          
+          // Add dust particles and finalize
+          addDustParticles();
+          finalizeScene();
+          
+          // Update loading status
+          loadingElement.textContent = 'Scene loaded!';
+          
+          // Hide loading message after a short delay
+          setTimeout(() => {
+            loadingElement.style.opacity = '0';
+            loadingElement.style.transition = 'opacity 1s ease';
+            setTimeout(() => {
+              loadingElement.remove();
+            }, 1000);
+          }, 1000);
+        },
+        
+        // Progress callback
+        function(xhr) {
+          // This is handled by the loadingManager
+        },
+        
+        // Error callback
+        function(error) {
+          console.error('Error loading spider model:', error);
+          loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          
+          // Create a fallback procedural spider
+          createProceduralSpider();
+        }
+      );
+    }
+    
+    // Fallback: Create a procedural spider if model loading fails
+    function createProceduralSpider() {
+      console.log('Creating procedural spider as fallback');
+      
+      // Create a simple spider
       const spider = new THREE.Group();
       
       // Spider body (abdomen)
@@ -275,90 +393,40 @@ document.addEventListener('DOMContentLoaded', function() {
       head.castShadow = true;
       spider.add(head);
       
-      // Spider eyes
-      const eyeMaterial = new THREE.MeshStandardMaterial({
-        color: 0xff0000,
-        emissive: 0x440000,
-        roughness: 0.2,
-        metalness: 0.5,
-        envMap: envMap
-      });
-      
-      // Add 8 small eyes
+      // Simple legs
       for (let i = 0; i < 8; i++) {
-        const angle = Math.PI * 0.1 * (i - 2);
-        const eyeGeometry = new THREE.SphereGeometry(0.01, 8, 8);
-        const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-        const eyeRadius = 0.06;
-        eye.position.set(
-          eyeRadius * Math.sin(angle),
-          eyeRadius * Math.cos(angle) * 0.5 + 0.03,
-          0.34 // Positioned on the front of the head
-        );
-        head.add(eye);
-      }
-      
-      // Spider legs - more detailed with joints
-      const legMaterial = new THREE.MeshStandardMaterial({
-        color: 0x0a0a0a,
-        roughness: 0.9,
-        metalness: 0.1,
-        envMap: envMap
-      });
-      
-      // Create detailed legs with multiple segments
-      for (let i = 0; i < 8; i++) {
-        const legGroup = new THREE.Group();
+        const legGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.4, 8);
+        const leg = new THREE.Mesh(legGeometry, spiderMaterial);
+        
+        const angle = (Math.PI / 4) * (i % 4);
         const isLeftSide = i < 4;
         const sideSign = isLeftSide ? 1 : -1;
-        const angle = Math.PI / 8 + (Math.PI / 4) * (i % 4);
         
-        // Each leg has 3 segments
-        const femurGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.3, 8);
-        const femur = new THREE.Mesh(femurGeometry, legMaterial);
-        femur.castShadow = true;
+        leg.position.set(Math.cos(angle) * 0.2 * sideSign, 0, Math.sin(angle) * 0.2);
+        leg.rotation.z = sideSign * Math.PI / 4;
+        leg.rotation.y = angle;
         
-        const tibiaGeometry = new THREE.CylinderGeometry(0.01, 0.01, 0.35, 8);
-        const tibia = new THREE.Mesh(tibiaGeometry, legMaterial);
-        tibia.castShadow = true;
-        
-        const tarsusGeometry = new THREE.CylinderGeometry(0.005, 0.002, 0.25, 8);
-        const tarsus = new THREE.Mesh(tarsusGeometry, legMaterial);
-        tarsus.castShadow = true;
-        
-        // Position leg to side of body
-        legGroup.position.x = Math.cos(angle) * 0.18 * sideSign;
-        legGroup.position.z = Math.sin(angle) * 0.18;
-        
-        // Rotate and position segments
-        femur.rotation.z = sideSign * Math.PI / 4;
-        femur.position.x = sideSign * 0.1;
-        femur.position.y = -0.12;
-        
-        tibia.position.x = sideSign * 0.25;
-        tibia.position.y = -0.3;
-        tibia.rotation.z = sideSign * Math.PI / 3;
-        
-        tarsus.position.x = sideSign * 0.4;
-        tarsus.position.y = -0.5;
-        tarsus.rotation.z = sideSign * Math.PI / 6;
-        
-        legGroup.add(femur);
-        legGroup.add(tibia);
-        legGroup.add(tarsus);
-        spider.add(legGroup);
+        leg.castShadow = true;
+        spider.add(leg);
       }
       
       // Position spider in jar
       spider.position.y = 0.4;
-      spider.castShadow = true;
       scene.add(spider);
       
-      // Add more subtle ambient effects - dust particles in the jar
+      // Continue with dust particles and scene finalization
       addDustParticles();
+      finalizeScene();
       
-      // Setup animation and finalize
-      setupAnimation(spider);
+      // Update loading status
+      loadingElement.textContent = 'Scene loaded (using fallback spider)';
+      setTimeout(() => {
+        loadingElement.style.opacity = '0';
+        loadingElement.style.transition = 'opacity 1s ease';
+        setTimeout(() => {
+          loadingElement.remove();
+        }, 1000);
+      }, 1000);
     }
     
     // Add dust particles inside the jar
@@ -391,31 +459,22 @@ document.addEventListener('DOMContentLoaded', function() {
       particles.position.y = 0.75; // Center of jar
       scene.add(particles);
       
-      // Store in global scope for animation
+      // Store for animation
       window.dustParticles = particles;
     }
     
-    // Setup animation function
-    function setupAnimation(spider) {
-      let clock = new THREE.Clock();
-      
+    // Finalize the scene setup
+    function finalizeScene() {
       // Animation loop
       function animate() {
         requestAnimationFrame(animate);
         
         const delta = clock.getDelta();
-        const elapsedTime = clock.getElapsedTime();
         
-        // Spider subtle movement
-        spider.rotation.y = Math.sin(elapsedTime * 0.5) * 0.1;
-        spider.position.y = 0.4 + Math.sin(elapsedTime * 0.8) * 0.02;
-        
-        // Slightly move spider legs for natural effect
-        spider.children.forEach((child, index) => {
-          if (index > 1) { // Skip body and head
-            child.rotation.x = Math.sin(elapsedTime * 0.8 + index * 0.3) * 0.05;
-          }
-        });
+        // Update animation mixer if available
+        if (mixer) {
+          mixer.update(delta);
+        }
         
         // Animate dust particles
         if (window.dustParticles) {
@@ -423,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           for (let i = 0; i < positions.length; i += 3) {
             // Slow floating motion
-            positions[i + 1] += Math.sin((elapsedTime + i) * 0.1) * 0.0005;
+            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
             
             // Keep particles inside jar bounds
             if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
@@ -525,10 +584,10 @@ document.addEventListener('DOMContentLoaded', function() {
         renderer.setSize(width, height);
       });
       
-      console.log('Photorealistic scene built successfully!');
+      console.log('Scene setup completed');
     }
     
-    // If textures fail to load, start anyway with fallbacks
+    // If textures fail to load, start anyway with fallbacks after timeout
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, proceeding with fallbacks');
