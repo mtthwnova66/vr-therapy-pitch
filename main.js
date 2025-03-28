@@ -1,4 +1,86 @@
-// Wait for the DOM to be fully loaded
+// Add instructions
+      const instructions = document.createElement('div');
+      instructions.style.position = 'absolute';
+      instructions.style.top = '10px';
+      instructions.style.left = '10px';
+      instructions.style.padding = '10px';
+      instructions.style.background = 'rgba(255,255,255,0.7)';
+      instructions.style.borderRadius = '5px';
+      instructions.style.fontSize = '14px';
+      instructions.style.zIndex = '10';
+      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+      container.appendChild(instructions);
+      
+      // Hide instructions after 5 seconds
+      setTimeout(() => {
+        instructions.style.opacity = '0';
+        instructions.style.transition = 'opacity 1s ease';
+      }, 5000);
+      
+      // Handle window resize and fullscreen changes
+      function handleResize() {
+        // If in fullscreen, use screen dimensions
+        let width, height;
+        
+        if (document.fullscreenElement === container) {
+          width = window.innerWidth; 
+          height = window.innerHeight;
+          
+          // Ensure the canvas fills the entire fullscreen space
+          renderer.domElement.style.width = "100vw";
+          renderer.domElement.style.height = "100vh";
+          
+          // Additional styles to fix fullscreen issues
+          document.body.style.overflow = "hidden";
+        } else {
+          width = container.clientWidth;
+          height = container.clientHeight;
+          renderer.domElement.style.width = "100%";
+          renderer.domElement.style.height = "100%";
+          document.body.style.overflow = "";
+        }
+        
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        
+        console.log(`Resized to: ${width}x${height}`);
+      }
+      
+      // Listen for resize events
+      window.addEventListener('resize', handleResize);
+      
+      // Listen for fullscreen change events
+      document.addEventListener('fullscreenchange', handleResize);
+      document.addEventListener('webkitfullscreenchange', handleResize);
+      document.addEventListener('mozfullscreenchange', handleResize);
+      document.addEventListener('MSFullscreenChange', handleResize);
+      
+      // Initial resize
+      handleResize();
+      
+      console.log('Scene setup completed');
+    }
+    
+    // If textures fail to load, start anyway with fallbacks after timeout
+    setTimeout(() => {
+      if (texturesLoaded < requiredTextures) {
+        console.warn('Not all textures loaded in time, proceeding with fallbacks');
+        
+        // Fallback materials
+        woodTextures.map = woodTextures.map || new THREE.Texture();
+        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
+        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
+        
+        createTable();
+      }
+    }, 5000); // 5 second timeout
+    
+  } catch (error) {
+    console.error('Error creating photorealistic scene:', error);
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+  }
+});// Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM loaded, initializing photorealistic Three.js scene...');
   
@@ -131,8 +213,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Create Lights
-    // Ambient light (subtle)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    // Ambient light (subtle, increased intensity)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Increased from 0.3
     scene.add(ambientLight);
     
     // Key light (main light)
@@ -155,13 +237,18 @@ document.addEventListener('DOMContentLoaded', function() {
     fillLight.position.set(-3, 4, -3);
     scene.add(fillLight);
     
-    // Add an extra light for the right side of the jar (new)
-    const rightLight = new THREE.DirectionalLight(0xffffff, 0.7);
-    rightLight.position.set(6, 2, 0); // Position to the right side
+    // Dedicated front-facing light for spider visibility
+    const frontLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    frontLight.position.set(0, 2, 4); // Positioned in front of the scene
+    scene.add(frontLight);
+    
+    // Right side light (softened)
+    const rightLight = new THREE.DirectionalLight(0xffffff, 0.5); // Reduced intensity
+    rightLight.position.set(6, 2, 0);
     scene.add(rightLight);
     
     // Rim light (highlight edges)
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.5); // Reduced intensity
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
     
@@ -267,12 +354,12 @@ document.addEventListener('DOMContentLoaded', function() {
       jar.receiveShadow = true;
       scene.add(jar);
       
-      // Jar lid with metallic look
+      // Improved jar lid with ridges
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
       const lidMaterial = new THREE.MeshStandardMaterial({
-        color: 0x777777,
-        metalness: 0.9,
-        roughness: 0.1,
+        color: 0x888888, // Slightly lighter color
+        metalness: 0.7,
+        roughness: 0.3,
         envMap: envMap
       });
       const lid = new THREE.Mesh(lidGeometry, lidMaterial);
@@ -280,8 +367,69 @@ document.addEventListener('DOMContentLoaded', function() {
       lid.castShadow = true;
       scene.add(lid);
       
+      // Add subtle ridges to the lid
+      const ridgeGroup = new THREE.Group();
+      const ridgeCount = 12;
+      for (let i = 0; i < ridgeCount; i++) {
+        const ridgeGeometry = new THREE.CylinderGeometry(0.84, 0.84, 0.02, 64, 1, true);
+        const ridgeMaterial = new THREE.MeshStandardMaterial({
+          color: 0x777777,
+          metalness: 0.6,
+          roughness: 0.4
+        });
+        const ridge = new THREE.Mesh(ridgeGeometry, ridgeMaterial);
+        
+        const angle = (i / ridgeCount) * Math.PI * 2;
+        ridge.position.y = 1.55 + 0.05 * Math.sin(angle);
+        ridge.rotation.y = angle;
+        
+        ridgeGroup.add(ridge);
+      }
+      scene.add(ridgeGroup);
+      
       // Now load the spider model
       loadSpiderModel();
+    }
+    
+    // Create subtle web strands
+    function createWebStrands(scene) {
+      const webMaterial = new THREE.LineBasicMaterial({
+        color: 0xf0f0f0,
+        opacity: 0.3,
+        transparent: true
+      });
+      
+      // Create multiple web strands
+      for (let i = 0; i < 5; i++) {
+        const points = [];
+        
+        // Start point near the lid
+        points.push(new THREE.Vector3(
+          Math.random() * 0.4 - 0.2, 
+          1.4, 
+          Math.random() * 0.4 - 0.2
+        ));
+        
+        // Intermediate points with some randomness
+        for (let j = 0; j < 3; j++) {
+          points.push(new THREE.Vector3(
+            points[j].x + (Math.random() * 0.2 - 0.1),
+            points[j].y - (Math.random() * 0.3 + 0.1),
+            points[j].z + (Math.random() * 0.2 - 0.1)
+          ));
+        }
+        
+        // End point near bottom of jar
+        points.push(new THREE.Vector3(
+          points[points.length - 1].x,
+          0.2,
+          points[points.length - 1].z
+        ));
+        
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const webStrand = new THREE.Line(geometry, webMaterial);
+        scene.add(webStrand);
+      }
     }
     
     // Load the spider model
@@ -331,14 +479,20 @@ document.addEventListener('DOMContentLoaded', function() {
             -center.z   // Center horizontally
           );
           
-          // Apply shadows and improve materials
+          // Improved material processing for better visibility
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
               node.receiveShadow = true;
               
-              // Improve materials if needed
+              // Improve materials for better visibility
               if (node.material) {
+                // Lighten the base color and reduce metalness
+                if (node.material.color) {
+                  node.material.color.setHSL(node.material.color.getHSL().h, 0.5, 0.6);
+                }
+                node.material.metalness = 0.1;
+                node.material.roughness = 0.6;
                 node.material.envMap = envMap;
                 node.material.needsUpdate = true;
               }
@@ -347,6 +501,9 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Add to scene
           scene.add(spiderModel);
+          
+          // Add web strands
+          createWebStrands(scene);
           
           // Handle animations if available
           if (gltf.animations && gltf.animations.length > 0) {
@@ -375,8 +532,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('No animations found in the model');
           }
           
-          // Add dust particles and finalize
+          // Add dust particles
           addDustParticles();
+          
+          // Finalize scene
           finalizeScene();
           
           // Update loading status
@@ -418,17 +577,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function createProceduralSpider() {
       console.log('Creating procedural spider as fallback');
       
-      // Create a simple spider
+      // Create a simple spider with improved visibility
       const spider = new THREE.Group();
+      
+      // Lighter color scheme
+      const spiderMaterial = new THREE.MeshStandardMaterial({
+        color: 0x444444, // Lighter base color
+        roughness: 0.5,
+        metalness: 0.1,
+        envMap: envMap
+      });
       
       // Spider body (abdomen) - increased size
       const abdomenGeometry = new THREE.SphereGeometry(0.28, 32, 32);
-      const spiderMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a1a1a,
-        roughness: 0.7,
-        metalness: 0.2,
-        envMap: envMap
-      });
       const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
       abdomen.castShadow = true;
       spider.add(abdomen);
@@ -461,8 +622,13 @@ document.addEventListener('DOMContentLoaded', function() {
       spider.position.y = 0.05;
       scene.add(spider);
       
-      // Continue with dust particles and scene finalization
+      // Add web strands
+      createWebStrands(scene);
+      
+      // Add dust particles
       addDustParticles();
+      
+      // Finalize scene
       finalizeScene();
       
       // Update loading status
@@ -482,8 +648,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add dust particles inside the jar
     function addDustParticles() {
-      const particlesCount = 100;
+      const particlesCount = 150; // Increased number of particles
       const positions = new Float32Array(particlesCount * 3);
+      const sizes = new Float32Array(particlesCount);
       const particleGeometry = new THREE.BufferGeometry();
       
       for (let i = 0; i < particlesCount; i++) {
@@ -494,16 +661,21 @@ document.addEventListener('DOMContentLoaded', function() {
         positions[i * 3] = Math.cos(angle) * radius; // x
         positions[i * 3 + 1] = Math.random() * 1.4 + 0.05; // y (within jar height)
         positions[i * 3 + 2] = Math.sin(angle) * radius; // z
+        
+        // Varied particle sizes
+        sizes[i] = Math.random() * 0.01 + 0.005;
       }
       
       particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
       
       const particleMaterial = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 0.005,
+        size: 0.01,
         transparent: true,
-        opacity: 0.3,
-        blending: THREE.AdditiveBlending
+        opacity: 0.4,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
       });
       
       const particles = new THREE.Points(particleGeometry, particleMaterial);
@@ -530,10 +702,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Animate dust particles
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
+          const sizes = window.dustParticles.geometry.attributes.size.array;
           
           for (let i = 0; i < positions.length; i += 3) {
-            // Slow floating motion
-            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
+            // More complex floating motion
+            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.2) * 0.001;
+            
+            // Subtle size pulsing
+            sizes[i / 3] += Math.sin((clock.getElapsedTime() + i) * 0.5) * 0.0005;
             
             // Keep particles inside jar bounds
             if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
@@ -541,6 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
+          window.dustParticles.geometry.attributes.size.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
         
@@ -635,86 +812,4 @@ document.addEventListener('DOMContentLoaded', function() {
       
       container.appendChild(rotateButton);
       
-      // Add instructions
-      const instructions = document.createElement('div');
-      instructions.style.position = 'absolute';
-      instructions.style.top = '10px';
-      instructions.style.left = '10px';
-      instructions.style.padding = '10px';
-      instructions.style.background = 'rgba(255,255,255,0.7)';
-      instructions.style.borderRadius = '5px';
-      instructions.style.fontSize = '14px';
-      instructions.style.zIndex = '10';
-      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
-      container.appendChild(instructions);
-      
-      // Hide instructions after 5 seconds
-      setTimeout(() => {
-        instructions.style.opacity = '0';
-        instructions.style.transition = 'opacity 1s ease';
-      }, 5000);
-      
-      // Handle window resize and fullscreen changes
-      function handleResize() {
-        // If in fullscreen, use screen dimensions
-        let width, height;
-        
-        if (document.fullscreenElement === container) {
-          width = window.innerWidth; 
-          height = window.innerHeight;
-          
-          // Ensure the canvas fills the entire fullscreen space
-          renderer.domElement.style.width = "100vw";
-          renderer.domElement.style.height = "100vh";
-          
-          // Additional styles to fix fullscreen issues
-          document.body.style.overflow = "hidden";
-        } else {
-          width = container.clientWidth;
-          height = container.clientHeight;
-          renderer.domElement.style.width = "100%";
-          renderer.domElement.style.height = "100%";
-          document.body.style.overflow = "";
-        }
-        
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-        
-        console.log(`Resized to: ${width}x${height}`);
-      }
-      
-      // Listen for resize events
-      window.addEventListener('resize', handleResize);
-      
-      // Listen for fullscreen change events
-      document.addEventListener('fullscreenchange', handleResize);
-      document.addEventListener('webkitfullscreenchange', handleResize);
-      document.addEventListener('mozfullscreenchange', handleResize);
-      document.addEventListener('MSFullscreenChange', handleResize);
-      
-      // Initial resize
-      handleResize();
-      
-      console.log('Scene setup completed');
-    }
-    
-    // If textures fail to load, start anyway with fallbacks after timeout
-    setTimeout(() => {
-      if (texturesLoaded < requiredTextures) {
-        console.warn('Not all textures loaded in time, proceeding with fallbacks');
-        
-        // Fallback materials
-        woodTextures.map = woodTextures.map || new THREE.Texture();
-        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
-        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
-        
-        createTable();
-      }
-    }, 5000); // 5 second timeout
-    
-  } catch (error) {
-    console.error('Error creating photorealistic scene:', error);
-    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
-  }
-});
+      //
