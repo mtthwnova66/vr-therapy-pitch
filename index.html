@@ -1527,7 +1527,7 @@
   </script>
 
   <!-- Three.js Script for Arachnophobia Demo -->
- <script>
+<script>
   function showLevel(level) {
     document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
     document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
@@ -1535,7 +1535,6 @@
 
     if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
     if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-    // Optional: implement initLevel3 later
   }
 </script>
 <script src="main.js"></script>
