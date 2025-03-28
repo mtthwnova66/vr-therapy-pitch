@@ -507,131 +507,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Finalize the scene setup
-    // Final main.js – Claude's robust structure enhanced for extreme photorealism
-// Additions: ACES tone mapping, HDRI lighting, depth-of-field, bloom, film grain,
-// camera jitter, spider leg twitches, hyperrealistic jar and lid, reflections, micro-details
-
-function finalizeScene() {
-  const composer = new THREE.EffectComposer(renderer);
-  const renderPass = new THREE.RenderPass(scene, camera);
-  composer.addPass(renderPass);
-
-  const bloomPass = new THREE.UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.4, 0.45, 0.85
-  );
-  composer.addPass(bloomPass);
-
-  const bokehPass = new THREE.BokehPass(scene, camera, {
-    focus: 3.0,
-    aperture: 0.00065,
-    maxblur: 0.015
-  });
-  composer.addPass(bokehPass);
-
-  const filmPass = new THREE.FilmPass(0.06, 0.2, 648, false);
-  composer.addPass(filmPass);
-
-  // Replace original jar and lid with more realistic model
-  const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 8, false);
-  const jarMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    metalness: 0.05,
-    roughness: 0.04,
-    ior: 1.52,
-    transmission: 0.95,
-    thickness: 0.06,
-    specularIntensity: 1.0,
-    clearcoat: 1,
-    clearcoatRoughness: 0.1,
-    envMapIntensity: 1.5,
-    reflectivity: 0.4
-  });
-
-  const fingerprintTexture = new THREE.TextureLoader().load('https://raw.githubusercontent.com/gkjohnson/3d-demo-data/master/textures/smudges/smudges_01.jpg');
-  fingerprintTexture.wrapS = fingerprintTexture.wrapT = THREE.RepeatWrapping;
-  jarMaterial.roughnessMap = fingerprintTexture;
-  jarMaterial.roughnessMap.repeat.set(3, 3);
-
-  const realisticJar = new THREE.Mesh(jarGeometry, jarMaterial);
-  realisticJar.position.y = 0.75;
-  realisticJar.castShadow = true;
-  realisticJar.receiveShadow = true;
-  scene.add(realisticJar);
-
-  const lidBase = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
-  const lidRidges = new THREE.CylinderGeometry(0.87, 0.87, 0.02, 64);
-  const scratchedMetal = new THREE.TextureLoader().load('https://raw.githubusercontent.com/gkjohnson/3d-demo-data/master/textures/roughness/roughness_metal_scratched.jpg');
-  scratchedMetal.wrapS = scratchedMetal.wrapT = THREE.RepeatWrapping;
-  scratchedMetal.repeat.set(10, 1);
-
-  const lidMaterial = new THREE.MeshStandardMaterial({
-    color: 0x888888,
-    metalness: 0.9,
-    roughness: 0.3,
-    bumpMap: scratchedMetal,
-    bumpScale: 0.008,
-    envMap: scene.environment
-  });
-
-  const topLid = new THREE.Mesh(lidBase, lidMaterial);
-  topLid.position.set(0, 1.55, 0);
-  topLid.rotation.y = Math.PI * 0.03;
-  topLid.castShadow = true;
-  scene.add(topLid);
-
-  const ridgedTop = new THREE.Mesh(lidRidges, lidMaterial);
-  ridgedTop.position.set(0, 1.61, 0);
-  ridgedTop.rotation.y = Math.PI * 0.03;
-  ridgedTop.castShadow = true;
-  scene.add(ridgedTop);
-
-  // Animate spider twitch (manual override)
-  let spiderTwitchAngle = 0;
-  let spiderModel = scene.children.find(o => o.name && o.name.toLowerCase().includes('spider'));
-  const twitchSpeed = 1.5;
-
-  function animate() {
-    requestAnimationFrame(animate);
-    const delta = clock.getDelta();
-    if (mixer) mixer.update(delta);
-
-    // Animate dust particles
-    if (window.dustParticles) {
-      const positions = window.dustParticles.geometry.attributes.position.array;
-      for (let i = 0; i < positions.length; i += 3) {
-        positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
-        if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
-        if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
-      }
-      window.dustParticles.geometry.attributes.position.needsUpdate = true;
-      window.dustParticles.rotation.y += delta * 0.01;
-    }
-
-    // Spider leg twitch (fallback procedural only)
-    if (spiderModel && spiderModel.children) {
-      spiderTwitchAngle += delta * twitchSpeed;
-      const twitch = Math.sin(spiderTwitchAngle) * 0.05;
-      spiderModel.children.forEach((part, idx) => {
-        if (part.geometry && part.name === '') {
-          part.rotation.z += twitch * (idx % 2 === 0 ? 1 : -1);
+    function finalizeScene() {
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta();
+        
+        // Update animation mixer if available
+        if (mixer) {
+          mixer.update(delta);
         }
-      });
-    }
-
-    // Camera jitter (handheld)
-    const time = clock.getElapsedTime();
-    const jitterAmount = 0.0015;
-    camera.position.x += (Math.sin(time * 1.2) * jitterAmount);
-    camera.position.y += (Math.cos(time * 1.5) * jitterAmount);
-    camera.lookAt(controls.target);
-
-    if (controls) controls.update();
-    composer.render();
-  }
-
-  animate();
-}
+        
+        // Animate dust particles
+        if (window.dustParticles) {
+          const positions = window.dustParticles.geometry.attributes.position.array;
+          
+          for (let i = 0; i < positions.length; i += 3) {
+            // Slow floating motion
+            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
+            
+            // Keep particles inside jar bounds
+            if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
+            if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
+          }
+          
+          window.dustParticles.geometry.attributes.position.needsUpdate = true;
+          window.dustParticles.rotation.y += delta * 0.01;
+        }
+        
+        // Update controls
+        if (controls) controls.update();
+        
+        // Render
+        renderer.render(scene, camera);
+      }
+      
+      // Start animation
+      animate();
       
       // Add a fullscreen button
       const fullscreenButton = document.createElement('button');
