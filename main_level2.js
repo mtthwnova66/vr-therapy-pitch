@@ -1,5 +1,5 @@
 // Spider Simulation - Level 2 (Moderate Exposure)
-// This is the more intense version with a closer view of the spider
+// Main controller script for the moderate exposure level with closer spider view
 
 let level2Scene, level2Camera, level2Renderer, level2Controls;
 
@@ -32,7 +32,7 @@ function initLevel2() {
   loadingStatus.className = 'loading-status';
   loadingStatus.innerHTML = `
     <div class="loading-spinner"></div>
-    <p>Loading Level 2 simulation...</p>
+    <p>Loading moderate exposure scene...</p>
   `;
   loadingStatus.style.position = 'absolute';
   loadingStatus.style.top = '50%';
@@ -46,25 +46,273 @@ function initLevel2() {
   container.appendChild(loadingStatus);
   
   try {
-    // Scene setup - use same scene properties as Level 1
+    // Scene setup
     level2Scene = new THREE.Scene();
     level2Scene.background = new THREE.Color(0xf5f5f7);
     
-    // Camera setup - closer view than Level 1
+    // Camera setup - diagonal view for consistency with Level 1
     level2Camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    
-    // Position camera at a more diagonal angle (similar to Level 1 but closer)
-    level2Camera.position.set(1.5, 0.8, 2.0);
+    level2Camera.position.set(1.0, 0.8, 1.5); // Diagonal position like Level 1 but closer
     
     // Enhanced renderer with physically-based settings
     level2Renderer = new THREE.WebGLRenderer({ 
       antialias: true,
       alpha: true
+    }
+    
+    // If textures fail to load, start anyway with fallbacks after timeout
+    setTimeout(() => {
+      if (texturesLoaded < requiredTextures) {
+        console.warn('Not all textures loaded in time, proceeding with fallbacks');
+        
+        // Fallback materials
+        woodTextures.map = woodTextures.map || new THREE.Texture();
+        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
+        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
+        
+        createTable();
+      }
+    }, 5000); // 5 second timeout
+  } catch (error) {
+    console.error('Error creating Level 2 scene:', error);
+    const container = document.getElementById('arachnophobia-level2');
+    if (container) {
+      container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+    }
+  }
+}
+
+// Function to refresh Level 2 if already initialized
+function refreshLevel2() {
+  const container = document.getElementById('arachnophobia-level2');
+  if (!container) return;
+  
+  // Make sure the container is displayed
+  container.style.display = 'block';
+  
+  // Force a resize event to refresh the renderer
+  if (level2Renderer && level2Camera) {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    level2Camera.aspect = width / height;
+    level2Camera.updateProjectionMatrix();
+    level2Renderer.setSize(width, height);
+    
+    // Re-render once
+    if (level2Scene) {
+      level2Renderer.render(level2Scene, level2Camera);
+    }
+  }
+}
+    
+    // Finalize the scene setup and start animation
+    function finalizeScene() {
+      // Animation loop
+      function animate() {
+        // Check if canvas is still in the DOM
+        if (!level2Renderer.domElement.isConnected) {
+          console.log('Level 2 canvas removed from DOM, stopping animation loop');
+          return;
+        }
+        
+        window.level2AnimationFrame = requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta();
+        
+        // Update animation mixer if available
+        if (mixer) {
+          mixer.update(delta);
+        }
+        
+        // Animate dust particles
+        if (window.level2DustParticles) {
+          const positions = window.level2DustParticles.geometry.attributes.position.array;
+          
+          for (let i = 0; i < positions.length; i += 3) {
+            // Slow floating motion
+            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
+            
+            // Keep particles above the table
+            if (positions[i + 1] > 0.55) positions[i + 1] = 0.05;
+            if (positions[i + 1] < 0.05) positions[i + 1] = 0.55;
+          }
+          
+          window.level2DustParticles.geometry.attributes.position.needsUpdate = true;
+          window.level2DustParticles.rotation.y += delta * 0.01;
+        }
+        
+        // Update controls
+        if (level2Controls) level2Controls.update();
+        
+        // Render
+        level2Renderer.render(level2Scene, level2Camera);
+      }
+      
+      // Start animation
+      animate();
+      
+      // Handle resizing
+      function handleResize() {
+        const container = document.getElementById('arachnophobia-level2');
+        if (!container) return;
+        
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        // Update camera aspect ratio
+        level2Camera.aspect = width / height;
+        level2Camera.updateProjectionMatrix();
+        
+        // Update renderer size
+        level2Renderer.setSize(width, height);
+      }
+      
+      // Listen for resize events
+      window.addEventListener('resize', handleResize);
+      
+      // Listen for fullscreenchange event to ensure everything renders correctly after exiting fullscreen
+      document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement) {
+          // Exited fullscreen, make sure the container is still visible
+          const container = document.getElementById('arachnophobia-level2');
+          if (container && container.style.display === 'block') {
+            // Force resize after a brief delay
+            setTimeout(() => {
+              handleResize();
+              
+              // Ensure controls are reset
+              if (level2Controls) {
+                level2Controls.update();
+              }
+              
+              // Render one frame
+              if (level2Scene && level2Camera && level2Renderer) {
+                level2Renderer.render(level2Scene, level2Camera);
+              }
+            }, 100);
+          }
+        }
+      });
+      
+      // Set flag to indicate level 2 is initialized
+      window.level2Initialized = true;
+      
+      console.log('Level 2 scene setup completed');
+    }
+    
+    // Add simulation controls (instructions, fullscreen button, rotation toggle)
+    function addSimControls(container, isLevel1) {
+      const prefix = isLevel1 ? 'level1' : 'level2';
+      
+      // Add instructions
+      const instructions = document.createElement('div');
+      instructions.className = 'sim-instructions';
+      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+      instructions.id = `${prefix}-instructions`;
+      container.appendChild(instructions);
+      
+      // Add control buttons container
+      const controlsDiv = document.createElement('div');
+      controlsDiv.className = 'sim-controls';
+      controlsDiv.id = `${prefix}-controls`;
+      controlsDiv.style.position = 'absolute';
+      controlsDiv.style.bottom = '20px';
+      controlsDiv.style.right = '20px';
+      controlsDiv.style.zIndex = '100';
+      controlsDiv.style.display = 'flex';
+      controlsDiv.style.gap = '10px';
+      
+      // Add fullscreen button
+      const fullscreenButton = document.createElement('button');
+      fullscreenButton.innerHTML = '⛶';
+      fullscreenButton.title = 'Toggle fullscreen';
+      fullscreenButton.id = `${prefix}-fullscreen`;
+      fullscreenButton.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+      fullscreenButton.style.color = '#000';
+      fullscreenButton.style.width = '40px';
+      fullscreenButton.style.height = '40px';
+      fullscreenButton.style.border = 'none';
+      fullscreenButton.style.borderRadius = '50%';
+      fullscreenButton.style.fontSize = '18px';
+      fullscreenButton.style.cursor = 'pointer';
+      fullscreenButton.style.display = 'flex';
+      fullscreenButton.style.alignItems = 'center';
+      fullscreenButton.style.justifyContent = 'center';
+      fullscreenButton.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+      fullscreenButton.style.transition = 'all 0.3s ease';
+      fullscreenButton.addEventListener('click', () => toggleFullscreen(container));
+      
+      // Add rotation toggle button
+      const rotateButton = document.createElement('button');
+      rotateButton.innerHTML = '↻';
+      rotateButton.title = 'Toggle auto-rotation';
+      rotateButton.id = `${prefix}-rotate`;
+      rotateButton.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+      rotateButton.style.color = '#000';
+      rotateButton.style.width = '40px';
+      rotateButton.style.height = '40px';
+      rotateButton.style.border = 'none';
+      rotateButton.style.borderRadius = '50%';
+      rotateButton.style.fontSize = '18px';
+      rotateButton.style.cursor = 'pointer';
+      rotateButton.style.display = 'flex';
+      rotateButton.style.alignItems = 'center';
+      rotateButton.style.justifyContent = 'center';
+      rotateButton.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+      rotateButton.style.transition = 'all 0.3s ease';
+      rotateButton.addEventListener('click', () => {
+        const controls = isLevel1 ? level1Controls : level2Controls;
+        if (controls) {
+          controls.autoRotate = !controls.autoRotate;
+          rotateButton.style.background = controls.autoRotate ? 
+            'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
+          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
+        }
+      });
+      
+      // Add buttons to controls div
+      controlsDiv.appendChild(rotateButton);
+      controlsDiv.appendChild(fullscreenButton);
+      
+      // Add controls to container
+      container.appendChild(controlsDiv);
+    }
+    
+    // Toggle fullscreen function
+    function toggleFullscreen(container) {
+      if (!document.fullscreenElement) {
+        // Going fullscreen
+        if (container.requestFullscreen) {
+          container.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+          });
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        } else if (container.mozRequestFullScreen) {
+          container.mozRequestFullScreen();
+        } else if (container.msRequestFullscreen) {
+          container.msRequestFullscreen();
+        }
+      } else {
+        // Exiting fullscreen
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => {
+            console.error(`Error attempting to exit fullscreen: ${err.message}`);
+          });
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
     });
     level2Renderer.setSize(container.clientWidth, container.clientHeight);
     level2Renderer.setPixelRatio(window.devicePixelRatio);
     
-    // Advanced rendering features - same as Level 1
+    // Advanced rendering features - enable as browser supports
     try {
       level2Renderer.physicallyCorrectLights = true;
       level2Renderer.outputEncoding = THREE.sRGBEncoding;
@@ -79,7 +327,7 @@ function initLevel2() {
     // Add canvas to container
     container.appendChild(level2Renderer.domElement);
     
-    // Ensure the renderer's canvas uses correct styles
+    // Ensure the renderer's canvas uses correct styles for fullscreen
     level2Renderer.domElement.style.width = '100%';
     level2Renderer.domElement.style.height = '100%';
     level2Renderer.domElement.style.display = 'block';
@@ -87,14 +335,14 @@ function initLevel2() {
     level2Renderer.domElement.style.top = '0';
     level2Renderer.domElement.style.left = '0';
     
-    // Add OrbitControls - same as Level 1
+    // Add OrbitControls
     if (typeof THREE.OrbitControls !== 'undefined') {
       level2Controls = new THREE.OrbitControls(level2Camera, level2Renderer.domElement);
-      level2Controls.target.set(0, 0.4, 0); // Look at spider body
+      level2Controls.target.set(0, 0.4, 0); // Target at the spider body
       level2Controls.enableDamping = true;
       level2Controls.dampingFactor = 0.05;
-      level2Controls.minDistance = 1.5;  // Allow closer zoom than Level 1
-      level2Controls.maxDistance = 8;
+      level2Controls.minDistance = 1.2; // Allow closer zoom
+      level2Controls.maxDistance = 6;
       level2Controls.autoRotate = false;
       level2Controls.autoRotateSpeed = 0.5;
       level2Controls.update();
@@ -102,13 +350,13 @@ function initLevel2() {
       console.warn('OrbitControls not available');
     }
     
-    // Add simulation controls - the same as Level 1
+    // Add simulation controls - same as Level 1
     addSimControls(container, false);
     
     // Texture loader
     const textureLoader = new THREE.TextureLoader();
     
-    // Load environment map for reflections - same as Level 1
+    // Load environment map for reflections
     let envMap;
     try {
       const urls = [
@@ -126,12 +374,87 @@ function initLevel2() {
       // Set as scene environment
       level2Scene.environment = envMap;
       
-      // Create a subtle background - same as Level 1
+      // Create a subtle background
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({
         color: 0xf5f5f7,
         side: THREE.DoubleSide
       });
+      
+      // Simple legs - larger and longer than Level 1
+      for (let i = 0; i < 8; i++) {
+        const legGeometry = new THREE.CylinderGeometry(0.03, 0.02, 0.6, 8);
+        const leg = new THREE.Mesh(legGeometry, spiderMaterial);
+        
+        const angle = (Math.PI / 4) * (i % 4);
+        const isLeftSide = i < 4;
+        const sideSign = isLeftSide ? 1 : -1;
+        
+        leg.position.set(Math.cos(angle) * 0.3 * sideSign, 0, Math.sin(angle) * 0.3);
+        leg.rotation.z = sideSign * Math.PI / 4;
+        leg.rotation.y = angle;
+        
+        leg.castShadow = true;
+        spider.add(leg);
+      }
+      
+      // Position spider on table
+      spider.position.y = 0.05;
+      
+      // Rotate to match desired initial view - diagonal orientation
+      spider.rotation.y = Math.PI / 4; // 45 degrees - same as Level 1
+      
+      level2Scene.add(spider);
+      
+      // Continue with dust particles and scene finalization
+      addDustParticles();
+      finalizeScene();
+      
+      // Update loading status
+      if(loadingStatus && loadingStatus.parentNode) {
+        loadingStatus.style.opacity = '0';
+        loadingStatus.style.transition = 'opacity 1s ease';
+        setTimeout(() => {
+          if(loadingStatus && loadingStatus.parentNode) {
+            loadingStatus.remove();
+          }
+        }, 1000);
+      }
+    }
+    
+    // Add dust particles around the scene
+    function addDustParticles() {
+      const particlesCount = 120; // More particles than Level 1
+      const positions = new Float32Array(particlesCount * 3);
+      const particleGeometry = new THREE.BufferGeometry();
+      
+      for (let i = 0; i < particlesCount; i++) {
+        // Random positions in a wider area
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * 1.2;
+        
+        positions[i * 3] = Math.cos(angle) * radius; // x
+        positions[i * 3 + 1] = Math.random() * 0.5 + 0.05; // y (just above table)
+        positions[i * 3 + 2] = Math.sin(angle) * radius; // z
+      }
+      
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.005,
+        transparent: true,
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      particles.position.y = 0.2; // Just above the table
+      level2Scene.add(particles);
+      
+      // Store for animation
+      window.level2DustParticles = particles;
+    }
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
       background.position.z = -20;
       level2Scene.add(background);
@@ -141,7 +464,7 @@ function initLevel2() {
       level2Scene.background = new THREE.Color(0xf5f5f7);
     }
     
-    // Create Lights - same as Level 1
+    // Create Lights - match Level 1
     // Ambient light (subtle)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     level2Scene.add(ambientLight);
@@ -168,7 +491,7 @@ function initLevel2() {
     
     // Add an extra light for the right side
     const rightLight = new THREE.DirectionalLight(0xffffff, 0.7);
-    rightLight.position.set(6, 2, 0);
+    rightLight.position.set(6, 2, 0); // Position to the right side
     level2Scene.add(rightLight);
     
     // Rim light (highlight edges)
@@ -176,7 +499,7 @@ function initLevel2() {
     rimLight.position.set(0, 5, -5);
     level2Scene.add(rimLight);
     
-    // Setup loading manager
+    // Setup loading manager for tracking load progress
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round(loaded / total * 100);
@@ -252,11 +575,11 @@ function initLevel2() {
       table.receiveShadow = true;
       level2Scene.add(table);
       
-      // Now load the spider model
+      // Now load the spider model - different model from Level 1
       loadSpiderModel();
     }
     
-    // Load the spider model - for level 2, we directly create it on the table
+    // Load the spider model
     function loadSpiderModel() {
       if(loadingStatus) {
         loadingStatus.innerHTML = `
@@ -277,15 +600,15 @@ function initLevel2() {
       
       // Load the spider model
       gltfLoader.load(
-        // Model URL - falls back to procedural spider if this fails
-        'spider_with_animation.glb',
+        // Use spider2.glb for level 2
+        'spider2.glb',
         
         // Success callback
         function(gltf) {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale - increased from 1.2 to 1.8 times larger for level 2
+          // Adjust scale - larger than Level 1
           spiderModel.scale.set(1.8, 1.8, 1.8);
           
           // First, get the bounding box to properly position the spider
@@ -300,10 +623,13 @@ function initLevel2() {
           const heightOffset = -minY;
           
           spiderModel.position.set(
-            -center.x,           // Center horizontally
-            0 + heightOffset,    // Place on the table
-            -center.z            // Center horizontally
+            -center.x,         // Center horizontally
+            0 + heightOffset,  // Place on the table
+            -center.z          // Center horizontally
           );
+          
+          // Rotate to match desired initial view - diagonal orientation
+          spiderModel.rotation.y = Math.PI / 4; // 45 degrees - same as Level 1
           
           // Apply shadows and improve materials
           spiderModel.traverse(function(node) {
@@ -424,273 +750,3 @@ function initLevel2() {
         eye.position.set(pos.x, pos.y, pos.z);
         spider.add(eye);
       });
-      
-      // Simple legs - larger and longer than Level 1
-      for (let i = 0; i < 8; i++) {
-        const legGeometry = new THREE.CylinderGeometry(0.03, 0.02, 0.6, 8);
-        const leg = new THREE.Mesh(legGeometry, spiderMaterial);
-        
-        const angle = (Math.PI / 4) * (i % 4);
-        const isLeftSide = i < 4;
-        const sideSign = isLeftSide ? 1 : -1;
-        
-        leg.position.set(Math.cos(angle) * 0.3 * sideSign, 0, Math.sin(angle) * 0.3);
-        leg.rotation.z = sideSign * Math.PI / 4;
-        leg.rotation.y = angle;
-        
-        leg.castShadow = true;
-        spider.add(leg);
-      }
-      
-      // Position spider on table
-      spider.position.y = 0.05;
-      level2Scene.add(spider);
-      
-      // Continue with dust particles and scene finalization
-      addDustParticles();
-      finalizeScene();
-      
-      // Update loading status
-      if(loadingStatus && loadingStatus.parentNode) {
-        loadingStatus.style.opacity = '0';
-        loadingStatus.style.transition = 'opacity 1s ease';
-        setTimeout(() => {
-          if(loadingStatus && loadingStatus.parentNode) {
-            loadingStatus.remove();
-          }
-        }, 1000);
-      }
-    }
-    
-    // Add dust particles around the scene
-    function addDustParticles() {
-      const particlesCount = 120; // More particles than Level 1
-      const positions = new Float32Array(particlesCount * 3);
-      const particleGeometry = new THREE.BufferGeometry();
-      
-      for (let i = 0; i < particlesCount; i++) {
-        // Random positions in a wider area
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * 1.2;
-        
-        positions[i * 3] = Math.cos(angle) * radius; // x
-        positions[i * 3 + 1] = Math.random() * 0.5 + 0.05; // y (just above table)
-        positions[i * 3 + 2] = Math.sin(angle) * radius; // z
-      }
-      
-      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.005,
-        transparent: true,
-        opacity: 0.3,
-        blending: THREE.AdditiveBlending
-      });
-      
-      const particles = new THREE.Points(particleGeometry, particleMaterial);
-      particles.position.y = 0.2; // Just above the table
-      level2Scene.add(particles);
-      
-      // Store for animation
-      window.level2DustParticles = particles;
-    }
-    
-    // Add simulation controls (instructions, fullscreen button, rotation toggle)
-    function addSimControls(container, isLevel1) {
-      const prefix = isLevel1 ? 'level1' : 'level2';
-      
-      // Add instructions
-      const instructions = document.createElement('div');
-      instructions.className = 'sim-instructions';
-      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
-      instructions.id = `${prefix}-instructions`;
-      container.appendChild(instructions);
-      
-      // Hide instructions after 5 seconds
-      setTimeout(() => {
-        instructions.style.opacity = '0';
-      }, 5000);
-      
-      // Add control buttons container
-      const controlsDiv = document.createElement('div');
-      controlsDiv.className = 'sim-controls';
-      controlsDiv.id = `${prefix}-controls`;
-      
-      // Add fullscreen button
-      const fullscreenButton = document.createElement('button');
-      fullscreenButton.innerHTML = '⛶';
-      fullscreenButton.title = 'Toggle fullscreen';
-      fullscreenButton.id = `${prefix}-fullscreen`;
-      fullscreenButton.addEventListener('click', () => toggleFullscreen(container));
-      
-      // Add rotation toggle button
-      const rotateButton = document.createElement('button');
-      rotateButton.innerHTML = '↻';
-      rotateButton.title = 'Toggle auto-rotation';
-      rotateButton.id = `${prefix}-rotate`;
-      rotateButton.addEventListener('click', () => {
-        const controls = isLevel1 ? level1Controls : level2Controls;
-        if (controls) {
-          controls.autoRotate = !controls.autoRotate;
-          rotateButton.style.background = controls.autoRotate ? 
-            'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
-          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
-        }
-      });
-      
-      // Add buttons to controls div
-      controlsDiv.appendChild(rotateButton);
-      controlsDiv.appendChild(fullscreenButton);
-      
-      // Add controls to container
-      container.appendChild(controlsDiv);
-    }
-    
-    // Toggle fullscreen function
-    function toggleFullscreen(container) {
-      if (!document.fullscreenElement) {
-        // Going fullscreen
-        if (container.requestFullscreen) {
-          container.requestFullscreen().catch(err => {
-            console.error(`Error attempting to enable fullscreen: ${err.message}`);
-          });
-        } else if (container.webkitRequestFullscreen) {
-          container.webkitRequestFullscreen();
-        } else if (container.mozRequestFullScreen) {
-          container.mozRequestFullScreen();
-        } else if (container.msRequestFullscreen) {
-          container.msRequestFullscreen();
-        }
-      } else {
-        // Exiting fullscreen
-        if (document.exitFullscreen) {
-          document.exitFullscreen().catch(err => {
-            console.error(`Error attempting to exit fullscreen: ${err.message}`);
-          });
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-      }
-    }
-    
-    // Finalize the scene setup and start animation
-    function finalizeScene() {
-      // Animation loop
-      function animate() {
-        // Check if canvas is still in the DOM
-        if (!level2Renderer.domElement.isConnected) {
-          console.log('Level 2 canvas removed from DOM, stopping animation loop');
-          return;
-        }
-        
-        window.level2AnimationFrame = requestAnimationFrame(animate);
-        
-        const delta = clock.getDelta();
-        
-        // Update animation mixer if available
-        if (mixer) {
-          mixer.update(delta);
-        }
-        
-        // Animate dust particles
-        if (window.level2DustParticles) {
-          const positions = window.level2DustParticles.geometry.attributes.position.array;
-          
-          for (let i = 0; i < positions.length; i += 3) {
-            // Slow floating motion
-            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
-            
-            // Keep particles above the table
-            if (positions[i + 1] > 0.55) positions[i + 1] = 0.05;
-            if (positions[i + 1] < 0.05) positions[i + 1] = 0.55;
-          }
-          
-          window.level2DustParticles.geometry.attributes.position.needsUpdate = true;
-          window.level2DustParticles.rotation.y += delta * 0.01;
-        }
-        
-        // Update controls
-        if (level2Controls) level2Controls.update();
-        
-        // Render
-        level2Renderer.render(level2Scene, level2Camera);
-      }
-      
-      // Start animation
-      animate();
-      
-      // Handle resizing
-      function handleResize() {
-        const container = document.getElementById('arachnophobia-level2');
-        if (!container) return;
-        
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        
-        // Update camera aspect ratio
-        level2Camera.aspect = width / height;
-        level2Camera.updateProjectionMatrix();
-        
-        // Update renderer size
-        level2Renderer.setSize(width, height);
-      }
-      
-      // Listen for resize events
-      window.addEventListener('resize', handleResize);
-      
-      // Set flag to indicate level 2 is initialized
-      window.level2Initialized = true;
-      
-      console.log('Level 2 scene setup completed');
-    }
-    
-    // If textures fail to load, start anyway with fallbacks after timeout
-    setTimeout(() => {
-      if (texturesLoaded < requiredTextures) {
-        console.warn('Not all textures loaded in time, proceeding with fallbacks');
-        
-        // Fallback materials
-        woodTextures.map = woodTextures.map || new THREE.Texture();
-        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
-        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
-        
-        createTable();
-      }
-    }, 5000); // 5 second timeout
-  } catch (error) {
-    console.error('Error creating Level 2 scene:', error);
-    const container = document.getElementById('arachnophobia-level2');
-    if (container) {
-      container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
-    }
-  }
-}
-
-// Function to refresh Level 2 if already initialized
-function refreshLevel2() {
-  const container = document.getElementById('arachnophobia-level2');
-  if (!container) return;
-  
-  // Make sure the container is displayed
-  container.style.display = 'block';
-  
-  // Force a resize event to refresh the renderer
-  if (level2Renderer && level2Camera) {
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    level2Camera.aspect = width / height;
-    level2Camera.updateProjectionMatrix();
-    level2Renderer.setSize(width, height);
-    
-    // Re-render once
-    if (level2Scene) {
-      level2Renderer.render(level2Scene, level2Camera);
-    }
-  }
-}
