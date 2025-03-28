@@ -1,6 +1,9 @@
-// Hyperrealistic Spider in a Jar Scene
+
+
+
+// Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing hyperrealistic Three.js scene...');
+  console.log('DOM loaded, initializing photorealistic Three.js scene...');
   
   // Get the container
   const container = document.getElementById('arachnophobia-demo');
@@ -9,26 +12,17 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Check if required libraries are available
-  const requiredLibs = [
-    'THREE', 
-    'THREE.GLTFLoader', 
-    'THREE.OrbitControls', 
-    'THREE.EffectComposer', 
-    'THREE.RenderPass', 
-    'THREE.UnrealBloomPass', 
-    'THREE.FilmPass',
-    'THREE.BokehPass'
-  ];
+  // Check if THREE is available
+  if (typeof THREE === 'undefined') {
+    console.error('THREE is not defined. Make sure Three.js is loaded.');
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries. Please check your browser settings or try a different browser.</p>';
+    return;
+  }
   
-  const missingLibs = requiredLibs.filter(lib => {
-    const parts = lib.split('.');
-    return parts.reduce((obj, part) => obj && obj[part], window) === undefined;
-  });
-  
-  if (missingLibs.length > 0) {
-    console.error(`Missing required libraries: ${missingLibs.join(', ')}`);
-    container.innerHTML = `<p style="padding: 20px; text-align: center;">Missing libraries: ${missingLibs.join(', ')}</p>`;
+  // Check if GLTFLoader is available
+  if (typeof THREE.GLTFLoader === 'undefined') {
+    console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
     return;
   }
   
@@ -43,37 +37,43 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.style.color = '#333';
     loadingElement.style.fontSize = '16px';
     loadingElement.style.fontWeight = 'bold';
-    loadingElement.textContent = 'Loading hyperrealistic scene...';
+    loadingElement.textContent = 'Loading photorealistic scene...';
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
     
-    // Scene setup with enhanced configurations
+    // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf0f0f0);
     
-    // Camera with realistic depth of field parameters
+    // Camera setup
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.2, 3.5);
     
-    // Renderer with advanced settings
+    // Enhanced renderer with physically-based settings
     const renderer = new THREE.WebGLRenderer({ 
       antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance'
+      alpha: true
     });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    
+    // Advanced rendering features - enable as browser supports
+    try {
+      renderer.physicallyCorrectLights = true;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    } catch (e) {
+      console.warn('Advanced rendering features not fully supported in this browser', e);
+    }
     
     // Clear the container and add canvas
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
-    container.appendChild(loadingElement);
+    container.appendChild(loadingElement); // Re-add the loading element
     
-    // Renderer styles
+    // Ensure the renderer's canvas uses correct styles for fullscreen
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
@@ -81,463 +81,632 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.domElement.style.top = '0';
     renderer.domElement.style.left = '0';
     
-    // Post-processing setup
-    const composer = new THREE.EffectComposer(renderer);
-    const renderPass = new THREE.RenderPass(scene, camera);
-    composer.addPass(renderPass);
-    
-    // Bloom effect for subtle glow
-    const bloomPass = new THREE.UnrealBloomPass(
-      new THREE.Vector2(container.clientWidth, container.clientHeight),
-      0.5,   // strength
-      0.4,   // radius
-      0.85   // threshold
-    );
-    composer.addPass(bloomPass);
-    
-    // Film grain for texture
-    const filmPass = new THREE.FilmPass(
-      0.35,   // noise intensity
-      0.025,  // scanline intensity
-      648,    // scanline count
-      false   // grayscale
-    );
-    filmPass.renderToScreen = true;
-    composer.addPass(filmPass);
-    
-    // Bokeh (depth of field) pass
-    const bokehPass = new THREE.BokehPass(scene, camera, {
-      focus: 1.0,
-      aperture: 0.025,
-      maxblur: 0.01
-    });
-    composer.addPass(bokehPass);
-    
-    // OrbitControls with enhanced settings
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0.6, 0);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 2;
-    controls.maxDistance = 10;
-    
-    // Simulate slight camera jitter (handheld effect)
-    function addCameraJitter() {
-      const jitterStrength = 0.001;
-      const time = performance.now() * 0.001;
-      camera.position.x += Math.sin(time * 2) * jitterStrength;
-      camera.position.y += Math.cos(time * 2.1) * jitterStrength;
+    // Add OrbitControls
+    let controls;
+    if (typeof THREE.OrbitControls !== 'undefined') {
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0.6, 0); // Lower target to look more at the bottom of the jar
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 2;
+      controls.maxDistance = 10;
+      controls.autoRotate = false;
+      controls.autoRotateSpeed = 0.5;
+      controls.update();
+    } else {
+      console.warn('OrbitControls not available');
     }
     
-    // Sophisticated lighting setup
+    // Texture loader
+    const textureLoader = new THREE.TextureLoader();
+    
+    // Load environment map for reflections
+    let envMap;
+    try {
+      const urls = [
+        'https://threejs.org/examples/textures/cube/pisa/px.png',
+        'https://threejs.org/examples/textures/cube/pisa/nx.png',
+        'https://threejs.org/examples/textures/cube/pisa/py.png',
+        'https://threejs.org/examples/textures/cube/pisa/ny.png',
+        'https://threejs.org/examples/textures/cube/pisa/pz.png',
+        'https://threejs.org/examples/textures/cube/pisa/nz.png'
+      ];
+      
+      const cubeTextureLoader = new THREE.CubeTextureLoader();
+      envMap = cubeTextureLoader.load(urls);
+      
+      // Set as scene environment and background
+      scene.environment = envMap;
+      
+      // Create a subtle background
+      const bgGeometry = new THREE.PlaneGeometry(100, 100);
+      const bgMaterial = new THREE.MeshBasicMaterial({
+        color: 0xf5f5f7,
+        side: THREE.DoubleSide
+      });
+      const background = new THREE.Mesh(bgGeometry, bgMaterial);
+      background.position.z = -20;
+      scene.add(background);
+      
+    } catch (e) {
+      console.warn('Environment mapping not fully supported', e);
+      scene.background = new THREE.Color(0xf5f5f7);
+    }
+    
+    // Create Lights
+    // Ambient light (subtle)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
     
-    // HDRI Environment Map
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const envMapLoader = new THREE.CubeTextureLoader();
-    const envMap = envMapLoader.load([
-      'https://threejs.org/examples/textures/cube/Park2/posx.jpg',
-      'https://threejs.org/examples/textures/cube/Park2/negx.jpg',
-      'https://threejs.org/examples/textures/cube/Park2/posy.jpg',
-      'https://threejs.org/examples/textures/cube/Park2/negy.jpg',
-      'https://threejs.org/examples/textures/cube/Park2/posz.jpg',
-      'https://threejs.org/examples/textures/cube/Park2/negz.jpg'
-    ]);
-    scene.environment = envMap;
-    
-    // Key light with advanced shadow mapping
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    keyLight.position.set(5, 10, 7);
+    // Key light (main light)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 2048;
-    keyLight.shadow.mapSize.height = 2048;
-    keyLight.shadow.camera.near = 0.5;
-    keyLight.shadow.camera.far = 50;
-    keyLight.shadow.bias = -0.001;
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
+    keyLight.shadow.camera.near = 0.1;
+    keyLight.shadow.camera.far = 20;
+    keyLight.shadow.camera.left = -5;
+    keyLight.shadow.camera.right = 5;
+    keyLight.shadow.camera.top = 5;
+    keyLight.shadow.camera.bottom = -5;
+    keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
     
-    // Texture loaders for detailed materials
-    const textureLoader = new THREE.TextureLoader();
-    const cubeTextureLoader = new THREE.CubeTextureLoader();
+    // Fill light (softer, from opposite side)
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    fillLight.position.set(-3, 4, -3);
+    scene.add(fillLight);
     
-    // Complex jar creation with imperfections
-    function createDetailedJar() {
-      // Base glass material with advanced properties
+    // Rim light (highlight edges)
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    rimLight.position.set(0, 5, -5);
+    scene.add(rimLight);
+    
+    // Setup loading manager for tracking load progress
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onProgress = function(url, loaded, total) {
+      const percent = Math.round(loaded / total * 100);
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      }
+    };
+    
+    // Clock for animations
+    const clock = new THREE.Clock();
+    let mixer; // Will hold the animation mixer
+    
+    // Load wood texture for table
+    const woodTextures = {
+      map: null,
+      normalMap: null,
+      roughnessMap: null
+    };
+    
+    // Load wood textures with the loading manager
+    textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
+      woodTextures.map = texture;
+      woodTextures.map.wrapS = THREE.RepeatWrapping;
+      woodTextures.map.wrapT = THREE.RepeatWrapping;
+      woodTextures.map.repeat.set(2, 2);
+      createTableIfTexturesLoaded();
+    });
+    
+    textureLoader.load('https://threejs.org/examples/textures/hardwood2_normal.jpg', function(texture) {
+      woodTextures.normalMap = texture;
+      woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
+      woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
+      woodTextures.normalMap.repeat.set(2, 2);
+      createTableIfTexturesLoaded();
+    });
+    
+    textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
+      woodTextures.roughnessMap = texture;
+      woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
+      woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
+      woodTextures.roughnessMap.repeat.set(2, 2);
+      createTableIfTexturesLoaded();
+    });
+    
+    // Track texture loading
+    let texturesLoaded = 0;
+    const requiredTextures = 3;
+    
+    function createTableIfTexturesLoaded() {
+      texturesLoaded++;
+      if (texturesLoaded >= requiredTextures) {
+        createTable();
+      }
+    }
+    
+    // Create wooden table
+    function createTable() {
+      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
+      const tableMaterial = new THREE.MeshStandardMaterial({
+        map: woodTextures.map,
+        normalMap: woodTextures.normalMap,
+        roughnessMap: woodTextures.roughnessMap,
+        roughness: 0.8,
+        metalness: 0.1,
+        envMap: envMap
+      });
+      
+      const table = new THREE.Mesh(tableGeometry, tableMaterial);
+      table.position.y = -0.1; // Slightly below the jar
+      table.receiveShadow = true;
+      scene.add(table);
+      
+      // Now that table is loaded, create the jar
+      createJar();
+    }
+    
+    // Create the glass jar
+    function createJar() {
+      // Create realistic glass jar - using a closed cylinder for complete glass
+      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false); // closed cylinder
       const jarMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
-        size: 0.003,
+        metalness: 0.1,
+        roughness: 0.05,
+        transmission: 0.95, // glass transparency
         transparent: true,
-        opacity: 0.2,
-        blending: THREE.AdditiveBlending
-      });
-      
-      const dustParticles = new THREE.Points(particleGeometry, particleMaterial);
-      dustParticles.position.y = 0.75;
-      scene.add(dustParticles);
-      
-      return { dustParticles, positions, velocities };
-    }
-    
-    // Main scene initialization
-    function initScene() {
-      // Create detailed components
-      const { jar, lid } = createDetailedJar();
-      const spiderMixer = loadSpiderModel();
-      const fogMesh = addVolumeFog();
-      const { dustParticles, positions, velocities } = createRealisticDustParticles();
-      
-      // Clock for animations
-      const clock = new THREE.Clock();
-      
-      // Animation loop
-      function animate() {
-        requestAnimationFrame(animate);
-        
-        const delta = clock.getDelta();
-        const elapsedTime = clock.getElapsedTime();
-        
-        // Update camera jitter
-        addCameraJitter();
-        
-        // Update orbit controls
-        controls.update();
-        
-        // Update dust particle animation
-        if (dustParticles) {
-          const positionAttribute = dustParticles.geometry.getAttribute('position');
-          
-          for (let i = 0; i < positions.length; i += 3) {
-            // More complex dust movement
-            positions[i] += velocities[i] + Math.sin(elapsedTime * 0.5 + i) * 0.0005;
-            positions[i + 1] += velocities[i + 1] + Math.cos(elapsedTime * 0.3 + i) * 0.0003;
-            positions[i + 2] += velocities[i + 2] + Math.sin(elapsedTime * 0.4 + i) * 0.0004;
-            
-            // Constrain particles within jar
-            if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
-            if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
-          }
-          
-          positionAttribute.array.set(positions);
-          positionAttribute.needsUpdate = true;
-          
-          // Subtle rotation
-          dustParticles.rotation.y += delta * 0.02;
-        }
-        
-        // Update animation mixer if exists
-        if (spiderMixer) {
-          spiderMixer.update(delta);
-        }
-        
-        // Render with composer for post-processing effects
-        composer.render();
-      }
-      
-      // Start animation
-      animate();
-      
-      // Resize handler
-      function handleResize() {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        
-        // Update camera
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        
-        // Update renderer and composer
-        renderer.setSize(width, height);
-        composer.setSize(width, height);
-        
-        // Adjust post-processing passes
-        bloomPass.setSize(width, height);
-      }
-      
-      // Add resize listener
-      window.addEventListener('resize', handleResize);
-      
-      // Initial resize call
-      handleResize();
-      
-      // Optional: Add audio ambiance
-      function addAmbientAudio() {
-        try {
-          const audioListener = new THREE.AudioListener();
-          camera.add(audioListener);
-          
-          const ambientSound = new THREE.Audio(audioListener);
-          const audioLoader = new THREE.AudioLoader();
-          
-          audioLoader.load('subtle_ambient.mp3', function(buffer) {
-            ambientSound.setBuffer(buffer);
-            ambientSound.setLoop(true);
-            ambientSound.setVolume(0.3);
-            ambientSound.play();
-          });
-        } catch (error) {
-          console.warn('Failed to load ambient audio', error);
-        }
-      }
-      
-      // Add UI controls
-      function addSceneControls() {
-        // Fullscreen button
-        const fullscreenButton = document.createElement('button');
-        fullscreenButton.innerHTML = '⛶';
-        fullscreenButton.style.position = 'absolute';
-        fullscreenButton.style.bottom = '10px';
-        fullscreenButton.style.right = '10px';
-        fullscreenButton.style.zIndex = '10';
-        fullscreenButton.style.background = 'rgba(255,255,255,0.7)';
-        fullscreenButton.style.border = 'none';
-        fullscreenButton.style.borderRadius = '5px';
-        fullscreenButton.style.padding = '5px 10px';
-        fullscreenButton.style.cursor = 'pointer';
-        
-        fullscreenButton.addEventListener('click', () => {
-          if (!document.fullscreenElement) {
-            container.requestFullscreen().catch(err => {
-              console.error(`Error entering fullscreen: ${err.message}`);
-            });
-          } else {
-            document.exitFullscreen().catch(err => {
-              console.error(`Error exiting fullscreen: ${err.message}`);
-            });
-          }
-        });
-        
-        container.appendChild(fullscreenButton);
-        
-        // Optional: Add warning/interaction disclaimer
-        const disclaimer = document.createElement('div');
-        disclaimer.innerHTML = 'Caution: Photorealistic Spider Simulation';
-        disclaimer.style.position = 'absolute';
-        disclaimer.style.top = '10px';
-        disclaimer.style.left = '10px';
-        disclaimer.style.background = 'rgba(255,0,0,0.7)';
-        disclaimer.style.color = 'white';
-        disclaimer.style.padding = '10px';
-        disclaimer.style.borderRadius = '5px';
-        disclaimer.style.zIndex = '10';
-        
-        container.appendChild(disclaimer);
-        
-        // Auto-hide disclaimer
-        setTimeout(() => {
-          disclaimer.style.opacity = '0';
-          disclaimer.style.transition = 'opacity 1s ease';
-          setTimeout(() => disclaimer.remove(), 1000);
-        }, 5000);
-      }
-      
-      // Initialize additional features
-      addSceneControls();
-      addAmbientAudio();
-      
-      // Remove loading element
-      if (loadingElement && loadingElement.parentNode) {
-        loadingElement.style.opacity = '0';
-        loadingElement.style.transition = 'opacity 1s ease';
-        setTimeout(() => {
-          loadingElement.remove();
-        }, 1000);
-      }
-      
-      console.log('Hyperrealistic spider scene initialized successfully');
-    }
-    
-    // Initialize the entire scene
-    initScene();
-    
-  } catch (error) {
-    console.error('Fatal error in scene creation:', error);
-    container.innerHTML = '<p style="color:red;">Failed to create scene. Check console for details.</p>';
-  }
-});
-
-        transmission: 0.95,
-        thickness: 0.05,
-        roughness: 0.1,
-        metalness: 0.02,
+        thickness: 0.05,    // glass thickness
+        envMapIntensity: 1,
         clearcoat: 1,
-        clearcoatRoughness: 0.1,
-        reflectivity: 0.5,
-        transparent: true,
-        opacity: 0.95
+        clearcoatRoughness: 0.1
       });
       
-      // Jar geometry with more segments for subtle imperfections
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 128, 32, true);
       const jar = new THREE.Mesh(jarGeometry, jarMaterial);
       jar.position.y = 0.75;
       jar.castShadow = true;
       jar.receiveShadow = true;
+      scene.add(jar);
       
-      // Add fingerprint/smudge overlay
-      textureLoader.load('fingerprint_texture.jpg', (texture) => {
-        const smudgeMaterial = new THREE.MeshBasicMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.2,
-          blending: THREE.AdditiveBlending
-        });
-        const smudgeGeometry = new THREE.CylinderGeometry(0.81, 0.81, 1.51, 128, 32, true);
-        const smudgeLayer = new THREE.Mesh(smudgeGeometry, smudgeMaterial);
-        smudgeLayer.position.copy(jar.position);
-        scene.add(smudgeLayer);
-      });
-      
-      // Scratched metal lid
-      const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 128);
+      // Jar lid with metallic look
+      const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
       const lidMaterial = new THREE.MeshStandardMaterial({
-        color: 0x555555,
+        color: 0x777777,
         metalness: 0.9,
-        roughness: 0.4,
-        envMap: envMap,
-        normalScale: new THREE.Vector2(1, 1)
+        roughness: 0.1,
+        envMap: envMap
       });
-      
-      // Add lid scratches
-      textureLoader.load('metal_scratches.jpg', (texture) => {
-        lidMaterial.normalMap = texture;
-        lidMaterial.needsUpdate = true;
-      });
-      
       const lid = new THREE.Mesh(lidGeometry, lidMaterial);
       lid.position.set(0, 1.55, 0);
       lid.castShadow = true;
       scene.add(lid);
       
-      scene.add(jar);
-      
-      return { jar, lid };
+      // Now load the spider model
+      loadSpiderModel();
     }
     
-    // Hyperrealistic spider loading with advanced animations
+    // Load the spider model
     function loadSpiderModel() {
-      const gltfLoader = new THREE.GLTFLoader();
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Loading spider model...';
+      }
       
-      // Optional Draco decoder
-      if (THREE.DRACOLoader) {
+      // Create a GLTFLoader instance
+      const gltfLoader = new THREE.GLTFLoader(loadingManager);
+      
+      // Optional: Setup Draco decoder for compressed models
+      if (typeof THREE.DRACOLoader !== 'undefined') {
         const dracoLoader = new THREE.DRACOLoader();
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
       
+      // Load the spider model
       gltfLoader.load(
+        // Model path - adjust this to your file location
         'spider_with_animation.glb',
-        (gltf) => {
+        
+        // Success callback
+        function(gltf) {
+          // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
+          
+          // Adjust scale - making it 1.2 times larger (more proportional to jar)
           spiderModel.scale.set(1.2, 1.2, 1.2);
           
-          // Advanced material enhancements
-          spiderModel.traverse((node) => {
-            if (node.isMesh) {
-              node.castShadow = true;
-              node.receiveShadow = true;
-              
-              // Improve material with environment map and micro details
-              if (node.material) {
-                node.material.envMap = envMap;
-                node.material.roughness = 0.6;
-                node.material.metalness = 0.2;
-                node.material.needsUpdate = true;
-              }
-            }
-          });
-          
-          // Positioning logic
+          // First, get the bounding box to properly position the spider
           const boundingBox = new THREE.Box3().setFromObject(spiderModel);
           const size = new THREE.Vector3();
           boundingBox.getSize(size);
           const center = new THREE.Vector3();
           boundingBox.getCenter(center);
           
+          // Calculate appropriate position to make the spider sit on jar bottom
+          // Position at the bottom of the jar (0 is jar bottom), adjust based on model's min Y
           const minY = boundingBox.min.y;
-          const heightOffset = -minY;
+          const heightOffset = -minY;  // This moves the bottom of the model to Y=0
           
           spiderModel.position.set(
-            -center.x,
-            0 + heightOffset,
-            -center.z
+            -center.x,  // Center horizontally
+            0 + heightOffset, // Place exactly at the bottom of the jar
+            -center.z   // Center horizontally
           );
           
+          // Apply shadows and improve materials
+          spiderModel.traverse(function(node) {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+              
+              // Improve materials if needed
+              if (node.material) {
+                node.material.envMap = envMap;
+                node.material.needsUpdate = true;
+              }
+            }
+          });
+          
+          // Add to scene
           scene.add(spiderModel);
           
-          // Animation mixer for subtle twitching
-          const mixer = new THREE.AnimationMixer(spiderModel);
-          const twitchClips = gltf.animations.filter(clip => 
-            clip.name.toLowerCase().includes('twitch') || 
-            clip.name.toLowerCase().includes('idle')
-          );
-          
-          if (twitchClips.length > 0) {
-            const twitchAction = mixer.clipAction(twitchClips[0]);
-            twitchAction.setLoop(THREE.LoopOnce);
-            twitchAction.clampWhenFinished = true;
-            twitchAction.play();
+          // Handle animations if available
+          if (gltf.animations && gltf.animations.length > 0) {
+            console.log(`Model has ${gltf.animations.length} animations`);
             
-            // Randomize twitching
-            function randomTwitch() {
-              if (Math.random() < 0.3) {
-                twitchAction.reset();
-                twitchAction.play();
-              }
-              setTimeout(randomTwitch, Math.random() * 5000 + 2000);
-            }
-            randomTwitch();
+            // Log animation names for debugging
+            gltf.animations.forEach((clip, index) => {
+              console.log(`Animation ${index}: ${clip.name || 'unnamed'}`);
+            });
+            
+            // Create an animation mixer
+            mixer = new THREE.AnimationMixer(spiderModel);
+            
+            // Get the first animation (or pick a specific one)
+            const idleAnimation = gltf.animations[0];
+            
+            // Create an animation action
+            const action = mixer.clipAction(idleAnimation);
+            
+            // Play the animation
+            action.play();
+          } else {
+            console.log('No animations found in the model');
           }
           
-          return mixer;
+          // Add dust particles and finalize
+          addDustParticles();
+          finalizeScene();
+          
+          // Update loading status
+          if(loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Scene loaded!';
+            
+            // Hide loading message after a short delay
+            setTimeout(() => {
+              loadingElement.style.opacity = '0';
+              loadingElement.style.transition = 'opacity 1s ease';
+              setTimeout(() => {
+                if(loadingElement && loadingElement.parentNode) {
+                  loadingElement.remove();
+                }
+              }, 1000);
+            }, 1000);
+          }
         },
-        null,
-        (error) => {
-          console.error('Spider model loading failed', error);
-          // Fallback procedural spider
+        
+        // Progress callback
+        function(xhr) {
+          // This is handled by the loadingManager
+        },
+        
+        // Error callback
+        function(error) {
+          console.error('Error loading spider model:', error);
+          if(loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          }
+          
+          // Create a fallback procedural spider
           createProceduralSpider();
         }
       );
     }
     
-    // Volumetric fog/light beams
-    function addVolumeFog() {
-      const fogGeometry = new THREE.BoxGeometry(2, 2, 2);
-      const fogMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.05,
-        blending: THREE.AdditiveBlending
-      });
-      const fogMesh = new THREE.Mesh(fogGeometry, fogMaterial);
-      fogMesh.position.y = 0.75;
-      scene.add(fogMesh);
+    // Fallback: Create a procedural spider if model loading fails
+    function createProceduralSpider() {
+      console.log('Creating procedural spider as fallback');
       
-      return fogMesh;
+      // Create a simple spider
+      const spider = new THREE.Group();
+      
+      // Spider body (abdomen)
+      const abdomenGeometry = new THREE.SphereGeometry(0.22, 32, 32);
+      const spiderMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a1a1a,
+        roughness: 0.7,
+        metalness: 0.2,
+        envMap: envMap
+      });
+      const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
+      abdomen.castShadow = true;
+      spider.add(abdomen);
+      
+      // Spider head (cephalothorax)
+      const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+      const head = new THREE.Mesh(headGeometry, spiderMaterial);
+      head.position.set(0, 0, 0.2);
+      head.castShadow = true;
+      spider.add(head);
+      
+      // Simple legs
+      for (let i = 0; i < 8; i++) {
+        const legGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.4, 8);
+        const leg = new THREE.Mesh(legGeometry, spiderMaterial);
+        
+        const angle = (Math.PI / 4) * (i % 4);
+        const isLeftSide = i < 4;
+        const sideSign = isLeftSide ? 1 : -1;
+        
+        leg.position.set(Math.cos(angle) * 0.2 * sideSign, 0, Math.sin(angle) * 0.2);
+        leg.rotation.z = sideSign * Math.PI / 4;
+        leg.rotation.y = angle;
+        
+        leg.castShadow = true;
+        spider.add(leg);
+      }
+      
+      // Position spider in jar - exactly on the bottom
+      spider.position.y = 0.0; // Place exactly at the bottom of jar
+      scene.add(spider);
+      
+      // Continue with dust particles and scene finalization
+      addDustParticles();
+      finalizeScene();
+      
+      // Update loading status
+      if(loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Scene loaded (using fallback spider)';
+        setTimeout(() => {
+          loadingElement.style.opacity = '0';
+          loadingElement.style.transition = 'opacity 1s ease';
+          setTimeout(() => {
+            if(loadingElement && loadingElement.parentNode) {
+              loadingElement.remove();
+            }
+          }, 1000);
+        }, 1000);
+      }
     }
     
-    // Dust particles with more realistic movement
-    function createRealisticDustParticles() {
-      const particlesCount = 200;
+    // Add dust particles inside the jar
+    function addDustParticles() {
+      const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
-      const velocities = new Float32Array(particlesCount * 3);
+      const particleGeometry = new THREE.BufferGeometry();
       
       for (let i = 0; i < particlesCount; i++) {
+        // Random positions inside jar
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.random() * 0.7;
         
-        positions[i * 3] = Math.cos(angle) * radius;
-        positions[i * 3 + 1] = Math.random() * 1.4 + 0.05;
-        positions[i * 3 + 2] = Math.sin(angle) * radius;
-        
-        // Random initial velocities
-        velocities[i * 3] = (Math.random() - 0.5) * 0.001;
-        velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.0005;
-        velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.001;
+        positions[i * 3] = Math.cos(angle) * radius; // x
+        positions[i * 3 + 1] = Math.random() * 1.4 + 0.05; // y (within jar height)
+        positions[i * 3 + 2] = Math.sin(angle) * radius; // z
       }
       
-      const particleGeometry = new THREE.BufferGeometry();
       particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       
       const particleMaterial = new THREE.PointsMaterial({
         color: 0xffffff,
+        size: 0.005,
+        transparent: true,
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      particles.position.y = 0.75; // Center of jar
+      scene.add(particles);
+      
+      // Store for animation
+      window.dustParticles = particles;
+    }
+    
+    // Finalize the scene setup
+    function finalizeScene() {
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta();
+        
+        // Update animation mixer if available
+        if (mixer) {
+          mixer.update(delta);
+        }
+        
+        // Animate dust particles
+        if (window.dustParticles) {
+          const positions = window.dustParticles.geometry.attributes.position.array;
+          
+          for (let i = 0; i < positions.length; i += 3) {
+            // Slow floating motion
+            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
+            
+            // Keep particles inside jar bounds
+            if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
+            if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
+          }
+          
+          window.dustParticles.geometry.attributes.position.needsUpdate = true;
+          window.dustParticles.rotation.y += delta * 0.01;
+        }
+        
+        // Update controls
+        if (controls) controls.update();
+        
+        // Render
+        renderer.render(scene, camera);
+      }
+      
+      // Start animation
+      animate();
+      
+      // Add a fullscreen button
+      const fullscreenButton = document.createElement('button');
+      fullscreenButton.textContent = '⛶';
+      fullscreenButton.style.position = 'absolute';
+      fullscreenButton.style.bottom = '10px';
+      fullscreenButton.style.right = '10px';
+      fullscreenButton.style.fontSize = '20px';
+      fullscreenButton.style.padding = '5px 10px';
+      fullscreenButton.style.background = 'rgba(255,255,255,0.7)';
+      fullscreenButton.style.border = 'none';
+      fullscreenButton.style.borderRadius = '5px';
+      fullscreenButton.style.cursor = 'pointer';
+      fullscreenButton.style.zIndex = '10';
+      fullscreenButton.title = 'Toggle fullscreen';
+      
+      fullscreenButton.addEventListener('click', function() {
+        if (!document.fullscreenElement) {
+          // Ensure container styles are correct before going fullscreen
+          container.style.width = '100%';
+          container.style.height = '100%';
+          container.style.margin = '0';
+          container.style.padding = '0';
+          container.style.overflow = 'hidden';
+          container.style.position = 'relative';
+          
+          // Fix for handling fullscreen properly across browsers
+          try {
+            // Try standard method first
+            container.requestFullscreen().catch(err => {
+              console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+          } catch (e) {
+            // Fallbacks for various browsers
+            try {
+              if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+              else if (container.mozRequestFullScreen) container.mozRequestFullScreen();
+              else if (container.msRequestFullscreen) container.msRequestFullscreen();
+            } catch (innerErr) {
+              console.error('Fullscreen API not supported', innerErr);
+            }
+          }
+          
+          // Force resize after going fullscreen
+          setTimeout(() => {
+            handleResize();
+          }, 100);
+        } else {
+          document.exitFullscreen().catch(err => {
+            console.error(`Error attempting to exit fullscreen: ${err.message}`);
+          });
+        }
+      });
+      
+      container.appendChild(fullscreenButton);
+      
+      // Add auto-rotate toggle
+      const rotateButton = document.createElement('button');
+      rotateButton.textContent = '↻';
+      rotateButton.style.position = 'absolute';
+      rotateButton.style.bottom = '10px';
+      rotateButton.style.right = '60px';
+      rotateButton.style.fontSize = '20px';
+      rotateButton.style.padding = '5px 10px';
+      rotateButton.style.background = 'rgba(255,255,255,0.7)';
+      rotateButton.style.border = 'none';
+      rotateButton.style.borderRadius = '5px';
+      rotateButton.style.cursor = 'pointer';
+      rotateButton.style.zIndex = '10';
+      rotateButton.title = 'Toggle auto-rotation';
+      
+      rotateButton.addEventListener('click', function() {
+        if (controls) {
+          controls.autoRotate = !controls.autoRotate;
+          rotateButton.style.background = controls.autoRotate ? 
+            'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
+          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
+        }
+      });
+      
+      container.appendChild(rotateButton);
+      
+      // Add instructions
+      const instructions = document.createElement('div');
+      instructions.style.position = 'absolute';
+      instructions.style.top = '10px';
+      instructions.style.left = '10px';
+      instructions.style.padding = '10px';
+      instructions.style.background = 'rgba(255,255,255,0.7)';
+      instructions.style.borderRadius = '5px';
+      instructions.style.fontSize = '14px';
+      instructions.style.zIndex = '10';
+      instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
+      container.appendChild(instructions);
+      
+      // Hide instructions after 5 seconds
+      setTimeout(() => {
+        instructions.style.opacity = '0';
+        instructions.style.transition = 'opacity 1s ease';
+      }, 5000);
+      
+      // Handle window resize and fullscreen changes
+      function handleResize() {
+        // If in fullscreen, use screen dimensions
+        let width, height;
+        
+        if (document.fullscreenElement === container) {
+          width = window.innerWidth; 
+          height = window.innerHeight;
+          
+          // Ensure the canvas fills the entire fullscreen space
+          renderer.domElement.style.width = "100vw";
+          renderer.domElement.style.height = "100vh";
+          
+          // Additional styles to fix fullscreen issues
+          document.body.style.overflow = "hidden";
+        } else {
+          width = container.clientWidth;
+          height = container.clientHeight;
+          renderer.domElement.style.width = "100%";
+          renderer.domElement.style.height = "100%";
+          document.body.style.overflow = "";
+        }
+        
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        
+        console.log(`Resized to: ${width}x${height}`);
+      }
+      
+      // Listen for resize events
+      window.addEventListener('resize', handleResize);
+      
+      // Listen for fullscreen change events
+      document.addEventListener('fullscreenchange', handleResize);
+      document.addEventListener('webkitfullscreenchange', handleResize);
+      document.addEventListener('mozfullscreenchange', handleResize);
+      document.addEventListener('MSFullscreenChange', handleResize);
+      
+      // Initial resize
+      handleResize();
+      
+      console.log('Scene setup completed');
+    }
+    
+    // If textures fail to load, start anyway with fallbacks after timeout
+    setTimeout(() => {
+      if (texturesLoaded < requiredTextures) {
+        console.warn('Not all textures loaded in time, proceeding with fallbacks');
+        
+        // Fallback materials
+        woodTextures.map = woodTextures.map || new THREE.Texture();
+        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
+        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
+        
+        createTable();
+      }
+    }, 5000); // 5 second timeout
+    
+  } catch (error) {
+    console.error('Error creating photorealistic scene:', error);
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+  }
+});
