@@ -1,5 +1,6 @@
 // Spider Simulation - Level 1 (Mild Exposure)
-// Wait for the DOM to be fully loaded
+// Main controller script for the mild exposure level with spider in jar
+
 let level1Scene, level1Camera, level1Renderer, level1Controls;
 
 function initLevel1() {
@@ -51,7 +52,7 @@ function initLevel1() {
     
     // Camera setup - closer initial view
     level1Camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    level1Camera.position.set(0, 1.2, 3.0); // Zoomed in closer than original (was 3.5)
+    level1Camera.position.set(0.5, 1.0, 2.5); // Zoomed in closer than original
     
     // Enhanced renderer with physically-based settings
     level1Renderer = new THREE.WebGLRenderer({ 
@@ -90,8 +91,8 @@ function initLevel1() {
       level1Controls.target.set(0, 0.6, 0); // Lower target to look more at the bottom of the jar
       level1Controls.enableDamping = true;
       level1Controls.dampingFactor = 0.05;
-      level1Controls.minDistance = 2;
-      level1Controls.maxDistance = 10;
+      level1Controls.minDistance = 1.8; // Allow closer zoom
+      level1Controls.maxDistance = 6;
       level1Controls.autoRotate = false;
       level1Controls.autoRotateSpeed = 0.5;
       level1Controls.update();
@@ -314,17 +315,17 @@ function initLevel1() {
         gltfLoader.setDRACOLoader(dracoLoader);
       }
       
-      // Try to load the spider model (note: this URL would need to be changed to your actual model location)
+      // Try to load the spider model
       gltfLoader.load(
-        // Model URL - falls back to procedural spider if this fails
-        'spider_with_animation.glb',
+        // Model URL
+        'spider.glb',
         
         // Success callback
         function(gltf) {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale - increased from 1.2 to 1.5 times larger
+          // Adjust scale - make it larger
           spiderModel.scale.set(1.5, 1.5, 1.5);
           
           // First, get the bounding box to properly position the spider
@@ -344,6 +345,9 @@ function initLevel1() {
             0 + heightOffset, // Place exactly at the bottom of the jar
             -center.z   // Center horizontally
           );
+          
+          // Rotate to match desired initial view - diagonal orientation
+          spiderModel.rotation.y = Math.PI / 4; // 45 degrees
           
           // Apply shadows and improve materials
           spiderModel.traverse(function(node) {
@@ -460,8 +464,12 @@ function initLevel1() {
         spider.add(leg);
       }
       
-      // Position spider in jar - slightly raised from bottom for better visibility
+      // Position spider in jar
       spider.position.y = 0.05;
+      
+      // Rotate to match desired initial view - diagonal orientation
+      spider.rotation.y = Math.PI / 4; // 45 degrees
+      
       level1Scene.add(spider);
       
       // Continue with dust particles and scene finalization
@@ -525,21 +533,35 @@ function initLevel1() {
       instructions.id = `${prefix}-instructions`;
       container.appendChild(instructions);
       
-      // Hide instructions after 5 seconds
-      setTimeout(() => {
-        instructions.style.opacity = '0';
-      }, 5000);
-      
       // Add control buttons container
       const controlsDiv = document.createElement('div');
       controlsDiv.className = 'sim-controls';
       controlsDiv.id = `${prefix}-controls`;
+      controlsDiv.style.position = 'absolute';
+      controlsDiv.style.bottom = '20px';
+      controlsDiv.style.right = '20px';
+      controlsDiv.style.zIndex = '100';
+      controlsDiv.style.display = 'flex';
+      controlsDiv.style.gap = '10px';
       
       // Add fullscreen button
       const fullscreenButton = document.createElement('button');
       fullscreenButton.innerHTML = '⛶';
       fullscreenButton.title = 'Toggle fullscreen';
       fullscreenButton.id = `${prefix}-fullscreen`;
+      fullscreenButton.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+      fullscreenButton.style.color = '#000';
+      fullscreenButton.style.width = '40px';
+      fullscreenButton.style.height = '40px';
+      fullscreenButton.style.border = 'none';
+      fullscreenButton.style.borderRadius = '50%';
+      fullscreenButton.style.fontSize = '18px';
+      fullscreenButton.style.cursor = 'pointer';
+      fullscreenButton.style.display = 'flex';
+      fullscreenButton.style.alignItems = 'center';
+      fullscreenButton.style.justifyContent = 'center';
+      fullscreenButton.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+      fullscreenButton.style.transition = 'all 0.3s ease';
       fullscreenButton.addEventListener('click', () => toggleFullscreen(container));
       
       // Add rotation toggle button
@@ -547,6 +569,19 @@ function initLevel1() {
       rotateButton.innerHTML = '↻';
       rotateButton.title = 'Toggle auto-rotation';
       rotateButton.id = `${prefix}-rotate`;
+      rotateButton.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+      rotateButton.style.color = '#000';
+      rotateButton.style.width = '40px';
+      rotateButton.style.height = '40px';
+      rotateButton.style.border = 'none';
+      rotateButton.style.borderRadius = '50%';
+      rotateButton.style.fontSize = '18px';
+      rotateButton.style.cursor = 'pointer';
+      rotateButton.style.display = 'flex';
+      rotateButton.style.alignItems = 'center';
+      rotateButton.style.justifyContent = 'center';
+      rotateButton.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+      rotateButton.style.transition = 'all 0.3s ease';
       rotateButton.addEventListener('click', () => {
         const controls = isLevel1 ? level1Controls : level2Controls;
         if (controls) {
@@ -556,159 +591,3 @@ function initLevel1() {
           rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
         }
       });
-      
-      // Add buttons to controls div
-      controlsDiv.appendChild(rotateButton);
-      controlsDiv.appendChild(fullscreenButton);
-      
-      // Add controls to container
-      container.appendChild(controlsDiv);
-    }
-    
-    // Toggle fullscreen function
-    function toggleFullscreen(container) {
-      if (!document.fullscreenElement) {
-        // Going fullscreen
-        if (container.requestFullscreen) {
-          container.requestFullscreen().catch(err => {
-            console.error(`Error attempting to enable fullscreen: ${err.message}`);
-          });
-        } else if (container.webkitRequestFullscreen) {
-          container.webkitRequestFullscreen();
-        } else if (container.mozRequestFullScreen) {
-          container.mozRequestFullScreen();
-        } else if (container.msRequestFullscreen) {
-          container.msRequestFullscreen();
-        }
-      } else {
-        // Exiting fullscreen
-        if (document.exitFullscreen) {
-          document.exitFullscreen().catch(err => {
-            console.error(`Error attempting to exit fullscreen: ${err.message}`);
-          });
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-      }
-    }
-    
-    // Finalize the scene setup and start animation
-    function finalizeScene() {
-      // Animation loop
-      function animate() {
-        // Check if canvas is still in the DOM (prevents errors if switching tabs during animation)
-        if (!level1Renderer.domElement.isConnected) {
-          console.log('Level 1 canvas removed from DOM, stopping animation loop');
-          return;
-        }
-        
-        window.level1AnimationFrame = requestAnimationFrame(animate);
-        
-        const delta = clock.getDelta();
-        
-        // Update animation mixer if available
-        if (mixer) {
-          mixer.update(delta);
-        }
-        
-        // Animate dust particles
-        if (window.level1DustParticles) {
-          const positions = window.level1DustParticles.geometry.attributes.position.array;
-          
-          for (let i = 0; i < positions.length; i += 3) {
-            // Slow floating motion
-            positions[i + 1] += Math.sin((clock.getElapsedTime() + i) * 0.1) * 0.0005;
-            
-            // Keep particles inside jar bounds
-            if (positions[i + 1] > 1.45) positions[i + 1] = 0.05;
-            if (positions[i + 1] < 0.05) positions[i + 1] = 1.45;
-          }
-          
-          window.level1DustParticles.geometry.attributes.position.needsUpdate = true;
-          window.level1DustParticles.rotation.y += delta * 0.01;
-        }
-        
-        // Update controls
-        if (level1Controls) level1Controls.update();
-        
-        // Render
-        level1Renderer.render(level1Scene, level1Camera);
-      }
-      
-      // Start animation
-      animate();
-      
-      // Handle resizing
-      function handleResize() {
-        const container = document.getElementById('arachnophobia-demo');
-        if (!container) return;
-        
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        
-        // Update camera aspect ratio
-        level1Camera.aspect = width / height;
-        level1Camera.updateProjectionMatrix();
-        
-        // Update renderer size
-        level1Renderer.setSize(width, height);
-      }
-      
-      // Listen for resize events
-      window.addEventListener('resize', handleResize);
-      
-      // Set flag to indicate level 1 is initialized
-      window.level1Initialized = true;
-      
-      console.log('Level 1 scene setup completed');
-    }
-    
-    // If textures fail to load, start anyway with fallbacks after timeout
-    setTimeout(() => {
-      if (texturesLoaded < requiredTextures) {
-        console.warn('Not all textures loaded in time, proceeding with fallbacks');
-        
-        // Fallback materials
-        woodTextures.map = woodTextures.map || new THREE.Texture();
-        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
-        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
-        
-        createTable();
-      }
-    }, 5000); // 5 second timeout
-  } catch (error) {
-    console.error('Error creating Level 1 scene:', error);
-    const container = document.getElementById('arachnophobia-demo');
-    if (container) {
-      container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
-    }
-  }
-}
-
-// Function to refresh Level 1 if already initialized
-function refreshLevel1() {
-  const container = document.getElementById('arachnophobia-demo');
-  if (!container) return;
-  
-  // Make sure the container is displayed
-  container.style.display = 'block';
-  
-  // Force a resize event to refresh the renderer
-  if (level1Renderer && level1Camera) {
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    level1Camera.aspect = width / height;
-    level1Camera.updateProjectionMatrix();
-    level1Renderer.setSize(width, height);
-    
-    // Re-render once
-    if (level1Scene) {
-      level1Renderer.render(level1Scene, level1Camera);
-    }
-  }
-}
