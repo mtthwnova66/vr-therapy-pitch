@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0.75, 0);
+      controls.target.set(0, 0.6, 0); // Lower target to look more at the bottom of the jar
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
       controls.minDistance = 2;
@@ -302,21 +302,26 @@ document.addEventListener('DOMContentLoaded', function() {
           // Get the model from the loaded gltf file
           const spiderModel = gltf.scene;
           
-          // Adjust scale - making it 8x larger (2x larger than before)
-          spiderModel.scale.set(1.6, 1.6, 1.6);
+          // Adjust scale - making it 1.2 times larger (more proportional to jar)
+          spiderModel.scale.set(1.2, 1.2, 1.2);
           
-          // Position at the bottom of the jar
-          spiderModel.position.set(0, 0.1, 0);
-          
-          // Get bounding box to help with positioning
+          // First, get the bounding box to properly position the spider
           const boundingBox = new THREE.Box3().setFromObject(spiderModel);
+          const size = new THREE.Vector3();
+          boundingBox.getSize(size);
           const center = new THREE.Vector3();
           boundingBox.getCenter(center);
           
-          // Adjust position to center horizontally but keep at bottom of jar
-          spiderModel.position.x -= center.x;
-          spiderModel.position.z -= center.z;
-          // Keep Y position at jar bottom
+          // Calculate appropriate position to make the spider sit on jar bottom
+          // Position at the bottom of the jar (0 is jar bottom), adjust based on model's min Y
+          const minY = boundingBox.min.y;
+          const heightOffset = -minY;  // This moves the bottom of the model to Y=0
+          
+          spiderModel.position.set(
+            -center.x,  // Center horizontally
+            0 + heightOffset, // Place exactly at the bottom of the jar
+            -center.z   // Center horizontally
+          );
           
           // Apply shadows and improve materials
           spiderModel.traverse(function(node) {
@@ -441,8 +446,8 @@ document.addEventListener('DOMContentLoaded', function() {
         spider.add(leg);
       }
       
-      // Position spider in jar
-      spider.position.y = 0.1; // Place at the bottom of jar
+      // Position spider in jar - exactly on the bottom
+      spider.position.y = 0.0; // Place exactly at the bottom of jar
       scene.add(spider);
       
       // Continue with dust particles and scene finalization
