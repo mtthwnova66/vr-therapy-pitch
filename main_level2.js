@@ -158,7 +158,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Lighting Setup (Same as Level 1)
+    // Lighting Setup (Enhanced for better shadows)
     // --------------------------------------------------------------------
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
@@ -166,8 +166,8 @@ function initLevel2() {
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
     keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 1024;
-    keyLight.shadow.mapSize.height = 1024;
+    keyLight.shadow.mapSize.width = 2048;  // Increased for better shadow quality
+    keyLight.shadow.mapSize.height = 2048; // Increased for better shadow quality
     keyLight.shadow.camera.near = 0.1;
     keyLight.shadow.camera.far = 20;
     keyLight.shadow.camera.left = -5;
@@ -175,6 +175,7 @@ function initLevel2() {
     keyLight.shadow.camera.top = 5;
     keyLight.shadow.camera.bottom = -5;
     keyLight.shadow.bias = -0.0005;
+    keyLight.shadow.normalBias = 0.02;  // Added to improve shadow accuracy
     scene.add(keyLight);
 
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -188,6 +189,20 @@ function initLevel2() {
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
+
+    // Add a spot light for enhanced spider shadow
+    const spotLight = new THREE.SpotLight(0xffffff, 0.8);
+    spotLight.position.set(2, 5, 2);
+    spotLight.angle = Math.PI / 6;
+    spotLight.penumbra = 0.2;
+    spotLight.decay = 2;
+    spotLight.distance = 50;
+    spotLight.castShadow = true;
+    spotLight.shadow.mapSize.width = 1024;
+    spotLight.shadow.mapSize.height = 1024;
+    spotLight.shadow.camera.near = 0.5;
+    spotLight.shadow.camera.far = 20;
+    scene.add(spotLight);
 
     // --------------------------------------------------------------------
     // Build the Scene: No Jar/Lid – Enlarged Table and Spider on Top
@@ -275,8 +290,7 @@ function initLevel2() {
           
           // Fixed positioning for spider on table
           // Table top is at y=0.6
-          // Ensure legs touch the table by using a fixed offset
-          // Try a lower position value
+          // Position directly on table surface
           
           spiderModel.position.set(
             -center.x,
@@ -284,17 +298,23 @@ function initLevel2() {
             -center.z
           );
 
+          // Ensure every mesh in the spider model casts shadows
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
               node.receiveShadow = true;
               if (node.material) {
+                // Ensure material properties are set for good shadows
                 node.material.envMap = envMap;
+                node.material.shadowSide = THREE.FrontSide;
                 node.material.needsUpdate = true;
               }
             }
           });
           scene.add(spiderModel);
+
+          // Aim the spotlight at the spider for better shadow
+          spotLight.target = spiderModel;
 
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
