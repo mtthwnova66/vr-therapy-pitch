@@ -24,7 +24,7 @@ function initLevel2() {
 
   try {
     // --------------------------------------------------------------------
-    // LOADING UI: Message only (blue loading bar removed)
+    // LOADING UI: Message & Loading Bar
     // --------------------------------------------------------------------
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
@@ -39,17 +39,40 @@ function initLevel2() {
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
 
+    const loadingBarContainer = document.createElement('div');
+    loadingBarContainer.style.position = 'absolute';
+    loadingBarContainer.style.top = '55%';
+    loadingBarContainer.style.left = '50%';
+    loadingBarContainer.style.transform = 'translate(-50%, -50%)';
+    loadingBarContainer.style.width = '300px';
+    loadingBarContainer.style.height = '10px';
+    loadingBarContainer.style.background = '#ccc';
+    loadingBarContainer.style.borderRadius = '5px';
+    loadingBarContainer.style.overflow = 'hidden';
+    loadingBarContainer.style.zIndex = '1000';
+    container.appendChild(loadingBarContainer);
+
+    const loadingBar = document.createElement('div');
+    loadingBar.style.width = '0%';
+    loadingBar.style.height = '100%';
+    loadingBar.style.background = '#0071e3';
+    loadingBarContainer.appendChild(loadingBar);
+
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
       loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      loadingBar.style.width = percent + '%';
     };
     loadingManager.onLoad = function() {
       setTimeout(() => {
         loadingElement.style.transition = 'opacity 1s ease';
+        loadingBarContainer.style.transition = 'opacity 1s ease';
         loadingElement.style.opacity = 0;
+        loadingBarContainer.style.opacity = 0;
         setTimeout(() => {
           loadingElement.remove();
+          loadingBarContainer.remove();
         }, 1000);
       }, 500);
     };
@@ -85,6 +108,7 @@ function initLevel2() {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
+    container.appendChild(loadingBarContainer);
     renderer.domElement.style.cssText =
       "width:100%;height:100%;display:block;position:absolute;top:0;left:0;";
 
@@ -198,7 +222,7 @@ function initLevel2() {
     };
     let leftEyePosition = new THREE.Vector3();
 
-    // Function to load the VR headset model (copied exactly)
+    // Function to load the VR headset model (copied exactly from main.js)
     function loadVRHeadset() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading VR headset model...';
@@ -319,10 +343,9 @@ function initLevel2() {
 
     // --------------------------------------------------------------------
     // 7. Main Photorealistic Scene (Group: mainScene)
-    // All photorealistic objects (table, jar, lid, spider, dust) are added to mainScene,
-    // which remains hidden until the VR entrance completes.
+    // All photorealistic objects (table, jar, lid, spider, dust) are added to mainScene.
+    // In Level 2 we use "spider2.glb" and position the spider so it sits on the table.
     // --------------------------------------------------------------------
-    // (Note: Do not modify the positioning of these objects!)
     let woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -356,7 +379,7 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
-    // Create an enlarged table. (Positions remain as set in your Level 2 code.)
+    // Create an enlarged table.
     function createTable() {
       const tableGeometry = new THREE.BoxGeometry(7, 0.2, 5);
       const tableMaterial = new THREE.MeshStandardMaterial({
@@ -371,7 +394,8 @@ function initLevel2() {
       // Table's center at y=0.5 so the top is at y=0.6.
       table.position.y = 0.5;
       table.receiveShadow = true;
-      mainScene.add(table);
+      scene.add(table);
+
       loadSpiderModel();
     }
 
@@ -391,13 +415,13 @@ function initLevel2() {
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
-          // Update world matrix so bounding box reflects scaling
+          // Update world matrix so bounding box reflects scaling.
           spiderModel.updateMatrixWorld(true);
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           console.log('Spider bounding box:', bbox);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          // Position the spider so that its lowest point aligns exactly with the table top (y = 0.6)
+          // Compute offset so that the spider’s lowest point aligns exactly with the table top at y = 0.6.
           const offset = -bbox.min.y + 0.6;
           spiderModel.position.set(-center.x, offset, -center.z);
           spiderModel.traverse(function(node) {
@@ -412,7 +436,7 @@ function initLevel2() {
             }
           });
           mainScene.add(spiderModel);
-          // Aim the spotlight at the spider for better shadow
+          // Aim the spotlight at the spider for better shadow.
           spotLight.target = spiderModel;
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
