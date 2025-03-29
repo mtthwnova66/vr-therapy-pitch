@@ -1,30 +1,30 @@
-// This function is called only when the user clicks on Level 1.
-window.initLevel1 = function() {
-  console.log('Initializing Level 1: photorealistic scene + VR portal...');
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing photorealistic Three.js scene...');
   
-  // Get the container element.
+  // Get the container
   const container = document.getElementById('arachnophobia-demo');
   if (!container) {
     console.error('Container not found: #arachnophobia-demo');
     return;
   }
   
-  // Check that Three.js and GLTFLoader are loaded.
+  // Check if THREE is available
   if (typeof THREE === 'undefined') {
-    console.error('THREE is not defined. Please ensure Three.js is loaded.');
-    container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load 3D libraries.</p>';
+    console.error('THREE is not defined. Make sure Three.js is loaded.');
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries. Please check your browser settings or try a different browser.</p>';
     return;
   }
+  
+  // Check if GLTFLoader is available
   if (typeof THREE.GLTFLoader === 'undefined') {
-    console.error('THREE.GLTFLoader is not defined. Please ensure GLTFLoader is loaded.');
-    container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load model loader.</p>';
+    console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
     return;
   }
   
   try {
-    // --------------------------------------------------------------------
-    // LOADING UI: Message and Loading Bar
-    // --------------------------------------------------------------------
+    // Create loading message
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
     loadingElement.style.position = 'absolute';
@@ -34,10 +34,11 @@ window.initLevel1 = function() {
     loadingElement.style.color = '#333';
     loadingElement.style.fontSize = '16px';
     loadingElement.style.fontWeight = 'bold';
-    loadingElement.style.zIndex = '100';
     loadingElement.textContent = 'Loading photorealistic scene...';
+    loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
     
+    // Create a loading bar overlay
     const loadingBarContainer = document.createElement('div');
     loadingBarContainer.style.position = 'absolute';
     loadingBarContainer.style.top = '55%';
@@ -57,11 +58,13 @@ window.initLevel1 = function() {
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
     
-    // Unified Loading Manager.
+    // Setup loading manager for all assets
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
-      loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      if (loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      }
       loadingBar.style.width = percent + '%';
     };
     loadingManager.onLoad = function() {
@@ -77,21 +80,16 @@ window.initLevel1 = function() {
       }, 500);
     };
     
-    // --------------------------------------------------------------------
-    // SCENE, CAMERA, RENDERER (Same as original)
-    // --------------------------------------------------------------------
+    // Scene setup
     const scene = new THREE.Scene();
-    // Use plain gray background.
+    // Use plain gray background so the VR headset stands out.
     scene.background = new THREE.Color(0xa0a0a0);
     
-    const camera = new THREE.PerspectiveCamera(
-      45, 
-      container.clientWidth / container.clientHeight, 
-      0.1, 
-      1000
-    );
+    // Camera setup
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.2, 3.5);
     
+    // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -103,32 +101,38 @@ window.initLevel1 = function() {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
-      console.warn('Advanced rendering features not fully supported:', e);
+      console.warn('Advanced rendering features not fully supported in this browser', e);
     }
     
+    // Clear container and add renderer
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
     container.appendChild(loadingBarContainer);
-    renderer.domElement.style.cssText =
-      "width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;";
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
     
-    // Optional OrbitControls (for debugging)
+    // Add OrbitControls (optional for debugging)
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0.6, 0);
+      controls.target.set(0, 0.6, 0); // Lower target to look at the jar
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
       controls.minDistance = 2;
       controls.maxDistance = 10;
       controls.autoRotate = false;
+      controls.autoRotateSpeed = 0.5;
       controls.update();
+    } else {
+      console.warn('OrbitControls not available');
     }
     
-    // --------------------------------------------------------------------
-    // LIGHTING (Same as original)
-    // --------------------------------------------------------------------
+    // Lighting (as in your original code)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
     
@@ -159,19 +163,16 @@ window.initLevel1 = function() {
     scene.add(rimLight);
     
     // --------------------------------------------------------------------
-    // GROUPS: VR HEADSET GROUP & ENVIRONMENT GROUP
+    // Create Groups: VR Headset Group and Environment Group
     // --------------------------------------------------------------------
-    // vrGroup will hold the VR headset portal.
-    const vrGroup = new THREE.Group();
+    const vrGroup = new THREE.Group(); // For the VR headset portal
     scene.add(vrGroup);
-    // envGroup will hold the original photorealistic scene (table, jar, spider, etc.).
-    const envGroup = new THREE.Group();
-    envGroup.visible = false; // Hidden until the camera transition finishes.
+    const envGroup = new THREE.Group(); // For your original table, jar, spider scene
+    envGroup.visible = false;           // Hidden initially
     scene.add(envGroup);
     
     // --------------------------------------------------------------------
-    // (Optional) Load an environment map for reflections.
-    // If any URL (like hardwood2_normal.jpg) fails, update it with a valid URL.
+    // (Optional) Load an environment map for reflections if available.
     try {
       const cubeUrls = [
         'https://threejs.org/examples/textures/cube/pisa/px.png',
@@ -185,14 +186,14 @@ window.initLevel1 = function() {
       const cubeTexture = cubeLoader.load(cubeUrls);
       scene.environment = cubeTexture;
     } catch (e) {
-      console.warn('Environment mapping failed:', e);
+      console.warn('Environment mapping not fully supported', e);
     }
     
     // --------------------------------------------------------------------
     // CAMERA TRANSITION VARIABLES
     // --------------------------------------------------------------------
-    const transitionDelay = 3;     // Wait 3 seconds before zooming in.
-    const transitionDuration = 5;  // Camera zoom lasts 5 seconds.
+    const transitionDelay = 3;     // Wait 3 seconds before zooming in
+    const transitionDuration = 5;  // Transition lasts 5 seconds
     let transitionStarted = false;
     let transitionStartTime = 0;
     const initialCamPos = camera.position.clone();
@@ -200,7 +201,7 @@ window.initLevel1 = function() {
     let vrReady = false;
     
     // --------------------------------------------------------------------
-    // LOAD THE VR HEADSET MODEL
+    // LOAD THE VR HEADSET MODEL (Portal)
     // --------------------------------------------------------------------
     const vrLoader = new THREE.GLTFLoader(loadingManager);
     if (typeof THREE.DRACOLoader !== 'undefined') {
@@ -214,17 +215,17 @@ window.initLevel1 = function() {
       'oculus_quest_vr_headset.glb',
       function(gltf) {
         vrHeadset = gltf.scene;
-        // Scale up so the headset is large.
+        // Scale up for a large, prominent headset
         vrHeadset.scale.set(2, 2, 2);
-        // Rotate so its front faces the viewer.
-        // (If it still appears from above, you might need to adjust rotation.x or rotation.z.)
+        // Rotate so the front faces the viewer.
+        // If it still appears from above or awkwardly, adjust rotation.x or rotation.z as needed.
         vrHeadset.rotation.y = Math.PI;
-        // Position it at eye level.
+        // Position the headset at eye level (modify if necessary)
         vrHeadset.position.set(0, 1.2, 0);
         vrGroup.add(vrHeadset);
         
-        // Compute target camera position from the headset’s left eye.
-        // Adjust the local offset as needed (here: left eye is at (-0.15, 0.0, 0.2)).
+        // Compute target camera position from the headset's left eye.
+        // Adjust the local offset as needed; here we assume left eye at (-0.15, 0.0, 0.2)
         const leftEyeLocal = new THREE.Vector3(-0.15, 0.0, 0.2);
         vrHeadset.updateMatrixWorld();
         targetCamPos = leftEyeLocal.applyMatrix4(vrHeadset.matrixWorld);
@@ -239,6 +240,7 @@ window.initLevel1 = function() {
     
     // --------------------------------------------------------------------
     // BUILD THE ORIGINAL ENVIRONMENT (TABLE, JAR, SPIDER)
+    // This is kept exactly as in your original code.
     // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -406,11 +408,13 @@ window.initLevel1 = function() {
       const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
       abdomen.castShadow = true;
       spider.add(abdomen);
+      
       const headGeometry = new THREE.SphereGeometry(0.2, 32, 32);
       const head = new THREE.Mesh(headGeometry, spiderMaterial);
       head.position.set(0, 0, 0.25);
       head.castShadow = true;
       spider.add(head);
+      
       for (let i = 0; i < 8; i++) {
         const legGeometry = new THREE.CylinderGeometry(0.025, 0.015, 0.5, 8);
         const leg = new THREE.Mesh(legGeometry, spiderMaterial);
@@ -423,10 +427,12 @@ window.initLevel1 = function() {
         leg.castShadow = true;
         spider.add(leg);
       }
+      
       spider.position.y = 0.05;
       envGroup.add(spider);
       addDustParticles();
       finalizeScene();
+      
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Scene loaded (fallback spider)';
         setTimeout(() => {
@@ -470,7 +476,7 @@ window.initLevel1 = function() {
     // CAMERA TRANSITION & VR FADE LOGIC
     // --------------------------------------------------------------------
     // The camera starts at its initial position. After a 3-second delay (if the VR headset is loaded),
-    // it smoothly interpolates over 5 seconds to the position of the headset's left eye.
+    // it smoothly moves over 5 seconds to the position of the headset's left eye.
     const checkVRInterval = setInterval(() => {
       if (vrHeadset) {
         // Assume the left eye is at local coordinates (-0.15, 0.0, 0.2) relative to the headset.
@@ -492,6 +498,7 @@ window.initLevel1 = function() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
         if (mixer) mixer.update(delta);
+        
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
@@ -503,12 +510,12 @@ window.initLevel1 = function() {
           window.dustParticles.rotation.y += delta * 0.01;
         }
         
-        // Rotate the VR headset slowly.
+        // Rotate the VR headset slowly so its presentation is dynamic.
         if (vrHeadset) {
           vrHeadset.rotation.y += 0.005;
         }
         
-        // Start camera transition after transitionDelay seconds, if VR is ready.
+        // Begin camera transition after transitionDelay seconds, if VR is loaded.
         const elapsed = mainClock.getElapsedTime();
         if (!transitionStarted && elapsed > transitionDelay && vrReady) {
           transitionStarted = true;
@@ -518,10 +525,10 @@ window.initLevel1 = function() {
         if (transitionStarted && vrHeadset && targetCamPos) {
           const t = Math.min((elapsed - transitionStartTime) / transitionDuration, 1);
           camera.position.lerpVectors(initialCamPos, targetCamPos, t);
-          // Aim the camera at the jar's center (assumed at (0, 0.75, 0))
+          // Focus camera on the jar (assumed centered at (0, 0.75, 0))
           camera.lookAt(new THREE.Vector3(0, 0.75, 0));
           if (t === 1 && vrHeadset) {
-            // Fade out the VR headset.
+            // Fade out the VR headset by reducing material opacity.
             vrGroup.traverse(child => {
               if (child.material) {
                 child.material.transparent = true;
@@ -537,7 +544,9 @@ window.initLevel1 = function() {
       }
       animate();
       
-      // --- UI Controls ---
+      // --------------------------------------------------------------------
+      // UI CONTROLS (Fullscreen, Auto-Rotate, Instructions)
+      // --------------------------------------------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
         fsButton.textContent = '⛶';
@@ -630,10 +639,10 @@ window.initLevel1 = function() {
       }
       
       addUIControls();
-      console.log('Scene setup completed (VR portal + spider scene).');
+      console.log('Scene setup completed (VR portal + original spider scene).');
     }
     
-    // If textures don't load within 5 seconds, use fallback materials.
+    // If textures do not load within 5 seconds, use fallback materials.
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -648,4 +657,4 @@ window.initLevel1 = function() {
     console.error('Error creating 3D scene:', error);
     container.innerHTML = '<p style="padding:20px;text-align:center;">Error creating 3D scene. Check console for details.</p>';
   }
-};
+});
