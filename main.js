@@ -76,7 +76,29 @@ window.initLevel1 = function() {
         setTimeout(() => {
           loadingElement.remove();
           loadingBarContainer.remove();
-        }, 1000);
+        }
+      
+      addUIControls();
+      console.log('Scene setup completed (photorealistic scene with VR entrance).');
+    }
+    
+    // If textures do not load within 5 seconds, use fallback materials.
+    setTimeout(() => {
+      if (texturesLoaded < requiredTextures) {
+        console.warn('Not all textures loaded in time, using fallback materials.');
+        woodTextures.map = woodTextures.map || new THREE.Texture();
+        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
+        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
+        createTable();
+      }
+    }, 5000);
+
+  } catch (error) {
+    console.error('Error creating 3D scene:', error);
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
+  }
+};
+// ***** END MAIN.JS *****, 1000);
       }, 500);
     };
 
@@ -199,19 +221,20 @@ window.initLevel1 = function() {
     // NEW: VR Headset Entrance Animation
     // ==============================
     let vrHeadset;
-    let mainScene = new THREE.Group(); // This will hold the spider, jar, table, etc.
-    let animationPhase = 0; // 0: Initial VR headset, 1: Rotating, 2: Zooming in, 3: Inside
+    let spiderScene = new THREE.Group(); // Group to hold the original spider scene
+    let animationPhase = 0; // 0: Initial view, 1: Rotating, 2: Zooming through, 3: Final scene
     let animationProgress = 0;
     let animationDuration = { 
-      rotate: 3.0,  // seconds for rotation
-      zoom: 2.5,    // seconds for zoom
-      transition: 1.5 // seconds for transition fade
+      rotate: 2.5,  // seconds for rotation
+      zoom: 3.0,    // seconds for zoom
+      transition: 1.5 // seconds for fade
     };
-    let leftEyePosition = new THREE.Vector3(); // Will store the position of the left eye
+    let leftEyePosition = new THREE.Vector3(); // Will store position of left eye lens
+    let cameraStartPosition = new THREE.Vector3();
     
-    // Hide main scene initially
-    mainScene.visible = false;
-    scene.add(mainScene);
+    // Initially hide the spider scene
+    spiderScene.visible = false;
+    scene.add(spiderScene);
     
     // Function to load the VR headset
     function loadVRHeadset() {
@@ -224,22 +247,30 @@ window.initLevel1 = function() {
         'oculus_quest_vr_headset.glb',
         function(gltf) {
           vrHeadset = gltf.scene;
-          // Scale and position the headset to face the camera
-          vrHeadset.scale.set(5, 5, 5); // Adjust scale as needed
-          vrHeadset.position.set(0, 0.8, 0);
-          vrHeadset.rotation.set(0, Math.PI, 0); // Initially facing the camera
           
-          // Find the left eye lens for later zooming
+          // Scale and position the headset to show interior view (lenses facing camera)
+          vrHeadset.scale.set(5, 5, 5);
+          vrHeadset.position.set(0, 0.8, 0);
+          vrHeadset.rotation.set(0, 0, 0); // Lenses facing camera
+          
+          // Find the left eye lens to zoom through
+          let leftEyeLens = null;
           vrHeadset.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
               node.receiveShadow = true;
               
-              // Try to find the left eye lens by name or position
-              if (node.name.toLowerCase().includes('eye') && 
+              // Try to find eye lens by name
+              if (node.name.toLowerCase().includes('lens') && 
                   node.name.toLowerCase().includes('left')) {
+                leftEyeLens = node;
                 leftEyePosition.copy(node.position);
-                console.log('Found left eye:', node.name, leftEyePosition);
+                console.log('Found left eye lens:', node.name);
+              } else if (node.name.toLowerCase().includes('eye') && 
+                         node.name.toLowerCase().includes('left')) {
+                leftEyeLens = node;
+                leftEyePosition.copy(node.position);
+                console.log('Found left eye:', node.name);
               }
               
               // Apply materials
@@ -250,60 +281,78 @@ window.initLevel1 = function() {
             }
           });
           
-          // If we couldn't find the left eye by name, estimate position
-          if (leftEyePosition.length() === 0) {
-            // Approximate left eye position - adjust based on model
-            leftEyePosition.set(-0.03, 0, -0.05);
-            leftEyePosition.applyMatrix4(vrHeadset.matrixWorld);
+          // If we can't find the left eye by name, estimate position
+          if (!leftEyeLens) {
+            console.log('Left eye lens not found by name, estimating position');
+            leftEyePosition.set(-0.04, 0, -0.02); // Adjust based on headset model
           }
           
           scene.add(vrHeadset);
           
-          // Position camera to view the headset
-          camera.position.set(0, 1.2, 3.5);
-          camera.lookAt(vrHeadset.position);
+          // Position camera inside the headset looking at left eye
+          // Calculate global position of left eye
+          const leftEyeWorld = new THREE.Vector3();
+          vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
           
-          // Start loading the rest of the scene
-          if (loadingElement && loadingElement.parentNode) {
-            loadingElement.textContent = 'Loading scene assets...';
+          // Position camera slightly behind the left eye (inside the headset)
+          cameraStartPosition.set(leftEyeWorld.x, leftEyeWorld.y, leftEyeWorld.z + 0.03);
+          camera.position.copy(cameraStartPosition);
+          
+          // Look toward where the lens would be
+          camera.lookAt(leftEyeWorld.x, leftEyeWorld.y, leftEyeWorld.z - 0.1);
+          
+          if (controls) {
+            controls.enabled = false; // Disable controls during animation
           }
           
-          // Begin with animation phase 0 (showing headset)
           animationPhase = 0;
           animationProgress = 0;
           
-          // Start loading the main scene (table, jar, spider)
-          loadMainScene();
+          // Begin loading the original spider scene
+          loadOriginalScene();
         },
         undefined,
         function(error) {
           console.error('Error loading VR headset model:', error);
-          // If VR headset fails to load, go directly to main scene
-          loadMainScene();
+          // Fallback to loading the original spider scene directly
+          loadOriginalSceneDirectly();
         }
       );
     }
     
-    // This function handles the animation between phases
-    function updateVRHeadsetAnimation(delta) {
+    // Animation update function
+    function updateVRAnimation(delta) {
       if (!vrHeadset) return;
       
       animationProgress += delta;
       
       switch(animationPhase) {
-        case 0: // Initial display (waiting period)
-          if (animationProgress > 1.5) { // Wait for 1.5 seconds before rotating
+        case 0: // Initial view inside headset
+          if (animationProgress > 1.0) {
             animationPhase = 1;
             animationProgress = 0;
           }
           break;
           
-        case 1: // Rotating the headset to show back side
+        case 1: // Rotating headset
           const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
-          const easedRotation = easeInOutCubic(rotationProgress);
+          const easedRotation = easeInOutQuad(rotationProgress);
           
-          // Rotate from front-facing to back-facing
-          vrHeadset.rotation.y = Math.PI * (1 - easedRotation);
+          // Calculate global position of left eye for each frame
+          const leftEyeWorld = new THREE.Vector3();
+          vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
+          
+          // Rotate headset around the Y axis, keeping eye position relatively constant
+          vrHeadset.rotation.y = Math.PI * easedRotation;
+          
+          // Keep camera positioned behind eye
+          const camOffset = new THREE.Vector3(0, 0, 0.03 - (0.06 * easedRotation)); // Move from inside to just outside
+          camera.position.copy(leftEyeWorld).add(camOffset);
+          
+          // Look toward the lens
+          const lookOffset = new THREE.Vector3(0, 0, -0.1 - (0.2 * easedRotation));
+          const lookTarget = leftEyeWorld.clone().add(lookOffset);
+          camera.lookAt(lookTarget);
           
           if (rotationProgress >= 1.0) {
             animationPhase = 2;
@@ -311,51 +360,52 @@ window.initLevel1 = function() {
           }
           break;
           
-        case 2: // Zooming into the left eye
+        case 2: // Zoom through the lens
           const zoomProgress = Math.min(animationProgress / animationDuration.zoom, 1.0);
-          const easedZoom = easeInOutCubic(zoomProgress);
+          const easedZoom = easeInOutQuad(zoomProgress);
           
-          // Get world position of the left eye
-          const leftEyeWorld = new THREE.Vector3();
-          leftEyePosition.clone().applyMatrix4(vrHeadset.matrixWorld);
-          vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
+          // Get updated world position of the left eye lens
+          const eyeWorld = new THREE.Vector3();
+          vrHeadset.localToWorld(eyeWorld.copy(leftEyePosition));
           
-          // Move camera toward the left eye
-          const startPos = new THREE.Vector3(0, 1.2, 2.0); // Position after rotation
-          const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05)); // Slightly in front of lens
+          // Initial position: just outside the lens
+          const startPos = eyeWorld.clone().add(new THREE.Vector3(0, 0, -0.03));
           
+          // Target position: in the main scene
+          const targetPos = new THREE.Vector3(0, 1.2, 3.5); // Original camera position
+          
+          // Interpolate camera position
           camera.position.lerpVectors(startPos, targetPos, easedZoom);
           
-          // Look at the center of the VR headset, then gradually into the eye
-          const startTarget = vrHeadset.position.clone();
-          const endTarget = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, -1)); // Looking through the lens
+          // Adjust look target from lens to scene center
+          const startLook = eyeWorld.clone().add(new THREE.Vector3(0, 0, -1));
+          const targetLook = new THREE.Vector3(0, 0.6, 0); // Original target
           
-          const currentTarget = new THREE.Vector3();
-          currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
-          camera.lookAt(currentTarget);
+          const currentLook = new THREE.Vector3();
+          currentLook.lerpVectors(startLook, targetLook, easedZoom);
+          camera.lookAt(currentLook);
           
-          // Fade in the main scene and fade out the VR headset near the end
-          if (zoomProgress > 0.7) {
-            const fadeProgress = (zoomProgress - 0.7) / 0.3; // Normalize to 0-1 for last 30% of zoom
-            mainScene.visible = true;
+          // Make the transition to the main scene
+          if (zoomProgress > 0.5) {
+            // Start revealing the spider scene
+            const fadeProgress = (zoomProgress - 0.5) / 0.5; // Normalize to 0-1 for last 50%
+            spiderScene.visible = true;
             
-            // Adjust opacity if your renderer and materials support it
+            // Adjust opacity of headset if possible
             vrHeadset.traverse(node => {
-              if (node.material) {
+              if (node.material && node.material.opacity !== undefined) {
                 node.material.transparent = true;
-                node.material.opacity = 1 - fadeProgress;
+                node.material.opacity = Math.max(0, 1 - fadeProgress);
               }
             });
             
             if (zoomProgress >= 1.0) {
               animationPhase = 3;
-              animationProgress = 0;
-              vrHeadset.visible = false; // Hide VR headset completely
+              vrHeadset.visible = false; // Hide headset completely
               
-              // Reset camera to original main scene position
-              camera.position.set(0, 1.2, 3.5);
-              camera.lookAt(0, 0.6, 0);
+              // Restore original camera and controls
               if (controls) {
+                controls.enabled = true;
                 controls.target.set(0, 0.6, 0);
                 controls.update();
               }
@@ -363,24 +413,79 @@ window.initLevel1 = function() {
           }
           break;
           
-        case 3: // Inside the simulation
-          // Nothing to animate here, main scene is visible
+        case 3: // Final state - original scene
+          // Nothing to do here, main scene is visible
           break;
       }
     }
     
     // Easing function for smoother animation
-    function easeInOutCubic(t) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    function easeInOutQuad(t) {
+      return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+    
+    // This function is called to load the spider scene elements
+    // We'll just move the existing scene loading code here
+    function loadOriginalScene() {
+      textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
+        woodTextures.map = texture;
+        woodTextures.map.wrapS = THREE.RepeatWrapping;
+        woodTextures.map.wrapT = THREE.RepeatWrapping;
+        woodTextures.map.repeat.set(2, 2);
+        createTableIfTexturesLoaded();
+      });
+      
+      textureLoader.load('https://threejs.org/examples/textures/hardwood2_normal.jpg', function(texture) {
+        woodTextures.normalMap = texture;
+        woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
+        woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
+        woodTextures.normalMap.repeat.set(2, 2);
+        createTableIfTexturesLoaded();
+      });
+      
+      textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
+        woodTextures.roughnessMap = texture;
+        woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
+        woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
+        woodTextures.roughnessMap.repeat.set(2, 2);
+        createTableIfTexturesLoaded();
+      });
+    }
+    
+    // This is called if the VR headset fails to load
+    function loadOriginalSceneDirectly() {
+      console.warn('Loading original scene directly due to VR headset failure');
+      spiderScene.visible = true; // Make sure spider scene is visible
+      
+      // Use the original loading code
+      textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
+        woodTextures.map = texture;
+        woodTextures.map.wrapS = THREE.RepeatWrapping;
+        woodTextures.map.wrapT = THREE.RepeatWrapping;
+        woodTextures.map.repeat.set(2, 2);
+        createTableIfTexturesLoaded();
+      });
+      
+      textureLoader.load('https://threejs.org/examples/textures/hardwood2_normal.jpg', function(texture) {
+        woodTextures.normalMap = texture;
+        woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
+        woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
+        woodTextures.normalMap.repeat.set(2, 2);
+        createTableIfTexturesLoaded();
+      });
+      
+      textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
+        woodTextures.roughnessMap = texture;
+        woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
+        woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
+        woodTextures.roughnessMap.repeat.set(2, 2);
+        createTableIfTexturesLoaded();
+      });
     }
 
     // ==============================
-    // 6. (For Now) No VR Portal – Just the Photorealistic Scene
+    // 6. Original Spider Scene
     // ==============================
-    // (We will add VR later once this scene works perfectly on-demand.)
-    // Ensure that the scene is built only when this function is called.
-    // (The following code is exactly as in your original ~700+ lines.)
-
     // Track wood texture loading
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -391,31 +496,6 @@ window.initLevel1 = function() {
       if (texturesLoaded >= requiredTextures) {
         createTable();
       }
-    }
-    
-    // Modify main scene loading to add everything to the mainScene group
-    function loadMainScene() {
-      textureLoader.load('https://threejs.org/examples/textures/hardwood2_diffuse.jpg', function(texture) {
-        woodTextures.map = texture;
-        woodTextures.map.wrapS = THREE.RepeatWrapping;
-        woodTextures.map.wrapT = THREE.RepeatWrapping;
-        woodTextures.map.repeat.set(2, 2);
-        createTableIfTexturesLoaded();
-      });
-      textureLoader.load('https://threejs.org/examples/textures/hardwood2_normal.jpg', function(texture) {
-        woodTextures.normalMap = texture;
-        woodTextures.normalMap.wrapS = THREE.RepeatWrapping;
-        woodTextures.normalMap.wrapT = THREE.RepeatWrapping;
-        woodTextures.normalMap.repeat.set(2, 2);
-        createTableIfTexturesLoaded();
-      });
-      textureLoader.load('https://threejs.org/examples/textures/hardwood2_roughness.jpg', function(texture) {
-        woodTextures.roughnessMap = texture;
-        woodTextures.roughnessMap.wrapS = THREE.RepeatWrapping;
-        woodTextures.roughnessMap.wrapT = THREE.RepeatWrapping;
-        woodTextures.roughnessMap.repeat.set(2, 2);
-        createTableIfTexturesLoaded();
-      });
     }
 
     function createTable() {
@@ -431,7 +511,7 @@ window.initLevel1 = function() {
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
       table.position.y = -0.1; // Slightly below the jar
       table.receiveShadow = true;
-      mainScene.add(table); // Add to mainScene instead of scene
+      spiderScene.add(table); // Add to spiderScene instead of scene directly
       createJar();
     }
 
@@ -453,7 +533,7 @@ window.initLevel1 = function() {
       jar.position.y = 0.75;
       jar.castShadow = true;
       jar.receiveShadow = true;
-      mainScene.add(jar); // Add to mainScene instead of scene
+      spiderScene.add(jar); // Add to spiderScene instead of scene directly
 
       const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
       const lidMaterial = new THREE.MeshStandardMaterial({
@@ -465,7 +545,7 @@ window.initLevel1 = function() {
       const lid = new THREE.Mesh(lidGeometry, lidMaterial);
       lid.position.set(0, 1.55, 0);
       lid.castShadow = true;
-      mainScene.add(lid); // Add to mainScene instead of scene
+      spiderScene.add(lid); // Add to spiderScene instead of scene directly
 
       loadSpiderModel();
     }
@@ -500,7 +580,7 @@ window.initLevel1 = function() {
               }
             }
           });
-          mainScene.add(spiderModel); // Add to mainScene instead of scene
+          spiderScene.add(spiderModel); // Add to spiderScene instead of scene directly
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
             mixer = new THREE.AnimationMixer(spiderModel);
@@ -568,7 +648,7 @@ window.initLevel1 = function() {
         spider.add(leg);
       }
       spider.position.y = 0.05;
-      mainScene.add(spider); // Add to mainScene instead of scene
+      spiderScene.add(spider); // Add to spiderScene instead of scene directly
       addDustParticles();
       finalizeScene();
       if (loadingElement && loadingElement.parentNode) {
@@ -606,7 +686,7 @@ window.initLevel1 = function() {
       });
       const particles = new THREE.Points(particleGeometry, particleMaterial);
       particles.position.y = 0.75;
-      mainScene.add(particles); // Add to mainScene instead of scene
+      spiderScene.add(particles); // Add to spiderScene instead of scene directly
       window.dustParticles = particles;
     }
 
@@ -616,16 +696,16 @@ window.initLevel1 = function() {
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
     function finalizeScene() {
-      // Start the animation by loading the VR headset first
+      // Start by loading the VR headset
       loadVRHeadset();
       
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
         
-        // Update VR headset animation if needed
+        // Update VR headset animation
         if (animationPhase < 3) {
-          updateVRHeadsetAnimation(delta);
+          updateVRAnimation(delta);
         }
         
         if (mixer) mixer.update(delta);
@@ -639,15 +719,7 @@ window.initLevel1 = function() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
-        
-        // Only enable controls after the animation is complete
-        if (controls && animationPhase === 3) {
-          controls.enabled = true;
-          controls.update();
-        } else if (controls) {
-          controls.enabled = false;
-        }
-        
+        if (controls && animationPhase === 3) controls.update();
         renderer.render(scene, camera);
       }
       animate();
@@ -736,6 +808,7 @@ window.initLevel1 = function() {
           container.style.overflow = '';
           container.style.position = '';
         }
+        
         function handleResize() {
           let width, height;
           if (document.fullscreenElement === container) {
@@ -757,6 +830,7 @@ window.initLevel1 = function() {
           renderer.setSize(width, height);
           console.log(`Resized to: ${width}x${height}`);
         }
+        
         window.addEventListener('resize', handleResize);
         document.addEventListener('fullscreenchange', function() {
           if (!document.fullscreenElement) {
@@ -782,28 +856,7 @@ window.initLevel1 = function() {
             handleResize();
           }
         });
+        
         handleResize();
         console.log('UI controls added.');
       }
-      
-      addUIControls();
-      console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
-    }
-    
-    // If textures do not load within 5 seconds, use fallback materials.
-    setTimeout(() => {
-      if (texturesLoaded < requiredTextures) {
-        console.warn('Not all textures loaded in time, using fallback materials.');
-        woodTextures.map = woodTextures.map || new THREE.Texture();
-        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
-        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
-        createTable();
-      }
-    }, 5000);
-
-  } catch (error) {
-    console.error('Error creating 3D scene:', error);
-    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
-  }
-};
-// ***** END MAIN.JS *****
