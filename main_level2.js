@@ -272,16 +272,19 @@ function initLevel2() {
           console.log('Spider bounding box:', bbox);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          const spiderMinY = bbox.min.y;
-          // In Level 1, the spider was positioned at (-bbox.min.y).
-          // For Level 2, we want its lowest point at the table top (y=0.6).
-          // Thus: desiredY = (-bbox.min.y) + 0.6.
-          const desiredY = (-spiderMinY) + 0.6;
-          console.log('spiderMinY:', spiderMinY, '=> desiredY:', desiredY);
+          
+          // New positioning calculation - place spider directly on table surface
+          // Table surface is at y=0.6
+          // We need to offset by (bbox.min.y) to place bottom of spider at y=0.6
+          const tableTopY = 0.6;
+          const spiderBottomY = bbox.min.y;
+          const spiderOffsetY = tableTopY - spiderBottomY;
+          
+          console.log('Spider offset for table placement:', spiderOffsetY);
 
           spiderModel.position.set(
             -center.x,
-            desiredY,
+            spiderOffsetY,
             -center.z
           );
 
@@ -554,4 +557,3 @@ function initLevel2() {
 }
 
 // ===== END main_level2.js =====
-
