@@ -24,7 +24,7 @@ function initLevel2() {
 
   try {
     // --------------------------------------------------------------------
-    // LOADING UI: Message Only (No blue loading bar)
+    // LOADING UI: Message & Blue Loading Bar
     // --------------------------------------------------------------------
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
@@ -39,18 +39,40 @@ function initLevel2() {
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
 
-    // Unified loading manager for all assets.
+    const loadingBarContainer = document.createElement('div');
+    loadingBarContainer.style.position = 'absolute';
+    loadingBarContainer.style.top = '55%';
+    loadingBarContainer.style.left = '50%';
+    loadingBarContainer.style.transform = 'translate(-50%, -50%)';
+    loadingBarContainer.style.width = '300px';
+    loadingBarContainer.style.height = '10px';
+    loadingBarContainer.style.background = '#ccc';
+    loadingBarContainer.style.borderRadius = '5px';
+    loadingBarContainer.style.overflow = 'hidden';
+    loadingBarContainer.style.zIndex = '1000';
+    container.appendChild(loadingBarContainer);
+
+    const loadingBar = document.createElement('div');
+    loadingBar.style.width = '0%';
+    loadingBar.style.height = '100%';
+    loadingBar.style.background = '#0071e3';
+    loadingBarContainer.appendChild(loadingBar);
+
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
       loadingElement.textContent = `Loading scene assets... ${percent}%`;
+      loadingBar.style.width = percent + '%';
     };
     loadingManager.onLoad = function() {
       setTimeout(() => {
         loadingElement.style.transition = 'opacity 1s ease';
+        loadingBarContainer.style.transition = 'opacity 1s ease';
         loadingElement.style.opacity = 0;
+        loadingBarContainer.style.opacity = 0;
         setTimeout(() => {
           loadingElement.remove();
+          loadingBarContainer.remove();
         }, 1000);
       }, 500);
     };
@@ -86,6 +108,7 @@ function initLevel2() {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
+    container.appendChild(loadingBarContainer);
     renderer.domElement.style.cssText =
       "width:100%;height:100%;display:block;position:absolute;top:0;left:0;";
 
@@ -182,11 +205,11 @@ function initLevel2() {
     scene.add(spotLight);
 
     // --------------------------------------------------------------------
-    // VR Headset Entrance Animation Setup
+    // 6. VR Headset Entrance Animation Setup
     // --------------------------------------------------------------------
     // All main scene objects (table, spider, dust) are grouped in mainScene and are initially hidden.
     let vrHeadset;
-    const mainScene = new THREE.Group();
+    let mainScene = new THREE.Group();
     mainScene.visible = false;
     scene.add(mainScene);
 
@@ -285,7 +308,7 @@ function initLevel2() {
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
-          // Reveal mainScene and fade out VR headset during the last 30% of zoom.
+          // Reveal mainScene and fade out VR headset during last 30% of zoom.
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -320,11 +343,10 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Main Photorealistic Scene (Group: mainScene)
+    // 7. Main Photorealistic Scene (Group: mainScene)
     // All photorealistic objects (table, spider, dust) are added to mainScene.
     // They remain hidden until the VR entrance animation completes.
     // --------------------------------------------------------------------
-    // (Use the spider positioning exactly as in the previous Level 2 code.)
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -358,7 +380,6 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
-    // Create the table and add it to mainScene
     function createTable() {
       const tableGeometry = new THREE.BoxGeometry(7, 0.2, 5);
       const tableMaterial = new THREE.MeshStandardMaterial({
@@ -370,7 +391,7 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // Table's center at y=0.5 so that its top is at y=0.6
+      // Table's center at y=0.5 => top at y=0.6
       table.position.y = 0.5;
       table.receiveShadow = true;
       mainScene.add(table);
@@ -378,7 +399,7 @@ function initLevel2() {
       loadSpiderModel();
     }
 
-    // Load the spider model ("spider2.glb") and position it exactly on the table (table top at y=0.6)
+    // Load the Spider Model ("spider2.glb") and position it exactly on the table.
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -398,7 +419,7 @@ function initLevel2() {
           // Update world matrix so bounding box reflects scaling
           spiderModel.updateMatrixWorld(true);
 
-          // Compute bounding box and center
+          // Compute the bounding box and center
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           console.log('Spider bounding box:', bbox);
           const center = new THREE.Vector3();
@@ -407,7 +428,7 @@ function initLevel2() {
           // Position the spider so its lowest point is at y = 0.6 (table top)
           spiderModel.position.set(
             -center.x,
-            0.6, // Directly on the table surface
+            0.6,
             -center.z
           );
 
@@ -454,13 +475,12 @@ function initLevel2() {
         },
         undefined,
         function(error) {
-          console.error('Error loading spider2.glb:', error);
+          console.error('Error loading spider model:', error);
           loadingElement.textContent = 'Failed to load spider model.';
         }
       );
     }
 
-    // Add dust particles and add them to mainScene
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
@@ -487,7 +507,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
+    // 8. FINALIZE THE SCENE SETUP & ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
@@ -515,14 +535,20 @@ function initLevel2() {
           window.dustParticles.rotation.y += delta * 0.01;
         }
         
-        if (controls) controls.update();
+        if (controls && animationPhase === 3) {
+          controls.enabled = true;
+          controls.update();
+        } else if (controls) {
+          controls.enabled = false;
+        }
+        
         renderer.render(scene, camera);
       }
       animate();
 
-      // ----------------------------------------------------------------
+      // ------------------------------
       // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize Handling
-      // ----------------------------------------------------------------
+      // ------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
         fsButton.textContent = '⛶';
@@ -595,7 +621,6 @@ function initLevel2() {
           instructions.style.transition = 'opacity 1s ease';
         }, 5000);
 
-        // Helper: Reset container style when exiting fullscreen.
         function resetContainerStyle() {
           container.style.width = '';
           container.style.height = '600px';
@@ -655,7 +680,7 @@ function initLevel2() {
       }
       
       addUIControls();
-      console.log('Scene setup completed (Level 2 photorealistic scene).');
+      console.log('Scene setup completed (Level 2 photorealistic scene with VR headset entrance).');
     }
 
     // --------------------------------------------------------------------
