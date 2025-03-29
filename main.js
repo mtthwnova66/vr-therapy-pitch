@@ -4,15 +4,15 @@
 window.initLevel1 = function() {
   console.log('Initializing photorealistic Three.js scene...');
 
-  // Get the container element (make sure your index.html contains
-  // <div id="arachnophobia-demo" class="level-container"></div>)
+  // Get the container element (make sure your index.html contains,
+  // e.g., <div id="arachnophobia-demo" class="level-container"></div>)
   const container = document.getElementById('arachnophobia-demo');
   if (!container) {
     console.error('Container not found: #arachnophobia-demo');
     return;
   }
 
-  // Library checks
+  // Library Checks
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
     container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries.</p>';
@@ -67,6 +67,8 @@ window.initLevel1 = function() {
       loadingBar.style.width = percent + '%';
     };
     loadingManager.onLoad = function() {
+      // Ensure the loading bar shows 100%
+      loadingBar.style.width = '100%';
       setTimeout(() => {
         loadingElement.style.transition = 'opacity 1s ease';
         loadingBarContainer.style.transition = 'opacity 1s ease';
@@ -83,7 +85,6 @@ window.initLevel1 = function() {
     // 2. Scene, Camera, Renderer
     // ==============================
     const scene = new THREE.Scene();
-    // Plain gray background
     scene.background = new THREE.Color(0xa0a0a0);
 
     const camera = new THREE.PerspectiveCamera(
@@ -195,19 +196,19 @@ window.initLevel1 = function() {
     // ==============================
     // 6. VR Headset Entrance Animation
     // ==============================
-    // The photorealistic scene (spider, jar, lid, table, dust) is now grouped in mainScene
-    // and is initially hidden.
+    // All photorealistic scene objects (spider, jar, lid, table, dust) are grouped in mainScene,
+    // which is initially hidden. They become visible only after the VR entrance completes.
     let vrHeadset;
     let mainScene = new THREE.Group();
     mainScene.visible = false;
     scene.add(mainScene);
 
-    let animationPhase = 0; // 0: VR display wait, 1: Rotate, 2: Zoom, 3: Inside scene
+    let animationPhase = 0; // 0: Wait, 1: Rotate, 2: Zoom, 3: Inside
     let animationProgress = 0;
     const animationDuration = { 
       rotate: 3.0,  // seconds for rotation
-      zoom: 2.5,    // seconds for zoom
-      transition: 1.5 // seconds for fade transition
+      zoom: 1.5,    // seconds for faster zoom (reduced from 2.5)
+      transition: 1.5
     };
     let leftEyePosition = new THREE.Vector3();
 
@@ -221,12 +222,12 @@ window.initLevel1 = function() {
         'oculus_quest_vr_headset.glb',
         function(gltf) {
           vrHeadset = gltf.scene;
-          // *** Set initial orientation so that the interior is visible.
+          // Set initial orientation so that the interior is visible.
           vrHeadset.scale.set(5, 5, 5);
           vrHeadset.position.set(0, 0.8, 0);
-          vrHeadset.rotation.set(0, 0, 0);
-          
-          // Find the left eye lens (by name or approximate)
+          vrHeadset.rotation.set(0, 0, 0); // Now interior is facing the viewer
+
+          // Find the left eye lens for zooming
           vrHeadset.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -268,16 +269,16 @@ window.initLevel1 = function() {
       if (!vrHeadset) return;
       animationProgress += delta;
       switch(animationPhase) {
-        case 0: // Wait a moment before starting rotation
+        case 0: // Wait period
           if (animationProgress > 1.5) {
             animationPhase = 1;
             animationProgress = 0;
           }
           break;
-        case 1: // Rotate the headset from 0 to Math.PI so that the left eye is exposed
+        case 1: // Rotate headset from 0 to Math.PI so that the left eye is exposed
           const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
           const easedRotation = easeInOutCubic(rotationProgress);
-          vrHeadset.rotation.y = Math.PI * easedRotation; // Rotates from 0 to Math.PI
+          vrHeadset.rotation.y = Math.PI * easedRotation;
           if (rotationProgress >= 1.0) {
             animationPhase = 2;
             animationProgress = 0;
@@ -289,7 +290,7 @@ window.initLevel1 = function() {
           const leftEyeWorld = new THREE.Vector3();
           leftEyePosition.clone().applyMatrix4(vrHeadset.matrixWorld);
           vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
-          const startPos = new THREE.Vector3(0, 1.2, 2.0); // After rotation
+          const startPos = new THREE.Vector3(0, 1.2, 2.0);
           const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
           camera.position.lerpVectors(startPos, targetPos, easedZoom);
           const startTarget = vrHeadset.position.clone();
@@ -297,7 +298,7 @@ window.initLevel1 = function() {
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
-          // Fade out VR headset and reveal main scene during the last 30% of zoom
+          // Once zoom progress is high, reveal the main scene and fade out the VR headset.
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -311,6 +312,7 @@ window.initLevel1 = function() {
               animationPhase = 3;
               animationProgress = 0;
               vrHeadset.visible = false;
+              // Reset camera for the main scene
               camera.position.set(0, 1.2, 3.5);
               camera.lookAt(0, 0.6, 0);
               if (controls) {
@@ -320,7 +322,7 @@ window.initLevel1 = function() {
             }
           }
           break;
-        case 3: // VR animation complete, main scene is visible
+        case 3: // Inside the simulation
           break;
       }
     }
@@ -331,9 +333,9 @@ window.initLevel1 = function() {
     }
 
     // ==============================
-    // 7. Main Photorealistic Scene
-    // (Original scene: spider, jar, lid, table, dust)
-    // Now, add these objects to mainScene so they remain hidden until the VR entrance completes.
+    // 7. Main Photorealistic Scene (Group: mainScene)
+    // The scene (table, jar, lid, spider, dust) is added to mainScene,
+    // which remains hidden until the VR entrance animation completes.
     // ==============================
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -439,7 +441,6 @@ window.initLevel1 = function() {
           const center = new THREE.Vector3();
           bbox.getCenter(center);
           const offset = -bbox.min.y;
-          // Position so that spider's lowest point aligns with table top (y=0.6)
           spiderModel.position.set(-center.x, offset, -center.z);
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
@@ -591,7 +592,7 @@ window.initLevel1 = function() {
           window.dustParticles.rotation.y += delta * 0.01;
         }
         
-        // Enable controls only after the VR animation is complete
+        // Enable controls only after VR animation completes
         if (controls && animationPhase === 3) {
           controls.enabled = true;
           controls.update();
