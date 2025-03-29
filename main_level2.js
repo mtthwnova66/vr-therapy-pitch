@@ -273,18 +273,14 @@ function initLevel2() {
           const center = new THREE.Vector3();
           bbox.getCenter(center);
           
-          // New positioning calculation - place spider directly on table surface
-          // Table surface is at y=0.6
-          // We need to offset by (bbox.min.y) to place bottom of spider at y=0.6
-          const tableTopY = 0.6;
-          const spiderBottomY = bbox.min.y;
-          const spiderOffsetY = tableTopY - spiderBottomY;
+          // Fixed positioning for spider on table
+          // Table top is at y=0.6
+          // Ensure legs touch the table by using a fixed offset
+          // Try a lower position value
           
-          console.log('Spider offset for table placement:', spiderOffsetY);
-
           spiderModel.position.set(
             -center.x,
-            spiderOffsetY,
+            0.6, // Position directly on the table surface
             -center.z
           );
 
