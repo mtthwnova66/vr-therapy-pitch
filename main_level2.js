@@ -370,7 +370,8 @@ function initLevel2() {
       // Table's center at y=0.5 => top at y=0.6
       table.position.y = 0.5;
       table.receiveShadow = true;
-      scene.add(table);
+      // Add table to mainScene so it remains hidden until VR animation completes.
+      mainScene.add(table);
 
       loadSpiderModel();
     }
@@ -421,6 +422,7 @@ function initLevel2() {
               }
             }
           });
+          // Add spider to mainScene so it remains hidden until VR animation completes.
           mainScene.add(spiderModel);
 
           // Aim the spotlight at the spider for better shadow
@@ -460,7 +462,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Add Dust Particles
+    // Add Dust Particles to mainScene
     // --------------------------------------------------------------------
     function addDustParticles() {
       const particlesCount = 100;
@@ -483,12 +485,13 @@ function initLevel2() {
       });
       const particles = new THREE.Points(particleGeometry, particleMaterial);
       particles.position.y = 0.75;
+      // Add dust particles to mainScene
       mainScene.add(particles);
       window.dustParticles = particles;
     }
 
     // --------------------------------------------------------------------
-    // 8. FINALIZE THE SCENE SETUP & ANIMATION LOOP
+    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
