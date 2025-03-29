@@ -10,7 +10,7 @@ function initLevel2() {
     return;
   }
 
-  // Check libraries
+  // Check if THREE and GLTFLoader are available
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
     container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load 3D libraries.</p>';
@@ -58,7 +58,6 @@ function initLevel2() {
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
 
-    // Unified loading manager for all assets
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
@@ -103,7 +102,7 @@ function initLevel2() {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
-      console.warn('Advanced rendering features not fully supported', e);
+      console.warn('Advanced rendering features not fully supported in this browser', e);
     }
 
     container.innerHTML = '';
@@ -132,7 +131,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // ENV MAP & BACKGROUND PLANE
+    // Texture Loader & Environment Map
     // --------------------------------------------------------------------
     const textureLoader = new THREE.TextureLoader();
     let envMap;
@@ -148,7 +147,6 @@ function initLevel2() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       scene.environment = envMap;
-
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xf5f5f7, side: THREE.DoubleSide });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
@@ -160,7 +158,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // LIGHTING (Same as Level 1)
+    // Lighting Setup (Same as Level 1)
     // --------------------------------------------------------------------
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
@@ -192,11 +190,9 @@ function initLevel2() {
     scene.add(rimLight);
 
     // --------------------------------------------------------------------
-    // NO JAR/LID. Large table + bigger spider on top
+    // Build the Scene: No Jar/Lid – Enlarged Table and Spider on Top
     // --------------------------------------------------------------------
-    // Table geometry: 7×0.2×5 => top at y=0.6 => center y=0.5
-    // Then we carefully position the spider so it doesn't float.
-
+    // Table dimensions: 7×0.2×5, so its center is at y=0.5 (making the top at y=0.6)
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -241,13 +237,17 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      table.position.y = 0.5; // top at 0.6
+      // Table's center at y=0.5 => top at y=0.6
+      table.position.y = 0.5;
       table.receiveShadow = true;
       scene.add(table);
 
       loadSpiderModel();
     }
 
+    // --------------------------------------------------------------------
+    // Load the Spider Model ("spider2.glb") and Position It on the Table
+    // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -258,28 +258,25 @@ function initLevel2() {
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
-
-      // "spider2.glb" presumably bigger
       gltfLoader.load(
         'spider2.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
 
-          // Update world matrix so bounding box accounts for scale
+          // IMPORTANT: Update world matrix so bounding box reflects scaling
           spiderModel.updateMatrixWorld(true);
 
-          // Compute bounding box
+          // Compute the bounding box and center
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           console.log('Spider bounding box:', bbox);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-
-          // The table top is at y=0.6. We want boundingBox.min.y = 0.6
           const spiderMinY = bbox.min.y;
-          const extraPush = 0.05; // tweak if still floating
-          const desiredY = 0.6 - spiderMinY - extraPush;
-
+          // In Level 1, the spider was positioned at (-bbox.min.y).
+          // For Level 2, we want its lowest point at the table top (y=0.6).
+          // Thus: desiredY = (-bbox.min.y) + 0.6.
+          const desiredY = (-spiderMinY) + 0.6;
           console.log('spiderMinY:', spiderMinY, '=> desiredY:', desiredY);
 
           spiderModel.position.set(
@@ -310,7 +307,6 @@ function initLevel2() {
           } else {
             console.log('No animations found in the model');
           }
-
           addDustParticles();
           finalizeScene();
           if (loadingElement && loadingElement.parentNode) {
@@ -334,6 +330,9 @@ function initLevel2() {
       );
     }
 
+    // --------------------------------------------------------------------
+    // Add Dust Particles
+    // --------------------------------------------------------------------
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
@@ -360,7 +359,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // FINALIZE SCENE & ANIMATION
+    // FINALIZE THE SCENE & START THE ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
@@ -385,7 +384,7 @@ function initLevel2() {
       animate();
 
       // ----------------------------------------------------------------
-      // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize
+      // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize Handling
       // ----------------------------------------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
@@ -459,9 +458,10 @@ function initLevel2() {
           instructions.style.transition = 'opacity 1s ease';
         }, 5000);
 
+        // Helper to reset container style when exiting fullscreen.
         function resetContainerStyle() {
           container.style.width = '';
-          container.style.height = '600px'; // Adjust to your default container height
+          container.style.height = '600px'; // Adjust to your default container height.
           container.style.margin = '';
           container.style.padding = '';
           container.style.overflow = '';
@@ -521,7 +521,9 @@ function initLevel2() {
       console.log('Scene setup completed (Level 2 photorealistic scene).');
     }
 
-    // If textures do not load within 5 seconds, fallback
+    // --------------------------------------------------------------------
+    // Fallback: If textures do not load within 5 seconds, use fallback materials.
+    // --------------------------------------------------------------------
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -532,7 +534,9 @@ function initLevel2() {
       }
     }, 5000);
 
+    // --------------------------------------------------------------------
     // Resize logic
+    // --------------------------------------------------------------------
     function handleResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
