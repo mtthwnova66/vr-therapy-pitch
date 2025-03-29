@@ -196,12 +196,156 @@ window.initLevel1 = function() {
     scene.add(rimLight);
 
     // ==============================
-    // 6. (For Now) No VR Portal – Just the Photorealistic Scene
+    // 6. VR Headset Entrance Animation
     // ==============================
-    // (We will add VR later once this scene works perfectly on-demand.)
-    // Ensure that the scene is built only when this function is called.
-    // (The following code is exactly as in your original ~700+ lines.)
+    // (We are adding the VR entrance without modifying the rest of your scene.
+    //  The VR section is inserted above your main scene so that after the VR animation
+    //  the user is inside the photorealistic scene as before.)
+    let vrHeadset;
+    let mainScene = new THREE.Group(); // Holds the spider, jar, table, etc.
+    let animationPhase = 0; // 0: Initial VR headset, 1: Rotating, 2: Zooming, 3: Inside
+    let animationProgress = 0;
+    const animationDuration = { 
+      rotate: 3.0,  // seconds for rotation
+      zoom: 2.5,    // seconds for zoom
+      transition: 1.5 // seconds for transition fade
+    };
+    let leftEyePosition = new THREE.Vector3(); // To store left eye position
 
+    // Hide main scene initially
+    mainScene.visible = false;
+    scene.add(mainScene);
+
+    // Function to load the VR headset
+    function loadVRHeadset() {
+      if (loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Loading VR headset model...';
+      }
+      const gltfLoader = new THREE.GLTFLoader(loadingManager);
+      gltfLoader.load(
+        'oculus_quest_vr_headset.glb',
+        function(gltf) {
+          vrHeadset = gltf.scene;
+          // *** Modification: Set initial rotation so that the interior is visible.
+          // Previously it was set to (0, Math.PI, 0). Now we set it to (0, 0, 0).
+          vrHeadset.scale.set(5, 5, 5); // Adjust scale as needed
+          vrHeadset.position.set(0, 0.8, 0);
+          vrHeadset.rotation.set(0, 0, 0); // Now oriented the other way
+
+          // Find the left eye lens for zooming.
+          vrHeadset.traverse(function(node) {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+              if (node.name.toLowerCase().includes('eye') && node.name.toLowerCase().includes('left')) {
+                leftEyePosition.copy(node.position);
+                console.log('Found left eye:', node.name, leftEyePosition);
+              }
+              if (node.material) {
+                node.material.envMap = envMap;
+                node.material.needsUpdate = true;
+              }
+            }
+          });
+          if (leftEyePosition.length() === 0) {
+            // Fallback approximate left eye position
+            leftEyePosition.set(-0.03, 0, -0.05);
+            leftEyePosition.applyMatrix4(vrHeadset.matrixWorld);
+          }
+
+          scene.add(vrHeadset);
+          camera.position.set(0, 1.2, 3.5);
+          camera.lookAt(vrHeadset.position);
+
+          if (loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Loading scene assets...';
+          }
+          // Begin animation phase 0 (showing headset)
+          animationPhase = 0;
+          animationProgress = 0;
+          // Start loading the main scene (table, jar, spider, etc.)
+          loadMainScene();
+        },
+        undefined,
+        function(error) {
+          console.error('Error loading VR headset model:', error);
+          loadMainScene();
+        }
+      );
+    }
+
+    // Update VR headset animation between phases.
+    function updateVRHeadsetAnimation(delta) {
+      if (!vrHeadset) return;
+      animationProgress += delta;
+      switch(animationPhase) {
+        case 0: // Wait period before rotating
+          if (animationProgress > 1.5) {
+            animationPhase = 1;
+            animationProgress = 0;
+          }
+          break;
+        case 1: // Rotate headset from initial (0) to Math.PI so that the left eye is shown
+          const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
+          const easedRotation = easeInOutCubic(rotationProgress);
+          // *** Modification: Rotate from 0 to Math.PI
+          vrHeadset.rotation.y = Math.PI * easedRotation;
+          if (rotationProgress >= 1.0) {
+            animationPhase = 2;
+            animationProgress = 0;
+          }
+          break;
+        case 2: // Zoom into the left eye from the interior
+          const zoomProgress = Math.min(animationProgress / animationDuration.zoom, 1.0);
+          const easedZoom = easeInOutCubic(zoomProgress);
+          // Get left eye world position
+          const leftEyeWorld = new THREE.Vector3();
+          leftEyePosition.clone().applyMatrix4(vrHeadset.matrixWorld);
+          vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
+          const startPos = new THREE.Vector3(0, 1.2, 2.0);
+          const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
+          camera.position.lerpVectors(startPos, targetPos, easedZoom);
+          const startTarget = vrHeadset.position.clone();
+          const endTarget = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, -1));
+          const currentTarget = new THREE.Vector3();
+          currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
+          camera.lookAt(currentTarget);
+          if (zoomProgress > 0.7) {
+            const fadeProgress = (zoomProgress - 0.7) / 0.3;
+            mainScene.visible = true;
+            vrHeadset.traverse(node => {
+              if (node.material) {
+                node.material.transparent = true;
+                node.material.opacity = 1 - fadeProgress;
+              }
+            });
+            if (zoomProgress >= 1.0) {
+              animationPhase = 3;
+              animationProgress = 0;
+              vrHeadset.visible = false;
+              camera.position.set(0, 1.2, 3.5);
+              camera.lookAt(0, 0.6, 0);
+              if (controls) {
+                controls.target.set(0, 0.6, 0);
+                controls.update();
+              }
+            }
+          }
+          break;
+        case 3: // Main scene is visible
+          break;
+      }
+    }
+
+    // Easing function
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // ==============================
+    // 7. (For Now) No VR Portal – Just the Photorealistic Scene
+    // (The following code is your original scene-building code.)
+    // ==============================
     // Track wood texture loading
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -434,9 +578,18 @@ window.initLevel1 = function() {
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
     function finalizeScene() {
+      // Start the animation by loading the VR headset first
+      loadVRHeadset();
+      
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
+        
+        // Update VR headset animation if needed
+        if (animationPhase < 3) {
+          updateVRHeadsetAnimation(delta);
+        }
+        
         if (mixer) mixer.update(delta);
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
@@ -448,7 +601,15 @@ window.initLevel1 = function() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
-        if (controls) controls.update();
+        
+        // Only enable controls after VR animation is complete
+        if (controls && animationPhase === 3) {
+          controls.enabled = true;
+          controls.update();
+        } else if (controls) {
+          controls.enabled = false;
+        }
+        
         renderer.render(scene, camera);
       }
       animate();
@@ -528,10 +689,9 @@ window.initLevel1 = function() {
           instructions.style.transition = 'opacity 1s ease';
         }, 5000);
 
-        // Helper: Reset container style when exiting fullscreen.
         function resetContainerStyle() {
           container.style.width = '';
-          container.style.height = '600px'; // Set this to your intended default height.
+          container.style.height = '600px'; // Default height; adjust as needed.
           container.style.margin = '';
           container.style.padding = '';
           container.style.overflow = '';
@@ -588,10 +748,12 @@ window.initLevel1 = function() {
       }
       
       addUIControls();
-      console.log('Scene setup completed (photorealistic scene without VR).');
+      console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
     }
-    
-    // If textures do not load within 5 seconds, use fallback materials.
+
+    // --------------------------------------------------------------------
+    // Fallback: If textures do not load within 5 seconds, use fallback materials.
+    // --------------------------------------------------------------------
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -602,12 +764,22 @@ window.initLevel1 = function() {
       }
     }, 5000);
 
+    // --------------------------------------------------------------------
+    // Resize logic
+    // --------------------------------------------------------------------
+    function handleResize() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
   } catch (error) {
     console.error('Error creating 3D scene:', error);
     container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
   }
 };
 // ***** END MAIN.JS *****
-        handleResize();
-        console.log('UI controls added.');
-      }
