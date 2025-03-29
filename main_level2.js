@@ -1,36 +1,30 @@
 // ----- BEGIN main_level2.js -----
 
-// Define the initialization function for Level 2.
-// This function will build the photorealistic scene for Level 2 only when called.
 function initLevel2() {
   console.log('Initializing Level 2 scene...');
 
-  // Get the container for level 2
+  // Get the container for Level 2 (ensure your index.html provides this element)
   const container = document.getElementById('arachnophobia-level2');
   if (!container) {
     console.error('Container not found: #arachnophobia-level2');
     return;
   }
 
-  // Check if THREE is available
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
-    container.innerHTML =
-      '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries. Please check your browser settings or try a different browser.</p>';
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries.</p>';
     return;
   }
 
-  // Check if GLTFLoader is available
   if (typeof THREE.GLTFLoader === 'undefined') {
     console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
-    container.innerHTML =
-      '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader.</p>';
     return;
   }
 
   try {
     // --------------------------------------------------------------------
-    // LOADING UI: Message and Loading Bar (only when Level 2 is pressed)
+    // LOADING UI: Message & Loading Bar
     // --------------------------------------------------------------------
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
@@ -64,7 +58,7 @@ function initLevel2() {
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
 
-    // Setup a unified loading manager
+    // Unified Loading Manager
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
@@ -85,13 +79,18 @@ function initLevel2() {
     };
 
     // --------------------------------------------------------------------
-    // SCENE, CAMERA, RENDERER (Same as Level 1 for photorealistic look)
+    // SCENE, CAMERA, RENDERER
     // --------------------------------------------------------------------
     const scene = new THREE.Scene();
+    // Use a plain gray background.
     scene.background = new THREE.Color(0xa0a0a0);
 
-    // Set camera position similar to Level 1 for a consistent view.
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
     camera.position.set(0, 1.2, 3.5);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -154,6 +153,7 @@ function initLevel2() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       scene.environment = envMap;
+      // Add a subtle background plane.
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xf5f5f7, side: THREE.DoubleSide });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
@@ -165,7 +165,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // LIGHTING SETUP (Same as Level 1)
+    // LIGHTING (Same as original)
     // --------------------------------------------------------------------
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
@@ -197,10 +197,38 @@ function initLevel2() {
     scene.add(rimLight);
 
     // --------------------------------------------------------------------
-    // (No VR Portal for Level 2 – We want the same photorealistic scene as Level 1)
+    // DEFERRED LOADING: Ensure the scene is built only when Level 2 is pressed.
     // --------------------------------------------------------------------
-    // The following section builds the scene exactly as in your original Level 1 code.
+    // (No VR code here – we want the same photorealistic scene as Level 1.)
+    // --------------------------------------------------------------------
 
+    // For Level 2 we remove the jar and lid so that the spider sits directly on the table.
+    // Also, enlarge the table so that the spider (which is larger) does not have its legs in the air.
+    // We choose a new table geometry and position:
+    //   New dimensions: width = 7, depth = 5, height remains 0.2.
+    //   We want the table's top to be at 0.6; since BoxGeometry is centered, table.position.y should be 0.6 - (0.2/2) = 0.5.
+    function createTable() {
+      const tableGeometry = new THREE.BoxGeometry(7, 0.2, 5);
+      const tableMaterial = new THREE.MeshStandardMaterial({
+        map: woodTextures.map,
+        normalMap: woodTextures.normalMap,
+        roughnessMap: woodTextures.roughnessMap,
+        roughness: 0.8,
+        metalness: 0.1,
+        envMap: envMap
+      });
+      const table = new THREE.Mesh(tableGeometry, tableMaterial);
+      table.position.y = 0.5; // Table center so that the top is at 0.6
+      table.receiveShadow = true;
+      scene.add(table);
+      // Now load the spider model so that it sits on the table.
+      loadSpiderModel();
+    }
+
+    // Remove the jar and lid creation (we no longer call createJar).
+    // --------------------------------------------------------------------
+    // TEXTURE LOADING FOR THE TABLE (Same as before)
+    // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -234,58 +262,12 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
-    function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
-      const tableMaterial = new THREE.MeshStandardMaterial({
-        map: woodTextures.map,
-        normalMap: woodTextures.normalMap,
-        roughnessMap: woodTextures.roughnessMap,
-        roughness: 0.8,
-        metalness: 0.1,
-        envMap: envMap
-      });
-      const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      table.position.y = -0.1;
-      table.receiveShadow = true;
-      scene.add(table);
-      createJar();
-    }
-
-    function createJar() {
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false);
-      const jarMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        metalness: 0.0,
-        roughness: 0.05,
-        transmission: 0.95,
-        transparent: true,
-        thickness: 0.05,
-        envMapIntensity: 1,
-        clearcoat: 1,
-        clearcoatRoughness: 0.1,
-        ior: 1.5
-      });
-      const jar = new THREE.Mesh(jarGeometry, jarMaterial);
-      jar.position.y = 0.75;
-      jar.castShadow = true;
-      jar.receiveShadow = true;
-      scene.add(jar);
-
-      const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
-      const lidMaterial = new THREE.MeshStandardMaterial({
-        color: 0x777777,
-        metalness: 0.9,
-        roughness: 0.1,
-        envMap: envMap
-      });
-      const lid = new THREE.Mesh(lidGeometry, lidMaterial);
-      lid.position.set(0, 1.55, 0);
-      lid.castShadow = true;
-      scene.add(lid);
-
-      loadSpiderModel();
-    }
-
+    // --------------------------------------------------------------------
+    // Load the Spider Model
+    // We adjust the vertical position so that the spider sits on the table.
+    // If the spider's computed offset brings its feet to 0, we add 0.6 (table top height)
+    // to ensure it sits on the table.
+    // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -296,6 +278,7 @@ function initLevel2() {
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
+      // Here we assume Level 2 uses "spider2.glb" (which is larger)
       gltfLoader.load(
         'spider2.glb',
         function(gltf) {
@@ -305,8 +288,8 @@ function initLevel2() {
           const center = new THREE.Vector3();
           bbox.getCenter(center);
           const offset = -bbox.min.y;
-          // Adjust the spider’s position so it matches Level 1’s orientation.
-          spiderModel.position.set(-center.x, offset, -center.z);
+          // Adjust vertical position so the spider sits on the table (table top = 0.6)
+          spiderModel.position.set(-center.x, offset + 0.6, -center.z);
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -377,7 +360,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // FINALIZE THE SCENE & START ANIMATION LOOP
+    // FINALIZE THE SCENE & START THE ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
@@ -476,7 +459,7 @@ function initLevel2() {
           instructions.style.transition = 'opacity 1s ease';
         }, 5000);
 
-        // Helper: Reset container styles when exiting fullscreen.
+        // Helper: Reset container style when exiting fullscreen.
         function resetContainerStyle() {
           container.style.width = '';
           container.style.height = '600px'; // Adjust to your default container height.
@@ -549,6 +532,17 @@ function initLevel2() {
         createTable();
       }
     }, 5000);
+
+    // Resize logic
+    function handleResize() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
 
   } catch (error) {
     console.error('Error creating 3D scene:', error);
