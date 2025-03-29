@@ -23,9 +23,9 @@ function initLevel2() {
   }
 
   try {
-    // ----------------------------------------------------------------
-    // LOADING UI: message + bar
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // LOADING UI: Message & Loading Bar
+    // --------------------------------------------------------------------
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
     loadingElement.style.position = 'absolute';
@@ -58,7 +58,7 @@ function initLevel2() {
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
 
-    // Loading manager
+    // Unified loading manager for all assets.
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
@@ -78,11 +78,10 @@ function initLevel2() {
       }, 500);
     };
 
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
     // SCENE, CAMERA, RENDERER
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
     const scene = new THREE.Scene();
-    // Plain gray background
     scene.background = new THREE.Color(0xa0a0a0);
 
     const camera = new THREE.PerspectiveCamera(
@@ -104,7 +103,7 @@ function initLevel2() {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
-      console.warn('Advanced rendering features not fully supported', e);
+      console.warn('Advanced rendering features not fully supported in this browser', e);
     }
 
     container.innerHTML = '';
@@ -114,9 +113,9 @@ function initLevel2() {
     renderer.domElement.style.cssText =
       "width:100%;height:100%;display:block;position:absolute;top:0;left:0;";
 
-    // ----------------------------------------------------------------
-    // OrbitControls (optional)
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // OrbitControls (Optional)
+    // --------------------------------------------------------------------
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -132,9 +131,9 @@ function initLevel2() {
       console.warn('OrbitControls not available');
     }
 
-    // ----------------------------------------------------------------
-    // ENV MAP & BACKGROUND PLANE
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // Texture Loader & Environment Map
+    // --------------------------------------------------------------------
     const textureLoader = new THREE.TextureLoader();
     let envMap;
     try {
@@ -149,7 +148,6 @@ function initLevel2() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       scene.environment = envMap;
-
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xf5f5f7, side: THREE.DoubleSide });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
@@ -160,9 +158,9 @@ function initLevel2() {
       scene.background = new THREE.Color(0xf5f5f7);
     }
 
-    // ----------------------------------------------------------------
-    // LIGHTING (same as level 1)
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // Lighting Setup (Same as Level 1)
+    // --------------------------------------------------------------------
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
@@ -192,12 +190,12 @@ function initLevel2() {
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
-    // ----------------------------------------------------------------
-    // NO JAR/LID. Large table + big spider on top.
-    // ----------------------------------------------------------------
-    // Table geometry: 7×0.2×5, top at y=0.6 => center y=0.5
-    // Then boundingBox.min.y => 0.6 for spider so it sits exactly on top.
-
+    // --------------------------------------------------------------------
+    // Build the Scene: No Jar/Lid – Enlarged Table & Spider on Top.
+    // --------------------------------------------------------------------
+    // For Level 2 we want a larger table so the (bigger) spider's feet rest on it.
+    // Table dimensions: width = 7, height = 0.2, depth = 5. (Since BoxGeometry is centered,
+    // table.position.y = 0.5 makes its top at 0.6.)
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -242,14 +240,18 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // center y=0.5 => top at y=0.6
+      // Set table center so that the top is at y = 0.6 (0.5 + 0.1 = 0.6)
       table.position.y = 0.5;
       table.receiveShadow = true;
       scene.add(table);
 
+      // Load the spider so it sits on the table.
       loadSpiderModel();
     }
 
+    // --------------------------------------------------------------------
+    // Load Spider Model ("spider2.glb") and Position It on the Table
+    // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -260,20 +262,20 @@ function initLevel2() {
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
-      // "spider2.glb" is presumably bigger
       gltfLoader.load(
         'spider2.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
 
-          // bounding box approach: boundingBox.min.y => 0.6
+          // Compute bounding box
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
+          // We want the spider's lowest point (bbox.min.y) to match the table top (0.6)
           const spiderMinY = bbox.min.y;
-          // We want the spider's lowest point at y=0.6 (the table top).
-          const desiredY = 0.6 - spiderMinY;
+          // Extra adjustment may be needed; here we subtract an additional 0.05
+          const desiredY = 0.6 - spiderMinY - 0.05;
 
           spiderModel.position.set(
             -center.x,
@@ -326,6 +328,9 @@ function initLevel2() {
       );
     }
 
+    // --------------------------------------------------------------------
+    // Dust Particles
+    // --------------------------------------------------------------------
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
@@ -351,11 +356,11 @@ function initLevel2() {
       window.dustParticles = particles;
     }
 
-    // ----------------------------------------------------------------
-    // FINALIZE SCENE & ANIMATION
-    // ----------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
+    // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
-    let mixer;
+    let mixer; // Spider animation mixer
     function finalizeScene() {
       function animate() {
         requestAnimationFrame(animate);
@@ -376,7 +381,9 @@ function initLevel2() {
       }
       animate();
 
-      // UI Controls (fullscreen, auto-rotate, instructions)
+      // ----------------------------------------------------------------
+      // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize Handling
+      // ----------------------------------------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
         fsButton.textContent = '⛶';
@@ -449,9 +456,10 @@ function initLevel2() {
           instructions.style.transition = 'opacity 1s ease';
         }, 5000);
 
+        // Helper: Reset container style when exiting fullscreen.
         function resetContainerStyle() {
           container.style.width = '';
-          container.style.height = '600px'; // Adjust to your default container height
+          container.style.height = '600px'; // Adjust to your default container height.
           container.style.margin = '';
           container.style.padding = '';
           container.style.overflow = '';
@@ -506,12 +514,14 @@ function initLevel2() {
         handleResize();
         console.log('UI controls added.');
       }
-      
+
       addUIControls();
       console.log('Scene setup completed (Level 2 photorealistic scene).');
     }
 
-    // If textures do not load within 5 seconds, fallback
+    // --------------------------------------------------------------------
+    // Fallback: If textures don't load within 5 seconds, use fallback materials.
+    // --------------------------------------------------------------------
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -522,7 +532,9 @@ function initLevel2() {
       }
     }, 5000);
 
+    // --------------------------------------------------------------------
     // Resize logic
+    // --------------------------------------------------------------------
     function handleResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
