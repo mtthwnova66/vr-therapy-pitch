@@ -1,30 +1,32 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM loaded, initializing photorealistic Three.js scene...');
-  
+
   // Get the container
   const container = document.getElementById('arachnophobia-demo');
   if (!container) {
     console.error('Container not found: #arachnophobia-demo');
     return;
   }
-  
+
   // Check if THREE is available
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
     container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load 3D libraries. Please check your browser settings or try a different browser.</p>';
     return;
   }
-  
+
   // Check if GLTFLoader is available
   if (typeof THREE.GLTFLoader === 'undefined') {
     console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
     container.innerHTML = '<p style="padding: 20px; text-align: center;">Failed to load model loader. Please check your browser settings or try a different browser.</p>';
     return;
   }
-  
+
   try {
-    // Create loading message
+    // --------------------------------------------------------------------
+    // LOADING MESSAGE & LOADING BAR
+    // --------------------------------------------------------------------
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
     loadingElement.style.position = 'absolute';
@@ -37,8 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingElement.textContent = 'Loading photorealistic scene...';
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
-    
-    // Create a loading bar overlay
+
     const loadingBarContainer = document.createElement('div');
     loadingBarContainer.style.position = 'absolute';
     loadingBarContainer.style.top = '55%';
@@ -51,20 +52,20 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingBarContainer.style.overflow = 'hidden';
     loadingBarContainer.style.zIndex = '1000';
     container.appendChild(loadingBarContainer);
-    
+
     const loadingBar = document.createElement('div');
     loadingBar.style.width = '0%';
     loadingBar.style.height = '100%';
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
-    
-    // Setup loading manager for all assets
+
+    // --------------------------------------------------------------------
+    // SETUP A UNIFIED LOADING MANAGER
+    // --------------------------------------------------------------------
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
-      if (loadingElement && loadingElement.parentNode) {
-        loadingElement.textContent = `Loading scene assets... ${percent}%`;
-      }
+      loadingElement.textContent = `Loading scene assets... ${percent}%`;
       loadingBar.style.width = percent + '%';
     };
     loadingManager.onLoad = function() {
@@ -79,17 +80,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
       }, 500);
     };
-    
-    // Scene setup
+
+    // --------------------------------------------------------------------
+    // SCENE, CAMERA, RENDERER (Exactly as in your original code)
+    // --------------------------------------------------------------------
     const scene = new THREE.Scene();
-    // Use plain gray background so the VR headset stands out.
+    // Use a plain gray background so the VR headset stands out.
     scene.background = new THREE.Color(0xa0a0a0);
-    
-    // Camera setup
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
     camera.position.set(0, 1.2, 3.5);
-    
-    // Renderer setup
+
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -103,24 +109,19 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {
       console.warn('Advanced rendering features not fully supported in this browser', e);
     }
-    
-    // Clear container and add renderer
+
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
     container.appendChild(loadingBarContainer);
-    renderer.domElement.style.width = '100%';
-    renderer.domElement.style.height = '100%';
-    renderer.domElement.style.display = 'block';
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0';
-    renderer.domElement.style.left = '0';
-    
-    // Add OrbitControls (optional for debugging)
+    renderer.domElement.style.cssText =
+      "width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;";
+
+    // Optional OrbitControls for debugging
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 0.6, 0); // Lower target to look at the jar
+      controls.target.set(0, 0.6, 0);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
       controls.minDistance = 2;
@@ -131,11 +132,13 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       console.warn('OrbitControls not available');
     }
-    
-    // Lighting (as in your original code)
+
+    // --------------------------------------------------------------------
+    // LIGHTING (Same as original)
+    // --------------------------------------------------------------------
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
-    
+
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
     keyLight.position.set(3, 6, 3);
     keyLight.castShadow = true;
@@ -149,30 +152,29 @@ document.addEventListener('DOMContentLoaded', function() {
     keyLight.shadow.camera.bottom = -5;
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
-    
+
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-3, 4, -3);
     scene.add(fillLight);
-    
+
     const rightLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rightLight.position.set(6, 2, 0);
     scene.add(rightLight);
-    
+
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
-    
+
     // --------------------------------------------------------------------
-    // Create Groups: VR Headset Group and Environment Group
+    // CREATE GROUPS: VR HEADSET GROUP & ENVIRONMENT GROUP
     // --------------------------------------------------------------------
     const vrGroup = new THREE.Group(); // For the VR headset portal
     scene.add(vrGroup);
-    const envGroup = new THREE.Group(); // For your original table, jar, spider scene
-    envGroup.visible = false;           // Hidden initially
+    const envGroup = new THREE.Group();  // For the original spider/table/jar scene
+    envGroup.visible = false;            // Hidden until the transition is complete
     scene.add(envGroup);
-    
-    // --------------------------------------------------------------------
-    // (Optional) Load an environment map for reflections if available.
+
+    // (Optional) Load an environment map for reflections.
     try {
       const cubeUrls = [
         'https://threejs.org/examples/textures/cube/pisa/px.png',
@@ -188,20 +190,20 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {
       console.warn('Environment mapping not fully supported', e);
     }
-    
+
     // --------------------------------------------------------------------
     // CAMERA TRANSITION VARIABLES
     // --------------------------------------------------------------------
-    const transitionDelay = 3;     // Wait 3 seconds before zooming in
-    const transitionDuration = 5;  // Transition lasts 5 seconds
+    const transitionDelay = 3;     // seconds to wait before zooming in
+    const transitionDuration = 5;  // seconds for the camera transition
     let transitionStarted = false;
     let transitionStartTime = 0;
     const initialCamPos = camera.position.clone();
     let targetCamPos = null;
     let vrReady = false;
-    
+
     // --------------------------------------------------------------------
-    // LOAD THE VR HEADSET MODEL (Portal)
+    // LOAD THE VR HEADSET MODEL
     // --------------------------------------------------------------------
     const vrLoader = new THREE.GLTFLoader(loadingManager);
     if (typeof THREE.DRACOLoader !== 'undefined') {
@@ -209,23 +211,20 @@ document.addEventListener('DOMContentLoaded', function() {
       dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
       vrLoader.setDRACOLoader(dracoLoader);
     }
-    
     let vrHeadset = null;
     vrLoader.load(
       'oculus_quest_vr_headset.glb',
       function(gltf) {
         vrHeadset = gltf.scene;
-        // Scale up for a large, prominent headset
+        // Scale up for a large VR headset
         vrHeadset.scale.set(2, 2, 2);
-        // Rotate so the front faces the viewer.
-        // If it still appears from above or awkwardly, adjust rotation.x or rotation.z as needed.
+        // Rotate so the front faces the user (adjust if needed)
         vrHeadset.rotation.y = Math.PI;
-        // Position the headset at eye level (modify if necessary)
+        // Position the headset at eye level in front of the environment
         vrHeadset.position.set(0, 1.2, 0);
         vrGroup.add(vrHeadset);
-        
         // Compute target camera position from the headset's left eye.
-        // Adjust the local offset as needed; here we assume left eye at (-0.15, 0.0, 0.2)
+        // (Assume left eye is at local coordinates (-0.15, 0.0, 0.2); adjust as needed.)
         const leftEyeLocal = new THREE.Vector3(-0.15, 0.0, 0.2);
         vrHeadset.updateMatrixWorld();
         targetCamPos = leftEyeLocal.applyMatrix4(vrHeadset.matrixWorld);
@@ -237,10 +236,10 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error loading VR headset model:', error);
       }
     );
-    
+
     // --------------------------------------------------------------------
     // BUILD THE ORIGINAL ENVIRONMENT (TABLE, JAR, SPIDER)
-    // This is kept exactly as in your original code.
+    // This section is kept exactly as in your original code.
     // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -288,7 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
       table.position.y = -0.1;
       table.receiveShadow = true;
-      // Add table to the environment group.
       envGroup.add(table);
       createJar();
     }
@@ -332,14 +330,12 @@ document.addEventListener('DOMContentLoaded', function() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
       }
-      
       const spiderLoader = new THREE.GLTFLoader(loadingManager);
       if (typeof THREE.DRACOLoader !== 'undefined') {
         const dracoLoader = new THREE.DRACOLoader();
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         spiderLoader.setDRACOLoader(dracoLoader);
       }
-      
       spiderLoader.load(
         'spider_with_animation.glb',
         function(gltf) {
@@ -408,13 +404,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
       abdomen.castShadow = true;
       spider.add(abdomen);
-      
       const headGeometry = new THREE.SphereGeometry(0.2, 32, 32);
       const head = new THREE.Mesh(headGeometry, spiderMaterial);
       head.position.set(0, 0, 0.25);
       head.castShadow = true;
       spider.add(head);
-      
       for (let i = 0; i < 8; i++) {
         const legGeometry = new THREE.CylinderGeometry(0.025, 0.015, 0.5, 8);
         const leg = new THREE.Mesh(legGeometry, spiderMaterial);
@@ -427,12 +421,10 @@ document.addEventListener('DOMContentLoaded', function() {
         leg.castShadow = true;
         spider.add(leg);
       }
-      
       spider.position.y = 0.05;
       envGroup.add(spider);
       addDustParticles();
       finalizeScene();
-      
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Scene loaded (fallback spider)';
         setTimeout(() => {
@@ -476,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // CAMERA TRANSITION & VR FADE LOGIC
     // --------------------------------------------------------------------
     // The camera starts at its initial position. After a 3-second delay (if the VR headset is loaded),
-    // it smoothly moves over 5 seconds to the position of the headset's left eye.
+    // it smoothly moves over 5 seconds to the headset's left eye, then the VR portal fades out and the environment is revealed.
     const checkVRInterval = setInterval(() => {
       if (vrHeadset) {
         // Assume the left eye is at local coordinates (-0.15, 0.0, 0.2) relative to the headset.
@@ -493,12 +485,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // FINALIZE SCENE & ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
+    let mixer; // Spider animation mixer (declared once here)
     function finalizeScene() {
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
         if (mixer) mixer.update(delta);
-        
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
@@ -509,13 +501,11 @@ document.addEventListener('DOMContentLoaded', function() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
-        
-        // Rotate the VR headset slowly so its presentation is dynamic.
+        // Rotate the VR headset slowly.
         if (vrHeadset) {
           vrHeadset.rotation.y += 0.005;
         }
-        
-        // Begin camera transition after transitionDelay seconds, if VR is loaded.
+        // Begin camera transition after transitionDelay seconds (if VR is ready)
         const elapsed = mainClock.getElapsedTime();
         if (!transitionStarted && elapsed > transitionDelay && vrReady) {
           transitionStarted = true;
@@ -525,10 +515,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (transitionStarted && vrHeadset && targetCamPos) {
           const t = Math.min((elapsed - transitionStartTime) / transitionDuration, 1);
           camera.position.lerpVectors(initialCamPos, targetCamPos, t);
-          // Focus camera on the jar (assumed centered at (0, 0.75, 0))
+          // Aim camera on the jar (assumed center at (0, 0.75, 0))
           camera.lookAt(new THREE.Vector3(0, 0.75, 0));
           if (t === 1 && vrHeadset) {
-            // Fade out the VR headset by reducing material opacity.
             vrGroup.traverse(child => {
               if (child.material) {
                 child.material.transparent = true;
@@ -538,14 +527,13 @@ document.addEventListener('DOMContentLoaded', function() {
             envGroup.visible = true;
           }
         }
-        
         if (controls) controls.update();
         renderer.render(scene, camera);
       }
       animate();
       
       // --------------------------------------------------------------------
-      // UI CONTROLS (Fullscreen, Auto-Rotate, Instructions)
+      // UI CONTROLS: Fullscreen, Auto-Rotate, and Instructions
       // --------------------------------------------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
@@ -658,3 +646,4 @@ document.addEventListener('DOMContentLoaded', function() {
     container.innerHTML = '<p style="padding:20px;text-align:center;">Error creating 3D scene. Check console for details.</p>';
   }
 });
+
