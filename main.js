@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing mixed reality VR scene...');
+  console.log('DOM loaded, initializing mixed reality VR scene for Level 1...');
   
   // Get the container
   const container = document.getElementById('arachnophobia-demo');
@@ -10,18 +10,18 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Check for THREE and GLTFLoader
   if (typeof THREE === 'undefined') {
-    console.error('THREE is not defined. Make sure Three.js is loaded.');
+    console.error('THREE is not defined. Ensure Three.js is loaded.');
     container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load 3D libraries.</p>';
     return;
   }
   if (typeof THREE.GLTFLoader === 'undefined') {
-    console.error('THREE.GLTFLoader is not defined. Make sure GLTFLoader is loaded.');
+    console.error('THREE.GLTFLoader is not defined. Ensure GLTFLoader is loaded.');
     container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load model loader.</p>';
     return;
   }
   
   try {
-    // --- Loading Bar ---
+    // --- Create a Loading Bar ---
     const loadingBarContainer = document.createElement('div');
     loadingBarContainer.style.position = 'absolute';
     loadingBarContainer.style.top = '50%';
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
   
-    // --- Loading Manager ---
+    // --- Setup a Loading Manager ---
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 500);
     };
   
-    // --- Scene Setup ---
+    // --- Create the Scene ---
     const scene = new THREE.Scene();
   
     // --- Renderer Setup ---
@@ -74,11 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
       "width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;";
   
     // --- Camera Setup ---
+    // Start with an exterior view so the VR headset is visible
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    // Start with an exterior view
     camera.position.set(0, 1.6, 3.5);
   
-    // --- OrbitControls (optional for debugging) ---
+    // --- Optional OrbitControls (for debugging) ---
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -89,14 +89,12 @@ document.addEventListener('DOMContentLoaded', function() {
       controls.maxDistance = 10;
       controls.autoRotate = false;
       controls.update();
-    } else {
-      console.warn('OrbitControls not available');
     }
   
-    // --- Groups: VR Headset and Environment ---
-    const vrGroup = new THREE.Group();   // Contains the VR headset
-    const envGroup = new THREE.Group();    // Contains table, jar, spider
-    envGroup.visible = false;              // Hidden initially
+    // --- Create Two Groups: VR and Environment ---
+    const vrGroup = new THREE.Group();    // For the VR headset model
+    const envGroup = new THREE.Group();     // For the photorealistic table, jar, spider
+    envGroup.visible = false;               // Hide environment initially
     scene.add(vrGroup);
     scene.add(envGroup);
   
@@ -115,11 +113,11 @@ document.addEventListener('DOMContentLoaded', function() {
       scene.environment = envMap;
       scene.background = envMap;
     } catch (e) {
-      console.warn('Environment mapping not supported, using fallback color');
+      console.warn('Environment map failed, using fallback color');
       scene.background = new THREE.Color(0xf5f5f7);
     }
   
-    // --- Lighting Setup ---
+    // --- Lighting ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -149,11 +147,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function buildEnvironment() {
       const textureLoader = new THREE.TextureLoader(loadingManager);
       const woodTextures = { map: null, normalMap: null, roughnessMap: null };
-      let texLoaded = 0;
+      let loadedCount = 0;
       const required = 3;
       function onTextureLoaded() {
-        texLoaded++;
-        if (texLoaded >= required) {
+        loadedCount++;
+        if (loadedCount >= required) {
           // Table
           const tableGeom = new THREE.BoxGeometry(5, 0.2, 3);
           const tableMat = new THREE.MeshStandardMaterial({
@@ -273,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     vrLoader.load('oculus_quest_vr_headset.glb', function(gltf) {
       vrHeadset = gltf.scene;
-      // Position the headset so it hovers at eye level in front of the jar scene.
+      // Position the headset so it hovers at eye level in front of the environment
       vrHeadset.position.set(0, 1.6, 0);
       vrGroup.add(vrHeadset);
     },
@@ -283,12 +281,130 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   
     // --- Camera Transition Setup ---
-    // We want to move from the initial camera position to the headset's left eye.
-    const transitionDelay = 3;       // seconds before starting transition
-    const transitionDuration = 5;    // duration in seconds
+    // We want to move the camera from its initial position to the headset's left eye.
+    const transitionDelay = 3;       // seconds before transition begins
+    const transitionDuration = 5;    // seconds duration of transition
     let transitionStarted = false;
     let transitionStartTime = 0;
-    const initialCamPos = camera.position.clone();
-    let targetCamPos = null;
-    let vr
-
+    const initialCameraPos = camera.position.clone();
+    let targetCameraPos = null;
+    let vrReady = false;
+    const vrInterval = setInterval(() => {
+      if (vrHeadset) {
+        // Assume the headset's left eye local coordinate is (-0.15, 1.65, 0.1)
+        const localEyePos = new THREE.Vector3(-0.15, 1.65, 0.1);
+        vrHeadset.updateMatrixWorld();
+        targetCameraPos = localEyePos.applyMatrix4(vrHeadset.matrixWorld);
+        vrReady = true;
+        clearInterval(vrInterval);
+        console.log("VR headset ready. Target camera position:", targetCameraPos);
+      }
+    }, 100);
+  
+    // --- Add UI Controls ---
+    function addUIControls() {
+      const fsButton = document.createElement('button');
+      fsButton.textContent = '⛶';
+      fsButton.style.position = 'absolute';
+      fsButton.style.bottom = '10px';
+      fsButton.style.right = '10px';
+      fsButton.style.fontSize = '20px';
+      fsButton.style.padding = '5px 10px';
+      fsButton.style.background = 'rgba(255,255,255,0.7)';
+      fsButton.style.border = 'none';
+      fsButton.style.borderRadius = '5px';
+      fsButton.style.cursor = 'pointer';
+      fsButton.style.zIndex = '10';
+      fsButton.title = 'Toggle fullscreen';
+      fsButton.addEventListener('click', function() {
+        if (!document.fullscreenElement) {
+          container.requestFullscreen().catch(err => console.error(err));
+        } else {
+          document.exitFullscreen().catch(err => console.error(err));
+        }
+      });
+      container.appendChild(fsButton);
+  
+      if (controls) {
+        const rotateButton = document.createElement('button');
+        rotateButton.textContent = '↻';
+        rotateButton.style.position = 'absolute';
+        rotateButton.style.bottom = '10px';
+        rotateButton.style.right = '60px';
+        rotateButton.style.fontSize = '20px';
+        rotateButton.style.padding = '5px 10px';
+        rotateButton.style.background = 'rgba(255,255,255,0.7)';
+        rotateButton.style.border = 'none';
+        rotateButton.style.borderRadius = '5px';
+        rotateButton.style.cursor = 'pointer';
+        rotateButton.style.zIndex = '10';
+        rotateButton.title = 'Toggle auto-rotation';
+        rotateButton.addEventListener('click', function() {
+          controls.autoRotate = !controls.autoRotate;
+          rotateButton.style.background = controls.autoRotate ? 'rgba(0,113,227,0.7)' : 'rgba(255,255,255,0.7)';
+          rotateButton.style.color = controls.autoRotate ? '#fff' : '#000';
+        });
+        container.appendChild(rotateButton);
+      }
+    }
+    addUIControls();
+  
+    // --- Resize Handling ---
+    function handleResize() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+    window.addEventListener('resize', handleResize);
+    document.addEventListener('fullscreenchange', handleResize);
+  
+    // --- Animation Loop ---
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+  
+      // Rotate the VR headset slowly (hovering effect)
+      if (vrHeadset) {
+        vrHeadset.rotation.y += 0.005;
+      }
+  
+      // Begin camera transition after delay, if VR is ready
+      if (elapsed > transitionDelay && vrReady && !transitionStarted) {
+        transitionStarted = true;
+        transitionStartTime = elapsed;
+        console.log("Camera transition started");
+      }
+      if (transitionStarted && targetCameraPos) {
+        const t = Math.min((elapsed - transitionStartTime) / transitionDuration, 1);
+        camera.position.lerpVectors(initialCameraPos, targetCameraPos, t);
+        // Keep the camera focused on the jar's center (approximate)
+        camera.lookAt(new THREE.Vector3(0, 0.75, 0));
+        // When transition completes, fade out the VR headset and reveal the environment
+        if (t === 1 && vrHeadset) {
+          vrGroup.traverse(child => {
+            if (child.material) {
+              child.material.transparent = true;
+              child.material.opacity = THREE.MathUtils.lerp(child.material.opacity || 1, 0, 0.02);
+            }
+          });
+          envGroup.visible = true;
+        }
+      }
+  
+      // Update any animations (e.g., spider)
+      if (window.spiderMixer) {
+        window.spiderMixer.update(clock.getDelta());
+      }
+      if (controls) controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  
+  } catch (error) {
+    console.error('Error creating VR scene:', error);
+    container.innerHTML = '<p style="padding:20px;text-align:center;">Error creating 3D scene. Check console for details.</p>';
+  }
+});
