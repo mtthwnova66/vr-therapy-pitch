@@ -58,7 +58,7 @@ function initLevel2() {
     loadingBar.style.background = '#0071e3';
     loadingBarContainer.appendChild(loadingBar);
 
-    // Unified loading manager for all assets.
+    // Unified loading manager for all assets
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
@@ -103,7 +103,7 @@ function initLevel2() {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     } catch (e) {
-      console.warn('Advanced rendering features not fully supported in this browser', e);
+      console.warn('Advanced rendering features not fully supported', e);
     }
 
     container.innerHTML = '';
@@ -132,7 +132,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Texture Loader & Environment Map
+    // ENV MAP & BACKGROUND PLANE
     // --------------------------------------------------------------------
     const textureLoader = new THREE.TextureLoader();
     let envMap;
@@ -148,6 +148,7 @@ function initLevel2() {
       const cubeTextureLoader = new THREE.CubeTextureLoader();
       envMap = cubeTextureLoader.load(urls);
       scene.environment = envMap;
+
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
       const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xf5f5f7, side: THREE.DoubleSide });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
@@ -159,7 +160,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Lighting Setup (Same as Level 1)
+    // LIGHTING (Same as Level 1)
     // --------------------------------------------------------------------
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
@@ -191,11 +192,11 @@ function initLevel2() {
     scene.add(rimLight);
 
     // --------------------------------------------------------------------
-    // Build the Scene: No Jar/Lid – Enlarged Table & Spider on Top.
+    // NO JAR/LID. Large table + bigger spider on top
     // --------------------------------------------------------------------
-    // For Level 2 we want a larger table so the (bigger) spider's feet rest on it.
-    // Table dimensions: width = 7, height = 0.2, depth = 5. (Since BoxGeometry is centered,
-    // table.position.y = 0.5 makes its top at 0.6.)
+    // Table geometry: 7×0.2×5 => top at y=0.6 => center y=0.5
+    // Then we carefully position the spider so it doesn't float.
+
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -240,18 +241,13 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // Set table center so that the top is at y = 0.6 (0.5 + 0.1 = 0.6)
-      table.position.y = 0.5;
+      table.position.y = 0.5; // top at 0.6
       table.receiveShadow = true;
       scene.add(table);
 
-      // Load the spider so it sits on the table.
       loadSpiderModel();
     }
 
-    // --------------------------------------------------------------------
-    // Load Spider Model ("spider2.glb") and Position It on the Table
-    // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -262,20 +258,29 @@ function initLevel2() {
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
+
+      // "spider2.glb" presumably bigger
       gltfLoader.load(
         'spider2.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
 
+          // Update world matrix so bounding box accounts for scale
+          spiderModel.updateMatrixWorld(true);
+
           // Compute bounding box
           const bbox = new THREE.Box3().setFromObject(spiderModel);
+          console.log('Spider bounding box:', bbox);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          // We want the spider's lowest point (bbox.min.y) to match the table top (0.6)
+
+          // The table top is at y=0.6. We want boundingBox.min.y = 0.6
           const spiderMinY = bbox.min.y;
-          // Extra adjustment may be needed; here we subtract an additional 0.05
-          const desiredY = 0.6 - spiderMinY - 0.05;
+          const extraPush = 0.05; // tweak if still floating
+          const desiredY = 0.6 - spiderMinY - extraPush;
+
+          console.log('spiderMinY:', spiderMinY, '=> desiredY:', desiredY);
 
           spiderModel.position.set(
             -center.x,
@@ -305,6 +310,7 @@ function initLevel2() {
           } else {
             console.log('No animations found in the model');
           }
+
           addDustParticles();
           finalizeScene();
           if (loadingElement && loadingElement.parentNode) {
@@ -322,15 +328,12 @@ function initLevel2() {
         },
         undefined,
         function(error) {
-          console.error('Error loading spider2.glb', error);
+          console.error('Error loading spider2.glb:', error);
           loadingElement.textContent = 'Failed to load spider model.';
         }
       );
     }
 
-    // --------------------------------------------------------------------
-    // Dust Particles
-    // --------------------------------------------------------------------
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
@@ -357,7 +360,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
+    // FINALIZE SCENE & ANIMATION
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
@@ -382,7 +385,7 @@ function initLevel2() {
       animate();
 
       // ----------------------------------------------------------------
-      // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize Handling
+      // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize
       // ----------------------------------------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
@@ -456,10 +459,9 @@ function initLevel2() {
           instructions.style.transition = 'opacity 1s ease';
         }, 5000);
 
-        // Helper: Reset container style when exiting fullscreen.
         function resetContainerStyle() {
           container.style.width = '';
-          container.style.height = '600px'; // Adjust to your default container height.
+          container.style.height = '600px'; // Adjust to your default container height
           container.style.margin = '';
           container.style.padding = '';
           container.style.overflow = '';
@@ -514,14 +516,12 @@ function initLevel2() {
         handleResize();
         console.log('UI controls added.');
       }
-
+      
       addUIControls();
       console.log('Scene setup completed (Level 2 photorealistic scene).');
     }
 
-    // --------------------------------------------------------------------
-    // Fallback: If textures don't load within 5 seconds, use fallback materials.
-    // --------------------------------------------------------------------
+    // If textures do not load within 5 seconds, fallback
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -532,9 +532,7 @@ function initLevel2() {
       }
     }, 5000);
 
-    // --------------------------------------------------------------------
     // Resize logic
-    // --------------------------------------------------------------------
     function handleResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
@@ -552,3 +550,4 @@ function initLevel2() {
 }
 
 // ===== END main_level2.js =====
+
