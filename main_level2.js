@@ -24,7 +24,7 @@ function initLevel2() {
 
   try {
     // --------------------------------------------------------------------
-    // LOADING UI: Message & Blue Loading Bar
+    // LOADING UI: Message only (blue loading bar removed)
     // --------------------------------------------------------------------
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
@@ -39,40 +39,17 @@ function initLevel2() {
     loadingElement.style.zIndex = '100';
     container.appendChild(loadingElement);
 
-    const loadingBarContainer = document.createElement('div');
-    loadingBarContainer.style.position = 'absolute';
-    loadingBarContainer.style.top = '55%';
-    loadingBarContainer.style.left = '50%';
-    loadingBarContainer.style.transform = 'translate(-50%, -50%)';
-    loadingBarContainer.style.width = '300px';
-    loadingBarContainer.style.height = '10px';
-    loadingBarContainer.style.background = '#ccc';
-    loadingBarContainer.style.borderRadius = '5px';
-    loadingBarContainer.style.overflow = 'hidden';
-    loadingBarContainer.style.zIndex = '1000';
-    container.appendChild(loadingBarContainer);
-
-    const loadingBar = document.createElement('div');
-    loadingBar.style.width = '0%';
-    loadingBar.style.height = '100%';
-    loadingBar.style.background = '#0071e3';
-    loadingBarContainer.appendChild(loadingBar);
-
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function(url, loaded, total) {
       const percent = Math.round((loaded / total) * 100);
       loadingElement.textContent = `Loading scene assets... ${percent}%`;
-      loadingBar.style.width = percent + '%';
     };
     loadingManager.onLoad = function() {
       setTimeout(() => {
         loadingElement.style.transition = 'opacity 1s ease';
-        loadingBarContainer.style.transition = 'opacity 1s ease';
         loadingElement.style.opacity = 0;
-        loadingBarContainer.style.opacity = 0;
         setTimeout(() => {
           loadingElement.remove();
-          loadingBarContainer.remove();
         }, 1000);
       }, 500);
     };
@@ -108,7 +85,6 @@ function initLevel2() {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
-    container.appendChild(loadingBarContainer);
     renderer.domElement.style.cssText =
       "width:100%;height:100%;display:block;position:absolute;top:0;left:0;";
 
@@ -394,12 +370,14 @@ function initLevel2() {
       // Table's center at y=0.5 => top at y=0.6
       table.position.y = 0.5;
       table.receiveShadow = true;
-      mainScene.add(table);
+      scene.add(table);
 
       loadSpiderModel();
     }
 
+    // --------------------------------------------------------------------
     // Load the Spider Model ("spider2.glb") and position it exactly on the table.
+    // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -481,6 +459,9 @@ function initLevel2() {
       );
     }
 
+    // --------------------------------------------------------------------
+    // Add Dust Particles
+    // --------------------------------------------------------------------
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
