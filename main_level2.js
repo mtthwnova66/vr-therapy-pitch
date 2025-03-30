@@ -1,4 +1,4 @@
-/ ===== BEGIN main_level2.js =====
+// ===== BEGIN main_level2.js =====
 
 function initLevel2() {
   console.log('Initializing Level 2 scene...');
