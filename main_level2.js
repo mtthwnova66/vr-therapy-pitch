@@ -1,4 +1,4 @@
-// ===== BEGIN main_level2.js =====
+/ ===== BEGIN main_level2.js =====
 
 function initLevel2() {
   console.log('Initializing Level 2 scene...');
@@ -204,9 +204,8 @@ function initLevel2() {
         loadingElement.textContent = 'Loading VR headset model...';
       }
       const gltfLoader = new THREE.GLTFLoader(loadingManager);
-      // ***** The only change: replace the old model path with the new one *****
       gltfLoader.load(
-        'vr_headset_free_model.glb',
+        'oculus_quest_vr_headset.glb',
         function(gltf) {
           vrHeadset = gltf.scene;
           // Set initial orientation so the interior faces the viewer.
@@ -319,11 +318,11 @@ function initLevel2() {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
-    // ==============================
+    // --------------------------------------------------------------------
     // 7. Main Photorealistic Scene (Group: mainScene)
     // All photorealistic objects (table, spider, dust) are added to mainScene.
     // They remain hidden until the VR entrance animation completes.
-    // ==============================
+    // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -396,7 +395,7 @@ function initLevel2() {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
 
-          // IMPORTANT: Update world matrix so bounding box reflects scaling
+          // Update world matrix so bounding box reflects scaling
           spiderModel.updateMatrixWorld(true);
 
           // Compute the bounding box and center
@@ -405,9 +404,7 @@ function initLevel2() {
           const center = new THREE.Vector3();
           bbox.getCenter(center);
           
-          // Fixed positioning for spider on table
-          // Table top is at y=0.6
-          // Position directly on table surface
+          // Position the spider so its lowest point is at y = 0.6 (table top)
           spiderModel.position.set(
             -center.x,
             0.6,
