@@ -40,17 +40,6 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
 
   <style>
-    /* Full-page background canvas for immersive effects */
-    #background-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
-    }
-    
     /* Modern CSS Variables for Enhanced Theming */
     :root {
       --primary: #0071e3;
@@ -96,7 +85,26 @@
       font-size: 16px;
     }
 
-    body { 
+    
+    body { margin: 0; background: #f5f5f7; font-family: sans-serif; }
+    .level-container { width: 100%; height: 600px; position: relative; margin-bottom: 2rem; display: none; }
+    #level-buttons { text-align: center; margin-bottom: 1.5rem; }
+    #level-buttons button {
+      background-color: #0071e3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #level-buttons button:hover {
+      background-color: #005bb5;
+    }
+
+    
+    body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
       /* Use explicit rgba values and add Safari-specific prefixes */
       background: 
@@ -120,12 +128,16 @@
     @media not all and (min-resolution:.001dpcm) { 
       @supports (-webkit-appearance:none) {
         body {
+          /* More intense colors for Safari */
           background: 
             -webkit-radial-gradient(top left, rgba(0,113,227,0.25), rgba(0,113,227,0) 70%),
             -webkit-radial-gradient(bottom right, rgba(255,193,7,0.25), rgba(255,193,7,0) 70%),
             -webkit-linear-gradient(135deg, #ffffff, #f5f5f7) !important;
+          /* Add a more pronounced color wash for Safari */
           position: relative;
         }
+        
+        /* Additional Safari-only overlay to ensure gradient visibility */
         body:before {
           content: "";
           position: fixed;
@@ -139,16 +151,21 @@
           pointer-events: none;
           z-index: -1;
         }
+        
+        /* Make tech symbols more visible in Safari */
         .tech-symbol {
           opacity: 0.9;
-          -webkit-filter: blur(20px);
+          -webkit-filter: blur(20px); /* Less blur for Safari */
         }
+        
         #tech-symbol-1 {
           background: -webkit-radial-gradient(circle, rgba(0,113,227,0.6), rgba(0,113,227,0) 70%);
         }
+        
         #tech-symbol-2 {
           background: -webkit-radial-gradient(circle, rgba(255,193,7,0.6), rgba(255,193,7,0) 70%);
         }
+        
         #tech-symbol-3 {
           background: -webkit-radial-gradient(circle, rgba(76,175,80,0.6), rgba(76,175,80,0) 70%);
         }
@@ -167,11 +184,13 @@
       color: var(--primary-dark);
     }
     
+    /* Focus state for better accessibility */
     a:focus, button:focus {
       outline: 2px solid var(--primary);
       outline-offset: 3px;
     }
     
+    /* Typography Refinement */
     h1, h2, h3, h4, h5, h6 {
       font-weight: 600;
       line-height: 1.2;
@@ -192,6 +211,7 @@
       line-height: 1.2;
     }
     
+    /* Safari fallback for gradient text */
     @media not all and (min-resolution:.001dpcm) { 
       @supports (-webkit-appearance:none) {
         h1 {
@@ -221,6 +241,7 @@
       font-weight: 400;
     }
     
+    /* Properly styled bullet points */
     ul {
       list-style-type: none;
       margin: var(--space-xl) auto;
@@ -250,6 +271,7 @@
       background: var(--primary);
     }
     
+    /* Animations with Safari-specific prefixes */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -280,6 +302,7 @@
       -webkit-animation-delay: 1.5s; 
     }
     
+    /* Enhanced Micro-interactions */
     .btn {
       transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
       -webkit-transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -318,6 +341,7 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
+    /* Enhanced Card Design */
     .card {
       background: white;
       border-radius: var(--radius-md);
@@ -335,6 +359,7 @@
       box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
     }
     
+    /* Mobile-friendly Navigation */
     .navbar {
       position: fixed;
       top: 0; 
@@ -377,6 +402,7 @@
       -webkit-transform: translateY(-2px); 
     }
     
+    /* Hamburger Menu */
     .hamburger {
       display: none;
       cursor: pointer;
@@ -441,6 +467,7 @@
       to { opacity: 1; -webkit-transform: translateY(0); }
     }
     
+    /* Main Content Layout */
     .container {
       max-width: 1200px;
       margin: 140px auto 80px;
@@ -452,11 +479,13 @@
       -webkit-transition: -webkit-transform 0.3s ease;
     }
     
+    /* Hero Section with Original Logo Implementation */
     .hero-section { 
       margin-bottom: 60px;
       text-align: center;
     }
     
+    /* IMPORTANT: Using the exact same hero-logo implementation from original site */
     .hero-logo { 
       margin-bottom: 20px;
       display: flex;
@@ -465,7 +494,7 @@
     
     .hero-logo img { 
       max-width: 200px; 
-      width: 200px;
+      width: 200px; /* Explicit width for Safari */
       height: auto;
       margin-bottom: 20px; 
       transition: transform 0.3s ease; 
@@ -477,6 +506,7 @@
       -webkit-transform: scale(1.05); 
     }
     
+    /* Video Container Enhancements - optimized for Safari */
     .intro-video, .demo-video {
       margin: var(--space-xxl) 0;
       position: relative;
@@ -492,6 +522,7 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.1);
       aspect-ratio: 16/9;
       width: 100%;
+      /* Explicit fallback for Safari */
       height: 500px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -501,6 +532,7 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
     
+    /* Section Styling */
     .section {
       padding: 60px 20px;
       position: relative;
@@ -529,6 +561,7 @@
       background: var(--accent);
     }
     
+    /* Text alignment for paragraphs in sections */
     .section p {
       text-align: center;
       max-width: 800px;
@@ -536,6 +569,7 @@
       margin-right: auto;
     }
     
+    /* Team Section - optimized for Safari */
     .team-members { 
       display: flex; 
       justify-content: center; 
@@ -565,6 +599,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
+    /* Răzvan's image cropped to focus on head, neck, and shoulders */
     .razvi-img { 
       object-fit: cover; 
       object-position: 50% 55%; 
@@ -585,6 +620,7 @@
       line-height: 1.4; 
     }
     
+    /* Role Label Styling */
     .role {
       font-size: 0.85rem;
       color: #555555;
@@ -592,6 +628,7 @@
       font-weight: 600;
     }
     
+    /* Download Button Styling - Safari optimized */
     .download-btn {
       display: inline-block;
       background: var(--primary);
@@ -640,6 +677,7 @@
       box-shadow: 0 4px 8px rgba(0, 113, 227, 0.2);
     }
     
+    /* Contact Section */
     .contact-section {
       text-align: center;
     }
@@ -693,6 +731,7 @@
       transform-origin: left;
     }
     
+    /* Back to Top Button */
     #back-to-top {
       position: fixed;
       bottom: 30px;
@@ -720,6 +759,7 @@
       transform: translateY(-3px);
     }
     
+    /* Progress bar */
     .scroll-progress {
       position: fixed;
       top: 0;
@@ -731,6 +771,7 @@
       transition: width 0.1s;
     }
     
+    /* Footer Styling */
     .footer {
       background: var(--bg-dark);
       color: var(--text-light);
@@ -768,6 +809,7 @@
       text-align: center;
     }
     
+    /* Tech Symbols and Geometric Shapes - Safari optimized */
     .tech-symbol {
       position: fixed;
       border-radius: 50%;
@@ -810,6 +852,7 @@
       top: 20%; right: -50px;
     }
     
+    /* Arachnophobia Demo Container Styling */
     #arachnophobia-demo {
       width: 100%;
       height: 600px;
@@ -839,6 +882,7 @@
       font-size: 1rem;
     }
     
+    /* Enhanced Responsive Styles for Mobile */
     @media screen and (max-width: 1280px) {
       .container {
         max-width: 90%;
@@ -888,6 +932,7 @@
       }
     }
     
+    /* Tablet styles */
     @media screen and (max-width: 768px) {
       .container {
         padding: 25px;
@@ -962,6 +1007,7 @@
       }
     }
     
+    /* Mobile styles */
     @media screen and (max-width: 576px) {
       .container {
         padding: 20px;
@@ -1042,17 +1088,6 @@
   </style>
 </head>
 <body>
-  <!-- Background Canvas for Immersive Effects -->
-  <canvas id="background-canvas"></canvas>
-  
-  <!-- Hidden Ambient Music via YouTube -->
-  <iframe id="ambientMusic" 
-          src="https://www.youtube.com/embed/DRFHklnN-SM?autoplay=1&loop=1&playlist=DRFHklnN-SM&controls=0&modestbranding=1&showinfo=0"
-          style="position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0;"
-          frameborder="0"
-          allow="autoplay">
-  </iframe>
-  
   <!-- Scroll Progress Bar -->
   <div class="scroll-progress" id="scroll-progress"></div>
   
@@ -1167,9 +1202,8 @@
     <section class="section fade-in" id="try-it-yourself">
       <h2 id="try-title">Try It Yourself – Arachnophobia Simulation Experience</h2>
       <p>
-        This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom.
-      </p>
-      <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
+        This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom. </p>
+        <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
       
       <div id="level-buttons">
         <button onclick="showLevel('level1')">Level 1</button>
@@ -1289,8 +1323,6 @@
       }
     }
   </script>
-  
-  <!-- Existing Scripts -->
   <script>
     // Throttle function to limit how often certain events fire
     function throttle(func, limit) {
@@ -1344,15 +1376,19 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    // Use Intersection Observer for fade-in animations
+    // Use Intersection Observer for fade-in animations instead of scroll events
     document.addEventListener('DOMContentLoaded', function() {
       const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
+      
+      // Create the observer with options
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
+          // Add the active class if element is intersecting
           if (entry.isIntersecting) {
             entry.target.style.opacity = "1";
             entry.target.style.transform = "translateY(0)";
             entry.target.style.webkitTransform = "translateY(0)";
+            // Once animated, no need to observe anymore
             observer.unobserve(entry.target);
           }
         });
@@ -1361,29 +1397,35 @@
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
       });
+      
       fadeElements.forEach(element => {
         observer.observe(element);
       });
+      
       updateScrollProgress();
     });
     
-    // Hamburger Menu Toggle with accessibility improvements
+    // Hamburger Menu Toggle with improved accessibility
     document.addEventListener('DOMContentLoaded', function() {
       const hamburger = document.getElementById('hamburger-menu');
       const navLinks = document.getElementById('nav-links');
+      
       function toggleMenu() {
         const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
         hamburger.setAttribute('aria-expanded', !isExpanded);
         hamburger.classList.toggle('open');
         navLinks.classList.toggle('open');
       }
+      
       hamburger.addEventListener('click', toggleMenu);
+      
       hamburger.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           toggleMenu();
         }
       });
+      
       const navItems = document.querySelectorAll('.nav-links a');
       navItems.forEach(item => {
         item.addEventListener('click', function() {
@@ -1392,9 +1434,11 @@
           navLinks.classList.remove('open');
         });
       });
+      
       document.addEventListener('click', function(event) {
         const isClickInsideMenu = navLinks.contains(event.target);
         const isClickOnHamburger = hamburger.contains(event.target);
+        
         if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
           hamburger.setAttribute('aria-expanded', 'false');
           hamburger.classList.remove('open');
@@ -1403,9 +1447,10 @@
       });
     });
     
-    // Image loading error handling
+    // Better image loading with error handling
     document.addEventListener('DOMContentLoaded', function() {
       const images = document.querySelectorAll('img');
+      
       images.forEach(img => {
         img.addEventListener('error', function() {
           console.error(`Failed to load image: ${img.src}`);
@@ -1415,7 +1460,7 @@
       });
     });
     
-    // Preload team images
+    // Preload team images to avoid layout shifts
     window.addEventListener('load', function() {
       const teamImages = document.querySelectorAll('.team-member img');
       teamImages.forEach(img => {
@@ -1433,16 +1478,19 @@
     // Safari-specific fixes
     document.addEventListener('DOMContentLoaded', function() {
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
       if (isSafari) {
         document.body.style.display = 'inline-block';
         setTimeout(function() {
           document.body.style.display = '';
         }, 10);
+        
         const h1Elements = document.querySelectorAll('h1');
         h1Elements.forEach(function(h1) {
           h1.style.webkitBackgroundClip = 'text';
           h1.style.webkitTextFillColor = 'transparent';
         });
+        
         const gradientOverlay = document.createElement('div');
         gradientOverlay.style.position = 'fixed';
         gradientOverlay.style.top = '0';
@@ -1456,11 +1504,12 @@
       }
     });
     
-    // Fix viewport height on mobile
+    // Fix viewport height issue on mobile browsers
     function setMobileHeight() {
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
+    
     window.addEventListener('resize', debounce(setMobileHeight, 100));
     window.addEventListener('orientationchange', setMobileHeight);
     setMobileHeight();
@@ -1470,73 +1519,13 @@
       console.error('Global error handler:', e.message);
     });
   </script>
-  
-  <!-- Immersive Background Script -->
-  <script>
-    (function() {
-      const bgCanvas = document.getElementById('background-canvas');
-      const bgRenderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true });
-      bgRenderer.setSize(window.innerWidth, window.innerHeight);
-      bgRenderer.setPixelRatio(window.devicePixelRatio);
-      bgRenderer.setClearColor(0x000000, 0);
 
-      const bgScene = new THREE.Scene();
-      const bgCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-      bgCamera.position.z = 5;
-
-      // Create a group for grass blades
-      const grassGroup = new THREE.Group();
-      bgScene.add(grassGroup);
-      const bladeGeometry = new THREE.PlaneGeometry(0.05, 0.5);
-      const bladeMaterial = new THREE.MeshBasicMaterial({ color: 0x4CAF50, side: THREE.DoubleSide });
-      for (let i = 0; i < 200; i++) {
-        const blade = new THREE.Mesh(bladeGeometry, bladeMaterial);
-        blade.position.x = (Math.random() - 0.5) * 10;
-        blade.position.z = (Math.random() - 0.5) * 10;
-        blade.position.y = 0;
-        blade.rotation.z = Math.random() * Math.PI;
-        grassGroup.add(blade);
-      }
-
-      // Create a group for soft, forming shapes
-      const shapeGroup = new THREE.Group();
-      bgScene.add(shapeGroup);
-      const shapeGeometry = new THREE.CircleGeometry(0.2, 32);
-      const shapeMaterial = new THREE.MeshBasicMaterial({ color: 0xffc107, transparent: true, opacity: 0.2 });
-      for (let i = 0; i < 20; i++) {
-        const shape = new THREE.Mesh(shapeGeometry, shapeMaterial);
-        shape.position.x = (Math.random() - 0.5) * 10;
-        shape.position.y = (Math.random() - 0.5) * 2 + 1;
-        shape.position.z = (Math.random() - 0.5) * 10;
-        shapeGroup.add(shape);
-      }
-
-      function animateBackground(time) {
-        time *= 0.001;
-        grassGroup.children.forEach(blade => {
-          blade.rotation.z += 0.001 * Math.sin(time + blade.position.x);
-        });
-        shapeGroup.children.forEach(shape => {
-          shape.material.opacity = 0.1 + 0.1 * Math.abs(Math.sin(time + shape.position.x));
-        });
-        bgRenderer.render(bgScene, bgCamera);
-        requestAnimationFrame(animateBackground);
-      }
-      animateBackground();
-
-      window.addEventListener('resize', function() {
-        bgRenderer.setSize(window.innerWidth, window.innerHeight);
-        bgCamera.aspect = window.innerWidth / window.innerHeight;
-        bgCamera.updateProjectionMatrix();
-      });
-    })();
-  </script>
-  
   <!-- Three.js Script for Arachnophobia Demo -->
   <script>
     function showLevel(level) {
       document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
       document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
+
       if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
       if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
     }
