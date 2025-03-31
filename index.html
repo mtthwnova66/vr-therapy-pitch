@@ -367,7 +367,7 @@
     
     <section class="section fade-in" id="market">
       <h2>Market Opportunity</h2>
-      <p>With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.</p>
+      <p>With the global VR therapy market valued at $11.3B and an expected CFR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.</p>
     </section>
     
     <section class="section fade-in dark-section" id="business">
@@ -536,13 +536,14 @@
 
       try {
         bgMusic = new Howl({
-          src: ['https://freesound.org/data/previews/449/449271_6142149-lq.mp3'],
+          src: ['https://cdn.pixabay.com/audio/2022/03/15/audio_5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e.mp3'], // Placeholder for an ethereal track; replace with a suitable file
           html5: true,
           volume: 0.5,
           loop: true,
           preload: true,
-          onloaderror: () => console.error('Background music failed to load'),
-          onplayerror: () => console.error('Background music play error')
+          onload: () => console.log('Background music loaded'),
+          onloaderror: (id, err) => console.error('Background music failed to load:', err),
+          onplayerror: (id, err) => console.error('Background music play error:', err)
         });
 
         windSound = new Howl({
@@ -576,8 +577,8 @@
         window.audioPlaying = !window.audioPlaying;
         if (window.audioPlaying) {
           try {
-            bgMusic && bgMusic.play();
-            windSound && windSound.play();
+            bgMusic.play().then(() => console.log('Background music playing'));
+            windSound.play().then(() => console.log('Wind sound playing'));
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
@@ -589,16 +590,16 @@
           }
         } else {
           try {
-            bgMusic && bgMusic.stop();
-            windSound && windSound.stop();
-            birdSound && birdSound.stop();
+            bgMusic.stop();
+            windSound.stop();
+            birdSound.stop();
             clearInterval(ambientSoundInterval);
+            audioStatus.textContent = 'Music: Off';
+            audioToggle.style.background = '#0071e3';
+            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
           } catch (e) {
             console.error('Audio stop failed:', e);
           }
-          audioStatus.textContent = 'Music: Off';
-          audioToggle.style.background = '#0071e3';
-          document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
         }
       });
 
@@ -613,8 +614,14 @@
       // Unlock audio on first interaction
       document.body.addEventListener('click', function unlockAudio() {
         if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
-          bgMusic.play().catch(() => console.log('Audio unlock failed'));
-          bgMusic.stop();
+          bgMusic.play().then(() => {
+            window.audioPlaying = true;
+            audioStatus.textContent = 'Music: On';
+            audioToggle.style.background = '#34c759';
+            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
+            windSound.play();
+            ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
+          }).catch(err => console.log('Audio unlock failed:', err));
         }
         document.body.removeEventListener('click', unlockAudio);
       }, { once: true });
