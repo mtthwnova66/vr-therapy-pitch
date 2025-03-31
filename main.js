@@ -1,8 +1,21 @@
 // ***** BEGIN MAIN.JS *****
-// This function builds the entire photorealistic scene with a VR headset entrance.
-// It is invoked only when the user presses Level 1.
 window.initLevel1 = function() {
   console.log('Initializing photorealistic Three.js scene...');
+
+  // Added voice feedback using SpeechSynthesis API for Level 1
+  if ('speechSynthesis' in window) {
+    var voices = speechSynthesis.getVoices();
+    // Attempt to select a female voice (if available)
+    var femaleVoice = voices.find(function(voice) {
+      return voice.name.toLowerCase().includes("female");
+    });
+    var utterance = new SpeechSynthesisUtterance("you are looking at a black spider in a jar");
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+    utterance.rate = 1;
+    speechSynthesis.speak(utterance);
+  }
 
   // Get the container element (ensure your index.html contains,
   // e.g., <div id="arachnophobia-demo" class="level-container"></div>)
