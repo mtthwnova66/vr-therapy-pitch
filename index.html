@@ -4,278 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
-  
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
-  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
-  <meta name="author" content="Synaeon">
-  <meta property="og:title" content="Synaeon - AI-Powered VR Therapy">
-  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://synaeon.com/">
-  <meta name="twitter:card" content="summary_large_image">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="syneon_image.png">
-  <link rel="apple-touch-icon" href="syneon_image.png">
-  
-  <!-- Preconnect to resources -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://github.com">
-  <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="preconnect" href="https://www.youtube.com">
-  <link rel="dns-prefetch" href="https://www.youtube.com">
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Three.js and OrbitControls -->
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-
   <style>
-    :root {
-      --primary: #0071e3;
-      --primary-dark: #005bb5;
-      --primary-light: #47a0ff;
-      --accent: #ffc107;
-      --accent-dark: #e6a800;
-      --accent-light: #ffdb66;
-      --success: #34c759;
-      --bg-white: #ffffff;
-      --bg-light: #f5f5f7;
-      --bg-dark: #000000;
-      --text-primary: #1d1d1f;
-      --text-secondary: #222222;
-      --text-light: #f5f5f7;
-      --border-light: rgba(0,0,0,0.1);
-      --card-shadow: 0 12px 24px rgba(0,0,0,0.08);
-      --transition-fast: 0.2s ease;
-      --transition: 0.3s ease;
-      --transition-slow: 0.5s ease;
-      --container-width: 1200px;
-      --radius-sm: 8px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-      --space-xs: 4px;
-      --space-sm: 8px;
-      --space-md: 16px;
-      --space-lg: 24px;
-      --space-xl: 32px;
-      --space-xxl: 48px;
-      --team-width: 350px;
-    }
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    html { scroll-behavior: smooth; font-size: 16px; }
-
-    body { margin: 0; background: #000000; font-family: sans-serif; }
-    .level-container { width: 100%; height: 600px; position: relative; margin-bottom: 2rem; display: none; }
-    #level-buttons { text-align: center; margin-bottom: 1.5rem; }
-    #level-buttons button {
-      background-color: #0071e3;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin: 0 10px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #level-buttons button:hover { background-color: #005bb5; }
-
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin: 0;
       background: linear-gradient(135deg, #0a0a23, #1a1a3d);
-      color: var(--text-light);
-      line-height: 1.6;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
       overflow-x: hidden;
+    }
+    #immersive-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      opacity: 0.4; /* Subtle backdrop */
+    }
+    .container {
       position: relative;
-      transition: background var(--transition);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      text-align: center;
     }
-    
-    a { text-decoration: none; color: var(--primary-light); transition: color var(--transition-fast), transform var(--transition-fast); position: relative; }
-    a:hover { color: var(--accent-light); }
-    a:focus, button:focus { outline: 2px solid var(--primary); outline-offset: 3px; }
-    
-    h1 { font-size: 3rem; font-weight: 700; letter-spacing: -0.025em; margin-bottom: var(--space-lg); background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; line-height: 1.2; }
-    h2 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: var(--space-lg); color: var(--text-light); }
-    h3 { font-size: 1.75rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-light); }
-    p { font-size: 1.125rem; line-height: 1.7; color: rgba(255, 255, 255, 0.9); margin-bottom: var(--space-lg); font-weight: 400; }
-    
-    ul { list-style-type: none; margin: var(--space-xl) auto; max-width: 600px; padding: 0; text-align: left; }
-    li { font-size: 1.125rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; padding-left: 25px; position: relative; text-align: left; font-weight: 400; }
-    li:before { content: ""; position: absolute; left: 10px; top: 10px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-light); }
-    
-    .fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 1s forwards; will-change: opacity, transform; }
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-    .delay-1 { animation-delay: 0.5s; }
-    .delay-2 { animation-delay: 1s; }
-    .delay-3 { animation-delay: 1.5s; }
-    
-    .btn { transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); position: relative; overflow: hidden; }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15); }
-    .btn:active { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-    
-    .card { background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); padding: var(--space-xl); box-shadow: var(--card-shadow); transition: transform var(--transition), box-shadow var(--transition); border: 1px solid rgba(255, 255, 255, 0.1); height: 100%; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2); }
-    
-    .navbar { position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 10, 35, 0.9); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: center; border-bottom: 0.5px solid rgba(255, 255, 255, 0.1); z-index: 1000; animation: fadeInDown 1s forwards; }
-    .nav-links { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
-    .navbar a { font-size: 15px; font-weight: 400; padding: 10px 15px; letter-spacing: 1px; transition: color 0.3s ease, transform 0.2s ease; color: var(--text-light); }
-    .navbar a:hover { color: var(--accent-light); transform: translateY(-2px); }
-    
-    .hamburger { display: none; cursor: pointer; width: 30px; height: 20px; position: relative; margin-left: auto; }
-    .hamburger span { display: block; position: absolute; height: 2px; width: 100%; background: var(--text-light); border-radius: 2px; opacity: 1; left: 0; transform: rotate(0deg); transition: .25s ease-in-out; }
-    .hamburger span:nth-child(1) { top: 0px; }
-    .hamburger span:nth-child(2), .hamburger span:nth-child(3) { top: 9px; }
-    .hamburger span:nth-child(4) { top: 18px; }
-    .hamburger.open span:nth-child(1) { top: 9px; width: 0%; left: 50%; }
-    .hamburger.open span:nth-child(2) { transform: rotate(45deg); }
-    .hamburger.open span:nth-child(3) { transform: rotate(-45deg); }
-    .hamburger.open span:nth-child(4) { top: 9px; width: 0%; left: 50%; }
-    
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    
-    .container { max-width: 1200px; margin: 140px auto 80px; padding: 40px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s ease; backdrop-filter: blur(5px); position: relative; z-index: 10; }
-    
-    .hero-section { margin-bottom: 60px; text-align: center; }
-    .hero-logo { margin-bottom: 20px; display: flex; justify-content: center; }
-    .hero-logo img { max-width: 150px; width: 150px; height: auto; margin-bottom: 20px; transition: transform 0.3s ease; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
-    .hero-logo img:hover { transform: scale(1.05); }
-    
-    .intro-video, .demo-video { margin: var(--space-xxl) 0; position: relative; width: 100%; overflow: hidden; }
-    iframe { max-width: 100%; border: none; border-radius: 8px; margin-top: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); aspect-ratio: 16/9; width: 100%; height: 500px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    iframe:hover { transform: scale(1.01); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-    
-    .section { padding: 60px 20px; position: relative; text-align: center; }
-    .section:last-child { border-bottom: none; }
-    .dark-section { background-color: rgba(0, 0, 0, 0.8); }
-    .dark-section h2, .dark-section p { color: var(--text-light); }
-    .dark-section li { color: rgba(255, 255, 255, 0.9); }
-    .dark-section li:before { background: var(--accent-light); }
-    .section p { text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; }
-    
-    .team-members { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px; gap: 40px; }
-    .team-member { flex: 0 1 var(--team-width); max-width: var(--team-width); margin-bottom: 40px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .team-member img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2)); }
-    .razvi-img { object-fit: cover; object-position: 50% 55%; }
-    .team-member img:hover { transform: scale(1.05); }
-    .team-member h3 { font-size: 1.5rem; margin-bottom: 5px; }
-    .team-member p { font-size: 0.95rem; line-height: 1.4; }
-    .role { font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 10px; font-weight: 600; }
-    
-    .download-btn { display: inline-block; background: var(--primary-light); color: #fff !important; padding: 14px 28px; margin: 20px 0; border-radius: 8px; text-transform: uppercase; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3); position: relative; overflow: hidden; z-index: 1; }
-    .download-btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 113, 227, 0.5); color: #fff !important; text-decoration: none; }
-    .download-btn:active { transform: translateY(0); box-shadow: 0 4px 8px rgba(0, 113, 227, 0.3); }
-    
-    .contact-section { text-align: center; }
-    .contact-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; max-width: 800px; margin: 0 auto; }
-    .contact-email { flex: 0 1 var(--team-width); max-width: var(--team-width); margin: 10px 0; }
-    .contact-email h3 { font-size: 1.5rem; margin-bottom: 5px; }
-    .contact-email p { font-size: 0.95rem; line-height: 1.4; }
-    .contact-email a { display: inline-block; position: relative; overflow: hidden; }
-    .contact-email a:after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background-color: var(--accent-light); transform: scaleX(0); transform-origin: right; transition: transform 0.3s ease; }
-    .contact-email a:hover:after { transform: scaleX(1); transform-origin: left; }
-    
-    #back-to-top { position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); color: #fff; border: none; padding: 12px 15px; border-radius: 50px; cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 1000; }
-    #back-to-top.show { opacity: 1; visibility: visible; }
-    #back-to-top:hover { background: var(--primary-light); transform: translateY(-3px); }
-    
-    .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); z-index: 1010; transition: width 0.1s; }
-    
-    .footer { background: rgba(0, 0, 0, 0.9); color: var(--text-light); padding: var(--space-xxl) 0; text-align: center; }
-    .footer-container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-    .footer-links { display: flex; justify-content: center; gap: var(--space-lg); margin: var(--space-lg) 0; flex-wrap: wrap; }
-    .footer-links a { color: rgba(255, 255, 255, 0.7); transition: color var(--transition-fast); }
-    .footer-links a:hover { color: var(--accent-light); }
-    .copyright { font-size: 0.875rem; color: rgba(255, 255, 255, 0.5); text-align: center; }
-    
-    .tech-symbol { position: fixed; border-radius: 50%; z-index: -1; filter: blur(30px); animation: pulse 8s infinite ease-in-out; will-change: transform, opacity; }
-    @keyframes pulse { 0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; } 50% { transform: translate(10px, -10px) scale(1.15) rotate(5deg); opacity: 1; } }
-    #tech-symbol-1 { width: 150px; height: 150px; background: radial-gradient(circle, rgba(0,113,227,0.4), rgba(0,113,227,0) 70%); top: -50px; left: -50px; }
-    #tech-symbol-2 { width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,223,150,0.4), rgba(255,223,150,0) 70%); bottom: -70px; right: -70px; }
-    #tech-symbol-3 { width: 100px; height: 100px; background: radial-gradient(circle, rgba(76,175,80,0.4), rgba(76,175,80,0) 70%); top: 20%; right: -50px; }
-    
-    #arachnophobia-demo, #arachnophobia-level2 { width: 100%; height: 600px; border-radius: 12px; overflow: hidden; background-color: rgba(255, 255, 255, 0.05); position: relative; z-index: 1; }
-    #loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255, 255, 255, 0.7); font-size: 1rem; }
-    
-    @media screen and (max-width: 1280px) { .container { max-width: 90%; padding: 35px; } }
-    @media screen and (max-width: 992px) {
-      .container { padding: 30px; margin: 120px auto 60px; }
-      .navbar { padding: 15px 20px; }
-      h1 { font-size: 2.5rem; }
-      h2 { font-size: 2rem; }
-      .team-members { flex-direction: column; align-items: center; }
-      .team-member { flex: 0 1 100%; max-width: 400px; }
-      .contact-email { flex: 0 1 100%; max-width: 400px; }
-      iframe { height: 400px; }
-      #arachnophobia-demo, #arachnophobia-level2 { height: 500px; }
+    h1 { font-size: 2rem; }
+    p { font-size: 1.2rem; }
+    #audio-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 15px;
+      border-radius: 30px;
     }
-    @media screen and (max-width: 768px) {
-      .container { padding: 25px; margin: 100px auto 40px; }
-      .navbar { padding: 12px 20px; justify-content: space-between; }
-      .hamburger { display: block; }
-      .nav-links { position: fixed; top: 60px; left: 0; right: 0; background: rgba(10, 10, 35, 0.95); flex-direction: column; align-items: center; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: translateY(-150%); transition: transform 0.3s ease; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-      .nav-links.open { transform: translateY(0); }
-      .navbar a { padding: 15px; font-size: 16px; width: 100%; text-align: center; }
-      h1 { font-size: 2rem; }
-      h2 { font-size: 1.75rem; }
-      .section { padding: 40px 15px; }
-      .hero-logo img { max-width: 120px; width: 120px; }
-      iframe { height: 350px; }
-      #arachnophobia-demo, #arachnophobia-level2 { height: 400px; }
-      #back-to-top { bottom: 20px; right: 20px; padding: 10px 13px; }
+    #audio-toggle {
+      background: #0071e3;
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    @media screen and (max-width: 576px) {
-      .container { padding: 20px; margin: 80px auto 30px; border-radius: 10px; }
-      .navbar { padding: 10px 15px; }
-      .navbar a { padding: 12px 0; font-size: 15px; }
-      h1 { font-size: 1.75rem; margin-bottom: var(--space-md); }
-      h2 { font-size: 1.5rem; margin-bottom: var(--space-md); }
-      h3 { font-size: 1.25rem; }
-      p, li { font-size: 1rem; margin-bottom: var(--space-md); }
-      .hero-logo img { max-width: 100px; width: 100px; }
-      .section { padding: 30px 15px; }
-      iframe { height: 200px; }
-      #arachnophobia-demo, #arachnophobia-level2 { height: 300px; }
-      .download-btn { padding: 10px 20px; font-size: 0.9rem; }
-      ul { margin: var(--space-lg) auto; }
-      li { padding-left: 20px; margin-bottom: 8px; }
-      .team-member img, .razvi-img { width: 100px; height: 100px; }
-      #back-to-top { bottom: 15px; right: 15px; padding: 8px 12px; }
-    }
-
-    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto; opacity: 0.4; }
-
-    #audio-controls { position: fixed; bottom: 30px; left: 30px; z-index: 1000; display: flex; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); transition: all 0.3s ease; opacity: 0.8; }
-    #audio-controls:hover { opacity: 1; transform: scale(1.05); }
-    #audio-toggle { background: var(--primary-light); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: all 0.2s ease; }
-    #audio-toggle:hover { background: var(--primary-dark); transform: scale(1.1); }
-    #audio-toggle svg { width: 20px; height: 20px; transition: transform 0.2s ease; }
-    #audio-toggle:hover svg { transform: scale(1.1); }
-    .audio-status { font-size: 14px; margin-left: 12px; color: var(--text-light); font-weight: 500; }
-
-    @media screen and (max-width: 768px) {
-      #audio-controls { bottom: 20px; left: 20px; padding: 6px 12px; }
-      .audio-status { display: none; }
-    }
-    @media screen and (max-width: 576px) {
-      #audio-toggle { width: 35px; height: 35px; }
-      #audio-toggle svg { width: 18px; height: 18px; }
+    #audio-toggle svg { width: 20px; height: 20px; }
+    .audio-status {
+      margin-left: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <canvas id="immersive-canvas"></canvas>
-
   <div id="audio-controls">
     <button id="audio-toggle" aria-label="Toggle Background Music">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -285,488 +74,139 @@
     </button>
     <span class="audio-status">Music: Off</span>
   </div>
-
-  <div class="scroll-progress" id="scroll-progress"></div>
-  <div class="tech-symbol" id="tech-symbol-1"></div>
-  <div class="tech-symbol" id="tech-symbol-2"></div>
-  <div class="tech-symbol" id="tech-symbol-3"></div>
-  <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
-  
-  <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
-    <div class="hamburger" id="hamburger-menu" aria-label="Menu Toggle" role="button" tabindex="0" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <div class="nav-links" id="nav-links">
-      <a href="#about">About</a>
-      <a href="#problem">The Problem</a>
-      <a href="#solution">Our Solution</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#technology">Technology</a>
-      <a href="#try-it-yourself">Try It Yourself</a>
-      <a href="#market">Market</a>
-      <a href="#business">Business Model</a>
-      <a href="#team">Team</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
-  
-  <main class="container fade-in" id="pitch-content" role="main">
-    <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
-      <div class="hero-logo">
-        <img src="syneon_image.png" alt="Synaeon Logo" width="150" height="auto" loading="eager">
-      </div>
-      <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
-      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-      <div class="intro-video fade-in delay-2">
-        <h2>Who Are We? What's Our Mission?</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="demo-video fade-in delay-3">
-        <h2>Demo</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-      </div>
-    </section>
-    
-    <section class="section fade-in" id="about" aria-labelledby="about-title">
-      <h2 id="about-title">About Our Vision</h2>
-      <p>Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.</p>
-    </section>
-    
-    <section class="section fade-in" id="problem" aria-labelledby="problem-title">
-      <h2 id="problem-title">The Problem – Therapy Needs to Evolve</h2>
-      <p>Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios - limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.</p>
-      <ul>
-        <li>Low immersion and engagement.</li>
-        <li>Inability to adjust therapy in real time.</li>
-        <li>Heavy reliance on imagination or static media.</li>
-      </ul>
-    </section>
-    
-    <section class="section fade-in dark-section" id="solution" aria-labelledby="solution-title">
-      <h2 id="solution-title">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
-      <p>We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback - ensuring every session is personalized for maximum impact.</p>
-      <ul>
-        <li>Dynamic, AI-generated VR environments.</li>
-        <li>Real-time biofeedback integration.</li>
-        <li>Comprehensive clinical control via a dedicated dashboard.</li>
-      </ul>
-    </section>
-    
-    <section class="section fade-in" id="how-it-works" aria-labelledby="how-it-works-title">
-      <h2 id="how-it-works-title">How It Works</h2>
-      <ul>
-        <li>The therapist launches the software on a compatible VR headset.</li>
-        <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-        <li>The AI listens to the therapist's guidance and generates an interactive VR environment.</li>
-        <li>Real-time biofeedback allows for dynamic session adjustments.</li>
-        <li>The system learns and adapts, personalizing future sessions.</li>
-      </ul>
-    </section>
-    
-    <section class="section fade-in" id="technology" aria-labelledby="technology-title">
-      <h2 id="technology-title">Technology</h2>
-      <p>Leveraging instantaneous speech-to-3D generative AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.</p>
-    </section>
-    
-    <section class="section fade-in" id="try-it-yourself">
-      <h2 id="try-title">Try It Yourself – Arachnophobia Simulation Experience</h2>
-      <p>This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom.</p>
-      <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
-      <div id="level-buttons">
-        <button onclick="showLevel('level1')">Level 1</button>
-        <button onclick="showLevel('level2')">Level 2</button>
-      </div>
-      <div id="arachnophobia-demo" class="level-container"></div>
-      <div id="arachnophobia-level2" class="level-container"></div>
-    </section>
-    
-    <section class="section fade-in" id="market" aria-labelledby="market-title">
-      <h2 id="market-title">Market Opportunity</h2>
-      <p>With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.</p>
-    </section>
-    
-    <section class="section fade-in dark-section" id="business" aria-labelledby="business-title">
-      <h2 id="business-title">Business Model & Funding</h2>
-      <p>Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.</p>
-      <ul>
-        <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
-        <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
-        <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
-      </ul>
-    </section>
-    
-    <section class="section fade-in" id="team" aria-labelledby="team-title">
-      <h2 id="team-title">Meet the Team</h2>
-      <div class="team-members">
-        <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
-          <h3>Matei Seleușan</h3>
-          <p class="role">CEO</p>
-          <p>Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.</p>
-        </div>
-        <div class="team-member">
-          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120" loading="lazy">
-          <h3>Răzvan Crețu</h3>
-          <p class="role">CTO</p>
-          <p>Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
-        </div>
-      </div>
-    </section>
-    
-    <section class="section fade-in" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Contact Us</h2>
-      <div class="contact-container">
-        <div class="contact-email">
-          <h3>Matei Seleușan</h3>
-          <p><a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
-        </div>
-        <div class="contact-email">
-          <h3>Răzvan Crețu</h3>
-          <p><a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
-        </div>
-      </div>
-    </section>
+  <main class="container">
+    <h1>AI-Powered VR Therapy</h1>
+    <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
+    <p>Look around—you should see slow-moving, hallucinogenic alien shapes (orbs and tentacles), grass with white dust at the bottom, and hear cosmic music when you toggle the audio button.</p>
   </main>
-  
-  <footer class="footer" role="contentinfo">
-    <div class="footer-container">
-      <div class="footer-links">
-        <a href="#about">About</a>
-        <a href="#problem">Problem</a>
-        <a href="#solution">Solution</a>
-        <a href="#technology">Technology</a>
-        <a href="#team">Team</a>
-        <a href="#contact">Contact</a>
-      </div>
-      <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
-    </div>
-  </footer>
-  
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Synaeon",
-      "url": "https://synaeon.com",
-      "logo": "syneon_image.png",
-      "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
-      "founder": [
-        {"@type": "Person", "name": "Matei Seleușan", "jobTitle": "CEO", "email": "mateiseleusan@gmail.com"},
-        {"@type": "Person", "name": "Răzvan Crețu", "jobTitle": "CTO", "email": "razvanmihaicretu@gmail.com"}
-      ],
-      "foundingDate": "2025",
-      "address": {"@type": "PostalAddress", "addressCountry": "Romania"}
-    }
-  </script>
-  <script>
-    function throttle(func, limit) {
-      let inThrottle;
-      return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-          func.apply(context, args);
-          inThrottle = true;
-          setTimeout(() => inThrottle = false, limit);
-        }
-      };
-    }
-    
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
-        const context = this, args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
-      };
-    }
-    
-    function updateBackToTopButton() {
-      const btn = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) btn.classList.add('show');
-      else btn.classList.remove('show');
-    }
-    
-    function updateScrollProgress() {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById("scroll-progress").style.width = scrolled + "%";
-    }
-    
-    window.addEventListener('scroll', throttle(function() {
-      updateBackToTopButton();
-      updateScrollProgress();
-    }, 100));
-    
-    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { root: null, threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-      
-      document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)').forEach(element => observer.observe(element));
-      updateScrollProgress();
-    });
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      const hamburger = document.getElementById('hamburger-menu');
-      const navLinks = document.getElementById('nav-links');
-      
-      function toggleMenu() {
-        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', !isExpanded);
-        hamburger.classList.toggle('open');
-        navLinks.classList.toggle('open');
-      }
-      
-      hamburger.addEventListener('click', toggleMenu);
-      hamburger.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleMenu();
-        }
-      });
-      
-      document.querySelectorAll('.nav-links a').forEach(item => {
-        item.addEventListener('click', function() {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        });
-      });
-      
-      document.addEventListener('click', function(event) {
-        const isClickInsideMenu = navLinks.contains(event.target);
-        const isClickOnHamburger = hamburger.contains(event.target);
-        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        }
-      });
-    });
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      const images = document.querySelectorAll('img');
-      images.forEach(img => {
-        img.addEventListener('error', function() {
-          console.error(`Failed to load image: ${img.src}`);
-          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
-          img.classList.add('image-load-error');
-        });
-      });
-    });
-    
-    window.addEventListener('load', function() {
-      const teamImages = document.querySelectorAll('.team-member img');
-      teamImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (src) {
-          const preloadLink = document.createElement('link');
-          preloadLink.href = src;
-          preloadLink.rel = 'preload';
-          preloadLink.as = 'image';
-          document.head.appendChild(preloadLink);
-        }
-      });
-    });
-    
-    function setMobileHeight() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    
-    window.addEventListener('resize', debounce(setMobileHeight, 100));
-    window.addEventListener('orientationchange', setMobileHeight);
-    setMobileHeight();
-  </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-
   <script>
-    const originalShowLevel = window.showLevel;
-    window.showLevel = function(level) {
-      if (window.audioPlaying) document.getElementById('audio-toggle').click();
-      if (originalShowLevel) originalShowLevel(level);
-      else {
-        document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-        document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
-        if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
-        if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-      }
-    };
-
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded - initializing...');
+
+      // Canvas Setup
       const canvas = document.getElementById('immersive-canvas');
       const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Canvas context not supported');
+        return;
+      }
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      console.log('Canvas initialized:', canvas.width, 'x', canvas.height);
 
-      window.addEventListener('resize', function() {
+      window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        console.log('Canvas resized:', canvas.width, 'x', canvas.height);
       });
 
-      // Fluid Cosmic Music
-      let bgMusic, cosmicWave, etherealShimmer;
+      // Audio Setup
+      let bgMusic;
       window.audioPlaying = false;
-
       try {
         bgMusic = new Howl({
           src: ['https://freesound.org/data/previews/182/182617_3165007-lq.mp3'], // Deep space drone
           html5: true,
           volume: 0.5,
           loop: true,
-          preload: true
-        });
-
-        cosmicWave = new Howl({
-          src: ['https://freesound.org/data/previews/352/352658_6142149-lq.mp3'], // Pulsing cosmic wave
-          html5: true,
-          volume: 0.4,
-          loop: true,
-          preload: true
-        });
-
-        etherealShimmer = new Howl({
-          src: ['https://freesound.org/data/previews/120/120368_649468-lq.mp3'], // Ethereal shimmer
-          html5: true,
-          volume: 0.3,
-          loop: true,
-          preload: true
+          preload: true,
+          onload: () => console.log('Audio loaded successfully'),
+          onloaderror: (id, err) => console.error('Audio load failed:', err),
+          onplayerror: (id, err) => console.error('Audio play failed:', err)
         });
       } catch (e) {
-        console.error('Audio init failed:', e);
+        console.error('Audio initialization failed:', e);
       }
 
       const audioToggle = document.getElementById('audio-toggle');
       const audioStatus = document.querySelector('.audio-status');
 
-      audioToggle.addEventListener('click', function() {
+      audioToggle.addEventListener('click', () => {
         window.audioPlaying = !window.audioPlaying;
         if (window.audioPlaying) {
           try {
-            if (bgMusic) bgMusic.play();
-            if (cosmicWave) cosmicWave.play();
-            if (etherealShimmer) etherealShimmer.play();
+            bgMusic.play();
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
-            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
+            document.querySelector('.sound-wave').style.opacity = 1;
+            console.log('Music playing');
           } catch (e) {
-            console.error('Playback failed:', e);
+            console.error('Music playback failed:', e);
             window.audioPlaying = false;
             audioStatus.textContent = 'Music: Error';
           }
         } else {
-          try {
-            if (bgMusic) bgMusic.stop();
-            if (cosmicWave) cosmicWave.stop();
-            if (etherealShimmer) etherealShimmer.stop();
-          } catch (e) {
-            console.error('Stop failed:', e);
-          }
+          bgMusic.stop();
           audioStatus.textContent = 'Music: Off';
           audioToggle.style.background = '#0071e3';
-          document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
+          document.querySelector('.sound-wave').style.opacity = 0;
+          console.log('Music stopped');
         }
       });
 
+      // Unlock audio on first interaction (browser policy)
       document.body.addEventListener('click', function unlockAudio() {
         if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
           bgMusic.play().catch(() => {});
           bgMusic.stop();
+          console.log('Audio unlocked');
         }
         document.body.removeEventListener('click', unlockAudio);
       });
 
-      // Hallucinogenic Alien Entities and Grass/Dust
+      // Entities and Grass
       const entities = [];
-      const entityCount = 8;
+      const entityCount = 5;
       const particles = [];
-      const particleCount = 50;
+      const particleCount = 30;
 
       function createEntity() {
-        const type = Math.random() < 0.5 ? 'orb' : 'tentacular';
         return {
           x: Math.random() * canvas.width,
-          y: Math.random() * (canvas.height * 0.8), // Keep above grass
-          size: Math.random() * 60 + 20,
-          speedX: (Math.random() - 0.5) * 0.1, // Slower
+          y: Math.random() * (canvas.height * 0.8),
+          size: Math.random() * 40 + 20,
+          speedX: (Math.random() - 0.5) * 0.1,
           speedY: (Math.random() - 0.5) * 0.1,
           hue: Math.random() * 360,
-          connections: [],
-          morphSpeed: Math.random() * 0.002 + 0.001,
-          noiseOffset: Math.random() * 100,
-          type: type,
-          tendrils: type === 'tentacular' ? Array(4).fill().map(() => ({
-            length: Math.random() * 40 + 20,
+          type: Math.random() < 0.5 ? 'orb' : 'tentacular',
+          tendrils: Math.random() < 0.5 ? null : Array(4).fill().map(() => ({
+            length: Math.random() * 30 + 20,
             angle: Math.random() * Math.PI * 2,
             speed: Math.random() * 0.02 + 0.01
-          })) : [],
-          satellites: type === 'orb' ? [] : null
+          })),
+          satellites: Math.random() >= 0.5 ? null : []
         };
       }
 
       function createParticle() {
         return {
           x: Math.random() * canvas.width,
-          y: canvas.height - (Math.random() * 50), // Start at grass
+          y: canvas.height - (Math.random() * 50),
           size: Math.random() * 2 + 1,
-          speedY: -(Math.random() * 0.3 + 0.1), // Slower ascent
+          speedY: -(Math.random() * 0.3 + 0.1),
           opacity: Math.random() * 0.3 + 0.1
         };
       }
 
-      function initEntities() {
-        for (let i = 0; i < entityCount; i++) {
-          entities.push(createEntity());
-        }
-        for (let i = 0; i < particleCount; i++) {
-          particles.push(createParticle());
-        }
-      }
+      for (let i = 0; i < entityCount; i++) entities.push(createEntity());
+      for (let i = 0; i < particleCount; i++) particles.push(createParticle());
+      console.log('Entities initialized:', entities.length, 'Particles:', particles.length);
 
       function updateEntities(time) {
         entities.forEach(entity => {
           entity.x += entity.speedX;
           entity.y += entity.speedY;
-          entity.hue += 0.5; // Shifting colors for hallucinogenic effect
+          entity.hue += 0.5; // Hallucinogenic color shift
           if (entity.hue > 360) entity.hue -= 360;
 
-          // Boundary wrapping
           if (entity.x < -entity.size) entity.x = canvas.width + entity.size;
           if (entity.x > canvas.width + entity.size) entity.x = -entity.size;
           if (entity.y < -entity.size) entity.y = canvas.height * 0.8 + entity.size;
           if (entity.y > canvas.height * 0.8) entity.y = -entity.size;
 
-          // Connection logic
-          entity.connections = [];
-          entities.forEach(other => {
-            if (entity !== other) {
-              const dx = other.x - entity.x;
-              const dy = other.y - entity.y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              if (distance < 200) {
-                entity.connections.push({ x: other.x, y: other.y, distance });
-              }
-            }
-          });
-
-          // Satellite logic for orbs
-          if (entity.type === 'orb' && Math.random() < 0.02) {
+          if (entity.satellites && Math.random() < 0.02) {
             entity.satellites.push({
               x: entity.x,
               y: entity.y,
@@ -776,18 +216,19 @@
               life: 100
             });
           }
-          entity.satellites = entity.satellites.filter(s => {
-            s.angle += s.speed;
-            s.life--;
-            s.x = entity.x + Math.cos(s.angle) * s.distance;
-            s.y = entity.y + Math.sin(s.angle) * s.distance;
-            return s.life > 0;
-          });
+          if (entity.satellites) {
+            entity.satellites = entity.satellites.filter(s => {
+              s.angle += s.speed;
+              s.life--;
+              s.x = entity.x + Math.cos(s.angle) * s.distance;
+              s.y = entity.y + Math.sin(s.angle) * s.distance;
+              return s.life > 0;
+            });
+          }
 
-          // Tendril animation
-          if (entity.type === 'tentacular') {
+          if (entity.tendrils) {
             entity.tendrils.forEach(t => {
-              t.angle += t.speed * Math.sin(time * entity.morphSpeed);
+              t.angle += t.speed * Math.sin(time * 0.001);
             });
           }
         });
@@ -801,122 +242,76 @@
         });
       }
 
-      function drawGrass() {
+      function drawGrassAndDust() {
         const grassHeight = canvas.height * 0.1;
         const gradient = ctx.createLinearGradient(0, canvas.height - grassHeight, 0, canvas.height);
-        gradient.addColorStop(0, 'rgba(34, 139, 34, 0.3)');
+        gradient.addColorStop(0, 'rgba(34, 139, 34, 0.5)');
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
+        console.log('Grass drawn at:', canvas.height - grassHeight);
 
-        // Subtle noise for texture
-        for (let i = 0; i < canvas.width; i += 5) {
-          const height = grassHeight * (Math.random() * 0.3 + 0.7);
-          ctx.beginPath();
-          ctx.moveTo(i, canvas.height);
-          ctx.lineTo(i, canvas.height - height);
-          ctx.strokeStyle = `rgba(50, 205, 50, ${Math.random() * 0.3 + 0.1})`;
-          ctx.stroke();
-        }
-      }
-
-      function drawEntities(time) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGrass();
-
-        // Dust Particles
         particles.forEach(p => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
           ctx.fill();
         });
+      }
+
+      function drawEntities(time) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrassAndDust();
 
         entities.forEach(entity => {
           ctx.save();
           ctx.translate(entity.x, entity.y);
 
           if (entity.type === 'orb') {
-            // Hallucinogenic Orb
             ctx.beginPath();
-            const points = 16;
-            for (let i = 0; i < points; i++) {
-              const angle = (Math.PI * 2 / points) * i;
-              const noise = Math.sin(time * entity.morphSpeed + entity.noiseOffset + i) * 10;
-              const radius = entity.size + noise;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-              if (i === 0) ctx.moveTo(x, y);
-              else ctx.lineTo(x, y);
-            }
-            ctx.closePath();
-            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, entity.size * 1.5);
+            const radius = entity.size + Math.sin(time * 0.002) * 5;
+            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
             gradient.addColorStop(0, `hsla(${entity.hue}, 90%, 60%, 0.6)`);
             gradient.addColorStop(1, `hsla(${entity.hue + 60}, 90%, 50%, 0)`);
             ctx.fillStyle = gradient;
             ctx.fill();
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = `hsl(${entity.hue}, 90%, 50%)`;
-            ctx.fill();
-            ctx.shadowBlur = 0;
 
-            // Satellites
-            entity.satellites.forEach(s => {
-              ctx.beginPath();
-              ctx.arc(s.x - entity.x, s.y - entity.y, 3, 0, Math.PI * 2);
-              ctx.fillStyle = `hsla(${entity.hue + 30}, 90%, 70%, ${s.life / 100})`;
-              ctx.fill();
-            });
+            if (entity.satellites) {
+              entity.satellites.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x - entity.x, s.y - entity.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${entity.hue + 30}, 90%, 70%, ${s.life / 100})`;
+                ctx.fill();
+              });
+            }
           } else {
-            // Hallucinogenic Tentacular
             entity.tendrils.forEach(t => {
               ctx.beginPath();
               ctx.moveTo(0, 0);
-              const controlX = Math.cos(t.angle) * t.length * 0.5;
-              const controlY = Math.sin(t.angle) * t.length * 0.5;
               const endX = Math.cos(t.angle) * t.length;
               const endY = Math.sin(t.angle) * t.length;
-              ctx.quadraticCurveTo(controlX, controlY, endX, endY);
+              ctx.lineTo(endX, endY);
               ctx.strokeStyle = `hsla(${entity.hue}, 90%, 60%, 0.5)`;
               ctx.lineWidth = entity.size / 15;
               ctx.stroke();
             });
           }
 
-          // Connections
-          entity.connections.forEach(conn => {
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(conn.x - entity.x, conn.y - entity.y);
-            ctx.strokeStyle = `hsla(${entity.hue}, 90%, 60%, ${Math.min(1 - conn.distance / 200, 0.3)})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          });
-
           ctx.restore();
         });
+        console.log('Entities drawn:', entities.length);
       }
 
-      // Animation Loop
       function animate(time) {
         updateEntities(time);
         drawEntities(time);
         requestAnimationFrame(animate);
       }
 
-      initEntities();
       requestAnimationFrame(animate);
+      console.log('Animation started');
     });
   </script>
-  <script>
-    function showLevel(level) {
-      document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-      document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
-      if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
-      if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-    }
-  </script>
-  <script src="main.js"></script>
-  <script src="main_level2.js"></script>
 </body>
 </html>
