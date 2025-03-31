@@ -3,7 +3,11 @@
 function initLevel2() {
   console.log('Initializing Level 2 scene...');
 
-  // --- Minimal Modification 1: Permanently append a voice icon ("🔊") to the Level 2 button ---
+  // --- Added Variables for Voice Control ---
+  var voiceAudio = new Audio('recordinglevel2.mp3');
+  var sceneLoaded = false; // will be set to true when the scene is fully loaded
+
+  // --- Append a permanent voice icon ("🔊") to the Level 2 button ---
   var levelButtons = document.getElementById('level-buttons');
   if (levelButtons) {
     var buttons = levelButtons.getElementsByTagName('button');
@@ -15,18 +19,29 @@ function initLevel2() {
       voiceIcon.style.fontSize = "16px";
       voiceIcon.style.marginLeft = "5px";
       buttons[1].appendChild(voiceIcon);
+
+      // --- Attach click listener to toggle voice playback ---
+      voiceIcon.addEventListener('click', function(event) {
+        event.stopPropagation(); // prevent triggering other button events
+        if (!voiceAudio.paused) {
+          // If audio is playing, shut it off
+          voiceAudio.pause();
+          voiceAudio.currentTime = 0;
+        } else {
+          // Only restart voice if scene is fully loaded
+          if (sceneLoaded) {
+            voiceAudio.play().catch(function(error) {
+              console.error("Error re-playing Level 2 audio:", error);
+            });
+          }
+        }
+      });
     }
   }
 
-  // --- Minimal Modification 2: Play or shut off Level 2 voice recording ---
-  if (window.level2AudioInstance && !window.level2AudioInstance.paused) {
-    // If the voice is already playing, shut it off.
-    window.level2AudioInstance.pause();
-    window.level2AudioInstance.currentTime = 0;
-  } else {
-    // Otherwise, create and play the audio.
-    window.level2AudioInstance = new Audio('recordinglevel2.mp3');
-    window.level2AudioInstance.play().catch(function(error) {
+  // --- Auto-play the Level 2 voice recording on function invocation ---
+  if (voiceAudio.paused) {
+    voiceAudio.play().catch(function(error) {
       console.error("Error playing Level 2 audio:", error);
     });
   }
@@ -220,8 +235,8 @@ function initLevel2() {
     let animationPhase = 0; // 0: Wait, 1: Rotate, 2: Zoom, 3: Inside
     let animationProgress = 0;
     const animationDuration = { 
-      rotate: 3.0,  // seconds for rotation
-      zoom: 1.5,    // seconds for zoom (faster zoom to hide interior)
+      rotate: 3.0,
+      zoom: 1.5,
       transition: 1.5
     };
     let leftEyePosition = new THREE.Vector3();
@@ -236,12 +251,10 @@ function initLevel2() {
         'oculus_quest_vr_headset.glb',
         function(gltf) {
           vrHeadset = gltf.scene;
-          // Set initial orientation so the interior faces the viewer.
           vrHeadset.scale.set(5, 5, 5);
           vrHeadset.position.set(0, 0.8, 0);
           vrHeadset.rotation.set(0, 0, 0);
 
-          // Find the left eye lens for zooming.
           vrHeadset.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -283,13 +296,13 @@ function initLevel2() {
       if (!vrHeadset) return;
       animationProgress += delta;
       switch(animationPhase) {
-        case 0: // Wait period
+        case 0:
           if (animationProgress > 1.5) {
             animationPhase = 1;
             animationProgress = 0;
           }
           break;
-        case 1: // Rotate headset from 0 to Math.PI so left eye is exposed
+        case 1:
           const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
           const easedRotation = easeInOutCubic(rotationProgress);
           vrHeadset.rotation.y = Math.PI * easedRotation;
@@ -298,7 +311,7 @@ function initLevel2() {
             animationProgress = 0;
           }
           break;
-        case 2: // Zoom into the left eye quickly
+        case 2:
           const zoomProgress = Math.min(animationProgress / animationDuration.zoom, 1.0);
           const easedZoom = easeInOutCubic(zoomProgress);
           const leftEyeWorld = new THREE.Vector3();
@@ -312,7 +325,6 @@ function initLevel2() {
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
-          // Reveal mainScene and fade out VR headset during last 30% of zoom.
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -336,7 +348,6 @@ function initLevel2() {
           }
           break;
         case 3:
-          // VR animation complete; mainScene is active.
           break;
       }
     }
@@ -543,6 +554,9 @@ function initLevel2() {
         renderer.render(scene, camera);
       }
       animate();
+
+      // --- Set sceneLoaded to true once the animation loop has started ---
+      sceneLoaded = true;
 
       // ------------------------------
       // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize Handling
