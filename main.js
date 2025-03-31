@@ -4,6 +4,32 @@
 window.initLevel1 = function() {
   console.log('Initializing photorealistic Three.js scene...');
 
+  // --- Minimal Modification for Level 1 ---
+  // Permanently append a voice icon ("🔊") to the Level 1 button (assumed to be the first button)
+  var levelButtons = document.getElementById('level-buttons');
+  if (levelButtons) {
+    var buttons = levelButtons.getElementsByTagName('button');
+    if (buttons.length >= 1 && !buttons[0].querySelector('.voice-icon')) {
+      var voiceIcon = document.createElement('span');
+      voiceIcon.className = 'voice-icon';
+      voiceIcon.textContent = " 🔊";
+      voiceIcon.style.fontSize = "16px";
+      voiceIcon.style.marginLeft = "5px";
+      buttons[0].appendChild(voiceIcon);
+    }
+  }
+  // Handle Level 1 audio playback: if already playing, stop it; otherwise, play recordinglevel1.mp3.
+  if (window.level1AudioInstance && !window.level1AudioInstance.paused) {
+    window.level1AudioInstance.pause();
+    window.level1AudioInstance.currentTime = 0;
+  } else {
+    window.level1AudioInstance = new Audio('recordinglevel1.mp3');
+    window.level1AudioInstance.play().catch(function(error) {
+      console.error("Error playing Level 1 audio:", error);
+    });
+  }
+  // --- End Minimal Modification ---
+
   // Get the container element (ensure your index.html contains,
   // e.g., <div id="arachnophobia-demo" class="level-container"></div>)
   const container = document.getElementById('arachnophobia-demo');
@@ -272,7 +298,7 @@ window.initLevel1 = function() {
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
-          // Reveal main scene and fade out VR headset during last 30% of zoom.
+          // Reveal mainScene and fade out VR headset during last 30% of zoom.
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -296,7 +322,7 @@ window.initLevel1 = function() {
           }
           break;
         case 3:
-          // VR animation complete; main scene is active.
+          // VR animation complete; mainScene is active.
           break;
       }
     }
@@ -309,7 +335,7 @@ window.initLevel1 = function() {
     // ==============================
     // 7. Main Photorealistic Scene (Group: mainScene)
     // All photorealistic objects (table, jar, lid, spider, dust) are added to mainScene,
-    // which remains hidden until the VR entrance completes.
+    // which remains hidden until the VR entrance animation completes.
     // ==============================
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
