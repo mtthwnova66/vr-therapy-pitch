@@ -16,8 +16,8 @@
   <meta name="twitter:card" content="summary_large_image">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg">
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg">
+  <link rel="icon" type="image/png" href="syneon_image.png">
+  <link rel="apple-touch-icon" href="syneon_image.png">
   
   <!-- Preconnect to resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,7 +148,7 @@
     
     .hero-section { margin-bottom: 60px; text-align: center; }
     .hero-logo { margin-bottom: 20px; display: flex; justify-content: center; }
-    .hero-logo img { max-width: 200px; width: 200px; height: auto; margin-bottom: 20px; transition: transform 0.3s ease; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
+    .hero-logo img { max-width: 150px; width: 150px; height: auto; margin-bottom: 20px; transition: transform 0.3s ease; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
     .hero-logo img:hover { transform: scale(1.05); }
     
     .intro-video, .demo-video { margin: var(--space-xxl) 0; position: relative; width: 100%; overflow: hidden; }
@@ -220,7 +220,7 @@
       #arachnophobia-demo, #arachnophobia-level2 { height: 500px; }
     }
     @media screen and (max-width: 768px) {
-      .container { padding: 25px; border-radius: 12px; margin: 100px auto 40px; }
+      .container { padding: 25px; margin: 100px auto 40px; }
       .navbar { padding: 12px 20px; justify-content: space-between; }
       .hamburger { display: block; }
       .nav-links { position: fixed; top: 60px; left: 0; right: 0; background: rgba(10, 10, 35, 0.95); flex-direction: column; align-items: center; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: translateY(-150%); transition: transform 0.3s ease; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
@@ -229,7 +229,7 @@
       h1 { font-size: 2rem; }
       h2 { font-size: 1.75rem; }
       .section { padding: 40px 15px; }
-      .hero-logo img { max-width: 150px; width: 150px; }
+      .hero-logo img { max-width: 120px; width: 120px; }
       iframe { height: 350px; }
       #arachnophobia-demo, #arachnophobia-level2 { height: 400px; }
       #back-to-top { bottom: 20px; right: 20px; padding: 10px 13px; }
@@ -242,7 +242,7 @@
       h2 { font-size: 1.5rem; margin-bottom: var(--space-md); }
       h3 { font-size: 1.25rem; }
       p, li { font-size: 1rem; margin-bottom: var(--space-md); }
-      .hero-logo img { max-width: 120px; width: 120px; }
+      .hero-logo img { max-width: 100px; width: 100px; }
       .section { padding: 30px 15px; }
       iframe { height: 200px; }
       #arachnophobia-demo, #arachnophobia-level2 { height: 300px; }
@@ -253,7 +253,7 @@
       #back-to-top { bottom: 15px; right: 15px; padding: 8px 12px; }
     }
 
-    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto; opacity: 0.7; }
+    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto; opacity: 0.4; }
 
     #audio-controls { position: fixed; bottom: 30px; left: 30px; z-index: 1000; display: flex; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); transition: all 0.3s ease; opacity: 0.8; }
     #audio-controls:hover { opacity: 1; transform: scale(1.05); }
@@ -316,7 +316,7 @@
   <main class="container fade-in" id="pitch-content" role="main">
     <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
       <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" width="200" height="auto" loading="eager">
+        <img src="syneon_image.png" alt="Synaeon Logo" width="150" height="auto" loading="eager">
       </div>
       <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
       <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
@@ -452,7 +452,7 @@
       "@type": "Organization",
       "name": "Synaeon",
       "url": "https://synaeon.com",
-      "logo": "https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg",
+      "logo": "syneon_image.png",
       "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
       "founder": [
         {"@type": "Person", "name": "Matei Seleușan", "jobTitle": "CEO", "email": "mateiseleusan@gmail.com"},
@@ -620,31 +620,31 @@
         canvas.height = window.innerHeight;
       });
 
-      // Audio Setup - Interplanetary Sci-Fi
-      let bgMusic, synthLayer, cosmicAmbience;
+      // Audio Setup - Ethereal Music of the Spheres
+      let bgMusic, etherealLayer, ambientSwell;
       window.audioPlaying = false;
 
       try {
         bgMusic = new Howl({
-          src: ['https://freesound.org/data/previews/316/316847_4939433-lq.mp3'], // Cosmic ambient synth
+          src: ['https://freesound.org/data/previews/352/352651_6142149-lq.mp3'], // Cosmic hum
           html5: true,
           volume: 0.5,
           loop: true,
           preload: true
         });
 
-        synthLayer = new Howl({
-          src: ['https://freesound.org/data/previews/171/171604_3026642-lq.mp3'], // Sci-fi arpeggio
+        etherealLayer = new Howl({
+          src: ['https://freesound.org/data/previews/411/411497_5121236-lq.mp3'], // Harp-like celestial tones
           html5: true,
-          volume: 0.3,
+          volume: 0.4,
           loop: true,
           preload: true
         });
 
-        cosmicAmbience = new Howl({
-          src: ['https://freesound.org/data/previews/242/242501_4138468-lq.mp3'], // Deep space hum
+        ambientSwell = new Howl({
+          src: ['https://freesound.org/data/previews/456/456446_9158612-lq.mp3'], // Gentle swelling pad
           html5: true,
-          volume: 0.4,
+          volume: 0.3,
           loop: true,
           preload: true
         });
@@ -660,8 +660,8 @@
         if (window.audioPlaying) {
           try {
             if (bgMusic) bgMusic.play();
-            if (synthLayer) synthLayer.play();
-            if (cosmicAmbience) cosmicAmbience.play();
+            if (etherealLayer) etherealLayer.play();
+            if (ambientSwell) ambientSwell.play();
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
@@ -673,8 +673,8 @@
         } else {
           try {
             if (bgMusic) bgMusic.stop();
-            if (synthLayer) synthLayer.stop();
-            if (cosmicAmbience) cosmicAmbience.stop();
+            if (etherealLayer) etherealLayer.stop();
+            if (ambientSwell) ambientSwell.stop();
           } catch (e) {
             console.error('Stop failed:', e);
           }
@@ -692,27 +692,45 @@
         document.body.removeEventListener('click', unlockAudio);
       });
 
-      // Sci-Fi Alien Entities
+      // Sci-Fi Alien Entities and Grass/Dust
       const entities = [];
       const entityCount = 8;
+      const particles = [];
+      const particleCount = 50;
 
       function createEntity() {
+        const type = Math.random() < 0.5 ? 'orb' : 'tentacle';
         return {
           x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 50 + 30,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
+          y: Math.random() * (canvas.height * 0.8), // Keep above grass
+          size: Math.random() * 60 + 20, // Varied sizes
+          speedX: (Math.random() - 0.5) * 0.2,
+          speedY: (Math.random() - 0.5) * 0.2,
           hue: Math.random() * 360,
           connections: [],
           morphSpeed: Math.random() * 0.002 + 0.001,
-          noiseOffset: Math.random() * 100
+          noiseOffset: Math.random() * 100,
+          type: type,
+          tentacleLength: type === 'tentacle' ? Math.random() * 30 + 20 : 0
+        };
+      }
+
+      function createParticle() {
+        return {
+          x: Math.random() * canvas.width,
+          y: canvas.height,
+          size: Math.random() * 3 + 1,
+          speedY: -(Math.random() * 0.5 + 0.2),
+          opacity: 0.3
         };
       }
 
       function initEntities() {
         for (let i = 0; i < entityCount; i++) {
           entities.push(createEntity());
+        }
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(createParticle());
         }
       }
 
@@ -724,8 +742,8 @@
           // Boundary wrapping
           if (entity.x < -entity.size) entity.x = canvas.width + entity.size;
           if (entity.x > canvas.width + entity.size) entity.x = -entity.size;
-          if (entity.y < -entity.size) entity.y = canvas.height + entity.size;
-          if (entity.y > canvas.height + entity.size) entity.y = -entity.size;
+          if (entity.y < -entity.size) entity.y = canvas.height * 0.8 + entity.size;
+          if (entity.y > canvas.height * 0.8) entity.y = -entity.size;
 
           // Connection logic
           entity.connections = [];
@@ -740,39 +758,81 @@
             }
           });
         });
+
+        particles.forEach(particle => {
+          particle.y += particle.speedY;
+          if (particle.y < canvas.height * 0.8) {
+            particle.x = Math.random() * canvas.width;
+            particle.y = canvas.height;
+            particle.speedY = -(Math.random() * 0.5 + 0.2);
+          }
+        });
       }
 
       function drawEntities(time) {
+        // Grass
+        const grassHeight = canvas.height * 0.1;
+        const grassGradient = ctx.createLinearGradient(0, canvas.height - grassHeight, 0, canvas.height);
+        grassGradient.addColorStop(0, 'rgba(34, 139, 34, 0.3)');
+        grassGradient.addColorStop(1, 'rgba(34, 139, 34, 0)');
+        ctx.fillStyle = grassGradient;
+        ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
+
+        // Dust Particles
+        particles.forEach(particle => {
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+          ctx.fill();
+        });
+
+        // Entities
         entities.forEach(entity => {
           ctx.save();
           ctx.translate(entity.x, entity.y);
 
-          // Fluid, morphing shape
-          ctx.beginPath();
-          const points = 16;
-          for (let i = 0; i < points; i++) {
-            const angle = (Math.PI * 2 / points) * i;
-            const noise = Math.sin(time * entity.morphSpeed + entity.noiseOffset + i) * 20;
-            const radius = entity.size + noise;
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.quadraticCurveTo(
-              Math.cos(angle - Math.PI / points) * (entity.size + noise * 0.7),
-              Math.sin(angle - Math.PI / points) * (entity.size + noise * 0.7),
-              x, y
-            );
+          if (entity.type === 'orb') {
+            // Orb with tendrils and satellites
+            ctx.beginPath();
+            const points = 16;
+            for (let i = 0; i < points; i++) {
+              const angle = (Math.PI * 2 / points) * i;
+              const noise = Math.sin(time * entity.morphSpeed + entity.noiseOffset + i) * 10;
+              const radius = entity.size + noise;
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+              if (i === 0) ctx.moveTo(x, y);
+              else ctx.quadraticCurveTo(
+                Math.cos(angle - Math.PI / points) * (entity.size + noise * 0.7),
+                Math.sin(angle - Math.PI / points) * (entity.size + noise * 0.7),
+                x, y
+              );
+            }
+            ctx.closePath();
+            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, entity.size * 1.5);
+            gradient.addColorStop(0, `hsla(${entity.hue}, 80%, 70%, 0.6)`);
+            gradient.addColorStop(1, `hsla(${entity.hue}, 80%, 50%, 0.1)`);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = `hsl(${entity.hue}, 80%, 50%)`;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          } else {
+            // Tentacular form
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+              const angle = (Math.PI / 2) + (i - 2) * 0.3;
+              const length = entity.tentacleLength + Math.sin(time * entity.morphSpeed + i) * 10;
+              const x = Math.cos(angle) * length;
+              const y = Math.sin(angle) * length;
+              ctx.moveTo(0, 0);
+              ctx.quadraticCurveTo(x * 0.5, y * 0.5, x, y);
+            }
+            ctx.strokeStyle = `hsla(${entity.hue}, 80%, 60%, 0.6)`;
+            ctx.lineWidth = entity.size / 10;
+            ctx.stroke();
           }
-          ctx.closePath();
-          const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, entity.size * 1.5);
-          gradient.addColorStop(0, `hsla(${entity.hue}, 80%, 70%, 0.8)`);
-          gradient.addColorStop(1, `hsla(${entity.hue}, 80%, 50%, 0)`);
-          ctx.fillStyle = gradient;
-          ctx.fill();
-          ctx.shadowBlur = 20;
-          ctx.shadowColor = `hsl(${entity.hue}, 80%, 50%)`;
-          ctx.fill();
-          ctx.shadowBlur = 0;
 
           // Connections
           entity.connections.forEach(conn => {
@@ -781,8 +841,8 @@
             const dx = conn.x - entity.x;
             const dy = conn.y - entity.y;
             ctx.quadraticCurveTo(dx * 0.5, dy * 0.5, dx, dy);
-            ctx.strokeStyle = `hsla(${entity.hue}, 80%, 60%, ${1 - conn.distance / 200})`;
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = `hsla(${entity.hue}, 80%, 60%, ${Math.min(1 - conn.distance / 200, 0.3)})`;
+            ctx.lineWidth = 1;
             ctx.stroke();
           });
 
@@ -817,8 +877,8 @@
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < 150) {
               const angle = Math.atan2(dy, dx);
-              entity.speedX -= Math.cos(angle) * 0.05;
-              entity.speedY -= Math.sin(angle) * 0.05;
+              entity.speedX -= Math.cos(angle) * 0.02;
+              entity.speedY -= Math.sin(angle) * 0.02;
             }
           });
         }
@@ -826,8 +886,8 @@
 
       canvas.addEventListener('mouseup', () => {
         if (draggedEntity) {
-          draggedEntity.speedX = (Math.random() - 0.5) * 0.5;
-          draggedEntity.speedY = (Math.random() - 0.5) * 0.5;
+          draggedEntity.speedX = (Math.random() - 0.5) * 0.2;
+          draggedEntity.speedY = (Math.random() - 0.5) * 0.2;
           draggedEntity = null;
         }
       });
@@ -858,8 +918,8 @@
 
       canvas.addEventListener('touchend', () => {
         if (draggedEntity) {
-          draggedEntity.speedX = (Math.random() - 0.5) * 0.5;
-          draggedEntity.speedY = (Math.random() - 0.5) * 0.5;
+          draggedEntity.speedX = (Math.random() - 0.5) * 0.2;
+          draggedEntity.speedY = (Math.random() - 0.5) * 0.2;
           draggedEntity = null;
         }
       });
