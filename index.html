@@ -1,4 +1,200 @@
-<!DOCTYPE html>
+<!-- Structured Data for SEO -->
+  <script>
+    // Throttle function to limit how often certain events fire
+    function throttle(func, limit) {
+      let inThrottle;
+      return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
+        }
+      };
+    }
+    
+    // Debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+    
+    // Back to Top Button Functionality with throttling
+    function updateBackToTopButton() {
+      const btn = document.getElementById('back-to-top');
+      if (window.pageYOffset > 300) {
+        btn.classList.add('show');
+      } else {
+        btn.classList.remove('show');
+      }
+    }
+    
+    // Update scroll progress bar
+    function updateScrollProgress() {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("scroll-progress").style.width = scrolled + "%";
+    }
+    
+    // Combine scroll handlers with throttling
+    window.addEventListener('scroll', throttle(function() {
+      updateBackToTopButton();
+      updateScrollProgress();
+    }, 100));
+    
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // Use Intersection Observer for fade-in animations instead of scroll events
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
+      
+      // Create the observer with options
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          // Add the active class if element is intersecting
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.webkitTransform = "translateY(0)";
+            // Once animated, no need to observe anymore
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        root: null,
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+      
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+      
+      updateScrollProgress();
+    });
+    
+    // Hamburger Menu Toggle with improved accessibility
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
+      
+      function toggleMenu() {
+        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', !isExpanded);
+        hamburger.classList.toggle('open');
+        navLinks.classList.toggle('open');
+      }
+      
+      hamburger.addEventListener('click', toggleMenu);
+      
+      hamburger.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+      
+      const navItems = document.querySelectorAll('.nav-links a');
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.classList.remove('open');
+          navLinks.classList.remove('open');
+        });
+      });
+      
+      document.addEventListener('click', function(event) {
+        const isClickInsideMenu = navLinks.contains(event.target);
+        const isClickOnHamburger = hamburger.contains(event.target);
+        
+        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
+      });
+    });
+    
+    // Better image loading with error handling
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('img');
+      
+      images.forEach(img => {
+        img.addEventListener('error', function() {
+          console.error(`Failed to load image: ${img.src}`);
+          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
+          img.classList.add('image-load-error');
+        });
+      });
+    });
+    
+    // Preload team images to avoid layout shifts
+    window.addEventListener('load', function() {
+      const teamImages = document.querySelectorAll('.team-member img');
+      teamImages.forEach(img => {
+        const src = img.getAttribute('src');
+        if (src) {
+          const preloadLink = document.createElement('link');
+          preloadLink.href = src;
+          preloadLink.rel = 'preload';
+          preloadLink.as = 'image';
+          document.head.appendChild(preloadLink);
+        }
+      });
+    });
+    
+    // Safari-specific fixes
+    document.addEventListener('DOMContentLoaded', function() {
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
+      if (isSafari) {
+        document.body.style.display = 'inline-block';
+        setTimeout(function() {
+          document.body.style.display = '';
+        }, 10);
+        
+        const h1Elements = document.querySelectorAll('h1');
+        h1Elements.forEach(function(h1) {
+          h1.style.webkitBackgroundClip = 'text';
+          h1.style.webkitTextFillColor = 'transparent';
+        });
+        
+        const gradientOverlay = document.createElement('div');
+        gradientOverlay.style.position = 'fixed';
+        gradientOverlay.style.top = '0';
+        gradientOverlay.style.left = '0';
+        gradientOverlay.style.width = '100%';
+        gradientOverlay.style.height = '100%';
+        gradientOverlay.style.background = 'linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(255,193,7,0.08) 100%)';
+        gradientOverlay.style.pointerEvents = 'none';
+        gradientOverlay.style.zIndex = '-1';
+        document.body.appendChild(gradientOverlay);
+      }
+    });
+    
+    // Fix viewport height issue on mobile browsers
+    function setMobileHeight() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    window.addEventListener('resize', debounce(setMobileHeight, 100));
+    window.addEventListener('orientationchange', setMobileHeight);
+    setMobileHeight();
+    
+    // Global error handler
+    window.addEventListener('error', function(e) {
+      console.error('Global error handler:', e.message);
+    });
+  </script><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -962,6 +1158,28 @@
       border-radius: 50% 50% 0 0;
       pointer-events: none;
       z-index: 1;
+    }
+    
+    /* Glowing Forms Animation */
+    @keyframes glowForm {
+      0%, 100% { opacity: 0.2; transform: scale(1) rotate(0deg); }
+      50% { opacity: 0.5; transform: scale(1.1) rotate(5deg); }
+    }
+    
+    @-webkit-keyframes glowForm {
+      0%, 100% { opacity: 0.2; -webkit-transform: scale(1) rotate(0deg); }
+      50% { opacity: 0.5; -webkit-transform: scale(1.1) rotate(5deg); }
+    }
+    
+    /* Forms that appear and disappear */
+    .ambient-form {
+      position: fixed;
+      opacity: 0;
+      filter: blur(15px);
+      pointer-events: none;
+      z-index: 0;
+      animation: glowForm 8s infinite ease-in-out;
+      -webkit-animation: glowForm 8s infinite ease-in-out;
     }
     
     /* Arachnophobia Demo Container Styling */
