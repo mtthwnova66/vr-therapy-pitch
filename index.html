@@ -117,7 +117,7 @@
     .btn:active { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
     
     .card { background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); padding: var(--space-xl); box-shadow: var(--card-shadow); transition: transform var(--transition), box-shadow var(--transition); border: 1px solid rgba(255, 255, 255, 0.1); height: 100%; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2); }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(0,0,0,0.2); }
     
     .navbar { position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 10, 35, 0.9); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: center; border-bottom: 0.5px solid rgba(255, 255, 255, 0.1); z-index: 1000; animation: fadeInDown 1s forwards; }
     .nav-links { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
@@ -367,7 +367,7 @@
     
     <section class="section fade-in" id="market">
       <h2>Market Opportunity</h2>
-      <p>With the global VR therapy market valued at $11.3B and an expected CFR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.</p>
+      <p>With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.</p>
     </section>
     
     <section class="section fade-in dark-section" id="business">
@@ -526,24 +526,24 @@
 
       window.addEventListener('resize', function() {
         canvas.width = window.innerWidth;
-        canvas.height = window вважається зірочкою на основі шаблону зірочки:
-        canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        createGrassElements();
+      });
 
-      // Audio Setup - Using relaxing.mp3 from GitHub
+      // Audio Setup - Ethereal Music of the Spheres
       let bgMusic, windSound, birdSound;
       window.audioPlaying = false;
 
       try {
         bgMusic = new Howl({
-          src: ['https://github.com/mtthwnova66/vr-therapy-pitch/raw/main/relaxing.mp3'],
+          src: ['relaxing.mp3'],
           html5: true,
           volume: 0.5,
           loop: true,
           preload: true,
           onload: () => console.log('Background music loaded'),
-          onloaderror: (id, err) => console.error('Background music failed to load:', err),
-          onplayerror: (id, err) => console.error('Background music play error:', err)
+          onloaderror: () => console.error('Background music failed to load'),
+          onplayerror: () => console.error('Background music play error')
         });
 
         windSound = new Howl({
@@ -573,43 +573,33 @@
       const audioStatus = document.querySelector('.audio-status');
       let ambientSoundInterval;
 
-      // Start audio on first interaction (to comply with browser autoplay policies)
-      document.body.addEventListener('click', function startAudio() {
-        if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
-          bgMusic.play().then(() => {
+      audioToggle.addEventListener('click', function() {
+        window.audioPlaying = !window.audioPlaying;
+        if (window.audioPlaying) {
+          try {
+            bgMusic.play();
             windSound.play();
-            window.audioPlaying = true;
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
             ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
-          }).catch(err => {
-            console.error('Auto-play failed:', err);
-            audioStatus.textContent = 'Music: Click to Play';
-          });
-        }
-        document.body.removeEventListener('click', startAudio);
-      }, { once: true });
-
-      audioToggle.addEventListener('click', function() {
-        if (window.audioPlaying) {
-          bgMusic.stop();
-          windSound.stop();
-          birdSound.stop();
-          clearInterval(ambientSoundInterval);
-          window.audioPlaying = false;
+          } catch (e) {
+            console.error('Audio playback failed:', e);
+            window.audioPlaying = false;
+            audioStatus.textContent = 'Music: Error';
+          }
+        } else {
+          try {
+            bgMusic.stop();
+            windSound.stop();
+            birdSound.stop();
+            clearInterval(ambientSoundInterval);
+          } catch (e) {
+            console.error('Audio stop failed:', e);
+          }
           audioStatus.textContent = 'Music: Off';
           audioToggle.style.background = '#0071e3';
           document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
-        } else {
-          bgMusic.play().then(() => {
-            windSound.play();
-            window.audioPlaying = true;
-            audioStatus.textContent = 'Music: On';
-            audioToggle.style.background = '#34c759';
-            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
-            ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
-          }).catch(err => console.error('Play failed:', err));
         }
       });
 
@@ -620,6 +610,15 @@
           birdSound.play();
         }
       }
+
+      // Unlock audio on first interaction
+      document.body.addEventListener('click', function unlockAudio() {
+        if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
+          bgMusic.play().catch(() => console.log('Audio unlock failed'));
+          bgMusic.stop();
+        }
+        document.body.removeEventListener('click', unlockAudio);
+      }, { once: true });
 
       // Alien Entities with Interconnected Mesh
       const entities = [];
