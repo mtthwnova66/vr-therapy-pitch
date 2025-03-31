@@ -526,17 +526,17 @@
 
       window.addEventListener('resize', function() {
         canvas.width = window.innerWidth;
+        canvas.height = window вважається зірочкою на основі шаблону зірочки:
+        canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        createGrassElements();
-      });
 
-      // Audio Setup - Ethereal Music of the Spheres
+      // Audio Setup - Using relaxing.mp3 from GitHub
       let bgMusic, windSound, birdSound;
       window.audioPlaying = false;
 
       try {
         bgMusic = new Howl({
-          src: ['https://cdn.pixabay.com/audio/2022/03/15/audio_5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e.mp3'], // Placeholder for an ethereal track; replace with a suitable file
+          src: ['https://github.com/mtthwnova66/vr-therapy-pitch/raw/main/relaxing.mp3'],
           html5: true,
           volume: 0.5,
           loop: true,
@@ -573,33 +573,43 @@
       const audioStatus = document.querySelector('.audio-status');
       let ambientSoundInterval;
 
-      audioToggle.addEventListener('click', function() {
-        window.audioPlaying = !window.audioPlaying;
-        if (window.audioPlaying) {
-          try {
-            bgMusic.play().then(() => console.log('Background music playing'));
-            windSound.play().then(() => console.log('Wind sound playing'));
+      // Start audio on first interaction (to comply with browser autoplay policies)
+      document.body.addEventListener('click', function startAudio() {
+        if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
+          bgMusic.play().then(() => {
+            windSound.play();
+            window.audioPlaying = true;
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
             ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
-          } catch (e) {
-            console.error('Audio playback failed:', e);
-            window.audioPlaying = false;
-            audioStatus.textContent = 'Music: Error';
-          }
+          }).catch(err => {
+            console.error('Auto-play failed:', err);
+            audioStatus.textContent = 'Music: Click to Play';
+          });
+        }
+        document.body.removeEventListener('click', startAudio);
+      }, { once: true });
+
+      audioToggle.addEventListener('click', function() {
+        if (window.audioPlaying) {
+          bgMusic.stop();
+          windSound.stop();
+          birdSound.stop();
+          clearInterval(ambientSoundInterval);
+          window.audioPlaying = false;
+          audioStatus.textContent = 'Music: Off';
+          audioToggle.style.background = '#0071e3';
+          document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
         } else {
-          try {
-            bgMusic.stop();
-            windSound.stop();
-            birdSound.stop();
-            clearInterval(ambientSoundInterval);
-            audioStatus.textContent = 'Music: Off';
-            audioToggle.style.background = '#0071e3';
-            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
-          } catch (e) {
-            console.error('Audio stop failed:', e);
-          }
+          bgMusic.play().then(() => {
+            windSound.play();
+            window.audioPlaying = true;
+            audioStatus.textContent = 'Music: On';
+            audioToggle.style.background = '#34c759';
+            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
+            ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
+          }).catch(err => console.error('Play failed:', err));
         }
       });
 
@@ -610,21 +620,6 @@
           birdSound.play();
         }
       }
-
-      // Unlock audio on first interaction
-      document.body.addEventListener('click', function unlockAudio() {
-        if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
-          bgMusic.play().then(() => {
-            window.audioPlaying = true;
-            audioStatus.textContent = 'Music: On';
-            audioToggle.style.background = '#34c759';
-            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
-            windSound.play();
-            ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
-          }).catch(err => console.log('Audio unlock failed:', err));
-        }
-        document.body.removeEventListener('click', unlockAudio);
-      }, { once: true });
 
       // Alien Entities with Interconnected Mesh
       const entities = [];
