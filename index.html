@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
   
-  <!-- SEO Meta Tags -->
   <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
   <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
   <meta name="author" content="Synaeon">
@@ -15,11 +14,9 @@
   <meta property="og:url" content="https://synaeon.com/">
   <meta name="twitter:card" content="summary_large_image">
   
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="syneon_image.png">
   <link rel="apple-touch-icon" href="syneon_image.png">
   
-  <!-- Preconnect to resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://github.com">
@@ -30,12 +27,11 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js and OrbitControls -->
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
   <style>
     :root {
@@ -71,14 +67,22 @@
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     html { scroll-behavior: smooth; font-size: 16px; }
-
-    body { margin: 0; background: #000000; font-family: sans-serif; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #0a0a23, #1a1a3d);
+      color: var(--text-light);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
     .level-container { width: 100%; height: 600px; position: relative; margin-bottom: 2rem; display: none; }
     #level-buttons { text-align: center; margin-bottom: 1.5rem; }
     #level-buttons button {
-      background-color: #0071e3;
+      background-color: var(--primary);
       color: white;
       border: none;
       padding: 10px 20px;
@@ -87,20 +91,8 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    #level-buttons button:hover { background-color: #005bb5; }
+    #level-buttons button:hover { background-color: var(--primary-dark); }
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, #0a0a23, #1a1a3d);
-      color: var(--text-light);
-      line-height: 1.6;
-      overflow-x: hidden;
-      position: relative;
-      transition: background var(--transition);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
     a { text-decoration: none; color: var(--primary-light); transition: color var(--transition-fast), transform var(--transition-fast); position: relative; }
     a:hover { color: var(--accent-light); }
     a:focus, button:focus { outline: 2px solid var(--primary); outline-offset: 3px; }
@@ -207,6 +199,16 @@
     #arachnophobia-demo, #arachnophobia-level2 { width: 100%; height: 600px; border-radius: 12px; overflow: hidden; background-color: rgba(255, 255, 255, 0.05); position: relative; z-index: 1; }
     #loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255, 255, 255, 0.7); font-size: 1rem; }
     
+    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto; opacity: 0.5; }
+    
+    #audio-controls { position: fixed; bottom: 30px; left: 30px; z-index: 1000; display: flex; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); transition: all 0.3s ease; opacity: 0.8; }
+    #audio-controls:hover { opacity: 1; transform: scale(1.05); }
+    #audio-toggle { background: var(--primary-light); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: all 0.2s ease; }
+    #audio-toggle:hover { background: var(--primary-dark); transform: scale(1.1); }
+    #audio-toggle svg { width: 20px; height: 20px; transition: transform 0.2s ease; }
+    #audio-toggle:hover svg { transform: scale(1.1); }
+    .audio-status { font-size: 14px; margin-left: 12px; color: var(--text-light); font-weight: 500; }
+    
     @media screen and (max-width: 1280px) { .container { max-width: 90%; padding: 35px; } }
     @media screen and (max-width: 992px) {
       .container { padding: 30px; margin: 120px auto 60px; }
@@ -220,10 +222,10 @@
       #arachnophobia-demo, #arachnophobia-level2 { height: 500px; }
     }
     @media screen and (max-width: 768px) {
-      .container { padding: 25px; border-radius: 12px; margin: 100px auto 40px; }
+      .container { padding: 25px; margin: 100px auto 40px; }
       .navbar { padding: 12px 20px; justify-content: space-between; }
       .hamburger { display: block; }
-      .nav-links { position: fixed; top: 60px; left: 0; right: 0; background: rgba(10, 10, 35, 0.95); flex-direction: column; align-items: center; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: translateY(-150%); transition: transform 0.3s ease; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+      .nav-links { position: fixed; top: 60px; left: 0; right: 0; background: rgba(10, 10, 35, 0.95); flex-direction: column; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: translateY(-150%); transition: transform 0.3s ease; }
       .nav-links.open { transform: translateY(0); }
       .navbar a { padding: 15px; font-size: 16px; width: 100%; text-align: center; }
       h1 { font-size: 2rem; }
@@ -232,42 +234,21 @@
       .hero-logo img { max-width: 120px; width: 120px; }
       iframe { height: 350px; }
       #arachnophobia-demo, #arachnophobia-level2 { height: 400px; }
-      #back-to-top { bottom: 20px; right: 20px; padding: 10px 13px; }
-    }
-    @media screen and (max-width: 576px) {
-      .container { padding: 20px; margin: 80px auto 30px; border-radius: 10px; }
-      .navbar { padding: 10px 15px; }
-      .navbar a { padding: 12px 0; font-size: 15px; }
-      h1 { font-size: 1.75rem; margin-bottom: var(--space-md); }
-      h2 { font-size: 1.5rem; margin-bottom: var(--space-md); }
-      h3 { font-size: 1.25rem; }
-      p, li { font-size: 1rem; margin-bottom: var(--space-md); }
-      .hero-logo img { max-width: 100px; width: 100px; }
-      .section { padding: 30px 15px; }
-      iframe { height: 200px; }
-      #arachnophobia-demo, #arachnophobia-level2 { height: 300px; }
-      .download-btn { padding: 10px 20px; font-size: 0.9rem; }
-      ul { margin: var(--space-lg) auto; }
-      li { padding-left: 20px; margin-bottom: 8px; }
-      .team-member img, .razvi-img { width: 100px; height: 100px; }
-      #back-to-top { bottom: 15px; right: 15px; padding: 8px 12px; }
-    }
-
-    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto; opacity: 0.5; }
-
-    #audio-controls { position: fixed; bottom: 30px; left: 30px; z-index: 1000; display: flex; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); transition: all 0.3s ease; opacity: 0.8; }
-    #audio-controls:hover { opacity: 1; transform: scale(1.05); }
-    #audio-toggle { background: var(--primary-light); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: all 0.2s ease; }
-    #audio-toggle:hover { background: var(--primary-dark); transform: scale(1.1); }
-    #audio-toggle svg { width: 20px; height: 20px; transition: transform 0.2s ease; }
-    #audio-toggle:hover svg { transform: scale(1.1); }
-    .audio-status { font-size: 14px; margin-left: 12px; color: var(--text-light); font-weight: 500; }
-
-    @media screen and (max-width: 768px) {
       #audio-controls { bottom: 20px; left: 20px; padding: 6px 12px; }
       .audio-status { display: none; }
     }
     @media screen and (max-width: 576px) {
+      .container { padding: 20px; margin: 80px auto 30px; }
+      .navbar { padding: 10px 15px; }
+      .navbar a { padding: 12px 0; font-size: 15px; }
+      h1 { font-size: 1.75rem; }
+      h2 { font-size: 1.5rem; }
+      h3 { font-size: 1.25rem; }
+      p, li { font-size: 1rem; }
+      .hero-logo img { max-width: 100px; width: 100px; }
+      .section { padding: 30px 15px; }
+      iframe { height: 200px; }
+      #arachnophobia-demo, #arachnophobia-level2 { height: 300px; }
       #audio-toggle { width: 35px; height: 35px; }
       #audio-toggle svg { width: 18px; height: 18px; }
     }
@@ -292,8 +273,8 @@
   <div class="tech-symbol" id="tech-symbol-3"></div>
   <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
   
-  <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
-    <div class="hamburger" id="hamburger-menu" aria-label="Menu Toggle" role="button" tabindex="0" aria-expanded="false">
+  <nav class="navbar" id="navbar">
+    <div class="hamburger" id="hamburger-menu">
       <span></span>
       <span></span>
       <span></span>
@@ -313,12 +294,12 @@
     </div>
   </nav>
   
-  <main class="container fade-in" id="pitch-content" role="main">
-    <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
+  <main class="container fade-in" id="pitch-content">
+    <section class="hero-section fade-in delay-1">
       <div class="hero-logo">
         <img src="syneon_image.png" alt="Synaeon Logo" width="150" height="auto" loading="eager">
       </div>
-      <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
       <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
       <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
       <div class="intro-video fade-in delay-2">
@@ -331,13 +312,13 @@
       </div>
     </section>
     
-    <section class="section fade-in" id="about" aria-labelledby="about-title">
-      <h2 id="about-title">About Our Vision</h2>
+    <section class="section fade-in" id="about">
+      <h2>About Our Vision</h2>
       <p>Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.</p>
     </section>
     
-    <section class="section fade-in" id="problem" aria-labelledby="problem-title">
-      <h2 id="problem-title">The Problem – Therapy Needs to Evolve</h2>
+    <section class="section fade-in" id="problem">
+      <h2>The Problem – Therapy Needs to Evolve</h2>
       <p>Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios - limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.</p>
       <ul>
         <li>Low immersion and engagement.</li>
@@ -346,8 +327,8 @@
       </ul>
     </section>
     
-    <section class="section fade-in dark-section" id="solution" aria-labelledby="solution-title">
-      <h2 id="solution-title">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
+    <section class="section fade-in dark-section" id="solution">
+      <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
       <p>We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback - ensuring every session is personalized for maximum impact.</p>
       <ul>
         <li>Dynamic, AI-generated VR environments.</li>
@@ -356,8 +337,8 @@
       </ul>
     </section>
     
-    <section class="section fade-in" id="how-it-works" aria-labelledby="how-it-works-title">
-      <h2 id="how-it-works-title">How It Works</h2>
+    <section class="section fade-in" id="how-it-works">
+      <h2>How It Works</h2>
       <ul>
         <li>The therapist launches the software on a compatible VR headset.</li>
         <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
@@ -367,13 +348,13 @@
       </ul>
     </section>
     
-    <section class="section fade-in" id="technology" aria-labelledby="technology-title">
-      <h2 id="technology-title">Technology</h2>
+    <section class="section fade-in" id="technology">
+      <h2>Technology</h2>
       <p>Leveraging instantaneous speech-to-3D generative AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.</p>
     </section>
     
     <section class="section fade-in" id="try-it-yourself">
-      <h2 id="try-title">Try It Yourself – Arachnophobia Simulation Experience</h2>
+      <h2>Try It Yourself – Arachnophobia Simulation Experience</h2>
       <p>This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom.</p>
       <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
       <div id="level-buttons">
@@ -384,13 +365,13 @@
       <div id="arachnophobia-level2" class="level-container"></div>
     </section>
     
-    <section class="section fade-in" id="market" aria-labelledby="market-title">
-      <h2 id="market-title">Market Opportunity</h2>
+    <section class="section fade-in" id="market">
+      <h2>Market Opportunity</h2>
       <p>With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.</p>
     </section>
     
-    <section class="section fade-in dark-section" id="business" aria-labelledby="business-title">
-      <h2 id="business-title">Business Model & Funding</h2>
+    <section class="section fade-in dark-section" id="business">
+      <h2>Business Model & Funding</h2>
       <p>Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.</p>
       <ul>
         <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
@@ -399,8 +380,8 @@
       </ul>
     </section>
     
-    <section class="section fade-in" id="team" aria-labelledby="team-title">
-      <h2 id="team-title">Meet the Team</h2>
+    <section class="section fade-in" id="team">
+      <h2>Meet the Team</h2>
       <div class="team-members">
         <div class="team-member">
           <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
@@ -417,8 +398,8 @@
       </div>
     </section>
     
-    <section class="section fade-in" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Contact Us</h2>
+    <section class="section fade-in" id="contact">
+      <h2>Contact Us</h2>
       <div class="contact-container">
         <div class="contact-email">
           <h3>Matei Seleușan</h3>
@@ -432,7 +413,7 @@
     </section>
   </main>
   
-  <footer class="footer" role="contentinfo">
+  <footer class="footer">
     <div class="footer-container">
       <div class="footer-links">
         <a href="#about">About</a>
@@ -446,22 +427,6 @@
     </div>
   </footer>
   
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Synaeon",
-      "url": "https://synaeon.com",
-      "logo": "syneon_image.png",
-      "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
-      "founder": [
-        {"@type": "Person", "name": "Matei Seleușan", "jobTitle": "CEO", "email": "mateiseleusan@gmail.com"},
-        {"@type": "Person", "name": "Răzvan Crețu", "jobTitle": "CTO", "email": "razvanmihaicretu@gmail.com"}
-      ],
-      "foundingDate": "2025",
-      "address": {"@type": "PostalAddress", "addressCountry": "Romania"}
-    }
-  </script>
   <script>
     function throttle(func, limit) {
       let inThrottle;
@@ -514,7 +479,7 @@
             observer.unobserve(entry.target);
           }
         });
-      }, { root: null, threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
       
       document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)').forEach(element => observer.observe(element));
       updateScrollProgress();
@@ -546,137 +511,90 @@
           navLinks.classList.remove('open');
         });
       });
-      
-      document.addEventListener('click', function(event) {
-        const isClickInsideMenu = navLinks.contains(event.target);
-        const isClickOnHamburger = hamburger.contains(event.target);
-        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        }
-      });
     });
     
-    document.addEventListener('DOMContentLoaded', function() {
-      const images = document.querySelectorAll('img');
-      images.forEach(img => {
-        img.addEventListener('error', function() {
-          console.error(`Failed to load image: ${img.src}`);
-          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
-          img.classList.add('image-load-error');
-        });
-      });
-    });
-    
-    window.addEventListener('load', function() {
-      const teamImages = document.querySelectorAll('.team-member img');
-      teamImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (src) {
-          const preloadLink = document.createElement('link');
-          preloadLink.href = src;
-          preloadLink.rel = 'preload';
-          preloadLink.as = 'image';
-          document.head.appendChild(preloadLink);
-        }
-      });
-    });
-    
-    function setMobileHeight() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    
-    window.addEventListener('resize', debounce(setMobileHeight, 100));
-    window.addEventListener('orientationchange', setMobileHeight);
-    setMobileHeight();
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-
-  <script>
-    const originalShowLevel = window.showLevel;
-    window.showLevel = function(level) {
-      if (window.audioPlaying) document.getElementById('audio-toggle').click();
-      if (originalShowLevel) originalShowLevel(level);
-      else {
-        document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-        document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
-        if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
-        if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-      }
-    };
-
     document.addEventListener('DOMContentLoaded', function() {
       const canvas = document.getElementById('immersive-canvas');
       const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Canvas context not supported');
+        return;
+      }
+      
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
       window.addEventListener('resize', function() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        createGrassElements();
       });
 
-      // Audio Setup - Fluid Cosmic Ethereal Music
-      let bgMusic, etherealLayer, ambientSwell;
+      // Audio Setup - Ethereal Music of the Spheres
+      let bgMusic, windSound, birdSound;
       window.audioPlaying = false;
 
       try {
         bgMusic = new Howl({
-          src: ['https://freesound.org/data/previews/352/352651_6142149-lq.mp3'], // Cosmic hum
+          src: ['https://freesound.org/data/previews/449/449271_6142149-lq.mp3'],
           html5: true,
           volume: 0.5,
           loop: true,
-          preload: true
+          preload: true,
+          onloaderror: () => console.error('Background music failed to load'),
+          onplayerror: () => console.error('Background music play error')
         });
 
-        etherealLayer = new Howl({
-          src: ['https://freesound.org/data/previews/411/411497_5121236-lq.mp3'], // Harp-like tones
+        windSound = new Howl({
+          src: ['https://freesound.org/data/previews/169/169251_1862058-lq.mp3'],
           html5: true,
-          volume: 0.4,
+          volume: 0.2,
           loop: true,
-          preload: true
+          preload: true,
+          onloaderror: () => console.error('Wind sound failed to load'),
+          onplayerror: () => console.error('Wind sound play error')
         });
 
-        ambientSwell = new Howl({
-          src: ['https://freesound.org/data/previews/456/456446_9158612-lq.mp3'], // Gentle swell
+        birdSound = new Howl({
+          src: ['https://freesound.org/data/previews/316/316435_5385832-lq.mp3'],
           html5: true,
-          volume: 0.3,
-          loop: true,
-          preload: true
+          volume: 0.15,
+          loop: false,
+          preload: true,
+          onloaderror: () => console.error('Bird sound failed to load'),
+          onplayerror: () => console.error('Bird sound play error')
         });
       } catch (e) {
-        console.error('Audio init failed:', e);
+        console.error('Audio initialization failed:', e);
       }
 
       const audioToggle = document.getElementById('audio-toggle');
       const audioStatus = document.querySelector('.audio-status');
+      let ambientSoundInterval;
 
       audioToggle.addEventListener('click', function() {
         window.audioPlaying = !window.audioPlaying;
         if (window.audioPlaying) {
           try {
-            if (bgMusic) bgMusic.play();
-            if (etherealLayer) etherealLayer.play();
-            if (ambientSwell) ambientSwell.play();
+            bgMusic && bgMusic.play();
+            windSound && windSound.play();
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
+            ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
           } catch (e) {
-            console.error('Playback failed:', e);
+            console.error('Audio playback failed:', e);
             window.audioPlaying = false;
             audioStatus.textContent = 'Music: Error';
           }
         } else {
           try {
-            if (bgMusic) bgMusic.stop();
-            if (etherealLayer) etherealLayer.stop();
-            if (ambientSwell) ambientSwell.stop();
+            bgMusic && bgMusic.stop();
+            windSound && windSound.stop();
+            birdSound && birdSound.stop();
+            clearInterval(ambientSoundInterval);
           } catch (e) {
-            console.error('Stop failed:', e);
+            console.error('Audio stop failed:', e);
           }
           audioStatus.textContent = 'Music: Off';
           audioToggle.style.background = '#0071e3';
@@ -684,24 +602,33 @@
         }
       });
 
+      function playRandomAmbientSounds() {
+        if (Math.random() > 0.7 && birdSound && birdSound.state() === 'loaded') {
+          const pan = Math.random() * 2 - 1;
+          birdSound.pos(pan, 0, 0);
+          birdSound.play();
+        }
+      }
+
+      // Unlock audio on first interaction
       document.body.addEventListener('click', function unlockAudio() {
         if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
-          bgMusic.play().catch(() => {});
+          bgMusic.play().catch(() => console.log('Audio unlock failed'));
           bgMusic.stop();
         }
         document.body.removeEventListener('click', unlockAudio);
-      });
+      }, { once: true });
 
-      // Alien Entities
+      // Alien Entities with Interconnected Mesh
       const entities = [];
-      const entityCount = 8;
+      const entityCount = 10;
 
       function createEntity() {
         return {
           x: Math.random() * canvas.width,
-          y: Math.random() * (canvas.height * 0.7), // Stay above grass
-          size: Math.random() * 20 + 30, // Similar sizes: 30-50
-          speedX: (Math.random() - 0.5) * 0.1, // Very slow
+          y: Math.random() * (canvas.height * 0.7),
+          size: Math.random() * 20 + 30,
+          speedX: (Math.random() - 0.5) * 0.1,
           speedY: (Math.random() - 0.5) * 0.1,
           hue: Math.random() * 360,
           connections: [],
@@ -723,17 +650,36 @@
         }
       }
 
-      // Grass and Dust Particles
+      // Grass Elements
+      const grassElements = [];
+      const grassCount = window.innerWidth > 768 ? 100 : 50;
+
+      function createGrassElements() {
+        grassElements.length = 0;
+        for (let i = 0; i < grassCount; i++) {
+          grassElements.push({
+            x: Math.random() * canvas.width,
+            height: Math.random() * 60 + 30,
+            width: Math.random() * 2 + 1,
+            swayOffset: Math.random() * 100,
+            speed: Math.random() * 0.002 + 0.001,
+            color: `rgba(${76 + Math.random() * 20}, ${175 + Math.random() * 30}, ${80 + Math.random() * 20}, ${0.4 + Math.random() * 0.3})`
+          });
+        }
+      }
+
+      // Particles (White Dust)
       const particles = [];
-      const particleCount = 30;
+      const particleCount = 100;
 
       function createParticle() {
         return {
           x: Math.random() * canvas.width,
-          y: canvas.height - (Math.random() * 50 + 50), // Start near grass
-          size: Math.random() * 2 + 1,
-          speedY: -(Math.random() * 0.3 + 0.1),
-          opacity: Math.random() * 0.3 + 0.1
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speedX: Math.random() * 0.5 - 0.25,
+          speedY: Math.random() * 0.5 - 0.25,
+          opacity: Math.random() * 0.5
         };
       }
 
@@ -748,26 +694,23 @@
           entity.x += entity.speedX;
           entity.y += entity.speedY;
 
-          // Boundary wrapping
           if (entity.x < -entity.size) entity.x = canvas.width + entity.size;
           if (entity.x > canvas.width + entity.size) entity.x = -entity.size;
           if (entity.y < -entity.size) entity.y = canvas.height * 0.7 + entity.size;
           if (entity.y > canvas.height * 0.7) entity.y = -entity.size;
 
-          // Connections
           entity.connections = [];
           entities.forEach(other => {
             if (entity !== other) {
               const dx = other.x - entity.x;
               const dy = other.y - entity.y;
               const distance = Math.sqrt(dx * dx + dy * dy);
-              if (distance < 150) {
+              if (distance < 200) {
                 entity.connections.push({ x: other.x, y: other.y, distance });
               }
             }
           });
 
-          // Fragment dissociation/reassociation
           entity.fragments.forEach(f => {
             f.offsetX += f.driftX;
             f.offsetY += f.driftY;
@@ -785,39 +728,31 @@
 
       function updateParticles() {
         particles.forEach(p => {
+          p.x += p.speedX;
           p.y += p.speedY;
-          p.opacity -= 0.003;
-          if (p.y < 0 || p.opacity <= 0) {
-            Object.assign(p, createParticle());
-          }
+          p.opacity += Math.random() * 0.01 - 0.005;
+          if (p.opacity < 0.1) p.opacity = 0.1;
+          if (p.opacity > 0.5) p.opacity = 0.5;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
         });
       }
 
-      function drawGrass() {
-        const grassHeight = canvas.height * 0.15;
-        const gradient = ctx.createLinearGradient(0, canvas.height - grassHeight, 0, canvas.height);
-        gradient.addColorStop(0, 'rgba(34, 139, 34, 0.6)');
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
-
-        // Subtle noise for texture
-        for (let i = 0; i < canvas.width; i += 5) {
-          const height = grassHeight * (Math.random() * 0.3 + 0.7);
-          ctx.beginPath();
-          ctx.moveTo(i, canvas.height);
-          ctx.lineTo(i, canvas.height - height);
-          ctx.strokeStyle = `rgba(50, 205, 50, ${Math.random() * 0.3 + 0.1})`;
-          ctx.stroke();
-        }
+      function updateGrassElements(time) {
+        grassElements.forEach(grass => {
+          grass.angle = Math.sin(time * grass.speed + grass.swayOffset) * 0.2;
+        });
       }
 
       function drawEntities(time) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         entities.forEach(entity => {
           ctx.save();
           ctx.translate(entity.x, entity.y);
 
-          // Core shape with pulsation
           ctx.beginPath();
           const points = 12;
           for (let i = 0; i < points; i++) {
@@ -840,7 +775,6 @@
           ctx.fillStyle = gradient;
           ctx.fill();
 
-          // Fragments for dissociation effect
           entity.fragments.forEach(f => {
             ctx.beginPath();
             ctx.arc(f.offsetX, f.offsetY, entity.size * 0.2, 0, Math.PI * 2);
@@ -848,23 +782,33 @@
             ctx.fill();
           });
 
-          // Connections
           entity.connections.forEach(conn => {
             ctx.beginPath();
             ctx.moveTo(0, 0);
             const dx = conn.x - entity.x;
             const dy = conn.y - entity.y;
             ctx.quadraticCurveTo(dx * 0.5, dy * 0.5, dx, dy);
-            ctx.strokeStyle = `hsla(${entity.hue}, 50%, 60%, ${1 - conn.distance / 150 * 0.3})`;
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = `hsla(${entity.hue}, 50%, 60%, ${1 - conn.distance / 200 * 0.3})`;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
           });
 
           ctx.restore();
         });
 
-        // Draw grass and particles
-        drawGrass();
+        grassElements.forEach(grass => {
+          ctx.save();
+          ctx.translate(grass.x, canvas.height);
+          ctx.rotate(grass.angle);
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.quadraticCurveTo(grass.width * 2, -grass.height / 2, 0, -grass.height);
+          ctx.quadraticCurveTo(-grass.width * 2, -grass.height / 2, 0, 0);
+          ctx.fillStyle = grass.color;
+          ctx.fill();
+          ctx.restore();
+        });
+
         particles.forEach(p => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -873,24 +817,25 @@
         });
       }
 
-      // Animation Loop
       function animate(time) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         updateEntities(time);
         updateParticles();
+        updateGrassElements(time);
         drawEntities(time);
         requestAnimationFrame(animate);
       }
 
       initEntities();
       initParticles();
+      createGrassElements();
       requestAnimationFrame(animate);
     });
-  </script>
-  <script>
+    
     function showLevel(level) {
-      document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-      document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
+      const level1 = document.getElementById('arachnophobia-demo');
+      const level2 = document.getElementById('arachnophobia-level2');
+      level1.style.display = level === 'level1' ? 'block' : 'none';
+      level2.style.display = level === 'level2' ? 'block' : 'none';
       if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
       if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
     }
