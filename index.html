@@ -620,29 +620,29 @@
         canvas.height = window.innerHeight;
       });
 
-      // Audio Setup - Ethereal Music of the Spheres
-      let bgMusic, etherealLayer, ambientSwell;
+      // Fluid Cosmic Music
+      let bgMusic, cosmicWave, etherealShimmer;
       window.audioPlaying = false;
 
       try {
         bgMusic = new Howl({
-          src: ['https://freesound.org/data/previews/352/352651_6142149-lq.mp3'], // Cosmic hum
+          src: ['https://freesound.org/data/previews/182/182617_3165007-lq.mp3'], // Deep space drone
           html5: true,
           volume: 0.5,
           loop: true,
           preload: true
         });
 
-        etherealLayer = new Howl({
-          src: ['https://freesound.org/data/previews/411/411497_5121236-lq.mp3'], // Harp-like celestial tones
+        cosmicWave = new Howl({
+          src: ['https://freesound.org/data/previews/352/352658_6142149-lq.mp3'], // Pulsing cosmic wave
           html5: true,
           volume: 0.4,
           loop: true,
           preload: true
         });
 
-        ambientSwell = new Howl({
-          src: ['https://freesound.org/data/previews/456/456446_9158612-lq.mp3'], // Gentle swelling pad
+        etherealShimmer = new Howl({
+          src: ['https://freesound.org/data/previews/120/120368_649468-lq.mp3'], // Ethereal shimmer
           html5: true,
           volume: 0.3,
           loop: true,
@@ -660,8 +660,8 @@
         if (window.audioPlaying) {
           try {
             if (bgMusic) bgMusic.play();
-            if (etherealLayer) etherealLayer.play();
-            if (ambientSwell) ambientSwell.play();
+            if (cosmicWave) cosmicWave.play();
+            if (etherealShimmer) etherealShimmer.play();
             audioStatus.textContent = 'Music: On';
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
@@ -673,8 +673,8 @@
         } else {
           try {
             if (bgMusic) bgMusic.stop();
-            if (etherealLayer) etherealLayer.stop();
-            if (ambientSwell) ambientSwell.stop();
+            if (cosmicWave) cosmicWave.stop();
+            if (etherealShimmer) etherealShimmer.stop();
           } catch (e) {
             console.error('Stop failed:', e);
           }
@@ -692,36 +692,41 @@
         document.body.removeEventListener('click', unlockAudio);
       });
 
-      // Sci-Fi Alien Entities and Grass/Dust
+      // Hallucinogenic Alien Entities and Grass/Dust
       const entities = [];
       const entityCount = 8;
       const particles = [];
       const particleCount = 50;
 
       function createEntity() {
-        const type = Math.random() < 0.5 ? 'orb' : 'tentacle';
+        const type = Math.random() < 0.5 ? 'orb' : 'tentacular';
         return {
           x: Math.random() * canvas.width,
           y: Math.random() * (canvas.height * 0.8), // Keep above grass
-          size: Math.random() * 60 + 20, // Varied sizes
-          speedX: (Math.random() - 0.5) * 0.2,
-          speedY: (Math.random() - 0.5) * 0.2,
+          size: Math.random() * 60 + 20,
+          speedX: (Math.random() - 0.5) * 0.1, // Slower
+          speedY: (Math.random() - 0.5) * 0.1,
           hue: Math.random() * 360,
           connections: [],
           morphSpeed: Math.random() * 0.002 + 0.001,
           noiseOffset: Math.random() * 100,
           type: type,
-          tentacleLength: type === 'tentacle' ? Math.random() * 30 + 20 : 0
+          tendrils: type === 'tentacular' ? Array(4).fill().map(() => ({
+            length: Math.random() * 40 + 20,
+            angle: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.02 + 0.01
+          })) : [],
+          satellites: type === 'orb' ? [] : null
         };
       }
 
       function createParticle() {
         return {
           x: Math.random() * canvas.width,
-          y: canvas.height,
-          size: Math.random() * 3 + 1,
-          speedY: -(Math.random() * 0.5 + 0.2),
-          opacity: 0.3
+          y: canvas.height - (Math.random() * 50), // Start at grass
+          size: Math.random() * 2 + 1,
+          speedY: -(Math.random() * 0.3 + 0.1), // Slower ascent
+          opacity: Math.random() * 0.3 + 0.1
         };
       }
 
@@ -738,6 +743,8 @@
         entities.forEach(entity => {
           entity.x += entity.speedX;
           entity.y += entity.speedY;
+          entity.hue += 0.5; // Shifting colors for hallucinogenic effect
+          if (entity.hue > 360) entity.hue -= 360;
 
           // Boundary wrapping
           if (entity.x < -entity.size) entity.x = canvas.width + entity.size;
@@ -757,42 +764,80 @@
               }
             }
           });
+
+          // Satellite logic for orbs
+          if (entity.type === 'orb' && Math.random() < 0.02) {
+            entity.satellites.push({
+              x: entity.x,
+              y: entity.y,
+              angle: Math.random() * Math.PI * 2,
+              distance: entity.size * 0.5,
+              speed: Math.random() * 0.05 + 0.02,
+              life: 100
+            });
+          }
+          entity.satellites = entity.satellites.filter(s => {
+            s.angle += s.speed;
+            s.life--;
+            s.x = entity.x + Math.cos(s.angle) * s.distance;
+            s.y = entity.y + Math.sin(s.angle) * s.distance;
+            return s.life > 0;
+          });
+
+          // Tendril animation
+          if (entity.type === 'tentacular') {
+            entity.tendrils.forEach(t => {
+              t.angle += t.speed * Math.sin(time * entity.morphSpeed);
+            });
+          }
         });
 
-        particles.forEach(particle => {
-          particle.y += particle.speedY;
-          if (particle.y < canvas.height * 0.8) {
-            particle.x = Math.random() * canvas.width;
-            particle.y = canvas.height;
-            particle.speedY = -(Math.random() * 0.5 + 0.2);
+        particles.forEach(p => {
+          p.y += p.speedY;
+          p.opacity -= 0.003;
+          if (p.y < canvas.height * 0.8 || p.opacity <= 0) {
+            Object.assign(p, createParticle());
           }
         });
       }
 
-      function drawEntities(time) {
-        // Grass
+      function drawGrass() {
         const grassHeight = canvas.height * 0.1;
-        const grassGradient = ctx.createLinearGradient(0, canvas.height - grassHeight, 0, canvas.height);
-        grassGradient.addColorStop(0, 'rgba(34, 139, 34, 0.3)');
-        grassGradient.addColorStop(1, 'rgba(34, 139, 34, 0)');
-        ctx.fillStyle = grassGradient;
+        const gradient = ctx.createLinearGradient(0, canvas.height - grassHeight, 0, canvas.height);
+        gradient.addColorStop(0, 'rgba(34, 139, 34, 0.3)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = gradient;
         ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
 
-        // Dust Particles
-        particles.forEach(particle => {
+        // Subtle noise for texture
+        for (let i = 0; i < canvas.width; i += 5) {
+          const height = grassHeight * (Math.random() * 0.3 + 0.7);
           ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+          ctx.moveTo(i, canvas.height);
+          ctx.lineTo(i, canvas.height - height);
+          ctx.strokeStyle = `rgba(50, 205, 50, ${Math.random() * 0.3 + 0.1})`;
+          ctx.stroke();
+        }
+      }
+
+      function drawEntities(time) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrass();
+
+        // Dust Particles
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
           ctx.fill();
         });
 
-        // Entities
         entities.forEach(entity => {
           ctx.save();
           ctx.translate(entity.x, entity.y);
 
           if (entity.type === 'orb') {
-            // Orb with tendrils and satellites
+            // Hallucinogenic Orb
             ctx.beginPath();
             const points = 16;
             for (let i = 0; i < points; i++) {
@@ -802,46 +847,48 @@
               const x = Math.cos(angle) * radius;
               const y = Math.sin(angle) * radius;
               if (i === 0) ctx.moveTo(x, y);
-              else ctx.quadraticCurveTo(
-                Math.cos(angle - Math.PI / points) * (entity.size + noise * 0.7),
-                Math.sin(angle - Math.PI / points) * (entity.size + noise * 0.7),
-                x, y
-              );
+              else ctx.lineTo(x, y);
             }
             ctx.closePath();
             const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, entity.size * 1.5);
-            gradient.addColorStop(0, `hsla(${entity.hue}, 80%, 70%, 0.6)`);
-            gradient.addColorStop(1, `hsla(${entity.hue}, 80%, 50%, 0.1)`);
+            gradient.addColorStop(0, `hsla(${entity.hue}, 90%, 60%, 0.6)`);
+            gradient.addColorStop(1, `hsla(${entity.hue + 60}, 90%, 50%, 0)`);
             ctx.fillStyle = gradient;
             ctx.fill();
             ctx.shadowBlur = 10;
-            ctx.shadowColor = `hsl(${entity.hue}, 80%, 50%)`;
+            ctx.shadowColor = `hsl(${entity.hue}, 90%, 50%)`;
             ctx.fill();
             ctx.shadowBlur = 0;
+
+            // Satellites
+            entity.satellites.forEach(s => {
+              ctx.beginPath();
+              ctx.arc(s.x - entity.x, s.y - entity.y, 3, 0, Math.PI * 2);
+              ctx.fillStyle = `hsla(${entity.hue + 30}, 90%, 70%, ${s.life / 100})`;
+              ctx.fill();
+            });
           } else {
-            // Tentacular form
-            ctx.beginPath();
-            for (let i = 0; i < 5; i++) {
-              const angle = (Math.PI / 2) + (i - 2) * 0.3;
-              const length = entity.tentacleLength + Math.sin(time * entity.morphSpeed + i) * 10;
-              const x = Math.cos(angle) * length;
-              const y = Math.sin(angle) * length;
+            // Hallucinogenic Tentacular
+            entity.tendrils.forEach(t => {
+              ctx.beginPath();
               ctx.moveTo(0, 0);
-              ctx.quadraticCurveTo(x * 0.5, y * 0.5, x, y);
-            }
-            ctx.strokeStyle = `hsla(${entity.hue}, 80%, 60%, 0.6)`;
-            ctx.lineWidth = entity.size / 10;
-            ctx.stroke();
+              const controlX = Math.cos(t.angle) * t.length * 0.5;
+              const controlY = Math.sin(t.angle) * t.length * 0.5;
+              const endX = Math.cos(t.angle) * t.length;
+              const endY = Math.sin(t.angle) * t.length;
+              ctx.quadraticCurveTo(controlX, controlY, endX, endY);
+              ctx.strokeStyle = `hsla(${entity.hue}, 90%, 60%, 0.5)`;
+              ctx.lineWidth = entity.size / 15;
+              ctx.stroke();
+            });
           }
 
           // Connections
           entity.connections.forEach(conn => {
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            const dx = conn.x - entity.x;
-            const dy = conn.y - entity.y;
-            ctx.quadraticCurveTo(dx * 0.5, dy * 0.5, dx, dy);
-            ctx.strokeStyle = `hsla(${entity.hue}, 80%, 60%, ${Math.min(1 - conn.distance / 200, 0.3)})`;
+            ctx.lineTo(conn.x - entity.x, conn.y - entity.y);
+            ctx.strokeStyle = `hsla(${entity.hue}, 90%, 60%, ${Math.min(1 - conn.distance / 200, 0.3)})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           });
@@ -850,83 +897,8 @@
         });
       }
 
-      // Interaction
-      let draggedEntity = null;
-
-      canvas.addEventListener('mousedown', (e) => {
-        entities.forEach(entity => {
-          const dx = e.clientX - entity.x;
-          const dy = e.clientY - entity.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < entity.size) {
-            draggedEntity = entity;
-            entity.speedX = 0;
-            entity.speedY = 0;
-          }
-        });
-      });
-
-      canvas.addEventListener('mousemove', (e) => {
-        if (draggedEntity) {
-          draggedEntity.x = e.clientX;
-          draggedEntity.y = e.clientY;
-        } else {
-          entities.forEach(entity => {
-            const dx = e.clientX - entity.x;
-            const dy = e.clientY - entity.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < 150) {
-              const angle = Math.atan2(dy, dx);
-              entity.speedX -= Math.cos(angle) * 0.02;
-              entity.speedY -= Math.sin(angle) * 0.02;
-            }
-          });
-        }
-      });
-
-      canvas.addEventListener('mouseup', () => {
-        if (draggedEntity) {
-          draggedEntity.speedX = (Math.random() - 0.5) * 0.2;
-          draggedEntity.speedY = (Math.random() - 0.5) * 0.2;
-          draggedEntity = null;
-        }
-      });
-
-      canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        entities.forEach(entity => {
-          const dx = touch.clientX - entity.x;
-          const dy = touch.clientY - entity.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < entity.size) {
-            draggedEntity = entity;
-            entity.speedX = 0;
-            entity.speedY = 0;
-          }
-        });
-      });
-
-      canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        if (draggedEntity) {
-          draggedEntity.x = touch.clientX;
-          draggedEntity.y = touch.clientY;
-        }
-      });
-
-      canvas.addEventListener('touchend', () => {
-        if (draggedEntity) {
-          draggedEntity.speedX = (Math.random() - 0.5) * 0.2;
-          draggedEntity.speedY = (Math.random() - 0.5) * 0.2;
-          draggedEntity = null;
-        }
-      });
-
       // Animation Loop
       function animate(time) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         updateEntities(time);
         drawEntities(time);
         requestAnimationFrame(animate);
