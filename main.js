@@ -4,34 +4,6 @@
 window.initLevel1 = function() {
   console.log('Initializing photorealistic Three.js scene...');
 
-  // --- Minimal Modification 1: Permanently append a voice icon ("🔊") to the Level 1 button ---
-  var levelButtons = document.getElementById('level-buttons');
-  if (levelButtons) {
-    var buttons = levelButtons.getElementsByTagName('button');
-    // Assuming Level 1 is the first button (index 0)
-    if (buttons.length >= 1 && !buttons[0].querySelector('.voice-icon')) {
-      var voiceIcon = document.createElement('span');
-      voiceIcon.className = 'voice-icon';
-      voiceIcon.textContent = " 🔊";
-      voiceIcon.style.fontSize = "16px";
-      voiceIcon.style.marginLeft = "5px";
-      buttons[0].appendChild(voiceIcon);
-    }
-  }
-
-  // --- Minimal Modification 2: Play or shut off Level 1 voice recording ---
-  if (window.level1AudioInstance && !window.level1AudioInstance.paused) {
-    // If the voice is already playing, shut it off.
-    window.level1AudioInstance.pause();
-    window.level1AudioInstance.currentTime = 0;
-  } else {
-    // Otherwise, create and play the audio.
-    window.level1AudioInstance = new Audio('recordinglevel1.mp3');
-    window.level1AudioInstance.play().catch(function(error) {
-      console.error("Error playing Level 1 audio:", error);
-    });
-  }
-
   // Get the container element (ensure your index.html contains,
   // e.g., <div id="arachnophobia-demo" class="level-container"></div>)
   const container = document.getElementById('arachnophobia-demo');
@@ -196,9 +168,9 @@ window.initLevel1 = function() {
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
-    // --------------------------------------------------------------------
-    // 6. VR Headset Entrance Animation Setup
-    // --------------------------------------------------------------------
+    // ==============================
+    // 6. VR Headset Entrance Animation
+    // ==============================
     // All main scene objects (spider, jar, lid, table, dust) are grouped in mainScene and are initially hidden.
     let vrHeadset;
     let mainScene = new THREE.Group();
@@ -256,7 +228,7 @@ window.initLevel1 = function() {
           }
           animationPhase = 0;
           animationProgress = 0;
-          loadMainScene(); // Begin loading the main scene into mainScene
+          loadMainScene(); // Begin loading the main scene
         },
         undefined,
         function(error) {
@@ -300,7 +272,7 @@ window.initLevel1 = function() {
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
-          // Reveal mainScene and fade out VR headset during last 30% of zoom.
+          // Reveal main scene and fade out VR headset during last 30% of zoom.
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -324,21 +296,21 @@ window.initLevel1 = function() {
           }
           break;
         case 3:
-          // VR animation complete; mainScene is active.
+          // VR animation complete; main scene is active.
           break;
       }
     }
 
-    // Easing function for smoother animation
+    // Easing function
     function easeInOutCubic(t) {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
-    // --------------------------------------------------------------------
-    // Main Photorealistic Scene (Group: mainScene)
-    // All photorealistic objects (table, spider, dust) are added to mainScene.
-    // They remain hidden until the VR entrance animation completes.
-    // --------------------------------------------------------------------
+    // ==============================
+    // 7. Main Photorealistic Scene (Group: mainScene)
+    // All photorealistic objects (table, jar, lid, spider, dust) are added to mainScene,
+    // which remains hidden until the VR entrance completes.
+    // ==============================
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -373,7 +345,7 @@ window.initLevel1 = function() {
     });
 
     function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(7, 0.2, 5);
+      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
@@ -383,17 +355,47 @@ window.initLevel1 = function() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // Table's center at y=0.5 => top at y=0.6
-      table.position.y = 0.5;
+      table.position.y = -0.1;
       table.receiveShadow = true;
       mainScene.add(table);
+      createJar();
+    }
+
+    function createJar() {
+      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false);
+      const jarMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        metalness: 0.0,
+        roughness: 0.05,
+        transmission: 0.95,
+        transparent: true,
+        thickness: 0.05,
+        envMapIntensity: 1,
+        clearcoat: 1,
+        clearcoatRoughness: 0.1,
+        ior: 1.5
+      });
+      const jar = new THREE.Mesh(jarGeometry, jarMaterial);
+      jar.position.y = 0.75;
+      jar.castShadow = true;
+      jar.receiveShadow = true;
+      mainScene.add(jar);
+
+      const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
+      const lidMaterial = new THREE.MeshStandardMaterial({
+        color: 0x777777,
+        metalness: 0.9,
+        roughness: 0.1,
+        envMap: envMap
+      });
+      const lid = new THREE.Mesh(lidGeometry, lidMaterial);
+      lid.position.set(0, 1.55, 0);
+      lid.castShadow = true;
+      mainScene.add(lid);
 
       loadSpiderModel();
     }
 
-    // --------------------------------------------------------------------
-    // Load the Spider Model ("spider2.glb") and position it exactly on the table.
-    // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -405,33 +407,26 @@ window.initLevel1 = function() {
         gltfLoader.setDRACOLoader(dracoLoader);
       }
       gltfLoader.load(
-        'spider2.glb',
+        'spider_with_animation.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
-          spiderModel.updateMatrixWorld(true);
           const bbox = new THREE.Box3().setFromObject(spiderModel);
-          console.log('Spider bounding box:', bbox);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          spiderModel.position.set(
-            -center.x,
-            0.6,
-            -center.z
-          );
+          const offset = -bbox.min.y;
+          spiderModel.position.set(-center.x, offset, -center.z);
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
               node.receiveShadow = true;
               if (node.material) {
                 node.material.envMap = envMap;
-                node.material.shadowSide = THREE.FrontSide;
                 node.material.needsUpdate = true;
               }
             }
           });
           mainScene.add(spiderModel);
-          spotLight.target = spiderModel;
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
             mixer = new THREE.AnimationMixer(spiderModel);
@@ -460,14 +455,62 @@ window.initLevel1 = function() {
         undefined,
         function(error) {
           console.error('Error loading spider model:', error);
-          loadingElement.textContent = 'Failed to load spider model.';
+          if (loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Failed to load spider model. Using fallback...';
+          }
+          createProceduralSpider();
         }
       );
     }
 
-    // --------------------------------------------------------------------
-    // Add Dust Particles to mainScene
-    // --------------------------------------------------------------------
+    function createProceduralSpider() {
+      console.log('Creating procedural spider as fallback');
+      const spider = new THREE.Group();
+      const abdomenGeometry = new THREE.SphereGeometry(0.28, 32, 32);
+      const spiderMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a1a1a,
+        roughness: 0.7,
+        metalness: 0.2,
+        envMap: envMap
+      });
+      const abdomen = new THREE.Mesh(abdomenGeometry, spiderMaterial);
+      abdomen.castShadow = true;
+      spider.add(abdomen);
+      const headGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+      const head = new THREE.Mesh(headGeometry, spiderMaterial);
+      head.position.set(0, 0, 0.25);
+      head.castShadow = true;
+      spider.add(head);
+      for (let i = 0; i < 8; i++) {
+        const legGeometry = new THREE.CylinderGeometry(0.025, 0.015, 0.5, 8);
+        const leg = new THREE.Mesh(legGeometry, spiderMaterial);
+        const angle = (Math.PI / 4) * (i % 4);
+        const isLeftSide = i < 4;
+        const sideSign = isLeftSide ? 1 : -1;
+        leg.position.set(Math.cos(angle) * 0.25 * sideSign, 0, Math.sin(angle) * 0.25);
+        leg.rotation.z = sideSign * Math.PI / 4;
+        leg.rotation.y = angle;
+        leg.castShadow = true;
+        spider.add(leg);
+      }
+      spider.position.y = 0.05;
+      scene.add(spider);
+      addDustParticles();
+      finalizeScene();
+      if (loadingElement && loadingElement.parentNode) {
+        loadingElement.textContent = 'Scene loaded (fallback spider)';
+        setTimeout(() => {
+          loadingElement.style.opacity = '0';
+          loadingElement.style.transition = 'opacity 1s ease';
+          setTimeout(() => {
+            if (loadingElement && loadingElement.parentNode) {
+              loadingElement.remove();
+            }
+          }, 1000);
+        }, 1000);
+      }
+    }
+
     function addDustParticles() {
       const particlesCount = 100;
       const positions = new Float32Array(particlesCount * 3);
@@ -493,12 +536,13 @@ window.initLevel1 = function() {
       window.dustParticles = particles;
     }
 
-    // --------------------------------------------------------------------
-    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
-    // --------------------------------------------------------------------
+    // ==============================
+    // 8. FINALIZE THE SCENE SETUP & ANIMATION LOOP
+    // ==============================
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
     function finalizeScene() {
+      // Start the animation by loading the VR headset first
       loadVRHeadset();
       
       function animate() {
@@ -666,7 +710,7 @@ window.initLevel1 = function() {
       }
       
       addUIControls();
-      console.log('Scene setup completed (Level 2 photorealistic scene with VR headset entrance).');
+      console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
     }
 
     // --------------------------------------------------------------------
@@ -697,8 +741,7 @@ window.initLevel1 = function() {
 
   } catch (error) {
     console.error('Error creating 3D scene:', error);
-    container.innerHTML = '<p style="padding:20px;text-align:center;">Error creating 3D scene. Please check the browser console for details.</p>';
+    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
   }
-}
-
-// ===== END main_level1.js *****
+};
+// ***** END MAIN.JS *****
