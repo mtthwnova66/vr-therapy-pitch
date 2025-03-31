@@ -4,6 +4,13 @@
 window.initLevel1 = function() {
   console.log('Initializing photorealistic Three.js scene...');
 
+  // Ensure voices are loaded
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = function() {
+      // Voices are now loaded
+    };
+  }
+
   // Get the container element (ensure your index.html contains,
   // e.g., <div id="arachnophobia-demo" class="level-container"></div>)
   const container = document.getElementById('arachnophobia-demo');
@@ -297,6 +304,26 @@ window.initLevel1 = function() {
           break;
         case 3:
           // VR animation complete; main scene is active.
+          if (animationProgress === 0) {
+            // This code will run once when animation phase 3 starts
+            const utterance = new SpeechSynthesisUtterance("You are looking at a black spider in a jar");
+            utterance.rate = 0.9; // Slightly slower than default
+            utterance.pitch = 1.1; // Slightly higher pitch for female voice
+            
+            // Try to find a female voice
+            const voices = window.speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice => 
+              voice.name.includes('female') || 
+              voice.name.includes('woman') || 
+              voice.name.includes('girl'));
+            
+            if (femaleVoice) {
+              utterance.voice = femaleVoice;
+            }
+            
+            window.speechSynthesis.speak(utterance);
+            animationProgress = 0.1; // Update progress to prevent repeating
+          }
           break;
       }
     }
@@ -645,103 +672,4 @@ window.initLevel1 = function() {
         instructions.style.fontSize = '14px';
         instructions.style.zIndex = '10';
         instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
-        container.appendChild(instructions);
-        setTimeout(() => {
-          instructions.style.opacity = '0';
-          instructions.style.transition = 'opacity 1s ease';
-        }, 5000);
-
-        function resetContainerStyle() {
-          container.style.width = '';
-          container.style.height = '600px';
-          container.style.margin = '';
-          container.style.padding = '';
-          container.style.overflow = '';
-          container.style.position = '';
-        }
-        function handleResize() {
-          let width, height;
-          if (document.fullscreenElement === container) {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            renderer.domElement.style.width = "100vw";
-            renderer.domElement.style.height = "100vh";
-            document.body.style.overflow = "hidden";
-          } else {
-            resetContainerStyle();
-            width = container.clientWidth;
-            height = container.clientHeight;
-            renderer.domElement.style.width = "100%";
-            renderer.domElement.style.height = "100%";
-            document.body.style.overflow = "";
-          }
-          camera.aspect = width / height;
-          camera.updateProjectionMatrix();
-          renderer.setSize(width, height);
-          console.log(`Resized to: ${width}x${height}`);
-        }
-        window.addEventListener('resize', handleResize);
-        document.addEventListener('fullscreenchange', function() {
-          if (!document.fullscreenElement) {
-            resetContainerStyle();
-            handleResize();
-          }
-        });
-        document.addEventListener('webkitfullscreenchange', function() {
-          if (!document.webkitIsFullScreen) {
-            resetContainerStyle();
-            handleResize();
-          }
-        });
-        document.addEventListener('mozfullscreenchange', function() {
-          if (!document.mozFullScreen) {
-            resetContainerStyle();
-            handleResize();
-          }
-        });
-        document.addEventListener('MSFullscreenChange', function() {
-          if (!document.msFullscreenElement) {
-            resetContainerStyle();
-            handleResize();
-          }
-        });
-        handleResize();
-        console.log('UI controls added.');
-      }
-      
-      addUIControls();
-      console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
-    }
-
-    // --------------------------------------------------------------------
-    // Fallback: If textures do not load within 5 seconds, use fallback materials.
-    // --------------------------------------------------------------------
-    setTimeout(() => {
-      if (texturesLoaded < requiredTextures) {
-        console.warn('Not all textures loaded in time, using fallback materials.');
-        woodTextures.map = woodTextures.map || new THREE.Texture();
-        woodTextures.normalMap = woodTextures.normalMap || new THREE.Texture();
-        woodTextures.roughnessMap = woodTextures.roughnessMap || new THREE.Texture();
-        createTable();
-      }
-    }, 5000);
-
-    // --------------------------------------------------------------------
-    // Resize logic
-    // --------------------------------------------------------------------
-    function handleResize() {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    }
-    window.addEventListener('resize', handleResize);
-    handleResize();
-
-  } catch (error) {
-    console.error('Error creating 3D scene:', error);
-    container.innerHTML = '<p style="padding: 20px; text-align: center;">Error creating 3D scene. Please check the browser console for details.</p>';
-  }
-};
-// ***** END MAIN.JS *****
+        container.
