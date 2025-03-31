@@ -1723,366 +1723,301 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
   <!-- Immersive Experience Script -->
-  <script>
-    // Modify the existing showLevel function to stop audio
-    const originalShowLevel = window.showLevel;
-    window.showLevel = function(level) {
-      // Stop audio if playing
-      if (window.audioPlaying) {
-        document.getElementById('audio-toggle').click();
-      }
-      
-      // Call the original function
-      if (originalShowLevel) {
-        originalShowLevel(level);
-      } else {
-        document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-        document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
+<script>
+  // Modify the existing showLevel function to stop audio
+  const originalShowLevel = window.showLevel;
+  window.showLevel = function(level) {
+    if (window.audioPlaying) {
+      document.getElementById('audio-toggle').click();
+    }
+    if (originalShowLevel) {
+      originalShowLevel(level);
+    } else {
+      document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
+      document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
+      if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
+      if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
+    }
+  };
 
-        if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
-        if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-      }
-    };
+  document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('immersive-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    // Immersive Background Experience
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize canvas
-      const canvas = document.getElementById('immersive-canvas');
-      const ctx = canvas.getContext('2d');
+    window.addEventListener('resize', function() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      
-      // Handle window resize
-      window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        // Redraw grass elements on resize
-        drawGrassElements();
+      drawGrassElements();
+    });
+
+    // Audio Setup with Better Error Handling
+    let bgMusic, windSound, birdSound;
+    window.audioPlaying = false;
+
+    try {
+      bgMusic = new Howl({
+        src: ['https://freesound.org/data/previews/449/449271_6142149-lq.mp3'],
+        html5: true,
+        volume: 0.5,
+        loop: true,
+        preload: true,
+        onload: () => console.log('Background music loaded'),
+        onloaderror: (id, err) => console.error('Background music load error:', err),
+        onplayerror: (id, err) => console.error('Background music play error:', err)
       });
-      
-      // Audio system setup with Howler.js
-      let bgMusic, audioFallback, windSound, birdSound;
-      
-      try {
-        // Background music - use YouTube URL for the specific track
-        bgMusic = new Howl({
-          src: ['https://freesound.org/data/previews/449/449271_6142149-lq.mp3'], // Fallback ambient music URL
-          html5: true,
-          volume: 0.5,
-          loop: true,
-          autoplay: false
-        });
-        
-        // Fallback audio using Audio API
-        audioFallback = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Mid-Air_Machine/Ambient_Spaces_Compilation/Mid-Air_Machine_-_Ambient_1.mp3');
-        audioFallback.loop = true;
-        audioFallback.volume = 0.4;
-        
-        // Ambient sounds
-        windSound = new Howl({
-          src: ['https://freesound.org/data/previews/169/169251_1862058-lq.mp3'],
-          html5: true,
-          volume: 0.2,
-          loop: true,
-          autoplay: false
-        });
-        
-        birdSound = new Howl({
-          src: ['https://freesound.org/data/previews/316/316435_5385832-lq.mp3'],
-          html5: true,
-          volume: 0.15,
-          loop: false,
-          autoplay: false
-        });
-      } catch (e) {
-        console.warn('Audio initialization error:', e);
+
+      windSound = new Howl({
+        src: ['https://freesound.org/data/previews/169/169251_1862058-lq.mp3'],
+        html5: true,
+        volume: 0.2,
+        loop: true,
+        preload: true
+      });
+
+      birdSound = new Howl({
+        src: ['https://freesound.org/data/previews/316/316435_5385832-lq.mp3'],
+        html5: true,
+        volume: 0.15,
+        loop: false,
+        preload: true
+      });
+    } catch (e) {
+      console.error('Audio initialization failed:', e);
+    }
+
+    const audioToggle = document.getElementById('audio-toggle');
+    const audioStatus = document.querySelector('.audio-status');
+    let ambientSoundInterval;
+
+    function playRandomAmbientSounds() {
+      if (Math.random() > 0.7 && birdSound && window.audioPlaying) {
+        const pan = Math.random() * 2 - 1;
+        birdSound.pos(pan, 0, 0);
+        birdSound.play();
       }
-      
-      // Add random intermittent sounds
-      function playRandomAmbientSounds() {
-        if (Math.random() > 0.7 && birdSound) {
-          const pan = Math.random() * 2 - 1; // -1 to 1 (left to right)
-          birdSound.pos(pan, 0, 0);
-          birdSound.play();
-        }
-      }
-      
-      // Audio Toggle
-      window.audioPlaying = false;
-      const audioToggle = document.getElementById('audio-toggle');
-      const audioStatus = document.querySelector('.audio-status');
-      let ambientSoundInterval;
-      
-      audioToggle.addEventListener('click', function() {
-        window.audioPlaying = !window.audioPlaying;
-        
-        if (window.audioPlaying) {
-          // Try to play the background music
-          try {
-            if (bgMusic && bgMusic.state() !== 'loaded') {
-              // If Howler fails, try the fallback
-              audioFallback.play().catch(e => console.warn('Audio fallback failed:', e));
-            } else if (bgMusic) {
-              bgMusic.play();
-            }
-            
-            if (windSound) windSound.play();
-          } catch (e) {
-            console.warn('Audio playback error:', e);
+    }
+
+    audioToggle.addEventListener('click', function() {
+      window.audioPlaying = !window.audioPlaying;
+
+      if (window.audioPlaying) {
+        try {
+          if (bgMusic) {
+            bgMusic.play();
+            console.log('Playing background music');
           }
-          
-          // Visual changes for audio on
+          if (windSound) windSound.play();
           audioStatus.textContent = 'Music: On';
-          audioToggle.style.background = '#34c759'; // Green
-          document.querySelectorAll('.sound-wave').forEach(wave => {
-            wave.style.opacity = 1;
-          });
-          
-          // Schedule random ambient sounds
+          audioToggle.style.background = '#34c759';
+          document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
           ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
-        } else {
-          // Stop all sounds
-          try {
-            if (bgMusic) bgMusic.pause();
-            audioFallback.pause();
-            if (windSound) windSound.pause();
-            if (birdSound) birdSound.stop();
-          } catch (e) {
-            console.warn('Audio stop error:', e);
-          }
-          
-          // Visual changes for audio off
-          audioStatus.textContent = 'Music: Off';
-          audioToggle.style.background = '#0071e3'; // Primary color
-          document.querySelectorAll('.sound-wave').forEach(wave => {
-            wave.style.opacity = 0;
-          });
-          
-          // Clear sound interval
-          clearInterval(ambientSoundInterval);
+        } catch (e) {
+          console.error('Audio playback failed:', e);
+          window.audioPlaying = false;
+          audioStatus.textContent = 'Music: Error';
         }
-      });
-      
-      // Auto-stop audio when videos or simulations start
-      const videos = document.querySelectorAll('iframe');
-      videos.forEach(video => {
-        video.addEventListener('click', function() {
-          if (window.audioPlaying) {
-            audioToggle.click(); // Toggle off
-          }
-        });
-      });
-      
-      // Ambient background particles
-      const particles = [];
-      const particleCount = 100;
-      
-      function createParticles() {
-        for (let i = 0; i < particleCount; i++) {
-          particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 3 + 1,
-            speedX: Math.random() * 0.5 - 0.25,
-            speedY: Math.random() * 0.5 - 0.25,
-            opacity: Math.random() * 0.5
-          });
-        }
-      }
-      
-      function updateParticles() {
-        particles.forEach(p => {
-          p.x += p.speedX;
-          p.y += p.speedY;
-          
-          // Boundary checks with wrapping
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
-          
-          // Subtle opacity changes
-          p.opacity += Math.random() * 0.01 - 0.005;
-          if (p.opacity < 0.1) p.opacity = 0.1;
-          if (p.opacity > 0.5) p.opacity = 0.5;
-        });
-      }
-      
-      function drawParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(p => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
-          ctx.fill();
-        });
-      }
-      
-      // Grass elements
-      const grassElements = [];
-      const grassCount = window.innerWidth > 768 ? 100 : 50;
-      
-      function createGrassElements() {
-        // Clear existing
-        grassElements.length = 0;
-        
-        for (let i = 0; i < grassCount; i++) {
-          grassElements.push({
-            x: Math.random() * canvas.width,
-            height: Math.random() * 60 + 30,
-            width: Math.random() * 2 + 1,
-            swayOffset: Math.random() * 100,
-            speed: Math.random() * 0.002 + 0.001,
-            color: `rgba(${76 + Math.random() * 20}, ${175 + Math.random() * 30}, ${80 + Math.random() * 20}, ${0.4 + Math.random() * 0.3})`
-          });
-        }
-      }
-      
-      function updateGrassElements(time) {
-        grassElements.forEach(grass => {
-          grass.angle = Math.sin(time * grass.speed + grass.swayOffset) * 0.2;
-        });
-      }
-      
-      function drawGrassElements() {
-        grassElements.forEach(grass => {
-          ctx.save();
-          ctx.translate(grass.x, canvas.height);
-          ctx.rotate(grass.angle);
-          
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.quadraticCurveTo(grass.width * 2, -grass.height / 2, 0, -grass.height);
-          ctx.quadraticCurveTo(-grass.width * 2, -grass.height / 2, 0, 0);
-          
-          ctx.fillStyle = grass.color;
-          ctx.fill();
-          ctx.restore();
-        });
-      }
-      
-            // Dynamic Forms (shapes that morph and transform)
-      const dynamicForms = [];
-      const formCount = 5;
-
-      function createDynamicForms() {
-        const formElements = document.querySelectorAll('.ambient-form');
-        formElements.forEach((el, index) => {
-          dynamicForms.push({
-            element: el,
-            baseWidth: parseFloat(el.style.width),
-            baseHeight: parseFloat(el.style.height),
-            offset: Math.random() * 100,
-            speed: Math.random() * 0.002 + 0.001
-          });
-        });
-      }
-
-      function updateDynamicForms(time) {
-        dynamicForms.forEach(form => {
-          const scale = 1 + Math.sin(time * form.speed + form.offset) * 0.1;
-          form.element.style.width = `${form.baseWidth * scale}px`;
-          form.element.style.height = `${form.baseHeight * scale}px`;
-          form.element.style.opacity = 0.2 + Math.cos(time * form.speed + form.offset) * 0.3;
-        });
-      }
-
-      // Main animation loop
-      let lastTime = 0;
-      function animate(time) {
-        updateParticles();
-        drawParticles();
-        updateGrassElements(time);
-        drawGrassElements();
-        updateDynamicForms(time);
-        
-        requestAnimationFrame(animate);
-      }
-
-      // Initialize everything
-      createParticles();
-      createGrassElements();
-      createDynamicForms();
-      requestAnimationFrame(animate);
-
-      // Mouse interaction for particles
-      canvas.addEventListener('mousemove', (e) => {
-        particles.forEach(p => {
-          const dx = e.clientX - p.x;
-          const dy = e.clientY - p.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 100) {
-            const angle = Math.atan2(dy, dx);
-            p.x -= Math.cos(angle) * 2;
-            p.y -= Math.sin(angle) * 2;
-            p.opacity = Math.min(p.opacity + 0.1, 0.8);
-          }
-        });
-      });
-
-      // Touch interaction for mobile
-      canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        particles.forEach(p => {
-          const dx = touch.clientX - p.x;
-          const dy = touch.clientY - p.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 100) {
-            const angle = Math.atan2(dy, dx);
-            p.x -= Math.cos(angle) * 2;
-            p.y -= Math.sin(angle) * 2;
-            p.opacity = Math.min(p.opacity + 0.1, 0.8);
-          }
-        });
-      });
-
-      // Error handling for WebGL context
-      try {
-        if (!canvas.getContext('2d')) {
-          console.error('WebGL not supported');
-          canvas.style.display = 'none';
-        }
-      } catch (e) {
-        console.error('Canvas initialization error:', e);
-        canvas.style.display = 'none';
-      }
-
-      // Performance optimization
-      let lastFrameTime = 0;
-      const targetFPS = 60;
-      const frameInterval = 1000 / targetFPS;
-
-      function optimizedAnimate(currentTime) {
-        if (currentTime - lastFrameTime >= frameInterval) {
-          updateParticles();
-          drawParticles();
-          updateGrassElements(currentTime);
-          drawGrassElements();
-          updateDynamicForms(currentTime);
-          lastFrameTime = currentTime;
-        }
-        requestAnimationFrame(optimizedAnimate);
-      }
-
-      // Start optimized animation if preferred
-      if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-        requestAnimationFrame(optimizedAnimate);
       } else {
-        // Fallback for reduced motion
-        setInterval(() => {
-          const time = Date.now();
-          updateParticles();
-          drawParticles();
-          updateGrassElements(time);
-          drawGrassElements();
-          updateDynamicForms(time);
-        }, 100);
+        try {
+          if (bgMusic) bgMusic.stop();
+          if (windSound) windSound.stop();
+          if (birdSound) birdSound.stop();
+        } catch (e) {
+          console.error('Audio stop failed:', e);
+        }
+        audioStatus.textContent = 'Music: Off';
+        audioToggle.style.background = '#0071e3';
+        document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
+        clearInterval(ambientSoundInterval);
       }
     });
-  </script>
+
+    // Auto-unlock audio on user interaction (fixes mobile issues)
+    document.body.addEventListener('click', function unlockAudio() {
+      if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
+        bgMusic.play().catch(() => {});
+        bgMusic.stop();
+      }
+      document.body.removeEventListener('click', unlockAudio);
+    });
+
+    // Particles
+    const particles = [];
+    const particleCount = 100;
+
+    function createParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speedX: Math.random() * 0.5 - 0.25,
+          speedY: Math.random() * 0.5 - 0.25,
+          opacity: Math.random() * 0.5
+        });
+      }
+    }
+
+    function updateParticles() {
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        p.opacity += Math.random() * 0.01 - 0.005;
+        p.opacity = Math.max(0.1, Math.min(0.5, p.opacity));
+      });
+    }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+        ctx.fill();
+      });
+    }
+
+    // Grass Elements
+    const grassElements = [];
+    const grassCount = window.innerWidth > 768 ? 100 : 50;
+
+    function createGrassElements() {
+      grassElements.length = 0;
+      for (let i = 0; i < grassCount; i++) {
+        grassElements.push({
+          x: Math.random() * canvas.width,
+          height: Math.random() * 60 + 30,
+          width: Math.random() * 2 + 1,
+          swayOffset: Math.random() * 100,
+          speed: Math.random() * 0.002 + 0.001,
+          color: `rgba(${76 + Math.random() * 20}, ${175 + Math.random() * 30}, ${80 + Math.random() * 20}, ${0.4 + Math.random() * 0.3})`
+        });
+      }
+    }
+
+    function updateGrassElements(time) {
+      grassElements.forEach(grass => {
+        grass.angle = Math.sin(time * grass.speed + grass.swayOffset) * 0.2;
+      });
+    }
+
+    function drawGrassElements() {
+      grassElements.forEach(grass => {
+        ctx.save();
+        ctx.translate(grass.x, canvas.height);
+        ctx.rotate(grass.angle);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(grass.width * 2, -grass.height / 2, 0, -grass.height);
+        ctx.quadraticCurveTo(-grass.width * 2, -grass.height / 2, 0, 0);
+        ctx.fillStyle = grass.color;
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // Droplets/Shapes
+    const droplets = [];
+    const dropletCount = 20;
+
+    function createDroplets() {
+      for (let i = 0; i < dropletCount; i++) {
+        droplets.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 20 + 10,
+          speedX: Math.random() * 0.3 - 0.15,
+          speedY: Math.random() * 0.3 - 0.15,
+          opacity: Math.random() * 0.3 + 0.1,
+          type: Math.random() > 0.5 ? 'circle' : 'ellipse',
+          rotation: Math.random() * Math.PI * 2,
+          color: `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, ${Math.random() * 0.2 + 0.1})`
+        });
+      }
+    }
+
+    function updateDroplets() {
+      droplets.forEach(d => {
+        d.x += d.speedX;
+        d.y += d.speedY;
+        d.rotation += 0.01;
+        if (d.x < -d.size) d.x = canvas.width + d.size;
+        if (d.x > canvas.width + d.size) d.x = -d.size;
+        if (d.y < -d.size) d.y = canvas.height + d.size;
+        if (d.y > canvas.height + d.size) d.y = -d.size;
+        d.opacity += Math.random() * 0.005 - 0.0025;
+        d.opacity = Math.max(0.1, Math.min(0.4, d.opacity));
+      });
+    }
+
+    function drawDroplets() {
+      droplets.forEach(d => {
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        ctx.rotate(d.rotation);
+        ctx.beginPath();
+        if (d.type === 'circle') {
+          ctx.arc(0, 0, d.size, 0, Math.PI * 2);
+        } else {
+          ctx.ellipse(0, 0, d.size, d.size * 0.7, 0, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = d.color;
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // Animation Loop
+    function animate(time) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      updateParticles();
+      drawParticles();
+      updateGrassElements(time);
+      drawGrassElements();
+      updateDroplets();
+      drawDroplets();
+      requestAnimationFrame(animate);
+    }
+
+    // Initialize
+    createParticles();
+    createGrassElements();
+    createDroplets();
+    requestAnimationFrame(animate);
+
+    // Interaction
+    canvas.addEventListener('mousemove', (e) => {
+      droplets.forEach(d => {
+        const dx = e.clientX - d.x;
+        const dy = e.clientY - d.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 100) {
+          const angle = Math.atan2(dy, dx);
+          d.x -= Math.cos(angle) * 2;
+          d.y -= Math.sin(angle) * 2;
+        }
+      });
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      droplets.forEach(d => {
+        const dx = touch.clientX - d.x;
+        const dy = touch.clientY - d.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 100) {
+          const angle = Math.atan2(dy, dx);
+          d.x -= Math.cos(angle) * 2;
+          d.y -= Math.sin(angle) * 2;
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>
