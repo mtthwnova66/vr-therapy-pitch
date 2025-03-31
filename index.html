@@ -39,6 +39,12 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
 
+  <!-- Add TweenMax for smoother animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+  <!-- Howler.js for audio management -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+
   <style>
     /* Modern CSS Variables for Enhanced Theming */
     :root {
@@ -477,6 +483,8 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       transition: transform 0.3s ease;
       -webkit-transition: -webkit-transform 0.3s ease;
+      position: relative;
+      z-index: 2;
     }
     
     /* Hero Section with Original Logo Implementation */
@@ -852,6 +860,110 @@
       top: 20%; right: -50px;
     }
     
+    /* Immersive Background Canvas */
+    #immersive-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    /* Ambient Element Styling */
+    .ambient-element {
+      position: absolute;
+      background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      opacity: 0;
+      filter: blur(5px);
+      transform-origin: center;
+      pointer-events: none;
+    }
+    
+    /* Audio Controls */
+    #audio-controls {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 8px 15px;
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      opacity: 0.8;
+    }
+    
+    #audio-controls:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    
+    #audio-toggle {
+      background: var(--primary);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    
+    #audio-toggle:hover {
+      background: var(--primary-dark);
+      transform: scale(1.1);
+    }
+    
+    #audio-toggle svg {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.2s ease;
+    }
+    
+    #audio-toggle:hover svg {
+      transform: scale(1.1);
+    }
+    
+    .audio-status {
+      font-size: 14px;
+      margin-left: 12px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    /* Ambient Particles */
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 1;
+    }
+    
+    /* Grass Elements */
+    .grass-leaf {
+      position: absolute;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to top, rgba(76,175,80,0.7), rgba(76,175,80,0) 90%);
+      transform-origin: bottom center;
+      border-radius: 50% 50% 0 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
     /* Arachnophobia Demo Container Styling */
     #arachnophobia-demo {
       width: 100%;
@@ -860,7 +972,7 @@
       overflow: hidden;
       background-color: #f5f5f7;
       position: relative;
-      z-index: 1;
+      z-index: 3;
     }
     
     #arachnophobia-level2 {
@@ -870,7 +982,7 @@
       overflow: hidden;
       background-color: #f5f5f7;
       position: relative;
-      z-index: 1;
+      z-index: 3;
     }
     
     #loading-message {
@@ -881,656 +993,3 @@
       color: #555;
       font-size: 1rem;
     }
-    
-    /* Enhanced Responsive Styles for Mobile */
-    @media screen and (max-width: 1280px) {
-      .container {
-        max-width: 90%;
-        padding: 35px;
-      }
-    }
-    
-    @media screen and (max-width: 992px) {
-      .container {
-        padding: 30px;
-        margin: 120px auto 60px;
-      }
-      
-      .navbar {
-        padding: 15px 20px;
-      }
-      
-      h1 {
-        font-size: 2.5rem;
-      }
-      
-      h2 {
-        font-size: 2rem;
-      }
-      
-      .team-members {
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      .team-member {
-        flex: 0 1 100%;
-        max-width: 400px;
-      }
-      
-      .contact-email {
-        flex: 0 1 100%;
-        max-width: 400px;
-      }
-      
-      iframe {
-        height: 400px;
-      }
-      
-      #arachnophobia-demo, #arachnophobia-level2 {
-        height: 500px;
-      }
-    }
-    
-    /* Tablet styles */
-    @media screen and (max-width: 768px) {
-      .container {
-        padding: 25px;
-        border-radius: 12px;
-        margin: 100px auto 40px;
-      }
-      
-      .navbar {
-        padding: 12px 20px;
-        justify-content: space-between;
-      }
-      
-      .hamburger {
-        display: block;
-      }
-      
-      .nav-links {
-        position: fixed;
-        top: 60px;
-        left: 0;
-        right: 0;
-        background: rgba(255, 255, 255, 0.95);
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 0;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        transform: translateY(-150%);
-        transition: transform 0.3s ease;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-      }
-      
-      .nav-links.open {
-        transform: translateY(0);
-      }
-      
-      .navbar a {
-        padding: 15px;
-        font-size: 16px;
-        width: 100%;
-        text-align: center;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      h2 {
-        font-size: 1.75rem;
-      }
-      
-      .section {
-        padding: 40px 15px;
-      }
-      
-      .hero-logo img {
-        max-width: 150px;
-        width: 150px;
-      }
-      
-      iframe {
-        height: 350px;
-      }
-      
-      #arachnophobia-demo, #arachnophobia-level2 {
-        height: 400px;
-      }
-      
-      #back-to-top {
-        bottom: 20px;
-        right: 20px;
-        padding: 10px 13px;
-      }
-    }
-    
-    /* Mobile styles */
-    @media screen and (max-width: 576px) {
-      .container {
-        padding: 20px;
-        margin: 80px auto 30px;
-        border-radius: 10px;
-      }
-      
-      .navbar {
-        padding: 10px 15px;
-      }
-      
-      .navbar a {
-        padding: 12px 0;
-        font-size: 15px;
-      }
-      
-      h1 {
-        font-size: 1.75rem;
-        margin-bottom: var(--space-md);
-      }
-      
-      h2 {
-        font-size: 1.5rem;
-        margin-bottom: var(--space-md);
-      }
-      
-      h3 {
-        font-size: 1.25rem;
-      }
-      
-      p, li {
-        font-size: 1rem;
-        margin-bottom: var(--space-md);
-      }
-      
-      .hero-logo img {
-        max-width: 120px;
-        width: 120px;
-      }
-      
-      .section {
-        padding: 30px 15px;
-      }
-      
-      iframe {
-        height: 200px;
-      }
-      
-      #arachnophobia-demo, #arachnophobia-level2 {
-        height: 300px;
-      }
-      
-      .download-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-      }
-      
-      ul {
-        margin: var(--space-lg) auto;
-      }
-      
-      li {
-        padding-left: 20px;
-        margin-bottom: 8px;
-      }
-      
-      .team-member img, .razvi-img {
-        width: 100px;
-        height: 100px;
-      }
-      
-      #back-to-top {
-        bottom: 15px;
-        right: 15px;
-        padding: 8px 12px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- Scroll Progress Bar -->
-  <div class="scroll-progress" id="scroll-progress"></div>
-  
-  <!-- Tech Symbols -->
-  <div class="tech-symbol" id="tech-symbol-1"></div>
-  <div class="tech-symbol" id="tech-symbol-2"></div>
-  <div class="tech-symbol" id="tech-symbol-3"></div>
-  
-  <!-- Back to Top Button -->
-  <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
-  
-  <!-- Navbar with Hamburger Menu (No Logo) -->
-  <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
-    <div class="hamburger" id="hamburger-menu" aria-label="Menu Toggle" role="button" tabindex="0" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    
-    <div class="nav-links" id="nav-links">
-      <a href="#about">About</a>
-      <a href="#problem">The Problem</a>
-      <a href="#solution">Our Solution</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#technology">Technology</a>
-      <a href="#try-it-yourself">Try It Yourself</a>
-      <a href="#market">Market</a>
-      <a href="#business">Business Model</a>
-      <a href="#team">Team</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
-  
-  <!-- Main Content -->
-  <main class="container fade-in" id="pitch-content" role="main">
-    <!-- Hero Section -->
-    <section class="hero-section fade-in delay-1" aria-labelledby="hero-title">
-      <div class="hero-logo">
-        <img src="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg" alt="Synaeon Logo" width="200" height="auto" loading="eager">
-      </div>
-      <h1 id="hero-title">AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">
-        Download Pitch Presentation
-      </a>
-      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-      <div class="intro-video fade-in delay-2">
-        <h2>Who Are We? What's Our Mission?</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="demo-video fade-in delay-3">
-        <h2>Demo</h2>
-        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-      </div>
-    </section>
-    
-    <!-- About Our Vision -->
-    <section class="section fade-in" id="about" aria-labelledby="about-title">
-      <h2 id="about-title">About Our Vision</h2>
-      <p>
-        Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.
-      </p>
-    </section>
-    
-    <!-- The Problem Section -->
-    <section class="section fade-in" id="problem" aria-labelledby="problem-title">
-      <h2 id="problem-title">The Problem – Therapy Needs to Evolve</h2>
-      <p>
-        Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios - limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.
-      </p>
-      <ul>
-        <li>Low immersion and engagement.</li>
-        <li>Inability to adjust therapy in real time.</li>
-        <li>Heavy reliance on imagination or static media.</li>
-      </ul>
-    </section>
-    
-    <!-- Our Solution Section -->
-    <section class="section fade-in dark-section" id="solution" aria-labelledby="solution-title">
-      <h2 id="solution-title">Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
-      <p>
-        We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback - ensuring every session is personalized for maximum impact.
-      </p>
-      <ul>
-        <li>Dynamic, AI-generated VR environments.</li>
-        <li>Real-time biofeedback integration.</li>
-        <li>Comprehensive clinical control via a dedicated dashboard.</li>
-      </ul>
-    </section>
-    
-    <!-- How It Works Section -->
-    <section class="section fade-in" id="how-it-works" aria-labelledby="how-it-works-title">
-      <h2 id="how-it-works-title">How It Works</h2>
-      <ul>
-        <li>The therapist launches the software on a compatible VR headset.</li>
-        <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-        <li>The AI listens to the therapist's guidance and generates an interactive VR environment.</li>
-        <li>Real-time biofeedback allows for dynamic session adjustments.</li>
-        <li>The system learns and adapts, personalizing future sessions.</li>
-      </ul>
-    </section>
-    
-    <!-- Technology Section -->
-    <section class="section fade-in" id="technology" aria-labelledby="technology-title">
-      <h2 id="technology-title">Technology</h2>
-      <p>
-        Leveraging instantaneous speech-to-3D generative AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.
-      </p>
-    </section>
-    
-    <!-- Try It Yourself Section (Updated) -->
-    <section class="section fade-in" id="try-it-yourself">
-      <h2 id="try-title">Try It Yourself – Arachnophobia Simulation Experience</h2>
-      <p>
-        This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom. </p>
-        <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
-      
-      <div id="level-buttons">
-        <button onclick="showLevel('level1')">Level 1</button>
-        <button onclick="showLevel('level2')">Level 2</button>
-      </div>
-      <div id="arachnophobia-demo" class="level-container"></div>
-      <div id="arachnophobia-level2" class="level-container"></div>
-    </section>
-    
-    <!-- Market Opportunity Section -->
-    <section class="section fade-in" id="market" aria-labelledby="market-title">
-      <h2 id="market-title">Market Opportunity</h2>
-      <p>
-        With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous - especially among early adopters in Europe and North America.
-      </p>
-    </section>
-    
-    <!-- Business Model & Funding Section -->
-    <section class="section fade-in dark-section" id="business" aria-labelledby="business-title">
-      <h2 id="business-title">Business Model & Funding</h2>
-      <p>
-        Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling - providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.
-      </p>
-      <ul>
-        <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
-        <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
-        <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
-      </ul>
-    </section>
-    
-    <!-- Team Section -->
-    <section class="section fade-in" id="team" aria-labelledby="team-title">
-      <h2 id="team-title">Meet the Team</h2>
-      <div class="team-members">
-        <div class="team-member">
-          <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
-          <h3>Matei Seleușan</h3>
-          <p class="role">CEO</p>
-          <p>
-            Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.
-          </p>
-        </div>
-        <div class="team-member">
-          <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120" loading="lazy">
-          <h3>Răzvan Crețu</h3>
-          <p class="role">CTO</p>
-          <p>
-            Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.
-          </p>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section class="section fade-in" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Contact Us</h2>
-      <div class="contact-container">
-        <div class="contact-email">
-          <h3>Matei Seleușan</h3>
-          <p>
-            <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
-          </p>
-        </div>
-        <div class="contact-email">
-          <h3>Răzvan Crețu</h3>
-          <p>
-            <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a>
-          </p>
-        </div>
-      </div>
-    </section>
-  
-  </main>
-  
-  <!-- Footer -->
-  <footer class="footer" role="contentinfo">
-    <div class="footer-container">
-      <div class="footer-links">
-        <a href="#about">About</a>
-        <a href="#problem">Problem</a>
-        <a href="#solution">Solution</a>
-        <a href="#technology">Technology</a>
-        <a href="#team">Team</a>
-        <a href="#contact">Contact</a>
-      </div>
-      <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
-    </div>
-  </footer>
-  
-  <!-- Structured Data for SEO -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Synaeon",
-      "url": "https://synaeon.com",
-      "logo": "https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/poza%20pt%20webpage.jpg",
-      "description": "AI-powered VR therapy transforming mental health treatment with real-time, adaptive, and clinically effective exposure therapy.",
-      "founder": [
-        {
-          "@type": "Person",
-          "name": "Matei Seleușan",
-          "jobTitle": "CEO",
-          "email": "mateiseleusan@gmail.com"
-        },
-        {
-          "@type": "Person",
-          "name": "Răzvan Crețu",
-          "jobTitle": "CTO",
-          "email": "razvanmihaicretu@gmail.com"
-        }
-      ],
-      "foundingDate": "2025",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "Romania"
-      }
-    }
-  </script>
-  <script>
-    // Throttle function to limit how often certain events fire
-    function throttle(func, limit) {
-      let inThrottle;
-      return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-          func.apply(context, args);
-          inThrottle = true;
-          setTimeout(() => inThrottle = false, limit);
-        }
-      };
-    }
-    
-    // Debounce function
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
-        const context = this, args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
-      };
-    }
-    
-    // Back to Top Button Functionality with throttling
-    function updateBackToTopButton() {
-      const btn = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
-    }
-    
-    // Update scroll progress bar
-    function updateScrollProgress() {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById("scroll-progress").style.width = scrolled + "%";
-    }
-    
-    // Combine scroll handlers with throttling
-    window.addEventListener('scroll', throttle(function() {
-      updateBackToTopButton();
-      updateScrollProgress();
-    }, 100));
-    
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    
-    // Use Intersection Observer for fade-in animations instead of scroll events
-    document.addEventListener('DOMContentLoaded', function() {
-      const fadeElements = document.querySelectorAll('.fade-in:not(.delay-1):not(.delay-2):not(.delay-3)');
-      
-      // Create the observer with options
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          // Add the active class if element is intersecting
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
-            entry.target.style.webkitTransform = "translateY(0)";
-            // Once animated, no need to observe anymore
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        root: null,
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-      });
-      
-      fadeElements.forEach(element => {
-        observer.observe(element);
-      });
-      
-      updateScrollProgress();
-    });
-    
-    // Hamburger Menu Toggle with improved accessibility
-    document.addEventListener('DOMContentLoaded', function() {
-      const hamburger = document.getElementById('hamburger-menu');
-      const navLinks = document.getElementById('nav-links');
-      
-      function toggleMenu() {
-        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', !isExpanded);
-        hamburger.classList.toggle('open');
-        navLinks.classList.toggle('open');
-      }
-      
-      hamburger.addEventListener('click', toggleMenu);
-      
-      hamburger.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleMenu();
-        }
-      });
-      
-      const navItems = document.querySelectorAll('.nav-links a');
-      navItems.forEach(item => {
-        item.addEventListener('click', function() {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        });
-      });
-      
-      document.addEventListener('click', function(event) {
-        const isClickInsideMenu = navLinks.contains(event.target);
-        const isClickOnHamburger = hamburger.contains(event.target);
-        
-        if (!isClickInsideMenu && !isClickOnHamburger && navLinks.classList.contains('open')) {
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.classList.remove('open');
-          navLinks.classList.remove('open');
-        }
-      });
-    });
-    
-    // Better image loading with error handling
-    document.addEventListener('DOMContentLoaded', function() {
-      const images = document.querySelectorAll('img');
-      
-      images.forEach(img => {
-        img.addEventListener('error', function() {
-          console.error(`Failed to load image: ${img.src}`);
-          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
-          img.classList.add('image-load-error');
-        });
-      });
-    });
-    
-    // Preload team images to avoid layout shifts
-    window.addEventListener('load', function() {
-      const teamImages = document.querySelectorAll('.team-member img');
-      teamImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (src) {
-          const preloadLink = document.createElement('link');
-          preloadLink.href = src;
-          preloadLink.rel = 'preload';
-          preloadLink.as = 'image';
-          document.head.appendChild(preloadLink);
-        }
-      });
-    });
-    
-    // Safari-specific fixes
-    document.addEventListener('DOMContentLoaded', function() {
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      
-      if (isSafari) {
-        document.body.style.display = 'inline-block';
-        setTimeout(function() {
-          document.body.style.display = '';
-        }, 10);
-        
-        const h1Elements = document.querySelectorAll('h1');
-        h1Elements.forEach(function(h1) {
-          h1.style.webkitBackgroundClip = 'text';
-          h1.style.webkitTextFillColor = 'transparent';
-        });
-        
-        const gradientOverlay = document.createElement('div');
-        gradientOverlay.style.position = 'fixed';
-        gradientOverlay.style.top = '0';
-        gradientOverlay.style.left = '0';
-        gradientOverlay.style.width = '100%';
-        gradientOverlay.style.height = '100%';
-        gradientOverlay.style.background = 'linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(255,193,7,0.08) 100%)';
-        gradientOverlay.style.pointerEvents = 'none';
-        gradientOverlay.style.zIndex = '-1';
-        document.body.appendChild(gradientOverlay);
-      }
-    });
-    
-    // Fix viewport height issue on mobile browsers
-    function setMobileHeight() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    
-    window.addEventListener('resize', debounce(setMobileHeight, 100));
-    window.addEventListener('orientationchange', setMobileHeight);
-    setMobileHeight();
-    
-    // Global error handler
-    window.addEventListener('error', function(e) {
-      console.error('Global error handler:', e.message);
-    });
-  </script>
-
-  <!-- Three.js Script for Arachnophobia Demo -->
-  <script>
-    function showLevel(level) {
-      document.getElementById('arachnophobia-demo').style.display = level === 'level1' ? 'block' : 'none';
-      document.getElementById('arachnophobia-level2').style.display = level === 'level2' ? 'block' : 'none';
-
-      if (level === 'level1' && typeof initLevel1 === 'function') initLevel1();
-      if (level === 'level2' && typeof initLevel2 === 'function') initLevel2();
-    }
-  </script>
-  <script src="main.js"></script>
-  <script src="main_level2.js"></script>
-</body>
-</html>
