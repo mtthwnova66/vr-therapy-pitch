@@ -1,84 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Blob Mixer Inspired</title>
-  <style>
-    body { margin: 0; overflow: hidden; background: #111; }
-    canvas { display: block; }
-  </style>
-</head>
-<body>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/simplex-noise.min.js"></script>
+<!-- Embed BlobMixer-Style Blob into Synaeon Hero Section -->
+<section id="hero" style="position: relative; height: 100vh; overflow: hidden;">
+  <canvas id="blobCanvas"></canvas>
+  <div id="hero-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; text-align: center; color: white;">
+    <h1>AI-Driven VR Therapy</h1>
+    <p>Real-time adaptive exposure therapy powered by speech & biofeedback</p>
+  </div>
+</section>
 
-  <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 3;
+<script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/simplex-noise.min.js"></script>
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 3;
+
+  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('blobCanvas'), antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const geometry = new THREE.IcosahedronGeometry(1, 5);
+  const material = new THREE.MeshStandardMaterial({ color: 0xff3c7b, roughness: 0.5, metalness: 0.6, flatShading: true });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  const light = new THREE.PointLight(0xffffff, 1);
+  light.position.set(10, 10, 10);
+  scene.add(light);
+  scene.add(new THREE.AmbientLight(0x222222));
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enabled = false;
+
+  const simplex = new SimplexNoise();
+  const basePositions = geometry.vertices.map(v => v.clone());
+
+  const params = {
+    speed: 1.0,
+    amplitude: 0.15,
+    frequency: 1.5
+  };
+
+  function animateBlob(time) {
+    const delta = time * 0.001 * params.speed;
+    geometry.vertices.forEach((vertex, i) => {
+      const base = basePositions[i];
+      const noise = simplex.noise3D(base.x * params.frequency, base.y * params.frequency, delta);
+      vertex.copy(base).addScaledVector(base.clone().normalize(), noise * params.amplitude);
+    });
+    geometry.verticesNeedUpdate = true;
+    geometry.computeVertexNormals();
+  }
+
+  function animate(time) {
+    requestAnimationFrame(animate);
+    animateBlob(time);
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const geometry = new THREE.IcosahedronGeometry(1, 5);
-    const material = new THREE.MeshStandardMaterial({ color: 0xff3c7b, roughness: 0.5, metalness: 0.6, flatShading: true });
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    const light = new THREE.PointLight(0xffffff, 1);
-    light.position.set(10, 10, 10);
-    scene.add(light);
-    scene.add(new THREE.AmbientLight(0x222222));
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    const simplex = new SimplexNoise();
-
-    const params = {
-      speed: 1.0,
-      amplitude: 0.15,
-      frequency: 1.5,
-      color: "#ff3c7b"
-    };
-
-    const gui = new dat.GUI();
-    gui.add(params, 'speed', 0.1, 5.0);
-    gui.add(params, 'amplitude', 0.01, 0.5);
-    gui.add(params, 'frequency', 0.1, 5.0);
-    gui.addColor(params, 'color').onChange(value => {
-      mesh.material.color.set(value);
-    });
-
-    const basePositions = geometry.vertices.map(v => v.clone());
-
-    function animateBlob(time) {
-      const delta = time * 0.001 * params.speed;
-      geometry.vertices.forEach((vertex, i) => {
-        const base = basePositions[i];
-        const noise = simplex.noise3D(base.x * params.frequency, base.y * params.frequency, delta);
-        vertex.copy(base).addScaledVector(base.clone().normalize(), noise * params.amplitude);
-      });
-      geometry.verticesNeedUpdate = true;
-      geometry.computeVertexNormals();
-    }
-
-    function animate(time) {
-      requestAnimationFrame(animate);
-      animateBlob(time);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
-</body>
-</html>
-ef="#contact" class="
+  });
+</script>
