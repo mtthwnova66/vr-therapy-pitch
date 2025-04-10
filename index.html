@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
-  
   <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
   <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
   <meta name="author" content="Synaeon">
@@ -13,31 +12,37 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://synaeon.com/">
   <meta name="twitter:card" content="summary_large_image">
-  
   <link rel="icon" type="image/png" href="syneon_image.png">
   <link rel="apple-touch-icon" href="syneon_image.png">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0a23;
+      color: #fff;
+      scroll-behavior: smooth;
+    }
     canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
     .overlay {
       width: 100%; height: 100vh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: radial-gradient(circle, rgba(0,0,0,0.4), rgba(0,0,0,0.9)); text-align: center;
-      z-index: 10; position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
+      text-align: center;
     }
-    .overlay h1 {
+    h1 {
       font-size: 3rem;
       background: linear-gradient(90deg, #47a0ff, #ffdb66);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 20px;
     }
-    .overlay p {
+    p {
       font-size: 1.25rem;
       max-width: 700px;
       color: rgba(255,255,255,0.85);
@@ -57,107 +62,33 @@
       background-color: #005bb5;
       transform: translateY(-2px);
     }
+    section {
+      padding: 80px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2 { font-size: 2.25rem; margin-bottom: 20px; }
+    ul { list-style-type: disc; padding-left: 40px; }
+    li { margin-bottom: 10px; }
   </style>
 </head>
 <body>
-
-<!-- Immersive Hero Section -->
-<canvas id="bgCanvas"></canvas>
-<div class="overlay">
-  <h1>Welcome to Synaeon</h1>
-  <p>AI-powered VR therapy that builds the world around you.</p>
-  <button class="btn" onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' });">
-    Explore the Vision
-  </button>
-</div>
-
-<script>
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-
-  const geometry = new THREE.IcosahedronGeometry(1, 2);
-  const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
-  const shape = new THREE.Mesh(geometry, material);
-  scene.add(shape);
-
-  const light = new THREE.PointLight(0xffffff, 1);
-  light.position.set(5, 5, 5);
-  scene.add(light);
-
-  camera.position.z = 3;
-
-  function animate() {
-    requestAnimationFrame(animate);
-    shape.rotation.x += 0.003;
-    shape.rotation.y += 0.005;
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-</script>
-<!-- Scroll Progress and UI Elements -->
-<div class="scroll-progress" id="scroll-progress"></div>
-<div class="tech-symbol" id="tech-symbol-1"></div>
-<div class="tech-symbol" id="tech-symbol-2"></div>
-<div class="tech-symbol" id="tech-symbol-3"></div>
-<button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
-
-<nav class="navbar" id="navbar">
-  <div class="hamburger" id="hamburger-menu">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
+  <canvas id="bgCanvas"></canvas>
+  <div class="overlay">
+    <h1>Welcome to Synaeon</h1>
+    <p>Real-time VR therapy powered by AI that listens, adapts, and evolves with you. This is the future of mental health treatment.</p>
+    <button class="btn" onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' });">Explore the Vision</button>
   </div>
-  <div class="nav-links" id="nav-links">
-    <a href="#about">About</a>
-    <a href="#problem">The Problem</a>
-    <a href="#solution">Our Solution</a>
-    <a href="#how-it-works">How It Works</a>
-    <a href="#technology">Technology</a>
-    <a href="#try-it-yourself">Try It Yourself</a>
-    <a href="#market">Market</a>
-    <a href="#business">Business Model</a>
-    <a href="#team">Team</a>
-    <a href="#contact">Contact</a>
-  </div>
-</nav>
 
-<main class="container fade-in" id="pitch-content">
-  <section class="hero-section fade-in delay-1">
-    <div class="hero-logo">
-      <img src="syneon_image.png" alt="Synaeon Logo" width="150" height="auto" loading="eager">
-    </div>
-    <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-    <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
-    <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-    <div class="intro-video fade-in delay-2">
-      <h2>Who Are We? What's Our Mission?</h2>
-      <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-    </div>
-    <div class="demo-video fade-in delay-3">
-      <h2>Demo</h2>
-      <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-    </div>
-  </section>
-
-  <section class="section fade-in" id="about">
+  <section id="about">
     <h2>About Our Vision</h2>
     <p>Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.</p>
-    <p>That which you need most is to be found where you least want to look – Carl Jung</p>
+    <p>“That which you need most is to be found where you least want to look.” – Carl Jung</p>
   </section>
 
-  <section class="section fade-in" id="problem">
+  <section id="problem">
     <h2>The Problem – Therapy Needs to Evolve</h2>
-    <p>Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios—limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.</p>
+    <p>Traditional exposure therapy often falls short because it relies on a patient’s imagination or static, pre-recorded VR scenarios. This leads to high dropout rates, sometimes reaching 50%.</p>
     <ul>
       <li>Low immersion and engagement</li>
       <li>Inability to adjust therapy in real time</li>
@@ -165,118 +96,66 @@
     </ul>
   </section>
 
-  <section class="section fade-in dark-section" id="solution">
+  <section id="solution">
     <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
     <p>We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback—ensuring every session is personalized for maximum impact.</p>
     <ul>
-      <li>Dynamic, AI-generated VR environments</li>
+      <li>AI-generated environments that adapt dynamically</li>
       <li>Real-time biofeedback integration</li>
-      <li>Comprehensive clinical control via a dedicated dashboard</li>
+      <li>Therapist dashboard with full control</li>
     </ul>
   </section>
 
-  <section class="section fade-in" id="how-it-works">
-    <h2>How It Works</h2>
-    <ul>
-      <li>The therapist launches the software on a compatible VR headset.</li>
-      <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-      <li>The AI listens to the therapist's guidance and generates an interactive VR environment.</li>
-      <li>Real-time biofeedback allows for dynamic session adjustments.</li>
-      <li>The system learns and adapts, personalizing future sessions.</li>
-    </ul>
-  </section>
-
-  <section class="section fade-in" id="technology">
+  <section id="technology">
     <h2>Technology</h2>
-    <p>Leveraging instantaneous speech-to-3D generative AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.</p>
-  </section>
-  <section class="section fade-in" id="try-it-yourself">
-    <h2>Try It Yourself – Arachnophobia Simulation Experience</h2>
-    <p>This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom.</p>
-    <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
-    <div id="level-buttons">
-      <button onclick="showLevel('level1')">Level 1</button>
-      <button onclick="showLevel('level2')">Level 2</button>
-    </div>
-    <div id="arachnophobia-demo" class="level-container"></div>
-    <div id="arachnophobia-level2" class="level-container"></div>
+    <p>Our platform transforms spoken words into immersive 360° VR landscapes using speech-to-3D AI, integrated with real-time physiological data and a cloud-based analytics dashboard. It supports Meta Quest, HTC Vive, and other major headsets.</p>
   </section>
 
-  <section class="section fade-in" id="market">
-    <h2>Market Opportunity</h2>
-    <p>With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous—especially among early adopters in Europe and North America.</p>
-  </section>
-
-  <section class="section fade-in dark-section" id="business">
-    <h2>Business Model & Funding</h2>
-    <p>Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling—providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.</p>
+  <section id="team">
+    <h2>Meet the Team</h2>
     <ul>
-      <li><strong>6–12 months:</strong> Beta testing with early clinic adopters.</li>
-      <li><strong>12–18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
-      <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
+      <li><strong>Matei Seleușan</strong> – Biomedical expert and visionary founder with firsthand therapeutic insight.</li>
+      <li><strong>Răzvan Crețu</strong> – Robotics & AI engineer, builder of sensor-driven healthcare hardware and VR systems.</li>
     </ul>
   </section>
 
-  <section class="section fade-in" id="team">
-    <h2>Meet the Team</h2>
-    <div class="team-members">
-      <div class="team-member">
-        <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" width="120" height="120" loading="lazy">
-        <h3>Matei Seleușan</h3>
-        <p class="role">CEO</p>
-        <p>Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.</p>
-      </div>
-      <div class="team-member">
-        <img class="razvi-img" src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" width="120" height="120" loading="lazy">
-        <h3>Răzvan Crețu</h3>
-        <p class="role">CTO</p>
-        <p>Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section fade-in" id="contact">
+  <section id="contact">
     <h2>Contact Us</h2>
-    <div class="contact-container">
-      <div class="contact-email">
-        <h3>Matei Seleușan</h3>
-        <p><a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
-      </div>
-      <div class="contact-email">
-        <h3>Răzvan Crețu</h3>
-        <p><a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
-      </div>
-    </div>
+    <p>Email Matei: <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
+    <p>Email Răzvan: <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
   </section>
 
-  <section class="section fade-in" id="updates">
-    <h2>Updates from the Team</h2>
-    <p>Stay tuned for our latest events, investor updates, and company milestones.</p>
-    <div class="update-item" style="text-align: center;">
-      <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 200px; width: 100%; border-radius: 16px;">
-      <p style="margin-top: 16px; font-style: italic;">Synaeon has reached Times Square.</p>
-    </div>
-  </section>
-</main>
+  <footer style="text-align: center; padding: 40px 20px; background-color: #000; color: #aaa;">
+    <p>&copy; 2025 Synaeon. All rights reserved.</p>
+  </footer>
 
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-links">
-      <a href="#about">About</a>
-      <a href="#problem">Problem</a>
-      <a href="#solution">Solution</a>
-      <a href="#technology">Technology</a>
-      <a href="#team">Team</a>
-      <a href="#contact">Contact</a>
-    </div>
-    <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
-  </div>
-</footer>
-
-<!-- You may also still need your original scripts: level toggle, scroll progress, audio controls etc. -->
-
-<script src="main.js"></script>
-<script src="main_level2.js"></script>
-
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    const geometry = new THREE.IcosahedronGeometry(1, 2);
+    const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
+    const shape = new THREE.Mesh(geometry, material);
+    scene.add(shape);
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+    camera.position.z = 3;
+    function animate() {
+      requestAnimationFrame(animate);
+      shape.rotation.x += 0.003;
+      shape.rotation.y += 0.005;
+      renderer.render(scene, camera);
+    }
+    animate();
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
+
