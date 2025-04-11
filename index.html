@@ -4,28 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
-  
+
+  <!-- Meta Tags for SEO (Complex and Comprehensive) -->
   <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
-  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
-  <meta name="author" content="Synaeon">
+  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare, Synaeon, immersive therapy">
+  <meta name="author" content="Synaeon Team">
   <meta property="og:title" content="Synaeon - AI-Powered VR Therapy">
-  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
+  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy that adapts in real-time to patient needs.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://synaeon.com/">
+  <meta property="og:image" content="https://synaeon.com/synaeon_og_image.png">
   <meta name="twitter:card" content="summary_large_image">
-  
+  <meta name="twitter:title" content="Synaeon - AI-Powered VR Therapy">
+  <meta name="twitter:description" content="Experience the future of mental health with Synaeon's AI-driven VR therapy solutions.">
+  <meta name="twitter:image" content="https://synaeon.com/synaeon_twitter_image.png">
+
+  <!-- Favicon (Ensure syneon_image.png exists in your project directory) -->
   <link rel="icon" type="image/png" href="syneon_image.png">
   <link rel="apple-touch-icon" href="syneon_image.png">
-  
+
+  <!-- Fonts (Complex Typography Setup) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- THREE.js and Dependencies (Using a reliable CDN with fallback) -->
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- Fallback for THREE.js if CDN fails -->
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+      console.error('Primary THREE.js CDN failed, falling back to secondary CDN.');
+    }
+  </script>
 
   <style>
+    /* CSS Variables for Complex Theming */
     :root {
       --primary: #0071e3;
       --primary-dark: #005bb5;
@@ -47,19 +63,21 @@
       --border-light: rgba(255, 255, 255, 0.1);
       --font-main: 'Inter', sans-serif;
       --font-display: 'Outfit', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
     }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
+
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    
-    html { 
-      scroll-behavior: smooth; 
-      font-size: 16px; 
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
     }
-    
+
     body {
       font-family: var(--font-main);
       background-color: var(--bg-dark);
@@ -69,8 +87,41 @@
       position: relative;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      /* Fallback background gradient if blobs fail */
+      background: linear-gradient(135deg, #040812 0%, #0a1128 100%);
     }
-    
+
+    /* Error Message Styling */
+    .error-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 0, 0, 0.8);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      z-index: 10000;
+      font-family: var(--font-mono);
+      display: none;
+      text-align: center;
+    }
+
+    /* Debug Message Styling */
+    .debug-message {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 255, 0, 0.8);
+      color: black;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      z-index: 10000;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      display: none;
+    }
+
     /* Loading Screen */
     #loading-screen {
       position: fixed;
@@ -86,7 +137,7 @@
       z-index: 10000;
       transition: opacity 0.5s ease;
     }
-    
+
     #loading-screen canvas {
       position: absolute;
       top: 0;
@@ -95,7 +146,7 @@
       height: 100%;
       z-index: -1;
     }
-    
+
     .loading-overlay {
       display: flex;
       flex-direction: column;
@@ -104,7 +155,7 @@
       text-align: center;
       color: var(--text-primary);
     }
-    
+
     .loading-overlay h1 {
       font-family: var(--font-display);
       font-size: 2.5rem;
@@ -114,7 +165,7 @@
       background-clip: text;
       margin-bottom: 1.5rem;
     }
-    
+
     #loading-bar-container {
       width: 300px;
       height: 10px;
@@ -122,7 +173,7 @@
       border-radius: 10px;
       overflow: hidden;
     }
-    
+
     #loading-bar {
       width: 0;
       height: 100%;
@@ -134,49 +185,49 @@
       position: relative;
       z-index: 1;
     }
-    
-    /* Typography */
+
+    /* Typography (Complex with Multiple Font Families) */
     h1, h2, h3, h4, h5, h6 {
       font-family: var(--font-display);
       font-weight: 600;
       line-height: 1.2;
     }
-    
-    h1 { 
-      font-size: clamp(2.5rem, 5vw, 4.5rem); 
-      font-weight: 700; 
-      letter-spacing: -0.03em; 
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); 
-      -webkit-background-clip: text; 
+
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text; 
+      background-clip: text;
       line-height: 1.1;
       margin-bottom: 1.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    
-    h2 { 
-      font-size: clamp(1.75rem, 4vw, 2.5rem); 
-      margin-bottom: 1.5rem; 
-      background: linear-gradient(90deg, #ffffff, #a0c3ff); 
-      -webkit-background-clip: text; 
+
+    h2 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, #ffffff, #a0c3ff);
+      -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;  
+      background-clip: text;
     }
-    
-    h3 { 
+
+    h3 {
       font-size: clamp(1.25rem, 3vw, 1.75rem);
-      margin-bottom: 1rem; 
+      margin-bottom: 1rem;
       color: var(--text-primary);
     }
-    
-    p { 
-      font-size: clamp(1rem, 2vw, 1.125rem); 
-      line-height: 1.7; 
-      color: var(--text-secondary); 
-      margin-bottom: 1.5rem; 
+
+    p {
+      font-size: clamp(1rem, 2vw, 1.125rem);
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
     }
 
     /* Hero Section */
@@ -192,19 +243,12 @@
     }
 
     #blobCanvas {
-      /* For blobs throughout the page: */
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      /* For blobs only in hero section, uncomment these: */
-      /* position: absolute; */
-      /* top: 0; */
-      /* left: 0; */
-      /* width: 100%; */
-      /* height: 100%; */
-      z-index: 0;
+      z-index: 1; /* Ensure blobs are visible but behind interactive elements */
       pointer-events: none;
     }
 
@@ -216,12 +260,12 @@
       padding: 2.5rem;
       max-width: 800px;
       width: 90%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
                   0 0 20px var(--primary-glow),
                   0 0 40px rgba(0, 0, 0, 0.3) inset;
       animation: float 6s infinite ease-in-out;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     @keyframes float {
@@ -246,7 +290,7 @@
       margin: 0 auto 2rem;
     }
 
-    /* Navigation */
+    /* Navigation (Complex with Hover Effects and Mobile Support) */
     .navbar {
       position: fixed;
       top: 0;
@@ -320,7 +364,7 @@
       transition: all 0.3s ease;
     }
 
-    /* Button Styles */
+    /* Button Styles (Complex with Hover Effects) */
     .btn {
       display: inline-block;
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
@@ -416,7 +460,7 @@
       background: rgba(255, 193, 7, 0.1);
     }
 
-    /* Feature Cards */
+    /* Feature Cards (Complex with Animations) */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -483,67 +527,6 @@
       flex-grow: 1;
     }
 
-    /* Blob Background Elements */
-    .blob-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.2;
-      animation: blob-float 15s infinite ease-in-out;
-    }
-
-    .blob-1 {
-      width: 500px;
-      height: 500px;
-      background: var(--primary);
-      top: -250px;
-      left: -250px;
-      animation-delay: 0s;
-    }
-
-    .blob-2 {
-      width: 400px;
-      height: 400px;
-      background: var(--accent);
-      bottom: -200px;
-      right: -200px;
-      animation-delay: -5s;
-    }
-
-    .blob-3 {
-      width: 300px;
-      height: 300px;
-      background: var(--neural-1);
-      top: 40%;
-      right: -150px;
-      animation-delay: -10s;
-    }
-
-    @keyframes blob-float {
-      0%, 100% {
-        transform: translate(0, 0) scale(1);
-      }
-      25% {
-        transform: translate(100px, 50px) scale(1.1);
-      }
-      50% {
-        transform: translate(50px, 100px) scale(0.9);
-      }
-      75% {
-        transform: translate(-50px, 50px) scale(1.05);
-      }
-    }
-
     /* Team Section */
     .team-grid {
       display: grid;
@@ -599,7 +582,7 @@
       color: var(--text-tertiary);
     }
 
-    /* Try-it-yourself Section */
+    /* VR Demo Section (Complex with Interactive Controls) */
     .vr-demo {
       background: var(--card-bg);
       border-radius: 20px;
@@ -622,16 +605,16 @@
       justify-content: center;
     }
 
-    /* Responsive Design */
+    /* Responsive Design (Complex Media Queries) */
     @media (max-width: 992px) {
       .section {
         padding: 6rem 1.5rem;
       }
-      
+
       .vr-demo-canvas {
         height: 400px;
       }
-      
+
       .feature-card, .team-card {
         transform: none !important;
       }
@@ -641,11 +624,11 @@
       .navbar {
         padding: 1rem 1.5rem;
       }
-      
+
       .hamburger {
         display: flex;
       }
-      
+
       .nav-links {
         position: fixed;
         top: 70px;
@@ -658,20 +641,20 @@
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
       }
-      
+
       .nav-links.active {
         clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
       }
-      
+
       .section {
         padding: 5rem 1rem;
       }
-      
+
       .btn-group {
         flex-direction: column;
         width: 100%;
       }
-      
+
       .vr-demo-canvas {
         height: 350px;
       }
@@ -681,22 +664,22 @@
       .hero-inner {
         padding: 2rem 1.5rem;
       }
-      
+
       .btn {
         width: 100%;
         text-align: center;
       }
-      
+
       .vr-demo-canvas {
         height: 250px;
       }
-      
+
       .vr-controls {
         flex-direction: column;
       }
     }
 
-    /* Footer */
+    /* Footer (Complex with Multiple Columns) */
     .footer {
       background: rgba(2, 6, 14, 0.9);
       padding: 4rem 2rem 2rem;
@@ -800,6 +783,26 @@
 </head>
 
 <body>
+  <!-- Error and Debug Messages -->
+  <div id="webgl-error" class="error-message">
+    WebGL is not supported in your browser. Please use a modern browser to view the full experience.
+  </div>
+  <div id="three-error" class="error-message">
+    Failed to load THREE.js library. Please check your internet connection and refresh the page.
+  </div>
+  <div id="blob-error" class="error-message">
+    Failed to initialize blob canvas. Please ensure WebGL is supported and refresh the page.
+  </div>
+  <div id="debug-blob" class="debug-message">
+    Blob canvas initialized successfully.
+  </div>
+  <div id="debug-loading" class="debug-message">
+    Loading screen initialized successfully.
+  </div>
+  <div id="debug-vr" class="debug-message">
+    VR demo initialized successfully.
+  </div>
+
   <!-- Loading Screen -->
   <div id="loading-screen">
     <canvas id="loadingCanvas"></canvas>
@@ -810,7 +813,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="main-content" style="display: none;">
     <nav class="navbar" id="navbar">
       <div class="hamburger" id="hamburger">
@@ -831,11 +834,6 @@
 
     <section class="hero">
       <canvas id="blobCanvas"></canvas>
-      <div class="blob-container">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-      </div>
       <div class="hero-inner">
         <div class="hero-tagline">The Future of Mental Health</div>
         <h1>
@@ -1124,42 +1122,100 @@
   </div>
 
   <script>
-    // Loading Screen Animation
+    // Utility Function to Show Debug Messages
+    function showDebugMessage(id, message) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+          element.style.display = 'none';
+        }, 5000);
+      }
+      console.log(message);
+    }
+
+    // Utility Function to Show Error Messages
+    function showErrorMessage(id, message) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = message;
+        element.style.display = 'block';
+      }
+      console.error(message);
+    }
+
+    // Check if THREE.js Loaded
+    if (typeof THREE === 'undefined') {
+      showErrorMessage('three-error', 'Failed to load THREE.js library. Please check your internet connection and refresh the page.');
+      throw new Error('THREE.js not loaded');
+    } else {
+      showDebugMessage('debug-loading', 'THREE.js loaded successfully.');
+    }
+
+    // Loading Screen Animation (Complex with Dynamic Lighting)
     (function() {
       const canvas = document.getElementById('loadingCanvas');
+      if (!canvas) {
+        console.error('Loading canvas not found!');
+        return;
+      }
+
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+      if (!renderer.getContext()) {
+        showErrorMessage('webgl-error', 'WebGL not supported in your browser.');
+        return;
+      }
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 3;
+
       const geometry = new THREE.IcosahedronGeometry(1, 2);
       const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
       const ball = new THREE.Mesh(geometry, material);
       scene.add(ball);
-      const light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(5, 5, 5);
-      scene.add(light);
+
+      const pointLight = new THREE.PointLight(0xffffff, 1);
+      pointLight.position.set(5, 5, 5);
+      scene.add(pointLight);
+
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+      scene.add(ambientLight);
+
+      const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
         ball.rotation.x += 0.003;
         ball.rotation.y += 0.005;
+        pointLight.position.x = Math.sin(elapsed) * 5;
+        pointLight.position.y = Math.cos(elapsed) * 5;
         renderer.render(scene, camera);
       }
       animate();
+
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
+
+      showDebugMessage('debug-loading', 'Loading screen initialized successfully.');
     })();
 
-    // Show loading bar and fade out
+    // Show Loading Bar and Fade Out
     window.addEventListener('load', function() {
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
-      
+
+      if (!loadingBar || !loadingScreen || !mainContent) {
+        console.error('Loading elements not found!');
+        return;
+      }
+
       loadingBar.style.width = '100%';
       setTimeout(function() {
         loadingScreen.style.opacity = '0';
@@ -1170,35 +1226,44 @@
       }, 1200);
     });
 
-    // Main initialization function
+    // Main Initialization Function
     document.addEventListener('DOMContentLoaded', function() {
-      // Navigation toggle
+      // Navigation Toggle
       const hamburger = document.getElementById('hamburger');
       const navLinks = document.getElementById('nav-links');
-      
-      hamburger.addEventListener('click', function() {
-        navLinks.classList.toggle('active');
-        hamburger.classList.toggle('active');
-      });
-      
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function() {
-          navLinks.classList.remove('active');
-          hamburger.classList.remove('active');
+
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', function() {
+          navLinks.classList.toggle('active');
+          hamburger.classList.toggle('active');
         });
-      });
-      
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.addEventListener('click', function() {
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+          });
+        });
+      } else {
+        console.error('Navigation elements not found!');
+      }
+
+      // Navbar Scroll Effect
       const navbar = document.getElementById('navbar');
-      window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-          navbar.classList.add('scrolled');
-        } else {
-          navbar.classList.remove('scrolled');
-        }
-      });
-      
+      if (navbar) {
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+          } else {
+            navbar.classList.remove('scrolled');
+          }
+        });
+      }
+
+      // Initialize Blob Canvas
       initBlobCanvas();
-      
+
+      // VR Demo Buttons
       const level1Btn = document.getElementById('level1-btn');
       const level2Btn = document.getElementById('level2-btn');
       if (level1Btn && level2Btn) {
@@ -1206,36 +1271,47 @@
           console.log('Level 1 Demo Loaded');
           level1Btn.classList.remove('btn-outline');
           level2Btn.classList.add('btn-outline');
+          initVRDemo(1);
         });
         level2Btn.addEventListener('click', function() {
           console.log('Level 2 Demo Loaded');
           level2Btn.classList.remove('btn-outline');
           level1Btn.classList.add('btn-outline');
+          initVRDemo(2);
         });
-        setTimeout(() => console.log('Level 1 Demo Loaded'), 1000);
+        setTimeout(() => initVRDemo(1), 1000);
       }
 
+      // Initialize Tech Demo
       if (document.getElementById('tech-canvas')) {
         initTechDemo();
       }
     });
 
-    // Enhanced Blob Canvas Animation with Complex, Organic Metaballs
+    // Complex Blob Canvas Animation with Metaballs, Particles, and Dynamic Lighting
     function initBlobCanvas() {
+      console.log("initBlobCanvas called");
       const canvas = document.getElementById('blobCanvas');
-      if (!canvas) return;
-      
+      if (!canvas) {
+        showErrorMessage('blob-error', 'Blob canvas not found!');
+        return;
+      }
+
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      if (!renderer.getContext()) {
+        showErrorMessage('webgl-error', 'WebGL not supported in your browser.');
+        return;
+      }
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      
+
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 50;
-      
+
       const metaballs = [];
-      const metaballCount = 20; // Adjusted for full-page distribution
-      
+      const metaballCount = 20;
+
       const materials = [
         new THREE.MeshStandardMaterial({
           color: 0x47a0ff,
@@ -1259,48 +1335,48 @@
           opacity: 0.5
         })
       ];
-      
-      // Noise function for organic deformation
+
+      // Noise Function for Organic Deformation
       function noise3D(x, y, z, t = 0) {
         return Math.sin(x * 0.3 + t) * Math.sin(y * 0.3 + t) * Math.sin(z * 0.3 + t);
       }
-      
+
+      // Create Metaballs
       for (let i = 0; i < metaballCount; i++) {
         const radius = Math.random() * 4 + 2;
-        const geometry = new THREE.IcosahedronGeometry(radius, 16); // Higher detail for complexity
+        const geometry = new THREE.IcosahedronGeometry(radius, 16);
         const vertices = geometry.attributes.position.array;
         const baseVertices = new Float32Array(vertices.length);
-        vertices.copyTo(baseVertices); // Store original positions for dynamic updates
-        
+        vertices.copyTo(baseVertices);
+
         const material = materials[Math.floor(Math.random() * materials.length)].clone();
         const mesh = new THREE.Mesh(geometry, material);
-        
-        // Distribute across the full page if using position: fixed
+
         mesh.position.x = (Math.random() - 0.5) * 60;
-        mesh.position.y = (Math.random() - 0.5) * 100; // Wider vertical range
+        mesh.position.y = (Math.random() - 0.5) * 100;
         mesh.position.z = (Math.random() - 0.5) * 40;
-        
-        // Reduce size and opacity at bottom if full-page
+
         if (mesh.position.y < -20) {
           mesh.scale.setScalar(0.5 + Math.random() * 0.5);
           mesh.material.opacity *= 0.5;
         }
-        
+
         mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.03 };
         mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
         mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
         mesh.material.color = mesh.originalColor;
-        mesh.userData = { baseVertices }; // Store for dynamic deformation
+        mesh.userData = { baseVertices };
         scene.add(mesh);
         metaballs.push(mesh);
       }
-      
+
+      // Add Connections Between Metaballs
       const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.2 });
       const connections = [];
       function updateConnections() {
         connections.forEach(conn => {
           scene.remove(conn);
-          if(conn.geometry) conn.geometry.dispose();
+          if (conn.geometry) conn.geometry.dispose();
         });
         connections.length = 0;
         for (let i = 0; i < metaballs.length; i++) {
@@ -1317,94 +1393,149 @@
           }
         }
       }
-      
+
+      // Add Dynamic Lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
       scene.add(ambientLight);
       const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
       directionalLight.position.set(10, 10, 10);
       scene.add(directionalLight);
-      
+      const pointLight = new THREE.PointLight(0x47a0ff, 1, 100);
+      pointLight.position.set(0, 0, 20);
+      scene.add(pointLight);
+
+      // Add Particle System for Added Complexity
+      const particlesCount = 500;
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesPositions = new Float32Array(particlesCount * 3);
+      const particlesSizes = new Float32Array(particlesCount);
+
+      for (let i = 0; i < particlesCount; i++) {
+        const i3 = i * 3;
+        particlesPositions[i3] = (Math.random() - 0.5) * 100;
+        particlesPositions[i3 + 1] = (Math.random() - 0.5) * 100;
+        particlesPositions[i3 + 2] = (Math.random() - 0.5) * 100;
+        particlesSizes[i] = Math.random() * 2;
+      }
+
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
+      particlesGeometry.setAttribute('size', new THREE.BufferAttribute(particlesSizes, 1));
+      const particlesMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.1,
+        transparent: true,
+        opacity: 0.4
+      });
+      const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particles);
+
       const clock = new THREE.Clock();
       let mouseX = 0, mouseY = 0;
       window.addEventListener('mousemove', (event) => {
         mouseX = event.clientX - window.innerWidth / 2;
         mouseY = event.clientY - window.innerHeight / 2;
       });
-      
+
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-        
+
+        // Animate Metaballs
         metaballs.forEach(ball => {
           ball.position.x += ball.velocity.x;
           ball.position.y += ball.velocity.y;
           ball.position.z += ball.velocity.z;
-          
+
           const boundaryX = 60;
-          const boundaryY = 100; // Adjusted for full-page if using position: fixed
+          const boundaryY = 100;
           const boundaryZ = 40;
           if (Math.abs(ball.position.x) > boundaryX) ball.velocity.x *= -1;
           if (Math.abs(ball.position.y) > boundaryY) ball.velocity.y *= -1;
           if (Math.abs(ball.position.z) > boundaryZ) ball.velocity.z *= -1;
-          
+
           ball.rotation.x += ball.rotationSpeed.x;
           ball.rotation.y += ball.rotationSpeed.y;
           ball.rotation.z += ball.rotationSpeed.z;
-          
-          // Organic shape-shifting inspired by Blobmixer
+
           const vertices = ball.geometry.attributes.position.array;
           const baseVertices = ball.userData.baseVertices;
           for (let j = 0; j < vertices.length; j += 3) {
             const x = baseVertices[j];
             const y = baseVertices[j + 1];
             const z = baseVertices[j + 2];
-            const noise = noise3D(x * 2, y * 2, z * 2, elapsed * 0.5) * 1.5; // Increased frequency and amplitude
+            const noise = noise3D(x * 2, y * 2, z * 2, elapsed * 0.5) * 1.5;
             vertices[j] = x + x * noise;
             vertices[j + 1] = y + y * noise;
             vertices[j + 2] = z + z * noise;
           }
           ball.geometry.attributes.position.needsUpdate = true;
-          
+
           const scale = 1 + Math.sin(elapsed * 2 + ball.position.x * 0.5) * 0.1;
           ball.scale.set(scale, scale, scale);
           const hue = (elapsed * 0.05 + ball.position.x * 0.01) % 1;
           ball.material.color.setHSL(hue, 0.6, 0.6);
         });
-        
+
+        // Animate Particles
+        const positions = particles.geometry.attributes.position.array;
+        for (let i = 0; i < particlesCount; i++) {
+          const i3 = i * 3;
+          positions[i3 + 1] += 0.01 * Math.sin(elapsed + i);
+          if (Math.abs(positions[i3]) > 50 || Math.abs(positions[i3 + 1]) > 50 || Math.abs(positions[i3 + 2]) > 50) {
+            positions[i3] = (Math.random() - 0.5) * 100;
+            positions[i3 + 1] = (Math.random() - 0.5) * 100;
+            positions[i3 + 2] = (Math.random() - 0.5) * 100;
+          }
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+
+        // Update Connections
         if (Math.random() < 0.05) updateConnections();
+
+        // Dynamic Lighting
+        pointLight.position.x = Math.sin(elapsed) * 20;
+        pointLight.position.y = Math.cos(elapsed) * 20;
+
+        // Scene Rotation Based on Mouse
         scene.rotation.y += ((mouseX * 0.0001) - scene.rotation.y) * 0.01;
         scene.rotation.x += ((mouseY * 0.0001) - scene.rotation.x) * 0.01;
+
         renderer.render(scene, camera);
       }
-      
+
       animate();
-      
+
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
+
+      showDebugMessage('debug-blob', 'Blob canvas initialized successfully.');
     }
 
-    // Technology Demo Visualization
+    // Technology Demo Visualization (Complex with Nodes and Connections)
     function initTechDemo() {
       const container = document.getElementById('tech-canvas');
-      if (!container) return;
-      
+      if (!container) {
+        console.error('Tech demo canvas not found!');
+        return;
+      }
+
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
-      
+
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
       camera.position.z = 20;
-      
+
       const nodeCount = 50;
       const nodes = [];
-      
+
       for (let i = 0; i < nodeCount; i++) {
         const geometry = new THREE.SphereGeometry(0.2 + Math.random() * 0.3, 16, 16);
-        const material = new THREE.MeshBasicMaterial({ 
+        const material = new THREE.MeshBasicMaterial({
           color: new THREE.Color(Math.random() * 0.3 + 0.5, Math.random() * 0.3 + 0.5, Math.random() * 0.3 + 0.5),
           transparent: true,
           opacity: 0.7
@@ -1420,12 +1551,12 @@
         scene.add(node);
         nodes.push(node);
       }
-      
+
       const lineGroup = new THREE.Group();
       scene.add(lineGroup);
-      
+
       function updateConnections() {
-        while(lineGroup.children.length > 0) {
+        while (lineGroup.children.length > 0) {
           const line = lineGroup.children[0];
           lineGroup.remove(line);
           line.geometry.dispose();
@@ -1438,7 +1569,7 @@
             const distance = node1.position.distanceTo(node2.position);
             if (distance < 8) {
               const strength = 1 - distance / 8;
-              const material = new THREE.LineBasicMaterial({ 
+              const material = new THREE.LineBasicMaterial({
                 color: 0x47a0ff,
                 transparent: true,
                 opacity: strength * 0.5
@@ -1451,15 +1582,15 @@
           }
         }
       }
-      
+
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambientLight);
-      
+
       const particlesCount = 500;
       const particlesGeometry = new THREE.BufferGeometry();
       const particlesPositions = new Float32Array(particlesCount * 3);
       const particlesSizes = new Float32Array(particlesCount);
-      
+
       for (let i = 0; i < particlesCount; i++) {
         const i3 = i * 3;
         particlesPositions[i3] = (Math.random() - 0.5) * 50;
@@ -1467,7 +1598,7 @@
         particlesPositions[i3 + 2] = (Math.random() - 0.5) * 50;
         particlesSizes[i] = Math.random() * 2;
       }
-      
+
       particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
       particlesGeometry.setAttribute('size', new THREE.BufferAttribute(particlesSizes, 1));
       const particlesMaterial = new THREE.PointsMaterial({
@@ -1478,7 +1609,7 @@
       });
       const particles = new THREE.Points(particlesGeometry, particlesMaterial);
       scene.add(particles);
-      
+
       const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
@@ -1508,7 +1639,7 @@
         particles.geometry.attributes.position.needsUpdate = true;
         renderer.render(scene, camera);
       }
-      
+
       animate();
       window.addEventListener('resize', () => {
         camera.aspect = container.clientWidth / container.clientHeight;
@@ -1516,8 +1647,133 @@
         renderer.setSize(container.clientWidth, container.clientHeight);
       });
     }
+
+          // VR Demo Setup
+      const controls = new THREE.OrbitControls(vrCamera, vrRenderer.domElement);
+      controls.enablePan = false;
+      controls.enableZoom = true;
+      controls.minDistance = 2;
+      controls.maxDistance = 10;
+
+      // Add Ground Plane
+      const groundGeometry = new THREE.PlaneGeometry(50, 50);
+      const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8, metalness: 0.2 });
+      const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -1;
+      vrScene.add(ground);
+
+      // Add Environment Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      vrScene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 10, 5);
+      directionalLight.castShadow = true;
+      vrScene.add(directionalLight);
+
+      // Add Dynamic Point Light for Atmosphere
+      const pointLight = new THREE.PointLight(0xff3366, 1, 20);
+      pointLight.position.set(0, 5, 0);
+      vrScene.add(pointLight);
+
+      // Spider Model (Simplified as a Placeholder - Replace with GLTF Model in Production)
+      const spiderGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+      const spiderMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.5, metalness: 0.1 });
+      spider = new THREE.Mesh(spiderGeometry, spiderMaterial);
+      spider.position.set(0, 0, 0);
+      spider.castShadow = true;
+      vrScene.add(spider);
+
+      // Add Spider Legs (Complex Geometry)
+      const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 1, 8);
+      const legMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+      for (let i = 0; i < 8; i++) {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        const angle = (i / 8) * Math.PI * 2;
+        leg.position.set(Math.cos(angle) * 0.7, 0.5, Math.sin(angle) * 0.7);
+        leg.rotation.z = angle + Math.PI / 2;
+        leg.rotation.x = Math.PI / 4;
+        spider.add(leg);
+      }
+
+      // Add Particle System for Dust/Atmosphere
+      const dustCount = 200;
+      const dustGeometry = new THREE.BufferGeometry();
+      const dustPositions = new Float32Array(dustCount * 3);
+      const dustSizes = new Float32Array(dustCount);
+
+      for (let i = 0; i < dustCount; i++) {
+        const i3 = i * 3;
+        dustPositions[i3] = (Math.random() - 0.5) * 20;
+        dustPositions[i3 + 1] = Math.random() * 5;
+        dustPositions[i3 + 2] = (Math.random() - 0.5) * 20;
+        dustSizes[i] = Math.random() * 0.5;
+      }
+
+      dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+      dustGeometry.setAttribute('size', new THREE.BufferAttribute(dustSizes, 1));
+      const dustMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.1,
+        transparent: true,
+        opacity: 0.3
+      });
+      const dust = new THREE.Points(dustGeometry, dustMaterial);
+      vrScene.add(dust);
+
+      // Level-Specific Adjustments
+      if (level === 1) {
+        spider.scale.set(0.5, 0.5, 0.5); // Smaller spider for mild exposure
+        spider.position.y = 0;
+        pointLight.color.setHex(0x47a0ff); // Calming blue light
+      } else if (level === 2) {
+        spider.scale.set(1.5, 1.5, 1.5); // Larger spider for intense exposure
+        spider.position.y = 1;
+        pointLight.color.setHex(0xff3366); // Intense red light
+        // Add more spiders for intensity
+        const spider2 = spider.clone();
+        spider2.position.set(2, 0, 2);
+        vrScene.add(spider2);
+      }
+
+      // Animation Loop
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        // Animate Spider
+        spider.position.y = Math.sin(elapsed * 2) * 0.2;
+        spider.rotation.y += 0.01;
+
+        // Animate Dust Particles
+        const positions = dust.geometry.attributes.position.array;
+        for (let i = 0; i < dustCount; i++) {
+          const i3 = i * 3;
+          positions[i3] += Math.sin(elapsed + i) * 0.01;
+          positions[i3 + 1] += Math.cos(elapsed + i) * 0.005;
+          if (positions[i3 + 1] > 5) positions[i3 + 1] = 0;
+        }
+        dust.geometry.attributes.position.needsUpdate = true;
+
+        // Animate Point Light
+        pointLight.position.x = Math.sin(elapsed) * 5;
+        pointLight.position.z = Math.cos(elapsed) * 5;
+
+        vrRenderer.render(vrScene, vrCamera);
+      }
+
+      animate();
+
+      // Handle Resize
+      window.addEventListener('resize', () => {
+        vrCamera.aspect = container.clientWidth / container.clientHeight;
+        vrCamera.updateProjectionMatrix();
+        vrRenderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      showDebugMessage('debug-vr', 'VR demo initialized successfully for Level ' + level + '.');
+    }
   </script>
-  <script src="main.js"></script>
-  <script src="main_level2.js"></script>
 </body>
 </html>
