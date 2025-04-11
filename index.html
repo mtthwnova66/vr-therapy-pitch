@@ -24,6 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
 
   <style>
     :root {
@@ -1110,52 +1111,117 @@
   </div>
 
   <script>
-    // Loading Screen Animation
-    (function() {
+    // Loading Screen Animation with Fallback
+    function initLoadingScreen() {
       const canvas = document.getElementById('loadingCanvas');
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 3;
-      const geometry = new THREE.IcosahedronGeometry(1, 2);
-      const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
-      const ball = new THREE.Mesh(geometry, material);
-      scene.add(ball);
-      const light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(5, 5, 5);
-      scene.add(light);
-      function animate() {
-        requestAnimationFrame(animate);
-        ball.rotation.x += 0.003;
-        ball.rotation.y += 0.005;
-        renderer.render(scene, camera);
-      }
-      animate();
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-    })();
-
-    // Show loading bar and fade out
-    window.addEventListener('load', function() {
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
-      
-      loadingBar.style.width = '100%';
-      setTimeout(function() {
-        loadingScreen.style.opacity = '0';
-        setTimeout(function() {
-          loadingScreen.style.display = 'none';
-          mainContent.style.display = 'block';
-        }, 500);
-      }, 1200);
+
+      // Check if essential elements exist
+      if (!canvas || !loadingBar || !loadingScreen || !mainContent) {
+        console.error('Loading screen elements not found. Forcing content display.');
+        loadingScreen.style.display = 'none';
+        mainContent.style.display = 'block';
+        return;
+      }
+
+      let renderer, scene, camera, ball;
+
+      try {
+        // Set up Three.js for the icosahedron
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 3;
+
+        const geometry = new THREE.IcosahedronGeometry(1, 2);
+        const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
+        ball = new THREE.Mesh(geometry, material);
+        scene.add(ball);
+
+        const light = new THREE.PointLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+
+        function animate() {
+          requestAnimationFrame(animate);
+          ball.rotation.x += 0.003;
+          ball.rotation.y += 0.005;
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      } catch (error) {
+        console.error('Error initializing Three.js for loading screen:', error);
+        // Fallback: proceed without the animation
+      }
+
+      // Animate the loading bar and transition to main content
+      try {
+        loadingBar.style.width = '100%';
+        setTimeout(() => {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 500);
+        }, 1200);
+      } catch (error) {
+        console.error('Error during loading bar animation:', error);
+        // Fallback: force transition
+        loadingScreen.style.display = 'none';
+        mainContent.style.display = 'block';
+      }
+    }
+
+    // Ensure the loading screen initializes and has a fallback
+    document.addEventListener('DOMContentLoaded', () => {
+      initLoadingScreen();
+
+      // Fallback: if the page doesn't transition after 5 seconds, force it
+      setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.querySelector('.main-content');
+        if (loadingScreen && mainContent && loadingScreen.style.display !== 'none') {
+          console.warn('Loading screen timeout. Forcing content display.');
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 500);
+        }
+      }, 5000);
     });
 
+    // Secondary trigger on window 'load' event
+    window.addEventListener('load', () => {
+      const loadingBar = document.getElementById('loading-bar');
+      const loadingScreen = document.getElementById('loading-screen');
+      const mainContent = document.querySelector('.main-content');
+
+      if (loadingBar && loadingScreen && mainContent && loadingScreen.style.display !== 'none') {
+        loadingBar.style.width = '100%';
+        setTimeout(() => {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 500);
+        }, 1200);
+      }
+    });
+  </script>
+
+  <script>
     // Main initialization function
     document.addEventListener('DOMContentLoaded', function() {
       // Navigation toggle
@@ -1186,7 +1252,7 @@
         }
       });
       
-      // Blob background animation with new metaballs
+      // Blob background animation with enhanced metaballs
       initBlobCanvas();
       
       // Demo buttons
@@ -1218,7 +1284,7 @@
       }
     });
 
-    // New Blob Canvas Animation with Metaballs
+    // Enhanced Blob Canvas Animation with Metaballs
     function initBlobCanvas() {
       const canvas = document.getElementById('blobCanvas');
       if (!canvas) return;
@@ -1235,34 +1301,70 @@
       const metaballCount = 10; // Background metaballs
       const titleMetaballCount = 15; // Smaller metaballs around title
       
+      // Initialize Simplex noise for smoother movement
+      const simplex = new SimplexNoise();
+
+      // Custom shader for glowing metaballs
+      const vertexShader = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vPosition = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+
+      const fragmentShader = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        uniform vec3 glowColor;
+        uniform float glowIntensity;
+        uniform float time;
+        void main() {
+          float intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+          float pulse = 0.5 + 0.5 * sin(time + vPosition.x + vPosition.y + vPosition.z);
+          vec3 color = glowColor * (intensity + glowIntensity * pulse);
+          gl_FragColor = vec4(color, 0.8);
+        }
+      `;
+
       const materials = [
-        new THREE.MeshStandardMaterial({
-          color: 0x47a0ff,
-          metalness: 0.2,
-          roughness: 0.8,
+        new THREE.ShaderMaterial({
+          uniforms: {
+            glowColor: { value: new THREE.Color(0x47a0ff) },
+            glowIntensity: { value: 0.5 },
+            time: { value: 0 }
+          },
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
           transparent: true,
-          opacity: 0.8
+          side: THREE.DoubleSide
         }),
-        new THREE.MeshStandardMaterial({
-          color: 0xffd166,
-          metalness: 0.3,
-          roughness: 0.7,
+        new THREE.ShaderMaterial({
+          uniforms: {
+            glowColor: { value: new THREE.Color(0xffd166) },
+            glowIntensity: { value: 0.5 },
+            time: { value: 0 }
+          },
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
           transparent: true,
-          opacity: 0.7
+          side: THREE.DoubleSide
         }),
-        new THREE.MeshStandardMaterial({
-          color: 0xff3366,
-          metalness: 0.1,
-          roughness: 0.9,
+        new THREE.ShaderMaterial({
+          uniforms: {
+            glowColor: { value: new THREE.Color(0xff3366) },
+            glowIntensity: { value: 0.5 },
+            time: { value: 0 }
+          },
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
           transparent: true,
-          opacity: 0.6
+          side: THREE.DoubleSide
         })
       ];
-      
-      function noise3D(x, y, z) {
-        return Math.sin(x * 0.1) * Math.sin(y * 0.1) * Math.sin(z * 0.1);
-      }
-      
+
       // Background metaballs
       for (let i = 0; i < metaballCount; i++) {
         const radius = Math.random() * 3 + 1;
@@ -1270,13 +1372,14 @@
         const vertices = geometry.attributes.position.array;
         for (let j = 0; j < vertices.length; j += 3) {
           const x = vertices[j];
-          const y = vertices[j+1];
-          const z = vertices[j+2];
-          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          const y = vertices[j + 1];
+          const z = vertices[j + 2];
+          const n = simplex.noise3D(x * 0.5, y * 0.5, z * 0.5) * 0.3;
           vertices[j] += x * n;
-          vertices[j+1] += y * n;
-          vertices[j+2] += z * n;
+          vertices[j + 1] += y * n;
+          vertices[j + 2] += z * n;
         }
+        geometry.attributes.position.needsUpdate = true;
         const material = materials[Math.floor(Math.random() * materials.length)].clone();
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.x = (Math.random() - 0.5) * 40;
@@ -1287,110 +1390,133 @@
         mesh.rotation.y = Math.random() * Math.PI;
         mesh.rotation.z = Math.random() * Math.PI;
         mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
-        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
-        mesh.material.color = mesh.originalColor;
+        mesh.noiseOffset = Math.random() * 100;
         scene.add(mesh);
         metaballs.push(mesh);
       }
-      
+
       // Smaller metaballs concentrated around title
       for (let i = 0; i < titleMetaballCount; i++) {
-        const radius = Math.random() * 0.8 + 0.3; // Smaller size
+        const radius = Math.random() * 0.8 + 0.3;
         const geometry = new THREE.IcosahedronGeometry(radius, 8);
         const vertices = geometry.attributes.position.array;
         for (let j = 0; j < vertices.length; j += 3) {
           const x = vertices[j];
-          const y = vertices[j+1];
-          const z = vertices[j+2];
-          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          const y = vertices[j + 1];
+          const z = vertices[j + 2];
+          const n = simplex.noise3D(x * 0.5, y * 0.5, z * 0.5) * 0.3;
           vertices[j] += x * n;
-          vertices[j+1] += y * n;
-          vertices[j+2] += z * n;
+          vertices[j + 1] += y * n;
+          vertices[j + 2] += z * n;
         }
+        geometry.attributes.position.needsUpdate = true;
         const material = materials[Math.floor(Math.random() * materials.length)].clone();
         const mesh = new THREE.Mesh(geometry, material);
-        // Position around center (title area), slightly offset
         mesh.position.x = (Math.random() - 0.5) * 10;
-        mesh.position.y = (Math.random() - 0.5) * 10 + 5; // Slightly higher to align with title
+        mesh.position.y = (Math.random() - 0.5) * 10 + 5;
         mesh.position.z = (Math.random() - 0.5) * 5;
         mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.03 };
         mesh.rotation.x = Math.random() * Math.PI;
         mesh.rotation.y = Math.random() * Math.PI;
         mesh.rotation.z = Math.random() * Math.PI;
         mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 };
-        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
-        mesh.material.color = mesh.originalColor;
+        mesh.noiseOffset = Math.random() * 100;
         scene.add(mesh);
         metaballs.push(mesh);
       }
-      
+
+      // Connection lines with fading effect
       const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.3 });
       const connections = [];
       function updateConnections() {
         connections.forEach(conn => {
           scene.remove(conn);
-          if(conn.geometry) conn.geometry.dispose();
+          if (conn.geometry) conn.geometry.dispose();
         });
         connections.length = 0;
-        for (let i = 0; i < metaballs.length; i++) {
+        let connectionCount = 0;
+        const maxConnections = 50; // Limit for performance
+        for (let i = 0; i < metaballs.length && connectionCount < maxConnections; i++) {
           const ball1 = metaballs[i];
-          for (let j = i + 1; j < metaballs.length; j++) {
+          for (let j = i + 1; j < metaballs.length && connectionCount < maxConnections; j++) {
             const ball2 = metaballs[j];
             const dx = ball1.position.x - ball2.position.x;
             const dy = ball1.position.y - ball2.position.y;
             const dz = ball1.position.z - ball2.position.z;
             const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (distance < 10) { // Reduced distance for smaller title metaballs
+            const maxDistance = ball1.geometry.parameters.radius > 1 ? 15 : 8;
+            if (distance < maxDistance) {
+              const opacity = 1 - (distance / maxDistance);
+              const material = new THREE.LineBasicMaterial({
+                color: 0x47a0ff,
+                transparent: true,
+                opacity: opacity * 0.5
+              });
               const geometry = new THREE.BufferGeometry().setFromPoints([ball1.position, ball2.position]);
-              const line = new THREE.Line(geometry, connectionMaterial);
+              const line = new THREE.Line(geometry, material);
               scene.add(line);
               connections.push(line);
+              connectionCount++;
             }
           }
         }
       }
-      
+
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
       const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
       directionalLight.position.set(10, 10, 10);
       scene.add(directionalLight);
-      
+
       const clock = new THREE.Clock();
       let mouseX = 0, mouseY = 0;
       window.addEventListener('mousemove', (event) => {
         mouseX = event.clientX - window.innerWidth / 2;
         mouseY = event.clientY - window.innerHeight / 2;
       });
-      
+
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
+
         metaballs.forEach(ball => {
+          // Update shader time for glow effect
+          ball.material.uniforms.time.value = elapsed;
+
+          // Organic movement using Simplex noise
+          const t = elapsed * 0.1 + ball.noiseOffset;
+          ball.velocity.x = simplex.noise3D(t, ball.position.y * 0.1, ball.position.z * 0.1) * 0.05;
+          ball.velocity.y = simplex.noise3D(ball.position.x * 0.1, t, ball.position.z * 0.1) * 0.05;
+          ball.velocity.z = simplex.noise3D(ball.position.x * 0.1, ball.position.y * 0.1, t) * 0.05;
+
           ball.position.x += ball.velocity.x;
           ball.position.y += ball.velocity.y;
           ball.position.z += ball.velocity.z;
-          // Boundary checks adjusted for title metaballs
-          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15; // Smaller boundary for title metaballs
-          if (Math.abs(ball.position.x) > boundary) ball.velocity.x *= -1;
-          if (Math.abs(ball.position.y) > boundary) ball.velocity.y *= -1;
-          if (Math.abs(ball.position.z) > boundary) ball.velocity.z *= -1;
+
+          // Boundary checks
+          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15;
+          if (Math.abs(ball.position.x) > boundary) ball.velocity.x *= -0.8;
+          if (Math.abs(ball.position.y) > boundary) ball.velocity.y *= -0.8;
+          if (Math.abs(ball.position.z) > boundary) ball.velocity.z *= -0.8;
+
           ball.rotation.x += ball.rotationSpeed.x;
           ball.rotation.y += ball.rotationSpeed.y;
           ball.rotation.z += ball.rotationSpeed.z;
+
           const scale = 1 + Math.sin(elapsed * 2 + ball.position.x * 0.5) * 0.1;
           ball.scale.set(scale, scale, scale);
-          const hue = (elapsed * 0.05 + ball.position.x * 0.01) % 1;
-          ball.material.color.setHSL(hue, 0.6, 0.6);
         });
-        if (Math.random() < 0.05) updateConnections();
+
+        // Update connections less frequently for performance
+        if (Math.random() < 0.03) updateConnections();
+
         scene.rotation.y += ((mouseX * 0.0001) - scene.rotation.y) * 0.01;
         scene.rotation.x += ((mouseY * 0.0001) - scene.rotation.x) * 0.01;
         renderer.render(scene, camera);
       }
-      
+
       animate();
-      
+
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -1415,6 +1541,7 @@
       // Create a neural network visualization
       const nodeCount = 50;
       const nodes = [];
+    
       
       // Create nodes
       for (let i = 0; i < nodeCount; i++) {
