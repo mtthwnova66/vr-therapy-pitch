@@ -3,120 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synaeon - AI-Powered VR Therapy</title>
-  
-  <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
-  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
-  <meta name="author" content="Synaeon">
-  <meta property="og:title" content="Synaeon - AI-Powered VR Therapy">
-  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://synaeon.com/">
-  <meta name="twitter:card" content="summary_large_image">
-  
-  <link rel="icon" type="image/png" href="syneon_image.png">
-  <link rel="apple-touch-icon" href="syneon_image.png">
-  
-  <!-- Preconnect / DNS Prefetch -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://github.com">
-  <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="preconnect" href="https://www.youtube.com">
-  <link rel="dns-prefetch" href="https://www.youtube.com">
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  
-  <!-- Web Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Three.js and Howler -->
+  <title>Synaeon - Loading</title>
+  <!-- Three.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-  
   <style>
-    /* =========================
-         Base Variables & Resets
-         ========================= */
-    :root {
-      --primary: #0071e3;
-      --primary-dark: #005bb5;
-      --primary-light: #47a0ff;
-      --primary-glow: rgba(71, 160, 255, 0.5);
-      --accent: #ffc107;
-      --accent-light: #ffdb66;
-      --accent-ultra: #fff0bf;
-      --accent-glow: rgba(255, 193, 7, 0.5);
-      --success: #34c759;
-      --bg-dark: #040812;
-      --card-bg: rgba(10, 17, 40, 0.7);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.8);
-      --text-tertiary: rgba(255, 255, 255, 0.5);
-      --border-light: rgba(255, 255, 255, 0.1);
-      --font-main: 'Inter', sans-serif;
-      --font-display: 'Outfit', sans-serif;
+    /* General styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: var(--font-main);
-      background-color: var(--bg-dark);
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-      position: relative;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    /* =========================
-         Preloader Styles
-         ========================= */
-    #preloader {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: var(--bg-dark);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-    #preloaderCanvas {
-      width: 200px;
-      height: 200px;
-    }
-    #loadingBarContainer {
-      width: 80%;
-      max-width: 400px;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      margin-top: 20px;
+      font-family: Arial, sans-serif;
+      background: #000;
       overflow: hidden;
+      color: #fff;
     }
-    #loadingBar {
-      width: 0%;
-      height: 100%;
-      background: var(--primary-light);
-      transition: width 0.3s ease;
-    }
-    
-    /* =========================
-         Main Content (Hidden Until Loaded)
-         ========================= */
-    #mainContent { display: none; }
-    
-    /* =========================
-         Additional Styles from Claude / Synaeon
-         ========================= */
-    /* For brevity, the styles below are a merge of your complete-synaeon-website.css */
-    
-    canvas#blobCanvas {
+    canvas {
       display: block;
       position: fixed;
       top: 0;
@@ -125,429 +28,158 @@
       height: 100%;
       z-index: -1;
     }
-    .navbar {
+    /* Preloader styles */
+    #preloader {
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 1.25rem 2rem;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      background: rgba(4, 8, 18, 0.7);
-      border-bottom: 1px solid var(--border-light);
+      justify-content: center;
+      flex-direction: column;
+      z-index: 20;
+      transition: opacity 0.5s ease;
     }
-    .navbar.scrolled { padding: 0.9rem 2rem; background: rgba(4, 8, 18, 0.9); }
-    .logo { display: flex; align-items: center; }
-    .logo img { height: 40px; width: auto; margin-right: 0.5rem; }
-    .logo-text {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 600;
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    #loadingBarContainer {
+      width: 80%;
+      max-width: 400px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 20px;
     }
-    .nav-links { display: flex; gap: 1.5rem; }
-    .nav-link {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      position: relative;
-      padding: 0.5rem 0;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: 0;
-      left: 0;
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+    #loadingBar {
+      height: 100%;
+      width: 0%;
+      background-color: #0071e3;
+      border-radius: 10px;
       transition: width 0.3s ease;
     }
-    .nav-link:hover { color: var(--text-primary); }
-    .nav-link:hover::after { width: 100%; }
-    .hamburger { display: none; cursor: pointer; width: 30px; height: 20px; position: relative; flex-direction: column; justify-content: space-between; }
-    .hamburger span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      background: var(--text-primary);
-      border-radius: 2px;
+    /* Main content (hero overlay) */
+    .overlay {
+      position: relative;
+      z-index: 10;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100vh;
+      padding: 20px;
+      background: radial-gradient(circle, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
+    }
+    .overlay h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #47a0ff, #ffdb66);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .overlay p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin-bottom: 30px;
+      color: rgba(255,255,255,0.85);
+    }
+    .btn {
+      background-color: #0071e3;
+      color: #fff;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
       transition: all 0.3s ease;
     }
-    /* (Additional typography, section, button, and footer styles are merged below as needed.) */
-    /* … (Refer to your original complete-synaeon-website.css for full details) … */
-    
+    .btn:hover {
+      background-color: #005bb5;
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
-  <!-- Preloader with Crystal Loading Ball and Loading Bar -->
+  <!-- Three.js canvas (the crystal geometric ball) -->
+  <canvas id="bgCanvas"></canvas>
+  
+  <!-- Preloader overlay with loading bar -->
   <div id="preloader">
-    <canvas id="preloaderCanvas"></canvas>
+    <!-- Since the 3D ball is visible through the canvas, we simply show a loading bar here -->
     <div id="loadingBarContainer">
       <div id="loadingBar"></div>
     </div>
   </div>
   
-  <!-- Main Content (Initially Hidden) -->
-  <div id="mainContent">
-    <!-- Background: Geometric blobs (from claude page) -->
-    <canvas id="blobCanvas"></canvas>
-    
-    <!-- Audio Controls & Additional Overlays -->
-    <div id="audio-controls">
-      <button id="audio-toggle" aria-label="Toggle Background Music">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-          <path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        </svg>
-      </button>
-      <span class="audio-status">Music: Off</span>
-    </div>
-    <div class="scroll-progress" id="scroll-progress"></div>
-    <div class="tech-symbol" id="tech-symbol-1"></div>
-    <div class="tech-symbol" id="tech-symbol-2"></div>
-    <div class="tech-symbol" id="tech-symbol-3"></div>
-    <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to Top">Top</button>
-    
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-      <div class="hamburger" id="hamburger-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <div class="nav-links" id="nav-links">
-        <a href="#about" class="nav-link">About</a>
-        <a href="#problem" class="nav-link">The Problem</a>
-        <a href="#solution" class="nav-link">Our Solution</a>
-        <a href="#how-it-works" class="nav-link">How It Works</a>
-        <a href="#technology" class="nav-link">Technology</a>
-        <a href="#try-it-yourself" class="nav-link">Try It Yourself</a>
-        <a href="#market" class="nav-link">Market</a>
-        <a href="#business" class="nav-link">Business Model</a>
-        <a href="#team" class="nav-link">Team</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </div>
-    </nav>
-    
-    <!-- Main Website Content (Based on claude2 / complete-synaeon-website.html) -->
-    <main class="container" id="pitch-content">
-      <section class="hero-section">
-        <div class="hero-logo">
-          <img src="syneon_image.png" alt="Synaeon Logo" width="150" height="auto" loading="eager">
-        </div>
-        <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-        <a class="download-btn" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
-        <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-        <div class="intro-video">
-          <h2>Who Are We? What's Our Mission?</h2>
-          <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-        </div>
-        <div class="demo-video">
-          <h2>Demo</h2>
-          <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-        </div>
-      </section>
-      
-      <section class="section" id="about">
-        <h2>About Our Vision</h2>
-        <p>Our mission is to revolutionize mental health treatment with AI-powered VR exposure therapy. By merging cutting-edge technology with innovative clinical insights, we overcome traditional limitations and create an immersive, adaptive, and effective therapeutic experience.</p>
-        <p>That which you need most is to be found where you least want to look - Carl Jung</p>
-      </section>
-      
-      <section class="section" id="problem">
-        <h2>The Problem – Therapy Needs to Evolve</h2>
-        <p>Traditional exposure therapy often falls short because it relies on a patient's imagination or static, pre-recorded VR scenarios – limiting immersion and dynamic response. This leads to high dropout rates, sometimes reaching 50%.</p>
-        <ul>
-          <li>Low immersion and engagement.</li>
-          <li>Inability to adjust therapy in real time.</li>
-          <li>Heavy reliance on imagination or static media.</li>
-        </ul>
-      </section>
-      
-      <section class="section dark-section" id="solution">
-        <h2>Our Solution – AI-Driven, Real-Time VR Exposure Therapy</h2>
-        <p>We create dynamic, immersive VR environments that respond in real time to therapist input and patient biofeedback – ensuring every session is personalized for maximum impact.</p>
-        <ul>
-          <li>Dynamic, AI-generated VR environments.</li>
-          <li>Real-time biofeedback integration.</li>
-          <li>Comprehensive clinical control via a dedicated dashboard.</li>
-        </ul>
-      </section>
-      
-      <section class="section" id="how-it-works">
-        <h2>How It Works</h2>
-        <ul>
-          <li>The therapist launches the software on a compatible VR headset.</li>
-          <li>The patient dons the headset along with a sensor-enabled smartwatch.</li>
-          <li>The AI listens to the therapist's guidance and generates an interactive VR environment.</li>
-          <li>Real-time biofeedback allows for dynamic session adjustments.</li>
-          <li>The system learns and adapts, personalizing future sessions.</li>
-        </ul>
-      </section>
-      
-      <section class="section" id="technology">
-        <h2>Technology</h2>
-        <p>Leveraging instantaneous speech-to-3D generative AI, our platform transforms spoken words into immersive 360° VR landscapes. Integrated with real-time biofeedback and cloud-based analytics, it supports leading VR devices like Meta Quest, HTC Vive, Pico 4, and Valve Index.</p>
-        <div id="tech-demo" class="vr-demo" style="margin-top: 3rem;">
-          <div id="tech-canvas" class="vr-demo-canvas"></div>
-        </div>
-      </section>
-      
-      <section class="section" id="try-it-yourself">
-        <h2>Try It Yourself – Arachnophobia Simulation Experience</h2>
-        <p>This simulation is designed for arachnophobia exposure therapy. Choose from two intensities: Mild (Level 1) and Intense (Level 2). Use the buttons at the lower right of the simulation to toggle fullscreen and auto-rotation, and drag to rotate the view while scrolling to zoom.</p>
-        <p>Level 1 was generated from the prompt "a black spider in a jar", while Level 2 was created using the prompt "a large clawed spider with big eyes".</p>
-        <div id="level-buttons">
-          <button onclick="showLevel('level1')">Level 1</button>
-          <button onclick="showLevel('level2')">Level 2</button>
-        </div>
-        <!-- Note: The inline call to initialize a demo on page load has been removed so that no arachnophobia simulation appears in front of the title -->
-        <div id="arachnophobia-demo" class="level-container"></div>
-        <div id="arachnophobia-level2" class="level-container"></div>
-      </section>
-      
-      <section class="section" id="market">
-        <h2>Market Opportunity</h2>
-        <p>With the global VR therapy market valued at $11.3B and an expected CAGR of 34%, our solution taps into a vast opportunity. Combined with the emerging speech-to-video AI industry and over 4.4M therapists worldwide, the potential is enormous – especially among early adopters in Europe and North America.</p>
-      </section>
-      
-      <section class="section dark-section" id="business">
-        <h2>Business Model & Funding</h2>
-        <p>Our revenue model is based on a B2B SaaS subscription complemented by hardware bundling – providing pre-configured VR headsets and smartwatches. We are seeking a $500K Pre-Seed Round to drive development, expand our market, and validate our clinical approach.</p>
-        <ul>
-          <li><strong>6-12 months:</strong> Beta testing with early clinic adopters.</li>
-          <li><strong>12-18 months:</strong> Refining AI algorithms and therapy scenarios.</li>
-          <li><strong>24 months:</strong> Full commercial launch and expansion.</li>
-        </ul>
-      </section>
-      
-      <section class="section" id="team">
-        <h2>Meet the Team</h2>
-        <div class="team-members">
-          <div class="team-card">
-            <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image">
-            </div>
-            <div class="team-info">
-              <h3 class="team-name">Matei Seleușan</h3>
-              <p class="team-role">CEO & Founder</p>
-              <p class="team-bio">Biomedical expert with direct clinical insights. Overcame OCD through exposure therapy. Former ETH Zürich Master's candidate, now building Synaeon.</p>
-            </div>
-          </div>
-          <div class="team-card">
-            <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image">
-            </div>
-            <div class="team-info">
-              <h3 class="team-name">Răzvan Crețu</h3>
-              <p class="team-role">CTO</p>
-              <p class="team-bio">Specialist in hardware and AI integration. Entrepreneur with multiple startup successes and deep expertise in robotics, AI, and sensor fusion.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <section class="section" id="contact">
-        <h2>Contact Us</h2>
-        <div class="contact-container">
-          <div class="contact-email">
-            <h3>Matei Seleușan</h3>
-            <p><a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a></p>
-          </div>
-          <div class="contact-email">
-            <h3>Răzvan Crețu</h3>
-            <p><a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a></p>
-          </div>
-        </div>
-      </section>
-      
-      <!-- Updates Section -->
-      <section class="section" id="updates">
-        <h2>Updates from the Team</h2>
-        <p>Stay tuned for our latest events, investor updates, and company milestones.</p>
-        <div class="update-item" style="text-align: center;">
-          <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 200px; width: 100%; border-radius: 16px;">
-          <p style="margin-top: 8px; font-style: italic;">Synaeon has reached Times Square.</p>
-        </div>
-      </section>
-    </main>
-    
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-links">
-          <a href="#about">About</a>
-          <a href="#problem">Problem</a>
-          <a href="#solution">Solution</a>
-          <a href="#technology">Technology</a>
-          <a href="#team">Team</a>
-          <a href="#contact">Contact</a>
-        </div>
-        <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
-      </div>
-    </footer>
+  <!-- Main hero content (hidden until loading is complete) -->
+  <div class="overlay" id="mainContent">
+    <h1>Welcome to Synaeon</h1>
+    <p>AI-powered VR therapy that builds the world around you.</p>
+    <button class="btn" onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' });">
+      Explore the Vision
+    </button>
   </div>
   
-  <!-- =========================
-       Inline Scripts
-       ========================= -->
   <script>
-    // PRELOADER: Crystal icosahedron animation and loading bar simulation
-    (function(){
-      const preloader = document.getElementById('preloader');
-      const preloaderCanvas = document.getElementById('preloaderCanvas');
-      const loadingBar = document.getElementById('loadingBar');
-      const renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true });
+    // === Three.js Crystal Geometric Ball Setup ===
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    
+    // Create a crystal-like ball using an icosahedron geometry with wireframe material
+    const geometry = new THREE.IcosahedronGeometry(1, 2);
+    const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
+    const crystal = new THREE.Mesh(geometry, material);
+    scene.add(crystal);
+    
+    // Add light to the scene
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+    
+    // Position the camera
+    camera.position.z = 3;
+    
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+      crystal.rotation.x += 0.003;
+      crystal.rotation.y += 0.005;
+      renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-      camera.position.z = 3;
-      
-      const geometry = new THREE.IcosahedronGeometry(1, 2);
-      const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
-      const shape = new THREE.Mesh(geometry, material);
-      scene.add(shape);
-      
-      const light = new THREE.PointLight(0xffffff, 1);
-      light.position.set(5, 5, 5);
-      scene.add(light);
-      
-      function animatePreloader() {
-        requestAnimationFrame(animatePreloader);
-        shape.rotation.x += 0.003;
-        shape.rotation.y += 0.005;
-        renderer.render(scene, camera);
-      }
-      animatePreloader();
-      
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth/window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-      
-      // Simulate loading progress
-      let progress = 0;
-      const loadingInterval = setInterval(() => {
-        progress += Math.random()*5;
-        if(progress >= 100){
-          progress = 100;
-          loadingBar.style.width = progress + '%';
-          clearInterval(loadingInterval);
-          preloader.style.transition = "opacity 0.5s ease";
-          preloader.style.opacity = 0;
-          setTimeout(() => {
-            preloader.style.display = "none";
-            document.getElementById('mainContent').style.display = "block";
-          }, 600);
-        } else {
-          loadingBar.style.width = progress + '%';
-        }
-      }, 300);
-    })();
-    
-    // NAVIGATION & SCROLL SCRIPTS
-    function throttle(func, limit) {
-      let inThrottle;
-      return function() {
-        const args = arguments, context = this;
-        if (!inThrottle) {
-          func.apply(context, args);
-          inThrottle = true;
-          setTimeout(() => inThrottle = false, limit);
-        }
-      };
-    }
-    
-    function updateBackToTopButton() {
-      const btn = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) btn.classList.add('show');
-      else btn.classList.remove('show');
-    }
-    
-    function updateScrollProgress() {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById("scroll-progress").style.width = scrolled + "%";
-    }
-    
-    window.addEventListener('scroll', throttle(function(){
-      updateBackToTopButton();
-      updateScrollProgress();
-    }, 100));
-    
-    function scrollToTop(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }
-    
-    document.addEventListener('DOMContentLoaded', function(){
-      const observer = new IntersectionObserver((entries)=>{
-         entries.forEach(entry=>{
-           if(entry.isIntersecting){
-             entry.target.style.opacity = "1";
-             entry.target.style.transform = "translateY(0)";
-             observer.unobserve(entry.target);
-           }
-         });
-      }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-      document.querySelectorAll('.fade-in').forEach(element => observer.observe(element));
-      updateScrollProgress();
     });
     
-    document.addEventListener('DOMContentLoaded', function(){
-      const hamburger = document.getElementById('hamburger-menu');
-      const navLinks = document.getElementById('nav-links');
-      
-      function toggleMenu(){
-        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', !isExpanded);
-        hamburger.classList.toggle('open');
-        navLinks.classList.toggle('open');
-      }
-      
-      hamburger.addEventListener('click', toggleMenu);
-      hamburger.addEventListener('keydown', function(e){
-         if(e.key === 'Enter' || e.key === ' '){
-           e.preventDefault();
-           toggleMenu();
-         }
-      });
-      
-      document.querySelectorAll('.nav-links a').forEach(item => {
-         item.addEventListener('click', function(){
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.classList.remove('open');
-            navLinks.classList.remove('open');
-         });
-      });
-    });
+    // === Simulated Preloader with Loading Bar ===
+    let progress = 0;
+    const loadingBar = document.getElementById('loadingBar');
+    const preloader = document.getElementById('preloader');
+    const mainContent = document.getElementById('mainContent');
     
-    // Remove the immediate initialization of the arachnophobia simulation.
-    // The try-it-yourself section now relies solely on user interaction.
-    function showLevel(level) {
-      const level1 = document.getElementById('arachnophobia-demo');
-      const level2 = document.getElementById('arachnophobia-level2');
-      level1.style.display = level === 'level1' ? 'block' : 'none';
-      level2.style.display = level === 'level2' ? 'block' : 'none';
-      // The initialization of these demos is handled in external main.js and main_level2.js.
-    }
+    const loadingInterval = setInterval(() => {
+      progress += 1; // Increment progress (adjust speed as needed)
+      loadingBar.style.width = progress + '%';
+      if (progress >= 100) {
+        clearInterval(loadingInterval);
+        // Fade out the preloader overlay
+        preloader.style.opacity = 0;
+        setTimeout(() => {
+          preloader.style.display = 'none';
+          // Show the main page content
+          mainContent.style.display = 'flex';
+        }, 500);
+      }
+    }, 30); // About 3 seconds total (100 * 30ms)
   </script>
-  
-  <!-- =========================
-       External Simulation Scripts
-       ========================= -->
-  <script src="main.js"></script>
-  <script src="main_level2.js"></script>
 </body>
 </html>
