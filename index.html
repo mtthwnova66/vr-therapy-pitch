@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
-  
   <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
   <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
   <meta name="author" content="Synaeon">
@@ -19,8 +18,13 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://github.com">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -32,40 +36,40 @@
       --primary: #0071e3;
       --primary-dark: #005bb5;
       --primary-light: #47a0ff;
-      --primary-glow: rgba(71, 160, 255, 0.5);
       --accent: #ffc107;
+      --accent-dark: #e6a800;
       --accent-light: #ffdb66;
-      --accent-ultra: #fff0bf;
-      --accent-glow: rgba(255, 193, 7, 0.5);
       --success: #34c759;
-      --neural-1: #ff3366;
-      --neural-2: #7c4dff;
-      --neural-3: #00e5ff;
-      --bg-dark: #040812;
-      --card-bg: rgba(10, 17, 40, 0.7);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.8);
-      --text-tertiary: rgba(255, 255, 255, 0.5);
-      --border-light: rgba(255, 255, 255, 0.1);
-      --font-main: 'Inter', sans-serif;
-      --font-display: 'Outfit', sans-serif;
+      --bg-white: #ffffff;
+      --bg-light: #f5f5f7;
+      --bg-dark: #000000;
+      --text-primary: #1d1d1f;
+      --text-secondary: #222222;
+      --text-light: #f5f5f7;
+      --border-light: rgba(0,0,0,0.1);
+      --card-shadow: 0 12px 24px rgba(0,0,0,0.08);
+      --transition-fast: 0.2s ease;
+      --transition: 0.3s ease;
+      --transition-slow: 0.5s ease;
+      --container-width: 1200px;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-xxl: 48px;
+      --team-width: 350px;
     }
     
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    html { 
-      scroll-behavior: smooth; 
-      font-size: 16px; 
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: var(--font-main);
-      background-color: var(--bg-dark);
-      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #0a0a23, #1a1a3d);
+      color: var(--text-light);
       line-height: 1.6;
       overflow-x: hidden;
       position: relative;
@@ -73,211 +77,6 @@
       -moz-osx-font-smoothing: grayscale;
     }
     
-    /* Loading Screen */
-    #loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      transition: opacity 0.5s ease;
-    }
-    
-    #loading-screen canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    
-    .loading-overlay {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: var(--text-primary);
-    }
-    
-    .loading-overlay h1 {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1.5rem;
-    }
-    
-    #loading-bar-container {
-      width: 300px;
-      height: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    
-    #loading-bar {
-      width: 0;
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
-      transition: width 1.2s ease-in-out;
-    }
-
-    .main-content {
-      position: relative;
-      z-index: 1;
-    }
-    
-    /* Typography */
-    h1, h2, h3, h4, h5, h6 {
-      font-family: var(--font-display);
-      font-weight: 600;
-      line-height: 1.2;
-    }
-    
-    h1 { 
-      font-size: clamp(2.5rem, 5vw, 4.5rem); 
-      font-weight: 700; 
-      letter-spacing: -0.03em; 
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent;
-      background-clip: text; 
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-    }
-    
-    h2 { 
-      font-size: clamp(1.75rem, 4vw, 2.5rem); 
-      margin-bottom: 1.5rem; 
-      background: linear-gradient(90deg, #ffffff, #a0c3ff); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent;
-      background-clip: text;  
-    }
-    
-    h3 { 
-      font-size: clamp(1.25rem, 3vw, 1.75rem);
-      margin-bottom: 1rem; 
-      color: var(--text-primary);
-    }
-    
-    p { 
-      font-size: clamp(1rem, 2vw, 1.125rem); 
-      line-height: 1.7; 
-      color: var(--text-secondary); 
-      margin-bottom: 1.5rem; 
-    }
-
-    /* Hero Section */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      padding: 0 1rem;
-      text-align: center;
-    }
-
-    #blobCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      backdrop-filter: blur(10px);
-      background: rgba(4, 8, 18, 0.3);
-      border: 1px solid var(--border-light);
-      border-radius: 20px;
-      padding: 2.5rem;
-      max-width: 800px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 
-                  0 0 20px var(--primary-glow),
-                  0 0 40px rgba(0, 0, 0, 0.3) inset;
-      animation: float 6s infinite ease-in-out;
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .hero-tagline {
-      font-family: var(--font-display);
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--accent-light);
-      margin-bottom: 1.5rem;
-      opacity: 0.9;
-    }
-
-    .hero-text {
-      font-size: clamp(1.1rem, 2vw, 1.3rem);
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-
-    /* Navigation */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 1.25rem 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      background: rgba(4, 8, 18, 0.7);
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .navbar.scrolled {
-      padding: 0.9rem 2rem;
-      background: rgba(4, 8, 18, 0.9);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .nav-link {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .nav-link:hover {
-      color: var(--accent-light);
-      transform: translateY(-2px);
-    }
-
-    /* Rest of the styles from your original code */
     .level-container { width: 100%; height: 600px; position: relative; margin-bottom: 2rem; display: none; }
     #level-buttons { text-align: center; margin-bottom: 1.5rem; }
     #level-buttons button {
@@ -292,16 +91,16 @@
     }
     #level-buttons button:hover { background-color: var(--primary-dark); }
 
-    a { text-decoration: none; color: var(--primary-light); transition: color 0.2s ease, transform 0.2s ease; position: relative; }
+    a { text-decoration: none; color: var(--primary-light); transition: color var(--transition-fast), transform var(--transition-fast); position: relative; }
     a:hover { color: var(--accent-light); }
     a:focus, button:focus { outline: 2px solid var(--primary); outline-offset: 3px; }
     
-    h1 { font-size: 3rem; font-weight: 700; letter-spacing: -0.025em; margin-bottom: 24px; background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; line-height: 1.2; }
-    h2 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 24px; color: var(--text-primary); }
-    h3 { font-size: 1.75rem; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
-    p { font-size: 1.125rem; line-height: 1.7; color: rgba(255, 255, 255, 0.9); margin-bottom: 24px; font-weight: 400; }
+    h1 { font-size: 3rem; font-weight: 700; letter-spacing: -0.025em; margin-bottom: var(--space-lg); background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; line-height: 1.2; }
+    h2 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: var(--space-lg); color: var(--text-light); }
+    h3 { font-size: 1.75rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-light); }
+    p { font-size: 1.125rem; line-height: 1.7; color: rgba(255, 255, 255, 0.9); margin-bottom: var(--space-lg); font-weight: 400; }
     
-    ul { list-style-type: none; margin: 48px auto; max-width: 600px; padding: 0; text-align: left; }
+    ul { list-style-type: none; margin: var(--space-xl) auto; max-width: 600px; padding: 0; text-align: left; }
     li { font-size: 1.125rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; padding-left: 25px; position: relative; text-align: left; font-weight: 400; }
     li:before { content: ""; position: absolute; left: 10px; top: 10px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-light); }
     
@@ -315,11 +114,16 @@
     .btn:hover { transform: translateY(-3px); box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15); }
     .btn:active { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
     
-    .card { background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 32px; box-shadow: 0 12px 24px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.1); height: 100%; }
+    .card { background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); padding: var(--space-xl); box-shadow: var(--card-shadow); transition: transform var(--transition), box-shadow var(--transition); border: 1px solid rgba(255, 255, 255, 0.1); height: 100%; }
     .card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(0,0,0,0.2); }
     
+    .navbar { position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 10, 35, 0.9); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: center; border-bottom: 0.5px solid rgba(255, 255, 255, 0.1); z-index: 1000; animation: fadeInDown 1s forwards; }
+    .nav-links { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
+    .navbar a { font-size: 15px; font-weight: 400; padding: 10px 15px; letter-spacing: 1px; transition: color 0.3s ease, transform 0.2s ease; color: var(--text-light); }
+    .navbar a:hover { color: var(--accent-light); transform: translateY(-2px); }
+    
     .hamburger { display: none; cursor: pointer; width: 30px; height: 20px; position: relative; margin-left: auto; }
-    .hamburger span { display: block; position: absolute; height: 2px; width: 100%; background: var(--text-primary); border-radius: 2px; opacity: 1; left: 0; transform: rotate(0deg); transition: .25s ease-in-out; }
+    .hamburger span { display: block; position: absolute; height: 2px; width: 100%; background: var(--text-light); border-radius: 2px; opacity: 1; left: 0; transform: rotate(0deg); transition: .25s ease-in-out; }
     .hamburger span:nth-child(1) { top: 0px; }
     .hamburger span:nth-child(2), .hamburger span:nth-child(3) { top: 9px; }
     .hamburger span:nth-child(4) { top: 18px; }
@@ -330,20 +134,28 @@
     
     @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     
-    .intro-video, .demo-video { margin: 48px 0; position: relative; width: 100%; overflow: hidden; }
+    .container { max-width: 1200px; margin: 140px auto 80px; padding: 40px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s ease; backdrop-filter: blur(5px); position: relative; z-index: 10; opacity: 0; }
+    .container.loaded { opacity: 1; transition: opacity 0.5s ease; }
+    
+    .hero-section { margin-bottom: 60px; text-align: center; }
+    .hero-logo { margin-bottom: 20px; display: flex; justify-content: center; }
+    .hero-logo img { max-width: 150px; width: 150px; height: auto; margin-bottom: 20px; transition: transform 0.3s ease; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
+    .hero-logo img:hover { transform: scale(1.05); }
+    
+    .intro-video, .demo-video { margin: var(--space-xxl) 0; position: relative; width: 100%; overflow: hidden; }
     iframe { max-width: 100%; border: none; border-radius: 8px; margin-top: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); aspect-ratio: 16/9; width: 100%; height: 500px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
     iframe:hover { transform: scale(1.01); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
     
     .section { padding: 60px 20px; position: relative; text-align: center; }
     .section:last-child { border-bottom: none; }
     .dark-section { background-color: rgba(0, 0, 0, 0.8); }
-    .dark-section h2, .dark-section p { color: var(--text-primary); }
+    .dark-section h2, .dark-section p { color: var(--text-light); }
     .dark-section li { color: rgba(255, 255, 255, 0.9); }
     .dark-section li:before { background: var(--accent-light); }
     .section p { text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; }
     
     .team-members { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px; gap: 40px; }
-    .team-member { flex: 0 1 350px; max-width: 350px; margin-bottom: 40px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .team-member { flex: 0 1 var(--team-width); max-width: var(--team-width); margin-bottom: 40px; text-align: center; display: flex; flex-direction: column; align-items: center; }
     .team-member img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2)); }
     .razvi-img { object-fit: cover; object-position: 50% 55%; }
     .team-member img:hover { transform: scale(1.05); }
@@ -357,7 +169,7 @@
     
     .contact-section { text-align: center; }
     .contact-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; max-width: 800px; margin: 0 auto; }
-    .contact-email { flex: 0 1 350px; max-width: 350px; margin: 10px 0; }
+    .contact-email { flex: 0 1 var(--team-width); max-width: var(--team-width); margin: 10px 0; }
     .contact-email h3 { font-size: 1.5rem; margin-bottom: 5px; }
     .contact-email p { font-size: 0.95rem; line-height: 1.4; }
     .contact-email a { display: inline-block; position: relative; overflow: hidden; }
@@ -370,10 +182,10 @@
     
     .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, var(--primary-light), var(--accent-light)); z-index: 1010; transition: width 0.1s; }
     
-    .footer { background: rgba(0, 0, 0, 0.9); color: var(--text-primary); padding: 48px 0; text-align: center; }
+    .footer { background: rgba(0, 0, 0, 0.9); color: var(--text-light); padding: var(--space-xxl) 0; text-align: center; }
     .footer-container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-    .footer-links { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
-    .footer-links a { color: rgba(255, 255, 255, 0.7); transition: color 0.2s ease; }
+    .footer-links { display: flex; justify-content: center; gap: var(--space-lg); margin: var(--space-lg) 0; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255, 255, 255, 0.7); transition: color var(--transition-fast); }
     .footer-links a:hover { color: var(--accent-light); }
     .copyright { font-size: 0.875rem; color: rgba(255, 255, 255, 0.5); text-align: center; }
     
@@ -386,7 +198,8 @@
     #arachnophobia-demo, #arachnophobia-level2 { width: 100%; height: 600px; border-radius: 12px; overflow: hidden; background-color: rgba(255, 255, 255, 0.05); position: relative; z-index: 1; }
     #loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255, 255, 255, 0.7); font-size: 1rem; }
     
-    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto; opacity: 0.5; }
+    #immersive-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.5s ease; }
+    #immersive-canvas.hidden { opacity: 0; }
     
     #audio-controls { position: fixed; bottom: 30px; left: 30px; z-index: 1000; display: flex; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); transition: all 0.3s ease; opacity: 0.8; }
     #audio-controls:hover { opacity: 1; transform: scale(1.05); }
@@ -394,11 +207,11 @@
     #audio-toggle:hover { background: var(--primary-dark); transform: scale(1.1); }
     #audio-toggle svg { width: 20px; height: 20px; transition: transform 0.2s ease; }
     #audio-toggle:hover svg { transform: scale(1.1); }
-    .audio-status { font-size: 14px; margin-left: 12px; color: var(--text-primary); font-weight: 500; }
+    .audio-status { font-size: 14px; margin-left: 12px; color: var(--text-light); font-weight: 500; }
     
-    @media screen and (max-width: 1280px) { .hero-inner { max-width: 90%; padding: 35px; } }
+    @media screen and (max-width: 1280px) { .container { max-width: 90%; padding: 35px; } }
     @media screen and (max-width: 992px) {
-      .hero-inner { padding: 30px; }
+      .container { padding: 30px; margin: 120px auto 60px; }
       .navbar { padding: 15px 20px; }
       h1 { font-size: 2.5rem; }
       h2 { font-size: 2rem; }
@@ -409,12 +222,12 @@
       #arachnophobia-demo, #arachnophobia-level2 { height: 500px; }
     }
     @media screen and (max-width: 768px) {
-      .hero-inner { padding: 25px; }
+      .container { padding: 25px; margin: 100px auto 40px; }
       .navbar { padding: 12px 20px; justify-content: space-between; }
       .hamburger { display: block; }
-      .nav-links { position: fixed; top: 60px; left: 0; right: 0; background: rgba(4, 8, 18, 0.95); flex-direction: column; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: translateY(-150%); transition: transform 0.3s ease; gap: 0; }
+      .nav-links { position: fixed; top: 60px; left: 0; right: 0; background: rgba(10, 10, 35, 0.95); flex-direction: column; padding: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: translateY(-150%); transition: transform 0.3s ease; }
       .nav-links.open { transform: translateY(0); }
-      .nav-link { padding: 15px; font-size: 16px; width: 100%; text-align: center; }
+      .navbar a { padding: 15px; font-size: 16px; width: 100%; text-align: center; }
       h1 { font-size: 2rem; }
       h2 { font-size: 1.75rem; }
       .section { padding: 40px 15px; }
@@ -425,9 +238,9 @@
       .audio-status { display: none; }
     }
     @media screen and (max-width: 576px) {
-      .hero-inner { padding: 20px; }
+      .container { padding: 20px; margin: 80px auto 30px; }
       .navbar { padding: 10px 15px; }
-      .nav-link { padding: 12px 0; font-size: 15px; }
+      .navbar a { padding: 12px 0; font-size: 15px; }
       h1 { font-size: 1.75rem; }
       h2 { font-size: 1.5rem; }
       h3 { font-size: 1.25rem; }
@@ -442,16 +255,6 @@
   </style>
 </head>
 <body>
-  <div id="loading-screen">
-    <canvas id="loadingCanvas"></canvas>
-    <div class="loading-overlay">
-      <h1>Synaeon</h1>
-      <div id="loading-bar-container">
-        <div id="loading-bar"></div>
-      </div>
-    </div>
-  </div>
-
   <canvas id="immersive-canvas"></canvas>
 
   <div id="audio-controls">
@@ -478,27 +281,34 @@
       <span></span>
     </div>
     <div class="nav-links" id="nav-links">
-      <a href="#about" class="nav-link">About</a>
-      <a href="#problem" class="nav-link">The Problem</a>
-      <a href="#solution" class="nav-link">Our Solution</a>
-      <a href="#how-it-works" class="nav-link">How It Works</a>
-      <a href="#technology" class="nav-link">Technology</a>
-      <a href="#try-it-yourself" class="nav-link">Try It Yourself</a>
-      <a href="#market" class="nav-link">Market</a>
-      <a href="#business" class="nav-link">Business Model</a>
-      <a href="#team" class="nav-link">Team</a>
-      <a href="#contact" class="nav-link">Contact</a>
+      <a href="#about">About</a>
+      <a href="#problem">The Problem</a>
+      <a href="#solution">Our Solution</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#technology">Technology</a>
+      <a href="#try-it-yourself">Try It Yourself</a>
+      <a href="#market">Market</a>
+      <a href="#business">Business Model</a>
+      <a href="#team">Team</a>
+      <a href="#contact">Contact</a>
     </div>
   </nav>
   
-  <main class="main-content">
-    <section class="hero">
-      <canvas id="blobCanvas"></canvas>
-      <div class="hero-inner">
-        <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
-        <p class="hero-tagline">Synaeon</p>
-        <p class="hero-text">Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
-        <a class="download-btn" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
+  <main class="container" id="pitch-content">
+    <section class="hero-section fade-in delay-1">
+      <div class="hero-logo">
+        <img src="syneon_image.png" alt="Synaeon Logo" width="150" height="auto" loading="eager">
+      </div>
+      <h1>AI-Powered VR Therapy: The Future of Exposure Therapy</h1>
+      <a class="download-btn fade-in delay-1" href="https://github.com/mtthwnova66/vr-therapy-pitch/raw/refs/heads/main/Pitch:19Feb.pptx" download="Pitch_19Feb.pptx">Download Pitch Presentation</a>
+      <p>Experience real-time, adaptive, and clinically effective therapy that transforms mental health treatment.</p>
+      <div class="intro-video fade-in delay-2">
+        <h2>Who Are We? What's Our Mission?</h2>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/XGhYnE62GOk?loading=lazy" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="demo-video fade-in delay-3">
+        <h2>Demo</h2>
+        <iframe width="900" height="500" src="https://www.youtube.com/embed/Py1ML8l-Y0E?loading=lazy" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
       </div>
     </section>
     
@@ -607,8 +417,9 @@
       <h2>Updates from the Team</h2>
       <p>Stay tuned for our latest events, investor updates, and company milestones.</p>
       <div class="update-item" style="text-align: center;">
-        <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 200px; width: 100%; border-radius: 16px;">
-        <p style="margin-top: 8px; font-style: italic;">Synaeon has reached Times Square.</p>
+        <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 300px; width: 100%; border-radius: var(--radius-md);">
+        <p style="margin-top: var(--space-sm); font-style: italic;">Synaeon has reached Times Square.</p>
+        <p style="font-size: 0.95rem; color: var(--text-light); font-weight: 600;">Synaeon, Inc.</p>
       </div>
     </section>
   </main>
@@ -666,12 +477,6 @@
     window.addEventListener('scroll', throttle(function() {
       updateBackToTopButton();
       updateScrollProgress();
-      const navbar = document.getElementById('navbar');
-      if (window.pageYOffset > 50) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
     }, 100));
     
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -720,67 +525,6 @@
     });
     
     document.addEventListener('DOMContentLoaded', function() {
-      // Loading Screen Animation
-      const loadingScreen = document.getElementById('loading-screen');
-      const loadingBar = document.getElementById('loading-bar');
-      const loadingCanvas = document.getElementById('loadingCanvas');
-      let scene, camera, renderer, icosahedron;
-
-      function initLoadingScreen() {
-        if (!loadingCanvas) {
-          console.error('Loading canvas not found');
-          return;
-        }
-
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        renderer = new THREE.WebGLRenderer({ canvas: loadingCanvas, alpha: true });
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        const geometry = new THREE.IcosahedronGeometry(1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x47a0ff, wireframe: true });
-        icosahedron = new THREE.Mesh(geometry, material);
-        scene.add(icosahedron);
-
-        camera.position.z = 3;
-
-        window.addEventListener('resize', () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        function animateLoading() {
-          requestAnimationFrame(animateLoading);
-          icosahedron.rotation.x += 0.01;
-          icosahedron.rotation.y += 0.01;
-          renderer.render(scene, camera);
-        }
-
-        animateLoading();
-
-        // Simulate loading progress
-        let progress = 0;
-        const loadingInterval = setInterval(() => {
-          progress += 5;
-          loadingBar.style.width = `${progress}%`;
-          if (progress >= 100) {
-            clearInterval(loadingInterval);
-            setTimeout(() => {
-              loadingScreen.style.opacity = '0';
-              setTimeout(() => {
-                loadingScreen.style.display = 'none';
-              }, 500);
-            }, 500);
-          }
-        }, 100);
-      }
-
-      initLoadingScreen();
-
-      // Immersive Canvas (Alien Blobs)
       const canvas = document.getElementById('immersive-canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) {
@@ -797,7 +541,7 @@
         createGrassElements();
       });
 
-      // Audio Setup - Ethereal Music of the Spheres
+      // Audio Setup
       let bgMusic, windSound, birdSound;
       window.audioPlaying = false;
 
@@ -809,8 +553,8 @@
           loop: true,
           preload: true,
           onload: () => console.log('Background music loaded'),
-          onloaderror: () => console.error('Background music failed to load'),
-          onplayerror: () => console.error('Background music play error')
+          onloaderror: (id, err) => console.error('Background music failed to load:', err),
+          onplayerror: (id, err) => console.error('Background music play error:', err)
         });
 
         windSound = new Howl({
@@ -819,8 +563,8 @@
           volume: 0.2,
           loop: true,
           preload: true,
-          onloaderror: () => console.error('Wind sound failed to load'),
-          onplayerror: () => console.error('Wind sound play error')
+          onloaderror: (id, err) => console.error('Wind sound failed to load:', err),
+          onplayerror: (id, err) => console.error('Wind sound play error:', err)
         });
 
         birdSound = new Howl({
@@ -829,8 +573,8 @@
           volume: 0.15,
           loop: false,
           preload: true,
-          onloaderror: () => console.error('Bird sound failed to load'),
-          onplayerror: () => console.error('Bird sound play error')
+          onloaderror: (id, err) => console.error('Bird sound failed to load:', err),
+          onplayerror: (id, err) => console.error('Bird sound play error:', err)
         });
       } catch (e) {
         console.error('Audio initialization failed:', e);
@@ -841,8 +585,7 @@
       let ambientSoundInterval;
 
       audioToggle.addEventListener('click', function() {
-        window.audioPlaying = !window.audioPlaying;
-        if (window.audioPlaying) {
+        if (!window.audioPlaying) {
           try {
             bgMusic.play();
             windSound.play();
@@ -850,9 +593,9 @@
             audioToggle.style.background = '#34c759';
             document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 1);
             ambientSoundInterval = setInterval(playRandomAmbientSounds, 8000);
+            window.audioPlaying = true;
           } catch (e) {
             console.error('Audio playback failed:', e);
-            window.audioPlaying = false;
             audioStatus.textContent = 'Music: Error';
           }
         } else {
@@ -861,12 +604,13 @@
             windSound.stop();
             birdSound.stop();
             clearInterval(ambientSoundInterval);
+            audioStatus.textContent = 'Music: Off';
+            audioToggle.style.background = '#0071e3';
+            document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
+            window.audioPlaying = false;
           } catch (e) {
             console.error('Audio stop failed:', e);
           }
-          audioStatus.textContent = 'Music: Off';
-          audioToggle.style.background = '#0071e3';
-          document.querySelectorAll('.sound-wave').forEach(wave => wave.style.opacity = 0);
         }
       });
 
@@ -881,7 +625,7 @@
       // Unlock audio on first interaction
       document.body.addEventListener('click', function unlockAudio() {
         if (!window.audioPlaying && bgMusic && bgMusic.state() === 'loaded') {
-          bgMusic.play().catch(() => console.log('Audio unlock failed'));
+          bgMusic.play().catch(e => console.log('Audio unlock failed:', e));
           bgMusic.stop();
         }
         document.body.removeEventListener('click', unlockAudio);
@@ -923,4 +667,295 @@
       const grassCount = window.innerWidth > 768 ? 100 : 50;
 
       function createGrassElements() {
-        grassElements.length
+        grassElements.length = 0;
+        for (let i = 0; i < grassCount; i++) {
+          grassElements.push({
+            x: Math.random() * canvas.width,
+            height: Math.random() * 60 + 30,
+            width: Math.random() * 2 + 1,
+            swayOffset: Math.random() * 100,
+            speed: Math.random() * 0.002 + 0.001,
+            color: `rgba(${76 + Math.random() * 20}, ${175 + Math.random() * 30}, ${80 + Math.random() * 20}, ${0.4 + Math.random() * 0.3})`
+          });
+        }
+      }
+
+      // Particles (White Dust)
+      const particles = [];
+      const particleCount = 100;
+
+      function createParticle() {
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speedX: Math.random() * 0.5 - 0.25,
+          speedY: Math.random() * 0.5 - 0.25,
+          opacity: Math.random() * 0.5
+        };
+      }
+
+      function initParticles() {
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(createParticle());
+        }
+      }
+
+      function updateEntities(time) {
+        entities.forEach(entity => {
+          entity.x += entity.speedX;
+          entity.y += entity.speedY;
+
+          if (entity.x < -entity.size) entity.x = canvas.width + entity.size;
+          if (entity.x > canvas.width + entity.size) entity.x = -entity.size;
+          if (entity.y < -entity.size) entity.y = canvas.height * 0.7 + entity.size;
+          if (entity.y > canvas.height * 0.7) entity.y = -entity.size;
+
+          entity.connections = [];
+          entities.forEach(other => {
+            if (entity !== other) {
+              const dx = other.x - entity.x;
+              const dy = other.y - entity.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              if (distance < 200) {
+                entity.connections.push({ x: other.x, y: other.y, distance });
+              }
+            }
+          });
+
+          entity.fragments.forEach(f => {
+            f.offsetX += f.driftX;
+            f.offsetY += f.driftY;
+            f.life--;
+            if (f.life <= 0) {
+              f.offsetX = 0;
+              f.offsetY = 0;
+              f.driftX = (Math.random() - 0.5) * 0.05;
+              f.driftY = (Math.random() - 0.5) * 0.05;
+              f.life = Math.random() * 100 + 50;
+            }
+          });
+        });
+      }
+
+      function updateParticles() {
+        particles.forEach(p => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.opacity += Math.random() * 0.01 - 0.005;
+          if (p.opacity < 0.1) p.opacity = 0.1;
+          if (p.opacity > 0.5) p.opacity = 0.5;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+        });
+      }
+
+      function updateGrassElements(time) {
+        grassElements.forEach(grass => {
+          grass.angle = Math.sin(time * grass.speed + grass.swayOffset) * 0.2;
+        });
+      }
+
+      function drawEntities(time) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        entities.forEach(entity => {
+          ctx.save();
+          ctx.translate(entity.x, entity.y);
+
+          ctx.beginPath();
+          const points = 12;
+          for (let i = 0; i < points; i++) {
+            const angle = (Math.PI * 2 / points) * i;
+            const noise = Math.sin(time * entity.morphSpeed + entity.noiseOffset + i) * 5;
+            const radius = entity.size + noise;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.quadraticCurveTo(
+              Math.cos(angle - Math.PI / points) * (entity.size + noise * 0.7),
+              Math.sin(angle - Math.PI / points) * (entity.size + noise * 0.7),
+              x, y
+            );
+          }
+          ctx.closePath();
+          const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, entity.size * 1.5);
+          gradient.addColorStop(0, `hsla(${entity.hue}, 50%, 60%, 0.4)`);
+          gradient.addColorStop(1, `hsla(${entity.hue}, 50%, 40%, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+
+          entity.fragments.forEach(f => {
+            ctx.beginPath();
+            ctx.arc(f.offsetX, f.offsetY, entity.size * 0.2, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${entity.hue}, 50%, 60%, ${f.life / 150})`;
+            ctx.fill();
+          });
+
+          entity.connections.forEach(conn => {
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            const dx = conn.x - entity.x;
+            const dy = conn.y - entity.y;
+            ctx.quadraticCurveTo(dx * 0.5, dy * 0.5, dx, dy);
+            ctx.strokeStyle = `hsla(${entity.hue}, 50%, 60%, ${1 - conn.distance / 200 * 0.3})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          });
+
+          ctx.restore();
+        });
+
+        grassElements.forEach(grass => {
+          ctx.save();
+          ctx.translate(grass.x, canvas.height);
+          ctx.rotate(grass.angle);
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.quadraticCurveTo(grass.width * 2, -grass.height / 2, 0, -grass.height);
+          ctx.quadraticCurveTo(-grass.width * 2, -grass.height / 2, 0, 0);
+          ctx.fillStyle = grass.color;
+          ctx.fill();
+          ctx.restore();
+        });
+
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+          ctx.fill();
+        });
+      }
+
+      function animate(time) {
+        updateEntities(time);
+        updateParticles();
+        updateGrassElements(time);
+        drawEntities(time);
+        requestAnimationFrame(animate);
+      }
+
+      initEntities();
+      initParticles();
+      createGrassElements();
+      requestAnimationFrame(animate);
+
+      // Loading Page Logic
+      const container = document.getElementById('pitch-content');
+      setTimeout(() => {
+        container.classList.add('loaded');
+        document.getElementById('immersive-canvas').classList.add('hidden');
+      }, 3000); // Adjust delay as needed
+    });
+    
+    function showLevel(level) {
+      const level1 = document.getElementById('arachnophobia-demo');
+      const level2 = document.getElementById('arachnophobia-level2');
+      level1.style.display = level === 'level1' ? 'block' : 'none';
+      level2.style.display = level === 'level2' ? 'block' : 'none';
+      if (level === 'level1' && typeof window.initLevel1 === 'function') window.initLevel1();
+      if (level === 'level2' && typeof window.initLevel2 === 'function') window.initLevel2();
+    }
+  </script>
+  <script>
+    // main.js - Level 1 (Spider in a Jar)
+    window.initLevel1 = function() {
+      const container = document.getElementById('arachnophobia-demo');
+      container.innerHTML = ''; // Clear previous content
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+
+      const loader = new THREE.GLTFLoader();
+      loader.load(
+        'spider_level1.glb', // Replace with actual path to your Level 1 model
+        (gltf) => {
+          const model = gltf.scene;
+          model.scale.set(1, 1, 1);
+          scene.add(model);
+        },
+        (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
+        (error) => console.error('Error loading Level 1 model:', error)
+      );
+
+      camera.position.z = 5;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    };
+  </script>
+  <script>
+    // main_level2.js - Level 2 (Large Clawed Spider)
+    window.initLevel2 = function() {
+      const container = document.getElementById('arachnophobia-level2');
+      container.innerHTML = ''; // Clear previous content
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+
+      const loader = new THREE.GLTFLoader();
+      loader.load(
+        'spider_level2.glb', // Replace with actual path to your Level 2 model
+        (gltf) => {
+          const model = gltf.scene;
+          model.scale.set(1, 1, 1);
+          scene.add(model);
+        },
+        (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
+        (error) => console.error('Error loading Level 2 model:', error)
+      );
+
+      camera.position.z = 5;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    };
+  </script>
+</body>
+</html>
