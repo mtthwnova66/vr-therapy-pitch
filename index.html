@@ -71,6 +71,15 @@
       -moz-osx-font-smoothing: grayscale;
     }
     
+    #global-blobCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
     /* Loading Screen */
     #loading-screen {
       position: fixed;
@@ -186,16 +195,6 @@
       position: relative;
       padding: 0 1rem;
       text-align: center;
-    }
-
-    #blobCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
     }
 
     .hero-inner {
@@ -612,6 +611,30 @@
       justify-content: center;
     }
 
+    /* Video Container for Technology Section */
+    .video-container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .video-container iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .video-container iframe:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
     /* Responsive Design */
     @media (max-width: 992px) {
       .section {
@@ -710,6 +733,10 @@
     .footer-title {
       font-size: 1.2rem;
       margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       position: relative;
       display: inline-block;
       padding-bottom: 0.5rem;
@@ -744,7 +771,7 @@
 
     .footer-text {
       color: var(--text-tertiary);
-      font-size: 0.9rem;
+      font-size:_argument0.9rem;
       margin-bottom: 1.5rem;
     }
 
@@ -764,32 +791,11 @@
       color: var(--text-tertiary);
       font-size: 0.85rem;
     }
-
-    .social-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .social-link {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .social-link:hover {
-      background: var(--primary);
-      transform: translateY(-3px);
-    }
   </style>
 </head>
 
 <body>
+  <canvas id="global-blobCanvas"></canvas>
   <!-- Loading Screen -->
   <div id="loading-screen">
     <canvas id="loadingCanvas"></canvas>
@@ -820,7 +826,6 @@
     </nav>
 
     <section class="hero">
-      <canvas id="blobCanvas"></canvas>
       <div class="blob-container">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
@@ -978,6 +983,11 @@
         <div id="tech-demo" class="vr-demo" style="margin-top: 3rem;">
           <div id="tech-canvas" class="vr-demo-canvas"></div>
         </div>
+        <h3>Demo Videos</h3>
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/XGhYnE62GOk" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
       </div>
     </section>
 
@@ -1008,7 +1018,7 @@
         <div class="team-grid">
           <div class="team-card">
             <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image">
+              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image" style="width: 150px; height: 150px; object-fit: cover;">
             </div>
             <div class="team-info">
               <h3 class="team-name">Matei Seleușan</h3>
@@ -1018,7 +1028,7 @@
           </div>
           <div class="team-card">
             <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image">
+              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image" style="width: 150px; height: 150px; object-fit: cover;">
             </div>
             <div class="team-info">
               <h3 class="team-name">Răzvan Crețu</h3>
@@ -1037,20 +1047,22 @@
           <h2>Contact Us</h2>
           <p>Interested in learning more about Synaeon or exploring partnership opportunities? Reach out to our team.</p>
         </div>
-        <div class="contact-form" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light);">
-          <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Name</label>
-            <input type="text" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);">
-          </div>
-          <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Email</label>
-            <input type="email" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);">
-          </div>
-          <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Message</label>
-            <textarea rows="5" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary); resize: vertical;"></textarea>
-          </div>
-          <button class="btn" style="width: 100%;">Send Message</button>
+        <div class="contact-form" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light); text-align: center;">
+          <p>Please contact us at: <a href="mailto:mateiseleusan@gmail.com" style="color: var(--primary-light);">mateiseleusan@gmail.com</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="updates">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-label">Updates</span>
+          <h2>Updates from the Team</h2>
+          <p>Stay tuned for our latest events, investor updates, and company milestones.</p>
+        </div>
+        <div style="text-align: center;">
+          <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 200px; width: 100%; border-radius: 10px;">
+          <p style="margin-top: 1rem; font-style: italic;">Synaeon has reached Times Square.</p>
         </div>
       </div>
     </section>
@@ -1058,10 +1070,7 @@
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-column">
-          <a href="#" class="logo" style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-            <img src="syneon_image.png" alt="Synaeon Logo" style="height: 40px; width: auto; margin-right: 0.5rem;">
-            <span class="logo-text">Synaeon</span>
-          </a>
+          <h4 class="footer-title">Synaeon, Inc.</h4>
           <p class="footer-text">Revolutionizing mental health treatment with AI-powered VR exposure therapy that adapts in real-time.</p>
           <p class="footer-text">"That which you need most is to be found where you least want to look." - Carl Jung</p>
         </div>
@@ -1080,31 +1089,11 @@
           <h4 class="footer-title">Contact</h4>
           <div class="footer-links">
             <a href="mailto:mateiseleusan@gmail.com" class="footer-link">mateiseleusan@gmail.com</a>
-            <a href="mailto:razvanmihaicretu@gmail.com" class="footer-link">razvanmihaicretu@gmail.com</a>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="copyright">© 2025 Synaeon. All rights reserved.</p>
-        <div class="social-links">
-          <a href="#" class="social-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-            </svg>
-          </a>
-          <a href="#" class="social-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-            </svg>
-          </a>
-          <a href="#" class="social-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-              <rect x="2" y="9" width="4" height="12"></rect>
-              <circle cx="4" cy="4" r="2"></circle>
-            </svg>
-          </a>
-        </div>
+        <p class="copyright">© 2025 Synaeon, Inc. All rights reserved.</p>
       </div>
     </footer>
   </div>
@@ -1220,7 +1209,7 @@
 
     // New Blob Canvas Animation with Metaballs
     function initBlobCanvas() {
-      const canvas = document.getElementById('blobCanvas');
+      const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
       
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
@@ -1309,9 +1298,8 @@
         }
         const material = materials[Math.floor(Math.random() * materials.length)].clone();
         const mesh = new THREE.Mesh(geometry, material);
-        // Position around center (title area), slightly offset
         mesh.position.x = (Math.random() - 0.5) * 10;
-        mesh.position.y = (Math.random() - 0.5) * 10 + 5; // Slightly higher to align with title
+        mesh.position.y = (Math.random() - 0.5) * 10 + 5;
         mesh.position.z = (Math.random() - 0.5) * 5;
         mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.03 };
         mesh.rotation.x = Math.random() * Math.PI;
@@ -1340,7 +1328,7 @@
             const dy = ball1.position.y - ball2.position.y;
             const dz = ball1.position.z - ball2.position.z;
             const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (distance < 10) { // Reduced distance for smaller title metaballs
+            if (distance < 10) {
               const geometry = new THREE.BufferGeometry().setFromPoints([ball1.position, ball2.position]);
               const line = new THREE.Line(geometry, connectionMaterial);
               scene.add(line);
@@ -1370,8 +1358,7 @@
           ball.position.x += ball.velocity.x;
           ball.position.y += ball.velocity.y;
           ball.position.z += ball.velocity.z;
-          // Boundary checks adjusted for title metaballs
-          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15; // Smaller boundary for title metaballs
+          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15;
           if (Math.abs(ball.position.x) > boundary) ball.velocity.x *= -1;
           if (Math.abs(ball.position.y) > boundary) ball.velocity.y *= -1;
           if (Math.abs(ball.position.z) > boundary) ball.velocity.z *= -1;
@@ -1412,11 +1399,9 @@
       const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
       camera.position.z = 20;
       
-      // Create a neural network visualization
       const nodeCount = 50;
       const nodes = [];
       
-      // Create nodes
       for (let i = 0; i < nodeCount; i++) {
         const geometry = new THREE.SphereGeometry(0.2 + Math.random() * 0.3, 16, 16);
         const material = new THREE.MeshBasicMaterial({ 
@@ -1431,7 +1416,6 @@
         
         const node = new THREE.Mesh(geometry, material);
         
-        // Position in a 3D space with more concentration in center
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(Math.random() * 2 - 1);
         const radius = Math.random() * 15;
@@ -1440,7 +1424,6 @@
         node.position.y = radius * Math.sin(phi) * Math.sin(theta);
         node.position.z = radius * Math.cos(phi);
         
-        // Add velocity for animation
         node.velocity = {
           x: (Math.random() - 0.5) * 0.05,
           y: (Math.random() - 0.5) * 0.05,
@@ -1451,12 +1434,10 @@
         nodes.push(node);
       }
       
-      // Create connections
       const lineGroup = new THREE.Group();
       scene.add(lineGroup);
       
       function updateConnections() {
-        // Remove old connections
         while(lineGroup.children.length > 0) {
           const line = lineGroup.children[0];
           lineGroup.remove(line);
@@ -1464,14 +1445,12 @@
           line.material.dispose();
         }
         
-        // Add new connections between nodes that are close to each other
         for (let i = 0; i < nodes.length; i++) {
           const node1 = nodes[i];
           
           for (let j = i + 1; j < nodes.length; j++) {
             const node2 = nodes[j];
             
-            // Calculate distance
             const dx = node1.position.x - node2.position.x;
             const dy = node1.position.y - node2.position.y;
             const dz = node1.position.z - node2.position.z;
@@ -1499,11 +1478,9 @@
         }
       }
       
-      // Add lights
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambientLight);
       
-      // Particle system for background
       const particlesCount = 500;
       const particlesGeometry = new THREE.BufferGeometry();
       const particlesPositions = new Float32Array(particlesCount * 3);
@@ -1530,45 +1507,36 @@
       const particles = new THREE.Points(particlesGeometry, particlesMaterial);
       scene.add(particles);
       
-      // Animation
       const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
         
         const elapsedTime = clock.getElapsedTime();
         
-        // Rotate the whole scene slowly for an ever-changing view
         scene.rotation.y = elapsedTime * 0.05;
         
-        // Update nodes
         nodes.forEach(node => {
-          // Pulse effect
           const scale = 1 + Math.sin(elapsedTime * 2 + node.position.x) * 0.2;
           node.scale.set(scale, scale, scale);
           
-          // Small random movement
           node.position.x += node.velocity.x;
           node.position.y += node.velocity.y;
           node.position.z += node.velocity.z;
           
-          // Boundary check to keep nodes in visible area
           if (Math.abs(node.position.x) > 15) node.velocity.x *= -1;
           if (Math.abs(node.position.y) > 15) node.velocity.y *= -1;
           if (Math.abs(node.position.z) > 15) node.velocity.z *= -1;
         });
         
-        // Update connections periodically for performance
         if (Math.random() < 0.05) {
           updateConnections();
         }
         
-        // Animate particles
         const positions = particles.geometry.attributes.position.array;
         for (let i = 0; i < particlesCount; i++) {
           const i3 = i * 3;
           positions[i3 + 1] += 0.01 * Math.sin(elapsedTime + i);
           
-          // Reset particles that go too far
           if (Math.abs(positions[i3]) > 25 || 
               Math.abs(positions[i3 + 1]) > 25 || 
               Math.abs(positions[i3 + 2]) > 25) {
@@ -1584,7 +1552,6 @@
       
       animate();
       
-      // Responsive design
       window.addEventListener('resize', () => {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
