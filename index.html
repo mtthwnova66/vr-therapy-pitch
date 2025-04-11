@@ -24,7 +24,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/noisejs/2.1.0/noise.min.js"></script>
 
   <style>
     :root {
@@ -41,7 +40,7 @@
       --neural-2: #7c4dff;
       --neural-3: #00e5ff;
       --bg-dark: #040812;
-      --card-bg: rgba(10, 17, 40, 0.85);
+      --card-bg: rgba(10, 17, 40, 0.7);
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.8);
       --text-tertiary: rgba(255, 255, 255, 0.5);
@@ -134,27 +133,6 @@
     .main-content {
       position: relative;
       z-index: 1;
-      display: none;
-    }
-    
-    /* Global Blob Container */
-    .global-blob-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    #blobCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
     }
     
     /* Typography */
@@ -210,9 +188,19 @@
       text-align: center;
     }
 
+    #blobCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
     .hero-inner {
       backdrop-filter: blur(10px);
-      background: rgba(4, 8, 18, 0.85);
+      background: rgba(4, 8, 18, 0.3);
       border: 1px solid var(--border-light);
       border-radius: 20px;
       padding: 2.5rem;
@@ -223,7 +211,7 @@
                   0 0 40px rgba(0, 0, 0, 0.3) inset;
       animation: float 6s infinite ease-in-out;
       position: relative;
-      z-index: 2;
+      z-index: 1;
     }
 
     @keyframes float {
@@ -261,7 +249,7 @@
       align-items: center;
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
-      background: rgba(4, 8, 18, 0.85);
+      background: rgba(4, 8, 18, 0.7);
       border-bottom: 1px solid var(--border-light);
     }
 
@@ -396,10 +384,6 @@
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      background: rgba(4, 8, 18, 0.85);
-      border-radius: 20px;
-      padding: 2rem;
-      backdrop-filter: blur(8px);
     }
 
     .section-header {
@@ -487,6 +471,67 @@
       color: var(--text-tertiary);
       margin-bottom: 0;
       flex-grow: 1;
+    }
+
+    /* Blob Background Elements */
+    .blob-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.2;
+      animation: blob-float 15s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: var(--primary);
+      top: -250px;
+      left: -250px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      background: var(--accent);
+      bottom: -200px;
+      right: -200px;
+      animation-delay: -5s;
+    }
+
+    .blob-3 {
+      width: 300px;
+      height: 300px;
+      background: var(--neural-1);
+      top: 40%;
+      right: -150px;
+      animation-delay: -10s;
+    }
+
+    @keyframes blob-float {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(100px, 50px) scale(1.1);
+      }
+      50% {
+        transform: translate(50px, 100px) scale(0.9);
+      }
+      75% {
+        transform: translate(-50px, 50px) scale(1.05);
+      }
     }
 
     /* Team Section */
@@ -643,7 +688,7 @@
 
     /* Footer */
     .footer {
-      background: rgba(2, 6, 14, 0.95);
+      background: rgba(2, 6, 14, 0.9);
       padding: 4rem 2rem 2rem;
       position: relative;
       border-top: 1px solid var(--border-light);
@@ -756,12 +801,7 @@
     </div>
   </div>
   
-  <div class="main-content">
-    <!-- Global Blob Container -->
-    <div class="global-blob-container">
-      <canvas id="blobCanvas"></canvas>
-    </div>
-    
+  <div class="main-content" style="display: none;">
     <nav class="navbar" id="navbar">
       <div class="hamburger" id="hamburger">
         <span></span>
@@ -780,6 +820,12 @@
     </nav>
 
     <section class="hero">
+      <canvas id="blobCanvas"></canvas>
+      <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+      </div>
       <div class="hero-inner">
         <div class="hero-tagline">The Future of Mental Health</div>
         <h1>AI-Powered VR Therapy That Builds Worlds Around You</h1>
@@ -1065,27 +1111,21 @@
 
   <script>
     // Loading Screen Animation
-    function initLoadingScreen() {
+    (function() {
       const canvas = document.getElementById('loadingCanvas');
-      if (!canvas) return;
-
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
-
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 3;
-
       const geometry = new THREE.IcosahedronGeometry(1, 2);
       const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
       const ball = new THREE.Mesh(geometry, material);
       scene.add(ball);
-
       const light = new THREE.PointLight(0xffffff, 1);
       light.position.set(5, 5, 5);
       scene.add(light);
-
       function animate() {
         requestAnimationFrame(animate);
         ball.rotation.x += 0.003;
@@ -1093,37 +1133,31 @@
         renderer.render(scene, camera);
       }
       animate();
-
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
+    })();
 
-      // Show loading bar and fade out
-      window.addEventListener('load', function() {
-        const loadingBar = document.getElementById('loading-bar');
-        const loadingScreen = document.getElementById('loading-screen');
-        const mainContent = document.querySelector('.main-content');
-
-        loadingBar.style.width = '100%';
+    // Show loading bar and fade out
+    window.addEventListener('load', function() {
+      const loadingBar = document.getElementById('loading-bar');
+      const loadingScreen = document.getElementById('loading-screen');
+      const mainContent = document.querySelector('.main-content');
+      
+      loadingBar.style.width = '100%';
+      setTimeout(function() {
+        loadingScreen.style.opacity = '0';
         setTimeout(function() {
-          loadingScreen.style.opacity = '0';
-          setTimeout(function() {
-            loadingScreen.style.display = 'none';
-            mainContent.style.display = 'block';
-          }, 500);
-        }, 1200);
-      });
-    }
-
-    // Initialize noise.js seed
-    noise.seed(Math.random());
+          loadingScreen.style.display = 'none';
+          mainContent.style.display = 'block';
+        }, 500);
+      }, 1200);
+    });
 
     // Main initialization function
     document.addEventListener('DOMContentLoaded', function() {
-      initLoadingScreen();
-
       // Navigation toggle
       const hamburger = document.getElementById('hamburger');
       const navLinks = document.getElementById('nav-links');
@@ -1152,7 +1186,7 @@
         }
       });
       
-      // Initialize blob canvas
+      // Blob background animation with new metaballs
       initBlobCanvas();
       
       // Demo buttons
@@ -1184,7 +1218,7 @@
       }
     });
 
-    // Enhanced Blob Canvas Animation
+    // New Blob Canvas Animation with Metaballs
     function initBlobCanvas() {
       const canvas = document.getElementById('blobCanvas');
       if (!canvas) return;
@@ -1195,230 +1229,168 @@
       
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 40;
+      camera.position.z = 30;
       
       const metaballs = [];
-      const metaballCount = 10; // Hero section blobs
-      const sectionMetaballCount = 6; // Smaller blobs for lower sections
+      const metaballCount = 10; // Background metaballs
+      const titleMetaballCount = 15; // Smaller metaballs around title
       
-      // Custom shader for organic, glossy blobs
-      const vertexShader = `
-        varying vec2 vUv;
-        varying vec3 vNormal;
-        varying vec3 vPosition;
-        uniform float uTime;
-        uniform vec3 uBlobPosition;
-
-        void main() {
-          vUv = uv;
-          vNormal = normal;
-          vPosition = position;
-
-          // Subtle pulsation
-          float pulse = sin(uTime * 2.0 + position.x * 0.5 + position.y * 0.3) * 0.05;
-          vec3 newPosition = position * (1.0 + pulse);
-
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-        }
-      `;
-
-      const fragmentShader = `
-        varying vec2 vUv;
-        varying vec3 vNormal;
-        varying vec3 vPosition;
-        uniform float uTime;
-        uniform vec3 uBlobColor;
-
-        float snoise(vec3 v) {
-          const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-          const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-          vec3 i = floor(v + dot(v, C.yyy));
-          vec3 x0 = v - i + dot(i, C.xxx);
-          vec3 g = step(x0.yzx, x0.xyz);
-          vec3 l = 1.0 - g;
-          vec3 i1 = min(g.xyz, l.zxy);
-          vec3 i2 = max(g.xyz, l.zxy);
-          vec3 x1 = x0 - i1 + C.xxx;
-          vec3 x2 = x0 - i2 + C.yyy;
-          vec3 x3 = x0 - D.yyy;
-          i = mod289(i);
-          vec4 p = permute(permute(permute(
-                     i.z + vec4(0.0, i1.z, i2.z, 1.0))
-                   + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-                   + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-          float n_ = 0.142857142857;
-          vec3 ns = n_ * D.wyz - D.xzx;
-          vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-          vec4 x_ = floor(j * ns.z);
-          vec4 y_ = floor(j - 7.0 * x_);
-          vec4 x = x_ * ns.x + ns.yyyy;
-          vec4 y = y_ * ns.x + ns.yyyy;
-          vec4 h = 1.0 - abs(x) - abs(y);
-          vec4 b0 = vec4(x.xy, y.xy);
-          vec4 b1 = vec4(x.zw, y.zw);
-          vec4 s0 = floor(b0)*2.0 + 1.0;
-          vec4 s1 = floor(b1)*2.0 + 1.0;
-          vec4 sh = -step(h, vec4(0.0));
-          vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-          vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-          vec3 p0 = vec3(a0.xy, h.x);
-          vec3 p1 = vec3(a0.zw, h.y);
-          vec3 p2 = vec3(a1.xy, h.z);
-          vec3 p3 = vec3(a1.zw, h.w);
-          vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-          p0 *= norm.x;
-          p1 *= norm.y;
-          p2 *= norm.z;
-          p3 *= norm.w;
-          vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-          m = m * m;
-          return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
-        }
-
-        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-        vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-        vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-        vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-
-        void main() {
-          vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-          float diffuse = max(dot(vNormal, lightDir), 0.0);
-          float specular = pow(diffuse, 32.0) * 0.4;
-          float noiseValue = snoise(vec3(vPosition * 0.3 + uTime * 0.1));
-          vec3 color = uBlobColor * (0.8 + noiseValue * 0.2);
-          gl_FragColor = vec4(color * diffuse + specular, 0.55);
-        }
-      `;
-
-      const colors = [
-        new THREE.Color(0x47a0ff),
-        new THREE.Color(0xffd166),
-        new THREE.Color(0xff3366),
-        new THREE.Color(0x7c4dff)
+      const materials = [
+        new THREE.MeshStandardMaterial({
+          color: 0x47a0ff,
+          metalness: 0.2,
+          roughness: 0.8,
+          transparent: true,
+          opacity: 0.8
+        }),
+        new THREE.MeshStandardMaterial({
+          color: 0xffd166,
+          metalness: 0.3,
+          roughness: 0.7,
+          transparent: true,
+          opacity: 0.7
+        }),
+        new THREE.MeshStandardMaterial({
+          color: 0xff3366,
+          metalness: 0.1,
+          roughness: 0.9,
+          transparent: true,
+          opacity: 0.6
+        })
       ];
-
-      function createMetaball(radius, isSectionBlob = false) {
-        const geometry = new THREE.IcosahedronGeometry(radius, 16);
+      
+      function noise3D(x, y, z) {
+        return Math.sin(x * 0.1) * Math.sin(y * 0.1) * Math.sin(z * 0.1);
+      }
+      
+      // Background metaballs
+      for (let i = 0; i < metaballCount; i++) {
+        const radius = Math.random() * 3 + 1;
+        const geometry = new THREE.IcosahedronGeometry(radius, 8);
         const vertices = geometry.attributes.position.array;
-
         for (let j = 0; j < vertices.length; j += 3) {
           const x = vertices[j];
-          const y = vertices[j + 1];
-          const z = vertices[j + 2];
-          const vertex = new THREE.Vector3(x, y, z).normalize();
-          const noiseValue = noise.simplex3(
-            vertex.x * 2.5 + (isSectionBlob ? 100 : 0),
-            vertex.y * 2.5 + (isSectionBlob ? 200 : 0),
-            vertex.z * 2.5 + (isSectionBlob ? 300 : 0)
-          );
-          const displacement = 1 + noiseValue * (isSectionBlob ? 0.15 : 0.35);
-          vertices[j] *= displacement;
-          vertices[j + 1] *= displacement;
-          vertices[j + 2] *= displacement;
+          const y = vertices[j+1];
+          const z = vertices[j+2];
+          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          vertices[j] += x * n;
+          vertices[j+1] += y * n;
+          vertices[j+2] += z * n;
         }
-        geometry.attributes.position.needsUpdate = true;
-        geometry.computeVertexNormals();
-
-        const material = new THREE.ShaderMaterial({
-          uniforms: {
-            uTime: { value: 0 },
-            uBlobColor: { value: colors[Math.floor(Math.random() * colors.length)] },
-            uBlobPosition: { value: new THREE.Vector3() }
-          },
-          vertexShader: vertexShader,
-          fragmentShader: fragmentShader,
-          transparent: true,
-          side: THREE.DoubleSide
-        });
-
+        const material = materials[Math.floor(Math.random() * materials.length)].clone();
         const mesh = new THREE.Mesh(geometry, material);
-        const maxRadius = isSectionBlob ? 20 : 30;
-        mesh.position.set(
-          (Math.random() - 0.5) * maxRadius,
-          (Math.random() - 0.5) * maxRadius + (isSectionBlob ? -20 : 0),
-          (Math.random() - 0.5) * (isSectionBlob ? 15 : 25)
-        );
-        mesh.velocity = {
-          x: (Math.random() - 0.5) * (isSectionBlob ? 0.02 : 0.04),
-          y: (Math.random() - 0.5) * (isSectionBlob ? 0.02 : 0.04),
-          z: (Math.random() - 0.5) * (isSectionBlob ? 0.02 : 0.04)
-        };
-        mesh.rotationSpeed = {
-          x: (Math.random() - 0.5) * (isSectionBlob ? 0.005 : 0.01),
-          y: (Math.random() - 0.5) * (isSectionBlob ? 0.005 : 0.01),
-          z: (Math.random() - 0.5) * (isSectionBlob ? 0.005 : 0.01)
-        };
-        mesh.baseScale = isSectionBlob ? 0.6 : 1.0;
-        return mesh;
-      }
-
-      for (let i = 0; i < metaballCount; i++) {
-        const radius = Math.random() * 2 + 2;
-        const mesh = createMetaball(radius);
+        mesh.position.x = (Math.random() - 0.5) * 40;
+        mesh.position.y = (Math.random() - 0.5) * 40;
+        mesh.position.z = (Math.random() - 0.5) * 30;
+        mesh.velocity = { x: (Math.random() - 0.5) * 0.05, y: (Math.random() - 0.5) * 0.05, z: (Math.random() - 0.5) * 0.05 };
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        mesh.rotation.z = Math.random() * Math.PI;
+        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
+        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
+        mesh.material.color = mesh.originalColor;
         scene.add(mesh);
         metaballs.push(mesh);
       }
-
-      for (let i = 0; i < sectionMetaballCount; i++) {
-        const radius = Math.random() * 1 + 0.5;
-        const mesh = createMetaball(radius, true);
+      
+      // Smaller metaballs concentrated around title
+      for (let i = 0; i < titleMetaballCount; i++) {
+        const radius = Math.random() * 0.8 + 0.3; // Smaller size
+        const geometry = new THREE.IcosahedronGeometry(radius, 8);
+        const vertices = geometry.attributes.position.array;
+        for (let j = 0; j < vertices.length; j += 3) {
+          const x = vertices[j];
+          const y = vertices[j+1];
+          const z = vertices[j+2];
+          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          vertices[j] += x * n;
+          vertices[j+1] += y * n;
+          vertices[j+2] += z * n;
+        }
+        const material = materials[Math.floor(Math.random() * materials.length)].clone();
+        const mesh = new THREE.Mesh(geometry, material);
+        // Position around center (title area), slightly offset
+        mesh.position.x = (Math.random() - 0.5) * 10;
+        mesh.position.y = (Math.random() - 0.5) * 10 + 5; // Slightly higher to align with title
+        mesh.position.z = (Math.random() - 0.5) * 5;
+        mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.03 };
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        mesh.rotation.z = Math.random() * Math.PI;
+        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 };
+        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
+        mesh.material.color = mesh.originalColor;
         scene.add(mesh);
         metaballs.push(mesh);
       }
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+      
+      const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.3 });
+      const connections = [];
+      function updateConnections() {
+        connections.forEach(conn => {
+          scene.remove(conn);
+          if(conn.geometry) conn.geometry.dispose();
+        });
+        connections.length = 0;
+        for (let i = 0; i < metaballs.length; i++) {
+          const ball1 = metaballs[i];
+          for (let j = i + 1; j < metaballs.length; j++) {
+            const ball2 = metaballs[j];
+            const dx = ball1.position.x - ball2.position.x;
+            const dy = ball1.position.y - ball2.position.y;
+            const dz = ball1.position.z - ball2.position.z;
+            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (distance < 10) { // Reduced distance for smaller title metaballs
+              const geometry = new THREE.BufferGeometry().setFromPoints([ball1.position, ball2.position]);
+              const line = new THREE.Line(geometry, connectionMaterial);
+              scene.add(line);
+              connections.push(line);
+            }
+          }
+        }
+      }
+      
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
       const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
       directionalLight.position.set(10, 10, 10);
       scene.add(directionalLight);
-      const pointLight = new THREE.PointLight(0x47a0ff, 1, 50);
-      pointLight.position.set(0, 0, 10);
-      scene.add(pointLight);
-
+      
       const clock = new THREE.Clock();
       let mouseX = 0, mouseY = 0;
       window.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        mouseX = event.clientX - window.innerWidth / 2;
+        mouseY = event.clientY - window.innerHeight / 2;
       });
-
+      
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-
         metaballs.forEach(ball => {
           ball.position.x += ball.velocity.x;
           ball.position.y += ball.velocity.y;
           ball.position.z += ball.velocity.z;
-
-          const boundary = ball.baseScale < 1 ? 25 : 35;
+          // Boundary checks adjusted for title metaballs
+          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15; // Smaller boundary for title metaballs
           if (Math.abs(ball.position.x) > boundary) ball.velocity.x *= -1;
-          if (Math.abs(ball.position.y) > boundary + (ball.baseScale < 1 ? 20 : 0)) ball.velocity.y *= -1;
+          if (Math.abs(ball.position.y) > boundary) ball.velocity.y *= -1;
           if (Math.abs(ball.position.z) > boundary) ball.velocity.z *= -1;
-
           ball.rotation.x += ball.rotationSpeed.x;
           ball.rotation.y += ball.rotationSpeed.y;
           ball.rotation.z += ball.rotationSpeed.z;
-
-          const pulse = 1 + Math.sin(elapsed * 2 + ball.position.x * 0.5) * 0.05;
-          ball.scale.set(pulse * ball.baseScale, pulse * ball.baseScale, pulse * ball.baseScale);
-
-          ball.material.uniforms.uTime.value = elapsed;
-          ball.material.uniforms.uBlobPosition.value.copy(ball.position);
-
+          const scale = 1 + Math.sin(elapsed * 2 + ball.position.x * 0.5) * 0.1;
+          ball.scale.set(scale, scale, scale);
           const hue = (elapsed * 0.05 + ball.position.x * 0.01) % 1;
-          ball.material.uniforms.uBlobColor.value.setHSL(hue, 0.7, 0.6);
+          ball.material.color.setHSL(hue, 0.6, 0.6);
         });
-
-        camera.position.x += (mouseX * 10 - camera.position.x) * 0.05;
-        camera.position.y += (mouseY * 10 - camera.position.y) * 0.05;
-        camera.lookAt(0, 0, 0);
-
+        if (Math.random() < 0.05) updateConnections();
+        scene.rotation.y += ((mouseX * 0.0001) - scene.rotation.y) * 0.01;
+        scene.rotation.x += ((mouseY * 0.0001) - scene.rotation.x) * 0.01;
         renderer.render(scene, camera);
       }
-
+      
       animate();
-
+      
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -1426,7 +1398,7 @@
       });
     }
 
-    // Technology Demo Visualization
+    // Technology Demo Visualization - Neural network visualization
     function initTechDemo() {
       const container = document.getElementById('tech-canvas');
       if (!container) return;
@@ -1436,12 +1408,15 @@
       container.appendChild(renderer.domElement);
       
       const scene = new THREE.Scene();
+      
       const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
       camera.position.z = 20;
       
+      // Create a neural network visualization
       const nodeCount = 50;
       const nodes = [];
       
+      // Create nodes
       for (let i = 0; i < nodeCount; i++) {
         const geometry = new THREE.SphereGeometry(0.2 + Math.random() * 0.3, 16, 16);
         const material = new THREE.MeshBasicMaterial({ 
@@ -1455,6 +1430,8 @@
         });
         
         const node = new THREE.Mesh(geometry, material);
+        
+        // Position in a 3D space with more concentration in center
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(Math.random() * 2 - 1);
         const radius = Math.random() * 15;
@@ -1463,6 +1440,7 @@
         node.position.y = radius * Math.sin(phi) * Math.sin(theta);
         node.position.z = radius * Math.cos(phi);
         
+        // Add velocity for animation
         node.velocity = {
           x: (Math.random() - 0.5) * 0.05,
           y: (Math.random() - 0.5) * 0.05,
@@ -1473,10 +1451,12 @@
         nodes.push(node);
       }
       
+      // Create connections
       const lineGroup = new THREE.Group();
       scene.add(lineGroup);
       
       function updateConnections() {
+        // Remove old connections
         while(lineGroup.children.length > 0) {
           const line = lineGroup.children[0];
           lineGroup.remove(line);
@@ -1484,10 +1464,14 @@
           line.material.dispose();
         }
         
+        // Add new connections between nodes that are close to each other
         for (let i = 0; i < nodes.length; i++) {
           const node1 = nodes[i];
+          
           for (let j = i + 1; j < nodes.length; j++) {
             const node2 = nodes[j];
+            
+            // Calculate distance
             const dx = node1.position.x - node2.position.x;
             const dy = node1.position.y - node2.position.y;
             const dz = node1.position.z - node2.position.z;
@@ -1495,24 +1479,31 @@
             
             if (distance < 8) {
               const strength = 1 - distance / 8;
+              
               const material = new THREE.LineBasicMaterial({ 
                 color: 0x47a0ff,
                 transparent: true,
                 opacity: strength * 0.5
               });
               
-              const points = [node1.position.clone(), node2.position.clone()];
+              const points = [];
+              points.push(new THREE.Vector3(node1.position.x, node1.position.y, node1.position.z));
+              points.push(new THREE.Vector3(node2.position.x, node2.position.y, node2.position.z));
+              
               const geometry = new THREE.BufferGeometry().setFromPoints(points);
               const line = new THREE.Line(geometry, material);
+              
               lineGroup.add(line);
             }
           }
         }
       }
       
+      // Add lights
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambientLight);
       
+      // Particle system for background
       const particlesCount = 500;
       const particlesGeometry = new THREE.BufferGeometry();
       const particlesPositions = new Float32Array(particlesCount * 3);
@@ -1539,35 +1530,45 @@
       const particles = new THREE.Points(particlesGeometry, particlesMaterial);
       scene.add(particles);
       
+      // Animation
       const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
+        
         const elapsedTime = clock.getElapsedTime();
         
+        // Rotate the whole scene slowly for an ever-changing view
         scene.rotation.y = elapsedTime * 0.05;
         
+        // Update nodes
         nodes.forEach(node => {
+          // Pulse effect
           const scale = 1 + Math.sin(elapsedTime * 2 + node.position.x) * 0.2;
           node.scale.set(scale, scale, scale);
           
+          // Small random movement
           node.position.x += node.velocity.x;
           node.position.y += node.velocity.y;
           node.position.z += node.velocity.z;
           
+          // Boundary check to keep nodes in visible area
           if (Math.abs(node.position.x) > 15) node.velocity.x *= -1;
           if (Math.abs(node.position.y) > 15) node.velocity.y *= -1;
           if (Math.abs(node.position.z) > 15) node.velocity.z *= -1;
         });
         
+        // Update connections periodically for performance
         if (Math.random() < 0.05) {
           updateConnections();
         }
         
+        // Animate particles
         const positions = particles.geometry.attributes.position.array;
         for (let i = 0; i < particlesCount; i++) {
           const i3 = i * 3;
           positions[i3 + 1] += 0.01 * Math.sin(elapsedTime + i);
           
+          // Reset particles that go too far
           if (Math.abs(positions[i3]) > 25 || 
               Math.abs(positions[i3 + 1]) > 25 || 
               Math.abs(positions[i3 + 2]) > 25) {
@@ -1583,6 +1584,7 @@
       
       animate();
       
+      // Responsive design
       window.addEventListener('resize', () => {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
@@ -1590,5 +1592,7 @@
       });
     }
   </script>
+  <script src="main.js"></script>
+  <script src="main_level2.js"></script>
 </body>
 </html>
