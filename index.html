@@ -1139,7 +1139,7 @@
         </div>
         <div class="vr-demo">
           <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: block;"></div>
-          <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;"></div>
+          <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none органы не указаны"></div>
           <div class="vr-controls">
             <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Mild Exposure</button>
             <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Intense Exposure</button>
@@ -1340,7 +1340,7 @@
         }
       });
       
-      // Blob background animation with cosmic web
+      // Blob background animation with metaballs
       initBlobCanvas();
 
       // Contact Form Submission
@@ -1385,7 +1385,7 @@
       });
     });
 
-    // Blob Canvas Animation with Cosmic Web
+    // Blob Canvas Animation with Cosmic Strands
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
@@ -1398,134 +1398,109 @@
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 30;
 
-      // Materials
-      const strandMaterial = new THREE.LineBasicMaterial({
-        color: 0x8ab5ff, // Soft blue
-        transparent: true,
-        opacity: 0.3,
-        linewidth: 1.5,
-        blending: THREE.AdditiveBlending
-      });
+      // Materials for the two cosmic strands
+      const materials = [
+        new THREE.MeshPhysicalMaterial({
+          color: 0x47a0ff, // Blue strand (calm, healing)
+          metalness: 0.1,
+          roughness: 0.2,
+          emissive: 0x0a3d7a,
+          emissiveIntensity: 0.6,
+          transparent: true,
+          opacity: 0.85,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.1
+        }),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xffd166, // Golden strand (hope, renewal)
+          metalness: 0.1,
+          roughness: 0.2,
+          emissive: 0x664d00,
+          emissiveIntensity: 0.6,
+          transparent: true,
+          opacity: 0.85,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.1
+        })
+      ];
 
-      const nodeMaterial = new THREE.PointsMaterial({
-        color: 0xffe4b5, // Warm gold
-        size: 0.4,
-        transparent: true,
-        opacity: 0.7,
-        blending: THREE.AdditiveBlending
-      });
+      // Two strands, each with multiple segments
+      const strand1 = [], strand2 = [];
+      const segmentCount = 10; // Segments per strand for smooth curves
+      const baseRadius = 0.5; // Thinner segments for strand-like appearance
+      const strandLength = 20; // Length of each strand
+      const swirlRadius = 5; // Radius of circular swirling motion
 
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0xb0c4ff, // Pale blue
-        size: 0.15,
-        transparent: true,
-        opacity: 0.5,
-        blending: THREE.AdditiveBlending
-      });
-
-      const nodes = [];
-      const strands = [];
-      const particles = [];
-      const nodeCount = 20; // Fewer nodes for smoother motion
-
-      // Initialize nodes with organic distribution
-      for (let i = 0; i < nodeCount; i++) {
-        const radius = 8 + Math.random() * 12;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const node = new THREE.Vector3(
-          radius * Math.sin(phi) * Math.cos(theta),
-          radius * Math.sin(phi) * Math.sin(theta),
-          radius * Math.cos(phi)
+      // Initialize strand 1 (blue, healing)
+      for (let i = 0; i < segmentCount; i++) {
+        const t = i / (segmentCount - 1);
+        const geometry = new THREE.SphereGeometry(baseRadius, 16, 16);
+        const mesh = new THREE.Mesh(geometry, materials[0].clone());
+        mesh.position.set(
+          Math.cos(t * Math.PI * 2) * swirlRadius,
+          t * strandLength - strandLength / 2,
+          Math.sin(t * Math.PI * 2) * swirlRadius
         );
-        node.baseRadius = radius;
-        node.phase = Math.random() * Math.PI * 2;
-        node.frequency = 0.05 + Math.random() * 0.03;
-        nodes.push(node);
+        mesh.basePosition = mesh.position.clone();
+        mesh.phase = t * Math.PI * 2;
+        mesh.strandId = 1;
+        scene.add(mesh);
+        strand1.push(mesh);
       }
 
-      // Update strands dynamically
-      function updateStrands() {
-        strands.forEach(strand => scene.remove(strand));
-        strands.length = 0;
-
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1;  j < nodes.length; j++) {
-            const node1 = nodes[i];
-            const node2 = nodes[j];
-            const distance = node1.distanceTo(node2);
-
-            if (distance < 12) {
-              const points = [];
-              const segments = 30;
-              for (let t = 0; t <= 1; t += 1 / segments) {
-                const point = new THREE.Vector3().lerpVectors(node1, node2, t);
-                const wave = Math.sin(t * Math.PI + node1.phase) * 0.3;
-                point.x += wave * Math.cos(t * Math.PI);
-                point.y += wave * Math.sin(t * Math.PI);
-                points.push(point);
-              }
-              const geometry = new THREE.BufferGeometry().setFromPoints(points);
-              const strand = new THREE.Line(geometry, strandMaterial);
-              scene.add(strand);
-              strands.push(strand);
-            }
-          }
-        }
+      // Initialize strand 2 (golden, renewal)
+      for (let i = 0; i < segmentCount; i++) {
+        const t = i / (segmentCount - 1);
+        const geometry = new THREE.SphereGeometry(baseRadius, 16, 16);
+        const mesh = new THREE.Mesh(geometry, materials[1].clone());
+        mesh.position.set(
+          Math.cos(t * Math.PI * 2 + Math.PI) * swirlRadius, // Opposite phase
+          t * strandLength - strandLength / 2,
+          Math.sin(t * Math.PI * 2 + Math.PI) * swirlRadius
+        );
+        mesh.basePosition = mesh.position.clone();
+        mesh.phase = t * Math.PI * 2 + Math.PI;
+        mesh.strandId = 2;
+        scene.add(mesh);
+        strand2.push(mesh);
       }
 
-      // Node visuals
-      const nodeGeometry = new THREE.BufferGeometry().setFromPoints(nodes);
-      const nodePoints = new THREE.Points(nodeGeometry, nodeMaterial);
-      scene.add(nodePoints);
+      // Particle system for reformation effects
+      const particles = [];
+      const particleCount = 100;
+      const particleGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const velocities = new Float32Array(particleCount * 3);
+      const lifetimes = new Float32Array(particleCount);
 
-      // Particle system
-      function spawnParticles() {
-        const particleCount = 5;
-        const particleGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const velocities = [];
-
-        for (let i = 0; i < particleCount; i++) {
-          const node = nodes[Math.floor(Math.random() * nodes.length)];
-          positions[i * 3] = node.x;
-          positions[i * 3 + 1] = node.y;
-          positions[i * 3 + 2] = node.z;
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 0.02 + Math.random() * 0.03;
-          velocities.push(
-            new THREE.Vector3(
-              Math.cos(angle) * speed,
-              Math.sin(angle) * speed,
-              (Math.random() - 0.5) * speed * 0.5
-            )
-          );
-        }
-
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-        particleSystem.velocities = velocities;
-        scene.add(particleSystem);
-        particles.push(particleSystem);
-
-        // Fade particles
-        setTimeout(() => {
-          new TWEEN.Tween(particleMaterial)
-            .to({ opacity: 0 }, 4000)
-            .onComplete(() => {
-              scene.remove(particleSystem);
-              particleGeometry.dispose();
-              particles.splice(particles.indexOf(particleSystem), 1);
-            })
-            .start();
-        }, 3000);
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = 0;
+        positions[i * 3 + 1] = 0;
+        positions[i * 3 + 2] = 0;
+        velocities[i * 3] = (Math.random() - 0.5) * 0.1;
+        velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.1;
+        velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
+        lifetimes[i] = 0;
       }
 
-      // Lighting
-      const ambientLight = new THREE.AmbientLight(0x1c2526, 0.5);
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0x47a0ff,
+        size: 0.1,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+      });
+
+      const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particleSystem);
+
+      // Lighting for cosmic effect
+      const ambientLight = new THREE.AmbientLight(0x0a1a2a, 0.4);
       scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0x8ab5ff, 0.6, 50);
-      pointLight.position.set(15, 15, 15);
+
+      const pointLight = new THREE.PointLight(0xffffff, 0.7, 100);
+      pointLight.position.set(10, 10, 10);
       scene.add(pointLight);
 
       const clock = new THREE.Clock();
@@ -1536,56 +1511,109 @@
         mouseY = -(event.clientY / window.innerHeight - 0.5) * 10;
       });
 
+      // Update strand positions and interactions
+      function updateStrands(elapsed) {
+        const swirlSpeed = 0.2;
+        const combineDistance = 2;
+        const detachDistance = 5;
+
+        // Update strand 1
+        strand1.forEach((segment, i) => {
+          const t = i / (segmentCount - 1);
+          const swirl = Math.sin(elapsed * swirlSpeed + segment.phase) * swirlRadius;
+          segment.position.x = segment.basePosition.x + Math.cos(t * Math.PI * 2 + elapsed * swirlSpeed) * swirl;
+          segment.position.y = t * strandLength - strandLength / 2 + Math.sin(elapsed * 0.1 + segment.phase) * 2;
+          segment.position.z = segment.basePosition.z + Math.sin(t * Math.PI * 2 + elapsed * swirlSpeed) * swirl;
+
+          // Gentle scaling for breathing effect
+          const scale = 1 + Math.sin(elapsed * 0.5 + segment.phase) * 0.1;
+          segment.scale.set(scale, scale, scale);
+        });
+
+        // Update strand 2
+        strand2.forEach((segment, i) => {
+          const t = i / (segmentCount - 1);
+          const swirl = Math.sin(elapsed * swirlSpeed + segment.phase) * swirlRadius;
+          segment.position.x = segment.basePosition.x + Math.cos(t * Math.PI * 2 + elapsed * swirlSpeed + Math.PI) * swirl;
+          segment.position.y = t * strandLength - strandLength / 2 + Math.sin(elapsed * 0.1 + segment.phase + Math.PI) * 2;
+          segment.position.z = segment.basePosition.z + Math.sin(t * Math.PI * 2 + elapsed * swirlSpeed + Math.PI) * swirl;
+
+          const scale = 1 + Math.sin(elapsed * 0.5 + segment.phase) * 0.1;
+          segment.scale.set(scale, scale, scale);
+        });
+
+        // Strand interaction (combine and detach)
+        strand1.forEach((s1) => {
+          strand2.forEach((s2) => {
+            const distance = s1.position.distanceTo(s2.position);
+            if (distance < combineDistance) {
+              // Combine: move toward midpoint
+              const midpoint = s1.position.clone().lerp(s2.position, 0.5);
+              s1.position.lerp(midpoint, 0.05);
+              s2.position.lerp(midpoint, 0.05);
+              emitParticles(midpoint, s1.material.color);
+            } else if (distance > detachDistance) {
+              // Detach: return to base swirl
+              s1.position.lerp(s1.basePosition, 0.02);
+              s2.position.lerp(s2.basePosition, 0.02);
+            }
+          });
+        });
+
+        // Update particles
+        for (let i = 0; i < particleCount; i++) {
+          if (lifetimes[i] > 0) {
+            positions[i * 3] += velocities[i * 3];
+            positions[i * 3 + 1] += velocities[i * 3 + 1];
+            positions[i * 3 + 2] += velocities[i * 3 + 2];
+            lifetimes[i] -= 0.02;
+            if (lifetimes[i] <= 0) {
+              positions[i * 3] = 0;
+              positions[i * 3 + 1] = 0;
+              positions[i * 3 + 2] = 0;
+            }
+          }
+        }
+        particleGeometry.attributes.position.needsUpdate = true;
+      }
+
+      // Emit particles at interaction points
+      function emitParticles(position, color) {
+        for (let i = 0; i < particleCount; i++) {
+          if (lifetimes[i] <= 0) {
+            positions[i * 3] = position.x;
+            positions[i * 3 + 1] = position.y;
+            positions[i * 3 + 2] = position.z;
+            velocities[i * 3] = (Math.random() - 0.5) * 0.1;
+            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.1;
+            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
+            lifetimes[i] = 1;
+            particleMaterial.color.set(color);
+            break;
+          }
+        }
+        particleGeometry.attributes.position.needsUpdate = true;
+      }
+
       // Animation loop
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
 
-        // Update nodes with fluidic motion
-        nodes.forEach((node, i) => {
-          const time = elapsed * node.frequency;
-          const radius = node.baseRadius + Math.sin(time + node.phase) * 2;
-          const theta = time + node.phase;
-          const phi = Math.acos(2 * Math.random() - 1);
-          node.x = radius * Math.sin(phi) * Math.cos(theta);
-          node.y = radius * Math.sin(phi) * Math.sin(theta);
-          node.z = radius * Math.cos(phi);
-        });
+        updateStrands(elapsed);
 
-        nodeGeometry.attributes.position.needsUpdate = true;
-        updateStrands();
-
-        // Update particles
-        particles.forEach(particleSystem => {
-          const positions = particleSystem.geometry.attributes.position.array;
-          const velocities = particleSystem.velocities;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i] += velocities[i / 3].x;
-            positions[i + 1] += velocities[i / 3].y;
-            positions[i + 2] += velocities[i / 3].z;
-            // Circular motion
-            const angle = elapsed * 0.1;
-            velocities[i / 3].x = Math.cos(angle) * 0.02;
-            velocities[i / 3].y = Math.sin(angle) * 0.02;
-          }
-          particleSystem.geometry.attributes.position.needsUpdate = true;
-        });
-
-        // Spawn particles sparingly
-        if (Math.random() < 0.05) spawnParticles();
-
-        // Gentle camera movement
-        camera.position.x += (mouseX - camera.position.x) * 0.02;
-        camera.position.y += (mouseY - camera.position.y) * 0.02;
+        camera.position.x = mouseX * 0.1;
+        camera.position.y = mouseY * 0.1;
         camera.lookAt(scene.position);
 
         renderer.render(scene, camera);
+
         TWEEN.update();
       }
 
       animate();
 
-      // Resize handling
+      // Handle window resize
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
