@@ -212,7 +212,7 @@
       background: rgba(4, 8, 18, 0.4);
       border: 2px solid var(--primary-glow);
       border-radius: 25px;
-      padding: 4rem 3rem 3rem; /* Increased top padding to move content lower */
+      padding: 2.5rem 3rem 3rem; /* Reduced top padding to lower content */
       max-width: 900px;
       width: 95%;
       box-shadow: var(--shadow-glow);
@@ -236,14 +236,14 @@
     }
 
     .hero-logo img {
-      width: 120px;
+      width: 150px; /* Increased from 120px */
       height: auto;
       filter: drop-shadow(0 0 10px var(--primary-glow));
       transition: transform 0.3s ease;
     }
 
     .hero-logo img:hover {
-      transform: scale(1.05);
+      transform: scale(1.03); /* Adjusted from 1.05 for subtler effect */
     }
 
     .hero-tagline {
@@ -770,7 +770,7 @@
       }
       
       .hero-logo img {
-        width: 100px;
+        width: 130px; /* Adjusted for smaller screens */
       }
       
       .video-container iframe {
@@ -812,7 +812,7 @@
       }
       
       .hero-logo img {
-        width: 90px;
+        width: 110px; /* Adjusted for smallest screens */
       }
       
       #updates img {
@@ -1422,7 +1422,7 @@
         for (let j = 0; j < vertices.length; j += 3) {
           const x = vertices[j];
           const y = vertices[j+1];
-          const z = vertices[j+2];
+         指定 z = vertices[j+2];
           const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
           vertices[j] += x * n;
           vertices[j+1] += y * n;
