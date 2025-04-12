@@ -653,6 +653,8 @@
       height: 600px;
       background: var(--bg-dark);
       border-radius: 20px 20px 0 0;
+      position: relative;
+      overflow: hidden;
     }
 
     .vr-controls {
@@ -1140,6 +1142,7 @@
           <div class="vr-controls">
             <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Mild Exposure</button>
             <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Intense Exposure</button>
+            <button class="btn btn-outline" id="soundToggleBtn" onclick="toggleSound()">Toggle Relaxing Sound</button>
           </div>
         </div>
       </div>
@@ -1254,6 +1257,8 @@
       </div>
     </footer>
   </div>
+
+  <audio id="relaxingAudio" src="relaxing.mp3" loop></audio>
 
   <script>
     // Loading Screen Animation
@@ -1569,31 +1574,78 @@
       const level2 = document.getElementById('arachnophobia-level2');
       const level1Btn = document.getElementById('level1-btn');
       const level2Btn = document.getElementById('level2-btn');
+
       level1.style.display = level === 'level1' ? 'block' : 'none';
       level2.style.display = level === 'level2' ? 'block' : 'none';
+
       if (level === 'level1') {
         level1Btn.classList.remove('btn-outline');
         level2Btn.classList.add('btn-outline');
+
         if (typeof initLevel1 === 'function') {
-          initLevel1();
+          initLevel1(); // Call the existing initialization
+
+          // Ensure the renderer fills the canvas
+          const renderer = level1.querySelector('canvas') ? level1.querySelector('canvas').renderer : new THREE.WebGLRenderer({ canvas: level1 });
+          renderer.setSize(level1.clientWidth, level1.clientHeight);
+          renderer.setPixelRatio(window.devicePixelRatio);
+          level1.appendChild(renderer.domElement); // Ensure the renderer canvas is in the DOM
         } else {
           console.log('initLevel1 not found, initializing default renderer');
           const renderer = new THREE.WebGLRenderer({ canvas: level1 });
           renderer.setSize(level1.clientWidth, level1.clientHeight);
+          renderer.setPixelRatio(window.devicePixelRatio);
           console.log('Renderer initialized:', renderer);
         }
       } else {
         level2Btn.classList.remove('btn-outline');
         level1Btn.classList.add('btn-outline');
+
         if (typeof initLevel2 === 'function') {
-          initLevel2();
+          initLevel2(); // Call the existing initialization
+
+          // Ensure the renderer fills the canvas
+          const renderer = level2.querySelector('canvas') ? level2.querySelector('canvas').renderer : new THREE.WebGLRenderer({ canvas: level2 });
+          renderer.setSize(level2.clientWidth, level2.clientHeight);
+          renderer.setPixelRatio(window.devicePixelRatio);
+          level2.appendChild(renderer.domElement); // Ensure the renderer canvas is in the DOM
         } else {
           console.log('initLevel2 not found, initializing default renderer');
           const renderer = new THREE.WebGLRenderer({ canvas: level2 });
           renderer.setSize(level2.clientWidth, level2.clientHeight);
+          renderer.setPixelRatio(window.devicePixelRatio);
           console.log('Renderer initialized:', renderer);
         }
       }
+
+      // Handle window resize to keep the canvas sized correctly
+      window.addEventListener('resize', () => {
+        if (level1.style.display === 'block' && level1.querySelector('canvas')) {
+          const renderer = level1.querySelector('canvas').renderer;
+          renderer.setSize(level1.clientWidth, level1.clientHeight);
+        } else if (level2.style.display === 'block' && level2.querySelector('canvas')) {
+          const renderer = level2.querySelector('canvas').renderer;
+          renderer.setSize(level2.clientWidth, level2.clientHeight);
+        }
+      }, { passive: true });
+    }
+
+    // Sound Toggle Function
+    let isPlaying = false;
+
+    function toggleSound() {
+      const audio = document.getElementById('relaxingAudio');
+      const button = document.getElementById('soundToggleBtn');
+
+      if (isPlaying) {
+        audio.pause();
+        button.textContent = 'Turn On Relaxing Sound';
+      } else {
+        audio.play();
+        button.textContent = 'Turn Off Relaxing Sound';
+      }
+
+      isPlaying = !isPlaying;
     }
   </script>
   <script src="main.js"></script>
