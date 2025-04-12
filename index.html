@@ -221,6 +221,7 @@
       position: relative;
       z-index: 1;
       transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      margin-top: 15vh; /* Shift significantly lower to show nav and stars */
     }
 
     .hero-inner:hover {
@@ -237,7 +238,7 @@
     }
 
     .hero-logo img {
-      width: 120px;
+      width: 160px; /* Larger logo */
       height: auto;
       filter: drop-shadow(0 0 10px var(--primary-glow));
       transition: transform 0.3s ease;
@@ -353,7 +354,7 @@
       font-weight: 500;
       text-decoration: none;
       padding: 0.8rem 2rem;
-      border-radius: 30px;
+      border-radius: 50px; /* Rounded buttons */
       border: none;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -361,6 +362,8 @@
       position: relative;
       overflow: hidden;
       z-index: 1;
+      min-width: 200px; /* Ensure buttons fit text */
+      text-align: center;
     }
 
     .btn::before {
@@ -390,6 +393,7 @@
       border: 1px solid var(--primary-light);
       color: var(--primary-light);
       box-shadow: 0 4px 15px rgba(0, 113, 227, 0.2);
+      border-radius: 50px; /* Rounded buttons */
     }
 
     .btn-outline::before {
@@ -613,6 +617,11 @@
       transition: transform 0.5s ease;
     }
 
+    .team-image.matei {
+      object-fit: contain; /* Zoom out slightly for Matei */
+      transform: scale(0.9); /* Slight zoom out */
+    }
+
     .team-card:hover .team-image {
       transform: scale(1.05);
     }
@@ -773,7 +782,7 @@
       }
       
       .hero-logo img {
-        width: 100px;
+        width: 120px; /* Slightly smaller for mobile */
       }
       
       .video-container iframe {
@@ -789,11 +798,16 @@
       #updates img {
         max-width: 300px;
       }
+      
+      .hero-inner {
+        margin-top: 20vh; /* Adjust for mobile */
+      }
     }
 
     @media (max-width: 576px) {
       .hero-inner {
         padding: 2rem 1.5rem;
+        margin-top: 25vh; /* Further adjust for smaller screens */
       }
       
       .btn {
@@ -815,7 +829,7 @@
       }
       
       .hero-logo img {
-        width: 90px;
+        width: 100px;
       }
       
       #updates img {
@@ -1138,13 +1152,13 @@
           <p>This interactive simulation demonstrates our AI-driven approach to exposure therapy for arachnophobia. Choose your comfort level and experience how our technology creates adaptive scenarios.</p>
         </div>
         <div class="vr-demo">
-          <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: block;"></div>
-          <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;"></div>
           <div class="vr-controls">
             <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Mild Exposure</button>
             <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Intense Exposure</button>
             <button class="btn btn-outline" id="soundToggleBtn" onclick="toggleSound()">Toggle Relaxing Sound</button>
           </div>
+          <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: block;"></div>
+          <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;"></div>
         </div>
       </div>
     </section>
@@ -1159,7 +1173,7 @@
         <div class="team-grid">
           <div class="team-card">
             <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image">
+              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image matei">
             </div>
             <div class="team-info">
               <h3 class="team-name">Matei Seleușan</h3>
@@ -1221,7 +1235,7 @@
           </div>
           <div style="text-align: center; max-width: 400px;">
             <img src="razvan_skyline.JPG" alt="Răzvan on Top of the Rock" style="max-width: 100%; border-radius: 10px;">
-            <p style="margin-top: 1rem; font-style: italic;">We've reached the skyline.</p>
+            <p style="margin-top: 1rem; font-style: italic;">Defining new frontiers. Exciting NYC meetings await.</p>
           </div>
         </div>
       </div>
@@ -1339,7 +1353,7 @@
         }
       });
       
-      // Blob background animation with starfield
+      // Blob background animation with starfield (unchanged)
       initBlobCanvas();
 
       // Contact Form Submission
@@ -1377,9 +1391,16 @@
         }
         messageElement.style.display = 'block';
       });
+
+      // Initialize VR demo on load
+      if (typeof initLevel1 === 'function') {
+        initLevel1();
+      } else {
+        console.error('initLevel1 is not defined. Ensure main.js is loaded.');
+      }
     });
 
-    // Starfield Animation (Galactic, Serene, Exuberant)
+    // Starfield Animation (Galactic, Serene, Exuberant) - Unchanged
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) {
@@ -1624,7 +1645,7 @@
       });
     }
 
-    // VR Demo Controls
+       // VR Demo Controls
     let currentLevel = 'level1';
     let audioPlaying = false;
     const audio = document.getElementById('relaxingAudio');
@@ -1643,6 +1664,11 @@
         level2Btn.classList.remove('btn');
         level2Btn.classList.add('btn-outline');
         currentLevel = 'level1';
+        if (typeof initLevel1 === 'function') {
+          initLevel1();
+        } else {
+          console.error('initLevel1 is not defined. Ensure main.js is loaded correctly.');
+        }
       } else {
         level1Canvas.style.display = 'none';
         level2Canvas.style.display = 'block';
@@ -1651,7 +1677,27 @@
         level2Btn.classList.remove('btn-outline');
         level2Btn.classList.add('btn');
         currentLevel = 'level2';
+        if (typeof initLevel2 === 'function') {
+          initLevel2();
+        } else {
+          console.error('initLevel2 is not defined. Ensure main_level2.js is loaded correctly.');
+        }
       }
+
+      // Handle resize to keep canvas sized correctly
+      window.addEventListener('resize', () => {
+        if (level1Canvas.style.display === 'block' && level1Canvas.querySelector('canvas')) {
+          const canvas = level1Canvas.querySelector('canvas');
+          if (canvas.renderer) {
+            canvas.renderer.setSize(level1Canvas.clientWidth, level1Canvas.clientHeight);
+          }
+        } else if (level2Canvas.style.display === 'block' && level2Canvas.querySelector('canvas')) {
+          const canvas = level2Canvas.querySelector('canvas');
+          if (canvas.renderer) {
+            canvas.renderer.setSize(level2Canvas.clientWidth, level2Canvas.clientHeight);
+          }
+        }
+      }, { passive: true });
     }
 
     function toggleSound() {
@@ -1673,4 +1719,3 @@
   <script src="main_level2.js"></script>
 </body>
 </html>
-      
