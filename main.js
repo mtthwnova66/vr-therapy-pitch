@@ -327,7 +327,6 @@ window.initLevel1 = function() {
       }
     }
 
-    // Easing function
     function easeInOutCubic(t) {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
@@ -437,6 +436,8 @@ window.initLevel1 = function() {
         function(gltf) {
           const spiderModel = gltf.scene;
           spiderModel.scale.set(1.5, 1.5, 1.5);
+          spiderModel.updateMatrixWorld(true);
+
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
@@ -564,6 +565,7 @@ window.initLevel1 = function() {
 
     // ==============================
     // 8. FINALIZE THE SCENE SETUP & ANIMATION LOOP
+    // (In this version, built-in spider animations are played as in the original.)
     // ==============================
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
@@ -670,6 +672,8 @@ window.initLevel1 = function() {
         instructions.style.borderRadius = '5px';
         instructions.style.fontSize = '14px';
         instructions.style.zIndex = '10';
+        // Set text color to black so the instructions are clearly visible.
+        instructions.style.color = '#000';
         instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
         container.appendChild(instructions);
         setTimeout(() => {
@@ -739,9 +743,9 @@ window.initLevel1 = function() {
       console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
     }
 
-    // --------------------------------------------------------------------
-    // Fallback: If textures do not load within 5 seconds, use fallback materials.
-    // --------------------------------------------------------------------
+    // ==============================
+    // 9. Fallback: If textures do not load within 5 seconds, use fallback materials.
+    // ==============================
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -752,9 +756,9 @@ window.initLevel1 = function() {
       }
     }, 5000);
 
-    // --------------------------------------------------------------------
-    // Resize logic
-    // --------------------------------------------------------------------
+    // ==============================
+    // 10. Resize Logic
+    // ==============================
     function handleResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
