@@ -29,18 +29,18 @@
 
   <style>
     :root {
-      --primary: #7c4dff;
-      --primary-dark: #5e3acc;
-      --primary-light: #a18aff;
-      --primary-glow: rgba(124, 77, 255, 0.5);
-      --accent: #ff3366;
-      --accent-light: #ff6688;
-      --accent-ultra: #ff99aa;
-      --accent-glow: rgba(255, 51, 102, 0.5);
+      --primary: #0071e3;
+      --primary-dark: #005bb5;
+      --primary-light: #47a0ff;
+      --primary-glow: rgba(71, 160, 255, 0.5);
+      --accent: #ffc107;
+      --accent-light: #ffdb66;
+      --accent-ultra: #fff0bf;
+      --accent-glow: rgba(255, 193, 7, 0.5);
       --success: #34c759;
       --neural-1: #ff3366;
       --neural-2: #7c4dff;
-      --neural-3: #47a0ff;
+      --neural-3: #00e5ff;
       --bg-dark: #040812;
       --card-bg: rgba(10, 17, 40, 0.7);
       --text-primary: #ffffff;
@@ -49,7 +49,7 @@
       --border-light: rgba(255, 255, 255, 0.1);
       --font-main: 'Inter', sans-serif;
       --font-display: 'Outfit', sans-serif;
-      --gradient-overlay: radial-gradient(circle at center, rgba(124, 77, 255, 0.1), transparent 70%);
+      --gradient-overlay: radial-gradient(circle at center, rgba(71, 160, 255, 0.1), transparent 70%);
       --shadow-glow: 0 0 15px var(--primary-glow), 0 0 30px rgba(0, 0, 0, 0.3);
     }
     
@@ -347,17 +347,17 @@
     /* Button Styles */
     .btn {
       display: inline-block;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       color: white;
       font-family: var(--font-display);
       font-weight: 500;
       text-decoration: none;
       padding: 0.8rem 2rem;
-      border-radius: 50px;
+      border-radius: 30px;
       border: none;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-      box-shadow: 0 4px 15px rgba(124, 77, 255, 0.4), 0 0 10px var(--primary-glow);
+      box-shadow: 0 4px 15px rgba(0, 113, 227, 0.4), 0 0 10px var(--primary-glow);
       position: relative;
       overflow: hidden;
       z-index: 1;
@@ -370,7 +370,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, var(--primary-dark), var(--accent-light));
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
       z-index: -1;
       transition: opacity 0.3s ease;
       opacity: 0;
@@ -378,7 +378,7 @@
 
     .btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 7px 20px rgba(124, 77, 255, 0.6), 0 0 15px var(--primary-glow);
+      box-shadow: 0 7px 20px rgba(0, 113, 227, 0.6), 0 0 15px var(--primary-glow);
     }
 
     .btn:hover::before {
@@ -389,16 +389,16 @@
       background: transparent;
       border: 1px solid var(--primary-light);
       color: var(--primary-light);
-      box-shadow: 0 4px 15px rgba(124, 77, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 113, 227, 0.2);
     }
 
     .btn-outline::before {
-      background: linear-gradient(90deg, var(--primary), var(--accent));
+      background: var(--primary);
     }
 
     .btn-outline:hover {
       color: white;
-      box-shadow: 0 7px 20px rgba(124, 77, 255, 0.6), 0 0 15px var(--primary-glow);
+      box-shadow: 0 7px 20px rgba(0, 113, 227, 0.6), 0 0 15px var(--primary-glow);
     }
 
     .btn-group {
@@ -406,29 +406,6 @@
       gap: 1rem;
       flex-wrap: wrap;
       justify-content: center;
-    }
-
-    /* VR Demo Buttons */
-    #level1-btn, #level2-btn {
-      border-radius: 50px;
-      padding: 0.7rem 2.5rem;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    #level1-btn:hover, #level2-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px var(--primary-glow), 0 0 10px var(--accent-glow);
-    }
-
-    #level1-btn.btn-outline, #level2-btn.btn-outline {
-      background: transparent;
-      border: 1px solid var(--accent-light);
-      color: var(--accent-light);
-    }
-
-    #soundToggleBtn {
-      border-radius: 50px;
     }
 
     /* Section Styling */
@@ -462,7 +439,7 @@
       padding: 0.4rem 1rem;
       border: 1px solid var(--border-light);
       border-radius: 30px;
-      background: rgba(255, 51, 102, 0.1);
+      background: rgba(255, 193, 7, 0.1);
       box-shadow: 0 0 10px var(--accent-glow);
       transition: transform 0.3s ease;
     }
@@ -522,7 +499,7 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 1.5rem;
-      background: rgba(124, 77, 255, 0.1);
+      background: rgba(71, 160, 255, 0.1);
       border: 1px solid var(--primary-light);
       color: var(--primary-light);
       font-size: 1.5rem;
@@ -592,10 +569,18 @@
     }
 
     @keyframes blob-float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(100px, 50px) scale(1.1); }
-      50% { transform: translate(50px, 100px) scale(0.9); }
-      75% { transform: translate(-50px, 50px) scale(1.05); }
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(100px, 50px) scale(1.1);
+      }
+      50% {
+        transform: translate(50px, 100px) scale(0.9);
+      }
+      75% {
+        transform: translate(-50px, 50px) scale(1.05);
+      }
     }
 
     /* Team Section */
@@ -1279,7 +1264,6 @@
     // Loading Screen Animation
     (function() {
       const canvas = document.getElementById('loadingCanvas');
-      if (!canvas) return;
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
@@ -1287,7 +1271,7 @@
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 3;
       const geometry = new THREE.IcosahedronGeometry(1, 2);
-      const material = new THREE.MeshStandardMaterial({ color: 0xa18aff, wireframe: true });
+      const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
       const ball = new THREE.Mesh(geometry, material);
       scene.add(ball);
       const light = new THREE.PointLight(0xffffff, 1);
@@ -1358,22 +1342,6 @@
       // Blob background animation with starfield
       initBlobCanvas();
 
-      // Initialize VR demos
-      try {
-        if (document.getElementById('arachnophobia-demo')) {
-          initLevel1();
-        }
-      } catch (error) {
-        console.error('Error initializing Level 1:', error);
-      }
-      try {
-        if (document.getElementById('arachnophobia-level2')) {
-          initLevel2();
-        }
-      } catch (error) {
-        console.error('Error initializing Level 2:', error);
-      }
-
       // Contact Form Submission
       document.getElementById('contact-form').addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -1411,57 +1379,7 @@
       });
     });
 
-    // VR Demo Controls
-    let currentLevel = 'level1';
-    function showLevel(level) {
-      const level1Canvas = document.getElementById('arachnophobia-demo');
-      const level2Canvas = document.getElementById('arachnophobia-level2');
-      const level1Btn = document.getElementById('level1-btn');
-      const level2Btn = document.getElementById('level2-btn');
-      
-      if (level === 'level1' && currentLevel !== 'level1') {
-        level2Canvas.style.display = 'none';
-        level1Canvas.style.display = 'block';
-        level1Btn.classList.remove('btn-outline');
-        level1Btn.classList.add('btn');
-        level2Btn.classList.remove('btn');
-        level2Btn.classList.add('btn-outline');
-        currentLevel = 'level1';
-        try {
-          initLevel1();
-        } catch (error) {
-          console.error('Error reinitializing Level 1:', error);
-        }
-      } else if (level === 'level2' && currentLevel !== 'level2') {
-        level1Canvas.style.display = 'none';
-        level2Canvas.style.display = 'block';
-        level2Btn.classList.remove('btn-outline');
-        level2Btn.classList.add('btn');
-        level1Btn.classList.remove('btn');
-        level1Btn.classList.add('btn-outline');
-        currentLevel = 'level2';
-        try {
-          initLevel2();
-        } catch (error) {
-          console.error('Error reinitializing Level 2:', error);
-        }
-      }
-    }
-
-    // Sound Toggle
-    function toggleSound() {
-      const audio = document.getElementById('relaxingAudio');
-      const btn = document.getElementById('soundToggleBtn');
-      if (audio.paused) {
-        audio.play().catch(e => console.error('Audio play failed:', e));
-        btn.textContent = 'Mute Relaxing Sound';
-      } else {
-        audio.pause();
-        btn.textContent = 'Play Relaxing Sound';
-      }
-    }
-
-    // Starfield Animation
+    // Starfield Animation (Galactic, Serene, Exuberant)
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) {
@@ -1470,10 +1388,6 @@
       }
 
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-      if (!renderer.getContext()) {
-        console.error('WebGL not supported');
-        return;
-      }
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -1481,7 +1395,7 @@
       const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 15;
 
-      // Circular texture for stars
+      // Circular texture for tiny and medium stars
       function createCircleTexture() {
         const size = 16;
         const canvas = document.createElement('canvas');
@@ -1521,34 +1435,21 @@
       const particleGroup = new THREE.Group();
       scene.add(particleGroup);
 
-      // Color gradient function
-      function getGradientColor(t) {
-        const colors = [
-          new THREE.Color('#7c4dff'), // Purple
-          new THREE.Color('#ff3366'), // Pink
-          new THREE.Color('#47a0ff'), // Blue
-          new THREE.Color('#ffe4b5')  // Gold
-        ];
-        const index = t * (colors.length - 1);
-        const i = Math.floor(index);
-        const frac = index - i;
-        if (i >= colors.length - 1) return colors[colors.length - 1];
-        return colors[i].clone().lerp(colors[i + 1], frac);
-      }
-
-      // Tiny stars (2500)
+      // Tiny stars (1600)
       const tinyStarGeometry = new THREE.BufferGeometry();
-      const tinyStarPositions = new Float32Array(2500 * 3);
-      const tinyStarColors = new Float32Array(2500 * 3);
-      const tinyStarVelocities = new Float32Array(2500);
-      for (let i = 0; i < 2500; i++) {
-        const radius = 15 + Math.random() * 35;
+      const tinyStarPositions = new Float32Array(1600 * 3);
+      const tinyStarColors = new Float32Array(1600 * 3);
+      const tinyStarVelocities = new Float32Array(1600);
+      for (let i = 0; i < 1600; i++) {
+        const radius = 20 + Math.random() * 30;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
         tinyStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
         tinyStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
         tinyStarPositions[i * 3 + 2] = radius * Math.cos(phi);
-        const color = getGradientColor(Math.random());
+        const colorChoice = Math.random();
+        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
         tinyStarColors[i * 3] = color.r;
         tinyStarColors[i * 3 + 1] = color.g;
         tinyStarColors[i * 3 + 2] = color.b;
@@ -1559,19 +1460,21 @@
       const tinyStarSystem = new THREE.Points(tinyStarGeometry, tinyStarMaterial);
       particleGroup.add(tinyStarSystem);
 
-      // Medium stars (1500)
+      // Medium stars (1300)
       const mediumStarGeometry = new THREE.BufferGeometry();
-      const mediumStarPositions = new Float32Array(1500 * 3);
-      const mediumStarColors = new Float32Array(1500 * 3);
-      const mediumStarVelocities = new Float32Array(1500);
-      for (let i = 0; i < 1500; i++) {
-        const radius = 10 + Math.random() * 30;
+      const mediumStarPositions = new Float32Array(1300 * 3);
+      const mediumStarColors = new Float32Array(1300 * 3);
+      const mediumStarVelocities = new Float32Array(1300);
+      for (let i = 0; i < 1300; i++) {
+        const radius = 15 + Math.random() * 25;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
         mediumStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
         mediumStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
         mediumStarPositions[i * 3 + 2] = radius * Math.cos(phi);
-        const color = getGradientColor(Math.random());
+        const colorChoice = Math.random();
+        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
         mediumStarColors[i * 3] = color.r;
         mediumStarColors[i * 3 + 1] = color.g;
         mediumStarColors[i * 3 + 2] = color.b;
@@ -1582,36 +1485,15 @@
       const mediumStarSystem = new THREE.Points(mediumStarGeometry, mediumStarMaterial);
       particleGroup.add(mediumStarSystem);
 
-      // Central wandering stars (700)
-      const wanderStarGeometry = new THREE.BufferGeometry();
-      const wanderStarPositions = new Float32Array(700 * 3);
-      const wanderStarColors = new Float32Array(700 * 3);
-      const wanderStarVelocities = new Float32Array(700);
-      for (let i = 0; i < 700; i++) {
-        const radius = Math.random() * 8;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        wanderStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-        wanderStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-        wanderStarPositions[i * 3 + 2] = radius * Math.cos(phi);
-        const color = getGradientColor(Math.random());
-        wanderStarColors[i * 3] = color.r;
-        wanderStarColors[i * 3 + 1] = color.g;
-        wanderStarColors[i * 3 + 2] = color.b;
-        wanderStarVelocities[i] = radius;
-      }
-      wanderStarGeometry.setAttribute('position', new THREE.BufferAttribute(wanderStarPositions, 3));
-      wanderStarGeometry.setAttribute('color', new THREE.BufferAttribute(wanderStarColors, 3));
-      const wanderStarSystem = new THREE.Points(wanderStarGeometry, tinyStarMaterial);
-      particleGroup.add(wanderStarSystem);
-
-      // Large orbs (500)
+      // Large orbs (300)
       const largeOrbGroup = new THREE.Group();
       particleGroup.add(largeOrbGroup);
       const sphereGeometry = new THREE.SphereGeometry(0.15, 16, 16);
       const largeOrbVelocities = [];
-      for (let i = 0; i < 500; i++) {
-        const color = getGradientColor(Math.random());
+      for (let i = 0; i < 300; i++) {
+        const colorChoice = Math.random();
+        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
         const material = new THREE.MeshPhongMaterial({
           color: color,
           emissive: color,
@@ -1624,7 +1506,7 @@
           depthWrite: false
         });
         const orb = new THREE.Mesh(sphereGeometry, material);
-        const radius = 8 + Math.random() * 22;
+        const radius = 10 + Math.random() * 20;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
         orb.position.set(
@@ -1647,108 +1529,148 @@
       const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
       scene.add(nebula);
 
-            // Lighting
+      // Lighting
       const ambientLight = new THREE.AmbientLight(0x1c2526, 0.4);
       scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0xffffff, 0.5, 100);
+      const pointLight = new THREE.PointLight(0x8ab5ff, 0.6, 50);
       pointLight.position.set(10, 10, 10);
       scene.add(pointLight);
+      const pointLight2 = new THREE.PointLight(0x8ab5ff, 0.4, 50);
+      pointLight2.position.set(-10, -10, -10);
+      scene.add(pointLight2);
+
+      // Fade animations
+      function animateFades() {
+        new TWEEN.Tween(tinyStarMaterial).to({ opacity: 0.2 }, 5000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        new TWEEN.Tween(mediumStarMaterial).to({ opacity: 0.3 }, 6000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        largeOrbGroup.children.forEach(orb => {
+          new TWEEN.Tween(orb.material).to({ opacity: 0.4 }, 7000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        });
+      }
+
+      try {
+        animateFades();
+      } catch (error) {
+        console.error('Error in animateFades:', error);
+      }
 
       // Animation loop
-      let time = 0;
+      const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
-        TWEEN.update();
+        const elapsed = clock.getElapsedTime();
 
-        // Update tiny stars
-        const tinyStarPos = tinyStarGeometry.attributes.position.array;
-        for (let i = 0; i < 2500; i++) {
-          const radius = tinyStarVelocities[i];
-          const angle = (i / 2500) * Math.PI * 2 + time * 0.001;
-          const drift = Math.sin(time * 0.05 + i) * 0.1;
-          const phi = Math.acos(2 * Math.random() - 1);
-          tinyStarPos[i * 3] = (radius + drift) * Math.sin(phi) * Math.cos(angle);
-          tinyStarPos[i * 3 + 1] = (radius + drift) * Math.sin(phi) * Math.sin(angle);
-          tinyStarPos[i * 3 + 2] = (radius + drift) * Math.cos(phi);
+        // Global rotation
+        particleGroup.rotation.y += 0.001;
+
+        // Subtle camera oscillation
+        camera.position.y = Math.sin(elapsed * 0.1) * 0.5;
+
+        // Radial drift for tiny and medium stars
+        const tinyPositions = tinyStarGeometry.attributes.position.array;
+        for (let i = 0; i < 1600; i++) {
+          let radius = tinyStarVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
+          const theta = Math.atan2(tinyPositions[i * 3 + 1], tinyPositions[i * 3]);
+          const phi = Math.acos(tinyPositions[i * 3 + 2] / tinyStarVelocities[i]);
+          radius = Math.min(radius, 50);
+          tinyPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+          tinyPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          tinyPositions[i * 3 + 2] = radius * Math.cos(phi);
         }
         tinyStarGeometry.attributes.position.needsUpdate = true;
 
-        // Update medium stars
-        const mediumStarPos = mediumStarGeometry.attributes.position.array;
-        for (let i = 0; i < 1500; i++) {
-          const radius = mediumStarVelocities[i];
-          const angle = (i / 1500) * Math.PI * 2 + time * 0.0015;
-          const drift = Math.sin(time * 0.04 + i) * 0.15;
-          const phi = Math.acos(2 * Math.random() - 1);
-          mediumStarPos[i * 3] = (radius + drift) * Math.sin(phi) * Math.cos(angle);
-          mediumStarPos[i * 3 + 1] = (radius + drift) * Math.sin(phi) * Math.sin(angle);
-          mediumStarPos[i * 3 + 2] = (radius + drift) * Math.cos(phi);
+        const mediumPositions = mediumStarGeometry.attributes.position.array;
+        for (let i = 0; i < 1300; i++) {
+          let radius = mediumStarVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
+          const theta = Math.atan2(mediumPositions[i * 3 + 1], mediumPositions[i * 3]);
+          const phi = Math.acos(mediumPositions[i * 3 + 2] / mediumStarVelocities[i]);
+          radius = Math.min(radius, 40);
+          mediumPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+          mediumPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          mediumPositions[i * 3 + 2] = radius * Math.cos(phi);
         }
         mediumStarGeometry.attributes.position.needsUpdate = true;
 
-        // Update wandering stars
-        const wanderStarPos = wanderStarGeometry.attributes.position.array;
-        for (let i = 0; i < 700; i++) {
-          const radius = wanderStarVelocities[i];
-          const angle = (i / 700) * Math.PI * 2 + time * 0.002;
-          const drift = Math.sin(time * 0.06 + i) * 0.05;
-          const phi = Math.acos(2 * Math.random() - 1);
-          wanderStarPos[i * 3] = (radius + drift) * Math.sin(phi) * Math.cos(angle);
-          wanderStarPos[i * 3 + 1] = (radius + drift) * Math.sin(phi) * Math.sin(angle);
-          wanderStarPos[i * 3 + 2] = (radius + drift) * Math.cos(phi);
-        }
-        wanderStarGeometry.attributes.position.needsUpdate = true;
-
-        // Update large orbs
+        // Large orbs drift
         largeOrbGroup.children.forEach((orb, i) => {
-          const radius = largeOrbVelocities[i];
-          const angle = (i / 500) * Math.PI * 2 + time * 0.0008;
-          const drift = Math.sin(time * 0.03 + i) * 0.2;
-          const phi = Math.acos(2 * Math.random() - 1);
+          let radius = largeOrbVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
+          const theta = Math.atan2(orb.position.y, orb.position.x);
+          const phi = Math.acos(orb.position.z / largeOrbVelocities[i]);
+          radius = Math.min(radius, 30);
           orb.position.set(
-            (radius + drift) * Math.sin(phi) * Math.cos(angle),
-            (radius + drift) * Math.sin(phi) * Math.sin(angle),
-            (radius + drift) * Math.cos(phi)
+            radius * Math.sin(phi) * Math.cos(theta),
+            radius * Math.sin(phi) * Math.sin(theta),
+            radius * Math.cos(phi)
           );
-          orb.material.opacity = 0.7 + Math.sin(time * 0.05 + i) * 0.1;
         });
 
-        // Camera oscillation
-        camera.position.y = Math.sin(time * 0.1) * 0.5;
-        camera.lookAt(0, 0, 0);
-
-        // Rotate entire particle group
-        particleGroup.rotation.y += 0.001;
-
-        time += 0.016;
         renderer.render(scene, camera);
+        TWEEN.update();
       }
 
-      // Fade-in effect
-      const fadeIn = new TWEEN.Tween({ opacity: 0 })
-        .to({ opacity: 1 }, 2000)
-        .onUpdate(obj => {
-          tinyStarMaterial.opacity = obj.opacity * 0.4;
-          mediumStarMaterial.opacity = obj.opacity * 0.5;
-          largeOrbGroup.children.forEach(orb => {
-            orb.material.opacity = obj.opacity * 0.7;
-          });
-        })
-        .start();
+      try {
+        animate();
+      } catch (error) {
+        console.error('Error in animate:', error);
+      }
 
-      animate();
-
-      // Handle resize
+      // Resize handling
       window.addEventListener('resize', () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
+        renderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
       });
     }
+
+    // VR Demo Controls
+    let currentLevel = 'level1';
+    let audioPlaying = false;
+    const audio = document.getElementById('relaxingAudio');
+
+    function showLevel(level) {
+      const level1Canvas = document.getElementById('arachnophobia-demo');
+      const level2Canvas = document.getElementById('arachnophobia-level2');
+      const level1Btn = document.getElementById('level1-btn');
+      const level2Btn = document.getElementById('level2-btn');
+
+      if (level === 'level1') {
+        level1Canvas.style.display = 'block';
+        level2Canvas.style.display = 'none';
+        level1Btn.classList.remove('btn-outline');
+        level1Btn.classList.add('btn');
+        level2Btn.classList.remove('btn');
+        level2Btn.classList.add('btn-outline');
+        currentLevel = 'level1';
+      } else {
+        level1Canvas.style.display = 'none';
+        level2Canvas.style.display = 'block';
+        level1Btn.classList.remove('btn');
+        level1Btn.classList.add('btn-outline');
+        level2Btn.classList.remove('btn-outline');
+        level2Btn.classList.add('btn');
+        currentLevel = 'level2';
+      }
+    }
+
+    function toggleSound() {
+      if (audioPlaying) {
+        audio.pause();
+        audioPlaying = false;
+        document.getElementById('soundToggleBtn').textContent = 'Toggle Relaxing Sound';
+      } else {
+        audio.play().catch(error => console.error('Audio play failed:', error));
+        audioPlaying = true;
+        document.getElementById('soundToggleBtn').textContent = 'Mute Relaxing Sound';
+      }
+    }
+
+    // Initialize default level
+    showLevel('level1');
   </script>
   <script src="main.js"></script>
   <script src="main_level2.js"></script>
 </body>
 </html>
+      
