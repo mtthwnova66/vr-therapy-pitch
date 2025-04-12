@@ -1340,7 +1340,7 @@
         }
       });
       
-      // Blob background animation with simplified metaballs
+      // Blob background animation with refined metaballs
       initBlobCanvas();
 
       // Contact Form Submission
@@ -1385,7 +1385,7 @@
       });
     });
 
-    // Blob Canvas Animation with Simplified Metablobs for Debugging
+    // Blob Canvas Animation with Refined Metablobs
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) {
@@ -1407,20 +1407,32 @@
       camera.position.z = 30;
       console.log('Camera and scene set up');
 
-      const geometry = new THREE.SphereGeometry(5, 32, 32);
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 });
+      // Use a softer, therapeutic material
+      const geometry = new THREE.SphereGeometry(5, 32, 32); // Smooth sphere
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xA2D2FF, // Soft pastel blue
+        roughness: 0.8,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.5,
+      });
       const blob = new THREE.Mesh(geometry, material);
       blob.position.set(0, 0, 0);
       scene.add(blob);
-      console.log('Blob added to scene');
+      console.log('Blob added to scene with soft material');
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      // Add gentle lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
       scene.add(ambientLight);
-      console.log('Ambient light added');
+
+      const pointLight = new THREE.PointLight(0xFFC8DD, 0.5, 50); // Soft pink light
+      pointLight.position.set(10, 10, 10);
+      scene.add(pointLight);
+      console.log('Lighting added');
 
       function animate() {
         requestAnimationFrame(animate);
-        blob.rotation.y += 0.01;
+        blob.rotation.y += 0.005; // Slow rotation
         renderer.render(scene, camera);
       }
       animate();
