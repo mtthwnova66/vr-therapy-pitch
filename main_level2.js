@@ -36,7 +36,7 @@ function initLevel2() {
     return;
   }
 
-  // Library Checks
+  // Check if THREE and GLTFLoader are available
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
     container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load 3D libraries.</p>';
@@ -74,7 +74,9 @@ function initLevel2() {
       setTimeout(() => {
         loadingElement.style.transition = 'opacity 1s ease';
         loadingElement.style.opacity = 0;
-        setTimeout(() => { loadingElement.remove(); }, 1000);
+        setTimeout(() => {
+          loadingElement.remove();
+        }, 1000);
       }, 500);
     };
 
@@ -84,7 +86,7 @@ function initLevel2() {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xa0a0a0);
 
-    // For a closer VR headset look (as in main.js), the camera is positioned at (0, 1.6, 4.5)
+    // Camera is placed a bit farther (z=4.5 initially).
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
@@ -191,8 +193,7 @@ function initLevel2() {
     scene.add(rimLight);
 
     // --------------------------------------------------------------------
-    // VR Headset Entrance Animation
-    // (This block is kept exactly as in main.js)
+    // VR Headset Entrance Animation (same as main.js)
     // --------------------------------------------------------------------
     let vrHeadset;
     let mainScene = new THREE.Group();
@@ -227,7 +228,6 @@ function initLevel2() {
               if (node.name.toLowerCase().includes('eye') &&
                   node.name.toLowerCase().includes('left')) {
                 leftEyePosition.copy(node.position);
-                console.log('Found left eye:', node.name, leftEyePosition);
               }
               if (node.material) {
                 node.material.envMap = envMap;
@@ -240,6 +240,7 @@ function initLevel2() {
             leftEyePosition.applyMatrix4(vrHeadset.matrixWorld);
           }
           scene.add(vrHeadset);
+          // Initially, camera is close to the VR headset
           camera.position.set(0, 1.2, 3.5);
           camera.lookAt(vrHeadset.position);
           if (loadingElement && loadingElement.parentNode) {
@@ -247,7 +248,7 @@ function initLevel2() {
           }
           animationPhase = 0;
           animationProgress = 0;
-          loadMainScene(); // Begin loading the main scene
+          loadMainScene();
         },
         undefined,
         function(error) {
@@ -286,11 +287,13 @@ function initLevel2() {
           const startPos = new THREE.Vector3(0, 1.2, 2.0);
           const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
           camera.position.lerpVectors(startPos, targetPos, easedZoom);
+
           const startTarget = vrHeadset.position.clone();
           const endTarget = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, -1));
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
+
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -304,7 +307,8 @@ function initLevel2() {
               animationPhase = 3;
               animationProgress = 0;
               vrHeadset.visible = false;
-              camera.position.set(0, 1.2, 3.5);
+              // After VR entrance, place the camera farther from the spider
+              camera.position.set(0, 1.2, 5); // more distance
               camera.lookAt(0, 0.6, 0);
               if (controls) {
                 controls.target.set(0, 0.6, 0);
@@ -324,8 +328,8 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // 7. Main Photorealistic Scene (Group: mainScene)
-    // In Level 2 we only create a table and then load the jumping spider.
+    // 7. Main Photorealistic Scene
+    // Table is now bigger, spider is smaller, and offset so it doesn’t float.
     // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -360,9 +364,9 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
-    // Create the table. (Adjust dimensions and offsets as needed so that the spider’s legs contact naturally.)
+    // Table is 2× bigger: 10×0.2×6 instead of 5×0.2×3
     function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
+      const tableGeometry = new THREE.BoxGeometry(10, 0.2, 6);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
@@ -372,15 +376,16 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // Here the table is positioned so its top is at y = (-0.1 + 0.2) = 0.1.
+      // Table’s top at y=0.1
       table.position.y = -0.1;
       table.receiveShadow = true;
       mainScene.add(table);
-      // Immediately load the jumping spider model.
+
+      // Immediately load the spider
       loadSpiderModel();
     }
 
-    // Load the jumping spider model (jumping_spider_habronattus_coecatus_compressed.glb).
+    let mixer; // For GLTF animations
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -395,17 +400,20 @@ function initLevel2() {
         'jumping_spider_habronattus_coecatus_compressed.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
-          // Use the scale desired (if you need it to be smaller, adjust here).
-          spiderModel.scale.set(1.5, 1.5, 1.5);
+          // Spider is now smaller (scale=0.8) instead of 1.5
+          spiderModel.scale.set(0.8, 0.8, 0.8);
           spiderModel.updateMatrixWorld(true);
-          // Compute bounding box to center the model and place it on the table.
+
+          // Calculate bounding box to place spider on table
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          // Offset so that the bottom of the spider (bbox.min.y) is slightly below the table top.
-          // Adjust the extra offset (here 0.1) until the front legs sit naturally on the table.
-          const offset = -bbox.min.y - 0.1;
-          spiderModel.position.set(-center.x, offset, -center.z);
+
+          // Let table’s top = y=0.1, so spider bottom is at 0.1
+          // i.e. spiderModel.position.y = 0.1 - bbox.min.y
+          const offsetY = 0.1 - bbox.min.y;
+          spiderModel.position.set(-center.x, offsetY, -center.z);
+
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -417,7 +425,8 @@ function initLevel2() {
             }
           });
           mainScene.add(spiderModel);
-          // If the model has built-in animations, play them (as in main.js).
+
+          // If spider has built-in animations, play them
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
             mixer = new THREE.AnimationMixer(spiderModel);
@@ -428,8 +437,7 @@ function initLevel2() {
           } else {
             console.log('No animations found in the model');
           }
-          // Ensure the camera is aimed directly at the spider.
-          camera.lookAt(spiderModel.position);
+
           addDustParticles();
           finalizeScene();
           if (loadingElement && loadingElement.parentNode) {
@@ -481,24 +489,22 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // 8. FINALIZE THE SCENE SETUP & ANIMATION LOOP
-    // (This version uses the original VR headset entrance animation as in main.js, and then enables the main scene.)
+    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
-    let mixer; // Spider animation mixer
     function finalizeScene() {
-      // Start the VR headset entrance animation first.
       loadVRHeadset();
-      
+
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
-        
+
         if (animationPhase < 3) {
           updateVRHeadsetAnimation(delta);
         }
-        
+
         if (mixer) mixer.update(delta);
+
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
@@ -509,14 +515,14 @@ function initLevel2() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
-        
+
         if (controls && animationPhase === 3) {
           controls.enabled = true;
           controls.update();
         } else if (controls) {
           controls.enabled = false;
         }
-        
+
         renderer.render(scene, camera);
       }
       animate();
@@ -589,7 +595,7 @@ function initLevel2() {
         instructions.style.borderRadius = '5px';
         instructions.style.fontSize = '14px';
         instructions.style.zIndex = '10';
-        // Set text color to black for clear contrast.
+        // Make instruction text black
         instructions.style.color = '#000';
         instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
         container.appendChild(instructions);
@@ -655,14 +661,14 @@ function initLevel2() {
         handleResize();
         console.log('UI controls added.');
       }
-      
+
       addUIControls();
-      console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
+      console.log('Scene setup completed (Level 2 photorealistic scene with VR headset entrance).');
     }
 
-    // ==============================
-    // 9. Fallback: If textures do not load within 5 seconds, use fallback materials.
-    // ==============================
+    // --------------------------------------------------------------------
+    // Fallback if textures do not load within 5 seconds
+    // --------------------------------------------------------------------
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -673,9 +679,9 @@ function initLevel2() {
       }
     }, 5000);
 
-    // ==============================
-    // 10. Resize Logic
-    // ==============================
+    // --------------------------------------------------------------------
+    // Resize logic
+    // --------------------------------------------------------------------
     function handleResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
@@ -691,4 +697,5 @@ function initLevel2() {
     container.innerHTML = '<p style="padding:20px;text-align:center;">Error creating 3D scene. Please check the browser console for details.</p>';
   }
 }
+
 // ===== END main_level2.js =====
