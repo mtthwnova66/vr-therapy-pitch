@@ -997,7 +997,7 @@
           </div>
           <div class="feature-card">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24  nullethics
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                 <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                 <line x1="12" y1="22.08" x2="12" y2="12"></line>
@@ -1305,6 +1305,7 @@
           loadingScreen.style.display = 'none';
           mainContent.style.display = 'block';
           blobCanvas.style.display = 'block';
+          console.log('Blob canvas display set to block');
         }, 500);
       }, 1200);
     });
@@ -1339,7 +1340,7 @@
         }
       });
       
-      // Blob background animation with metaballs
+      // Blob background animation with simplified metaballs
       initBlobCanvas();
 
       // Contact Form Submission
@@ -1384,217 +1385,52 @@
       });
     });
 
-    // Blob Canvas Animation with Sophisticated Metablobs
+    // Blob Canvas Animation with Simplified Metablobs for Debugging
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
-      if (!canvas) return;
+      if (!canvas) {
+        console.error('Canvas element not found');
+        return;
+      }
 
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      if (!renderer) {
+        console.error('Renderer initialization failed');
+        return;
+      }
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      console.log('Renderer initialized successfully');
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 40;
+      camera.position.z = 30;
+      console.log('Camera and scene set up');
 
-      // Therapeutic color palette
-      const colors = [
-        new THREE.Color('#A2D2FF'), // Soft blue
-        new THREE.Color('#BDE0FE'), // Light cyan
-        new THREE.Color('#CDB4DB'), // Gentle purple
-        new THREE.Color('#FFC8DD'), // Soft pink
-        new THREE.Color('#BFF4D2'), // Mint green
-      ];
+      const geometry = new THREE.SphereGeometry(5, 32, 32);
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 });
+      const blob = new THREE.Mesh(geometry, material);
+      blob.position.set(0, 0, 0);
+      scene.add(blob);
+      console.log('Blob added to scene');
 
-      // Advanced material with soft gradients
-      const blobMaterial = new THREE.MeshStandardMaterial({
-        roughness: 0.8,
-        metalness: 0.1,
-        transparent: true,
-        opacity: 0.5,
-        side: THREE.DoubleSide,
-      });
-
-      const particleMaterial = new THREE.PointsMaterial({
-        size: 0.08,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.6,
-        depthWrite: false,
-      });
-
-      // Simplex noise function for wave-like patterns
-      // Simple implementation of Perlin-like noise
-      function simplexNoise(x, y, z, time) {
-        const scale = 0.3;
-        const t = time * 0.2;
-        return (
-          Math.sin(x * scale + t) * Math.cos(y * scale + t) * Math.sin(z * scale + t) +
-          Math.sin(x * scale * 0.5 + t * 0.7) * Math.cos(y * scale * 0.5 + t * 0.7) * 0.5
-        ) * 0.2;
-      }
-
-      // Create complex metaballs
-      const metaballs = [];
-      const blobCount = 8; // Reduced for performance with complex animations
-
-      for (let i = 0; i < blobCount; i++) {
-        const baseRadius = Math.random() * 4 + 3;
-        const geometry = new THREE.SphereGeometry(baseRadius, 64, 64); // High resolution for smoothness
-
-        const mesh = new THREE.Mesh(geometry, blobMaterial.clone());
-        mesh.position.x = (Math.random() - 0.5) * 60;
-        mesh.position.y = (Math.random() - 0.5) * 60 + (i * (window.innerHeight / blobCount) * 0.5);
-        mesh.position.z = (Math.random() - 0.5) * 50;
-        mesh.velocity = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.015, z: (Math.random() - 0.5) * 0.02 };
-        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.003 };
-        mesh.colorIndex = i % colors.length;
-        mesh.material.color.copy(colors[mesh.colorIndex]);
-        mesh.targetRadius = baseRadius * (1 + Math.random() * 0.4);
-
-        // Particle system for wave-like effects
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particles = [];
-        for (let k = 0; k < 100; k++) {
-          particles.push(
-            mesh.position.x + (Math.random() - 0.5) * 5,
-            mesh.position.y + (Math.random() - 0.5) * 5,
-            mesh.position.z + (Math.random() - 0.5) * 5
-          );
-        }
-        particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particles, 3));
-        const particleSystem = new THREE.Points(particlesGeometry, particleMaterial.clone());
-        particleSystem.material.color.copy(colors[mesh.colorIndex]);
-        mesh.particles = particleSystem;
-        scene.add(particleSystem);
-
-        scene.add(mesh);
-        metaballs.push({ mesh, targetRadius });
-      }
-
-      // Lighting for soft, therapeutic glow
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-      directionalLight.position.set(20, 30, 20);
-      scene.add(directionalLight);
-
-      const pointLight1 = new THREE.PointLight(0xA2D2FF, 0.4, 100);
-      pointLight1.position.set(0, 10, 10);
-      scene.add(pointLight1);
-
-      const pointLight2 = new THREE.PointLight(0xFFC8DD, 0.4, 100);
-      pointLight2.position.set(0, -10, -10);
-      scene.add(pointLight2);
-
-      // Interactivity
-      let mouseX = 0, mouseY = 0;
-      window.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-      });
-
-      const clock = new THREE.Clock();
+      console.log('Ambient light added');
 
       function animate() {
         requestAnimationFrame(animate);
-        const elapsed = clock.getElapsedTime();
-
-        metaballs.forEach(({ mesh, targetRadius }, index) => {
-          // Morphing radius
-          let currentRadius = mesh.scale.x;
-          const speed = 0.02;
-          if (Math.abs(currentRadius - targetRadius) > 0.01) {
-            currentRadius += (targetRadius - currentRadius) * speed;
-            mesh.scale.set(currentRadius, currentRadius, currentRadius);
-          } else {
-            targetRadius = Math.random() * 4 + 3;
-          }
-
-          // Wave-like distortions
-          const vertices = mesh.geometry.attributes.position.array;
-          for (let i = 0; i < vertices.length; i += 3) {
-            const x = vertices[i];
-            const y = vertices[i + 1];
-            const z = vertices[i + 2];
-            const noise = simplexNoise(x, y, z, elapsed);
-            vertices[i] += noise * Math.sin(elapsed * 0.2 + index);
-            vertices[i + 1] += noise * Math.cos(elapsed * 0.2 + index);
-            vertices[i + 2] += noise * Math.sin(elapsed * 0.3 + index);
-          }
-          mesh.geometry.attributes.position.needsUpdate = true;
-
-          // Color cycling
-          const t = elapsed * 0.1 + index * 0.5;
-          const colorIndex = Math.floor(t % colors.length);
-          const nextColorIndex = (colorIndex + 1) % colors.length;
-          const lerpFactor = t % 1;
-          mesh.material.color.lerpColors(colors[colorIndex], colors[nextColorIndex], lerpFactor);
-          mesh.particles.material.color.lerpColors(colors[colorIndex], colors[nextColorIndex], lerpFactor);
-
-          // Movement and interactions
-          mesh.position.x += mesh.velocity.x;
-          mesh.position.y += mesh.velocity.y;
-          mesh.position.z += mesh.velocity.z;
-
-          const boundary = 60;
-          if (Math.abs(mesh.position.x) > boundary) mesh.velocity.x *= -1;
-          if (Math.abs(mesh.position.y) > boundary) mesh.velocity.y *= -1;
-          if (Math.abs(mesh.position.z) > boundary) mesh.velocity.z *= -1;
-
-          mesh.rotation.x += mesh.rotationSpeed.x;
-          mesh.rotation.y += mesh.rotationSpeed.y;
-          mesh.rotation.z += mesh.rotationSpeed.z;
-
-          // Blob interactions (attraction/repulsion)
-          metaballs.forEach((other, otherIndex) => {
-            if (index !== otherIndex) {
-              const dx = mesh.position.x - other.mesh.position.x;
-              const dy = mesh.position.y - other.mesh.position.y;
-              const dz = mesh.position.z - other.mesh.position.z;
-              const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-              const minDistance = 10;
-              const maxDistance = 30;
-              if (distance < maxDistance && distance > minDistance) {
-                const force = (maxDistance - distance) / maxDistance * 0.005;
-                mesh.velocity.x += (dx / distance) * force;
-                mesh.velocity.y += (dy / distance) * force;
-                mesh.velocity.z += (dz / distance) * force;
-              }
-            }
-          });
-
-          // Mouse interaction
-          const mx = mouseX * 30 - mesh.position.x;
-          const my = mouseY * 30 - mesh.position.y;
-          mesh.position.x += mx * 0.002;
-          mesh.position.y += my * 0.002;
-
-          // Update particles
-          const positions = mesh.particles.geometry.attributes.position.array;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i] += (mesh.position.x + (Math.random() - 0.5) * 2 - positions[i]) * 0.03;
-            positions[i + 1] += (mesh.position.y + (Math.random() - 0.5) * 2 - positions[i + 1]) * 0.03;
-            positions[i + 2] += (mesh.position.z + (Math.random() - 0.5) * 2 - positions[i + 2]) * 0.03;
-          }
-          mesh.particles.geometry.attributes.position.needsUpdate = true;
-        });
-
-        // Camera movement
-        camera.position.x += (mouseX * 5 - camera.position.x) * 0.02;
-        camera.position.y += (-mouseY * 5 - camera.position.y) * 0.02;
-        camera.lookAt(scene.position);
-
+        blob.rotation.y += 0.01;
         renderer.render(scene, camera);
       }
-
       animate();
+      console.log('Animation loop started');
 
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        console.log('Canvas resized');
       });
     }
 
@@ -1620,12 +1456,13 @@
           renderer.setSize(level1.clientWidth, level1.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
           level1.appendChild(renderer.domElement); // Ensure the renderer canvas is in the DOM
+          console.log('Level 1 renderer initialized');
         } else {
           console.log('initLevel1 not found, initializing default renderer');
           const renderer = new THREE.WebGLRenderer({ canvas: level1 });
           renderer.setSize(level1.clientWidth, level1.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
-          console.log('Renderer initialized:', renderer);
+          console.log('Default Level 1 renderer initialized:', renderer);
         }
       } else {
         level2Btn.classList.remove('btn-outline');
@@ -1639,12 +1476,13 @@
           renderer.setSize(level2.clientWidth, level2.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
           level2.appendChild(renderer.domElement); // Ensure the renderer canvas is in the DOM
+          console.log('Level 2 renderer initialized');
         } else {
           console.log('initLevel2 not found, initializing default renderer');
           const renderer = new THREE.WebGLRenderer({ canvas: level2 });
           renderer.setSize(level2.clientWidth, level2.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
-          console.log('Renderer initialized:', renderer);
+          console.log('Default Level 2 renderer initialized:', renderer);
         }
       }
 
@@ -1653,9 +1491,11 @@
         if (level1.style.display === 'block' && level1.querySelector('canvas')) {
           const renderer = level1.querySelector('canvas').renderer;
           renderer.setSize(level1.clientWidth, level1.clientHeight);
+          console.log('Level 1 canvas resized');
         } else if (level2.style.display === 'block' && level2.querySelector('canvas')) {
           const renderer = level2.querySelector('canvas').renderer;
           renderer.setSize(level2.clientWidth, level2.clientHeight);
+          console.log('Level 2 canvas resized');
         }
       }, { passive: true });
     }
