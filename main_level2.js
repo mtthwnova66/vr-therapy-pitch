@@ -1,7 +1,6 @@
-// ===== BEGIN main_level2.js =====
-
+// ***** BEGIN main_level2.js *****
 function initLevel2() {
-  console.log('Initializing photorealistic scene for Level 2...');
+  console.log('Initializing photorealistic Three.js scene for Level 2...');
 
   // --- Minimal Modification for Level 2 ---
   // Permanently append a voice icon ("🔊") to the Level 2 button (assumed to be the second button)
@@ -29,7 +28,7 @@ function initLevel2() {
   }
   // --- End Minimal Modification ---
 
-  // Get the container element for Level 2 (make sure your HTML includes e.g., <div id="arachnophobia-level2" class="level-container"></div>)
+  // Use the container for Level 2 (make sure your HTML contains, e.g., <div id="arachnophobia-level2" class="level-container"></div>)
   const container = document.getElementById('arachnophobia-level2');
   if (!container) {
     console.error('Container not found: #arachnophobia-level2');
@@ -49,9 +48,9 @@ function initLevel2() {
   }
 
   try {
-    // ===============================
-    // 1. Loading UI (Message only)
-    // ===============================
+    // ==============================
+    // 1. Loading UI (message only)
+    // ==============================
     const loadingElement = document.createElement('div');
     loadingElement.id = 'loading-status';
     loadingElement.style.position = 'absolute';
@@ -80,13 +79,13 @@ function initLevel2() {
       }, 500);
     };
 
-    // ===============================
+    // ==============================
     // 2. Scene, Camera, Renderer
-    // ===============================
+    // ==============================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xa0a0a0);
 
-    // For VR headset entrance the camera is initially positioned as in main.js
+    // For VR headset entrance, we use the same initial camera as in main.js
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
@@ -108,16 +107,15 @@ function initLevel2() {
     } catch (e) {
       console.warn('Advanced rendering features not fully supported in this browser', e);
     }
-
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     container.appendChild(loadingElement);
     renderer.domElement.style.cssText =
       "width:100%; height:100%; display:block; position:absolute; top:0; left:0;";
 
-    // ===============================
+    // ==============================
     // 3. OrbitControls (Optional)
-    // ===============================
+    // ==============================
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -133,9 +131,9 @@ function initLevel2() {
       console.warn('OrbitControls not available');
     }
 
-    // ===============================
+    // ==============================
     // 4. Texture Loader & Environment Map
-    // ===============================
+    // ==============================
     const textureLoader = new THREE.TextureLoader();
     let envMap;
     try {
@@ -151,10 +149,7 @@ function initLevel2() {
       envMap = cubeTextureLoader.load(urls);
       scene.environment = envMap;
       const bgGeometry = new THREE.PlaneGeometry(100, 100);
-      const bgMaterial = new THREE.MeshBasicMaterial({
-        color: 0xf5f5f7,
-        side: THREE.DoubleSide
-      });
+      const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xf5f5f7, side: THREE.DoubleSide });
       const background = new THREE.Mesh(bgGeometry, bgMaterial);
       background.position.z = -20;
       scene.add(background);
@@ -163,9 +158,9 @@ function initLevel2() {
       scene.background = new THREE.Color(0xf5f5f7);
     }
 
-    // ===============================
-    // 5. Lighting Setup (As in main.js)
-    // ===============================
+    // ==============================
+    // 5. Lighting Setup (Same as main.js)
+    // ==============================
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
@@ -195,10 +190,9 @@ function initLevel2() {
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
-    // ===============================
-    // 6. VR Headset Entrance Animation
-    // (This section is kept exactly the same as in main.js)
-    // ===============================
+    // ==============================
+    // 6. VR Headset Entrance Animation (Identical to main.js)
+    // ==============================
     let vrHeadset;
     let mainScene = new THREE.Group();
     mainScene.visible = false;
@@ -207,8 +201,8 @@ function initLevel2() {
     let animationPhase = 0; // 0: Wait, 1: Rotate, 2: Zoom, 3: Inside
     let animationProgress = 0;
     const animationDuration = { 
-      rotate: 3.0,  // seconds for rotation
-      zoom: 1.5,    // seconds for zoom (faster zoom to hide interior)
+      rotate: 3.0,
+      zoom: 1.5,
       transition: 1.5
     };
     let leftEyePosition = new THREE.Vector3();
@@ -254,7 +248,7 @@ function initLevel2() {
           }
           animationPhase = 0;
           animationProgress = 0;
-          loadMainScene(); // Begin loading the main scene
+          loadMainScene(); // Begin loading the main scene objects
         },
         undefined,
         function(error) {
@@ -274,55 +268,53 @@ function initLevel2() {
             animationProgress = 0;
           }
           break;
-        case 1:
-          {
-            const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
-            const easedRotation = easeInOutCubic(rotationProgress);
-            vrHeadset.rotation.y = Math.PI * easedRotation;
-            if (rotationProgress >= 1.0) {
-              animationPhase = 2;
-              animationProgress = 0;
-            }
+        case 1: {
+          const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
+          const easedRotation = easeInOutCubic(rotationProgress);
+          vrHeadset.rotation.y = Math.PI * easedRotation;
+          if (rotationProgress >= 1.0) {
+            animationPhase = 2;
+            animationProgress = 0;
           }
           break;
-        case 2:
-          {
-            const zoomProgress = Math.min(animationProgress / animationDuration.zoom, 1.0);
-            const easedZoom = easeInOutCubic(zoomProgress);
-            const leftEyeWorld = new THREE.Vector3();
-            leftEyePosition.clone().applyMatrix4(vrHeadset.matrixWorld);
-            vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
-            const startPos = new THREE.Vector3(0, 1.2, 2.0);
-            const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
-            camera.position.lerpVectors(startPos, targetPos, easedZoom);
-            const startTarget = vrHeadset.position.clone();
-            const endTarget = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, -1));
-            const currentTarget = new THREE.Vector3();
-            currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
-            camera.lookAt(currentTarget);
-            if (zoomProgress > 0.7) {
-              const fadeProgress = (zoomProgress - 0.7) / 0.3;
-              mainScene.visible = true;
-              vrHeadset.traverse(node => {
-                if (node.material) {
-                  node.material.transparent = true;
-                  node.material.opacity = 1 - fadeProgress;
-                }
-              });
-              if (zoomProgress >= 1.0) {
-                animationPhase = 3;
-                animationProgress = 0;
-                vrHeadset.visible = false;
-                camera.position.set(0, 1.2, 3.5);
-                camera.lookAt(0, 0.6, 0);
-                if (controls) {
-                  controls.target.set(0, 0.6, 0);
-                  controls.update();
-                }
+        }
+        case 2: {
+          const zoomProgress = Math.min(animationProgress / animationDuration.zoom, 1.0);
+          const easedZoom = easeInOutCubic(zoomProgress);
+          const leftEyeWorld = new THREE.Vector3();
+          leftEyePosition.clone().applyMatrix4(vrHeadset.matrixWorld);
+          vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
+          const startPos = new THREE.Vector3(0, 1.2, 2.0);
+          const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
+          camera.position.lerpVectors(startPos, targetPos, easedZoom);
+          const startTarget = vrHeadset.position.clone();
+          const endTarget = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, -1));
+          const currentTarget = new THREE.Vector3();
+          currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
+          camera.lookAt(currentTarget);
+          if (zoomProgress > 0.7) {
+            const fadeProgress = (zoomProgress - 0.7) / 0.3;
+            mainScene.visible = true;
+            vrHeadset.traverse(node => {
+              if (node.material) {
+                node.material.transparent = true;
+                node.material.opacity = 1 - fadeProgress;
+              }
+            });
+            if (zoomProgress >= 1.0) {
+              animationPhase = 3;
+              animationProgress = 0;
+              vrHeadset.visible = false;
+              camera.position.set(0, 1.2, 3.5);
+              camera.lookAt(0, 0.6, 0);
+              if (controls) {
+                controls.target.set(0, 0.6, 0);
+                controls.update();
               }
             }
           }
           break;
+        }
         case 3:
           break;
       }
@@ -332,11 +324,10 @@ function initLevel2() {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
-    // ===============================
+    // ==============================
     // 7. Main Photorealistic Scene (Group: mainScene)
-    // (Following the structure of main.js: table, jar, lid, then spider)
-    // ===============================
-    let mixer; // (Not used for spider here as we want it static.)
+    // In Level 2, we want our big‑eyed spider to appear on a table (with no jar or lid).
+    // ==============================
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
     const requiredTextures = 3;
@@ -370,8 +361,8 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
+    // Create the table and then immediately load the spider.
     function createTable() {
-      // Use same table as in main.js
       const tableGeometry = new THREE.BoxGeometry(5, 0.2, 3);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
@@ -385,44 +376,11 @@ function initLevel2() {
       table.position.y = -0.1;
       table.receiveShadow = true;
       mainScene.add(table);
-      createJar();
-    }
-
-    function createJar() {
-      const jarGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 64, 4, false);
-      const jarMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        metalness: 0.0,
-        roughness: 0.05,
-        transmission: 0.95,
-        transparent: true,
-        thickness: 0.05,
-        envMapIntensity: 1,
-        clearcoat: 1,
-        clearcoatRoughness: 0.1,
-        ior: 1.5
-      });
-      const jar = new THREE.Mesh(jarGeometry, jarMaterial);
-      jar.position.y = 0.75;
-      jar.castShadow = true;
-      jar.receiveShadow = true;
-      mainScene.add(jar);
-
-      const lidGeometry = new THREE.CylinderGeometry(0.85, 0.85, 0.1, 64);
-      const lidMaterial = new THREE.MeshStandardMaterial({
-        color: 0x777777,
-        metalness: 0.9,
-        roughness: 0.1,
-        envMap: envMap
-      });
-      const lid = new THREE.Mesh(lidGeometry, lidMaterial);
-      lid.position.set(0, 1.55, 0);
-      lid.castShadow = true;
-      mainScene.add(lid);
-
+      // In Level 2 we do not create a jar/lid – we simply show the spider on the table.
       loadSpiderModel();
     }
 
+    // Load our big‑eyed spider model (as used in main.js)
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -433,33 +391,20 @@ function initLevel2() {
         dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         gltfLoader.setDRACOLoader(dracoLoader);
       }
-      // Use the spider model file (update the filepath as needed)
       gltfLoader.load(
         'spider_with_animation.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
-          // Use the same scale as in main.js
           spiderModel.scale.set(1.5, 1.5, 1.5);
           spiderModel.updateMatrixWorld(true);
 
-          // Compute bounding box to center the model
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          // Compute offset so that the bottom of the spider (bbox.min.y) is placed slightly lower (by 0.1) than in main.js
-          // This makes the front legs contact the table more naturally.
+          // Compute offset so that the bottom (bbox.min.y) sits on the table surface.
+          // Adjust the offset (here we subtract an extra 0.1) so that the front legs make proper contact.
           const offset = -bbox.min.y - 0.1;
-          spiderModel.position.set(
-            -center.x,
-            offset,
-            -center.z
-          );
-          // Ensure the spider faces the camera:
-          spiderModel.rotation.y = 0;  // (Adjust as needed; use Math.PI if the model needs to be flipped)
-
-          spiderModel.updateMatrixWorld(true);
-
-          // Set up shadows & environment mapping
+          spiderModel.position.set(-center.x, offset, -center.z);
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -471,10 +416,17 @@ function initLevel2() {
             }
           });
           mainScene.add(spiderModel);
-          // Aim camera directly at the spider
-          camera.lookAt(spiderModel.position);
-
-          // Do NOT play any built-in spider animations so that it remains static.
+          // Play built-in spider animations (if available)
+          if (gltf.animations && gltf.animations.length > 0) {
+            console.log(`Spider model has ${gltf.animations.length} animations`);
+            mixer = new THREE.AnimationMixer(spiderModel);
+            const idleAnimation = gltf.animations[0];
+            const action = mixer.clipAction(idleAnimation);
+            action.timeScale = 0.5;
+            action.play();
+          } else {
+            console.log('No animations found in the model');
+          }
           addDustParticles();
           finalizeScene();
           if (loadingElement && loadingElement.parentNode) {
@@ -493,7 +445,9 @@ function initLevel2() {
         undefined,
         function(error) {
           console.error('Error loading spider model:', error);
-          loadingElement.textContent = 'Failed to load spider model.';
+          if (loadingElement && loadingElement.parentNode) {
+            loadingElement.textContent = 'Failed to load spider model.';
+          }
         }
       );
     }
@@ -523,11 +477,12 @@ function initLevel2() {
       window.dustParticles = particles;
     }
 
-    // ===============================
+    // ==============================
     // 8. FINALIZE THE SCENE SETUP & ANIMATION LOOP
-    // (In this version, the spider remains static.)
-    // ===============================
+    // (The spider animations play as in main.js.)
+    // ==============================
     const mainClock = new THREE.Clock();
+    let mixer; // Spider animation mixer
     function finalizeScene() {
       // Start the animation loop by loading the VR headset first.
       loadVRHeadset();
@@ -535,10 +490,12 @@ function initLevel2() {
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
+        
         if (animationPhase < 3) {
           updateVRHeadsetAnimation(delta);
         }
-        // Update dust particle floating (as in main.js)
+        
+        if (mixer) mixer.update(delta);
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
@@ -549,12 +506,14 @@ function initLevel2() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
+        
         if (controls && animationPhase === 3) {
           controls.enabled = true;
           controls.update();
         } else if (controls) {
           controls.enabled = false;
         }
+        
         renderer.render(scene, camera);
       }
       animate();
@@ -623,11 +582,11 @@ function initLevel2() {
         instructions.style.top = '10px';
         instructions.style.left = '10px';
         instructions.style.padding = '10px';
-        // Change instructions background remains white but text set to black
         instructions.style.background = 'rgba(255,255,255,0.7)';
         instructions.style.borderRadius = '5px';
         instructions.style.fontSize = '14px';
         instructions.style.zIndex = '10';
+        // Set the text color to black for better visibility.
         instructions.style.color = '#000';
         instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
         container.appendChild(instructions);
@@ -693,14 +652,14 @@ function initLevel2() {
         handleResize();
         console.log('UI controls added.');
       }
-
+      
       addUIControls();
       console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
     }
 
-    // ===============================
-    // 9. Fallback: Use fallback materials if textures do not load in time.
-    // ===============================
+    // ==============================
+    // 9. Fallback: If textures do not load within 5 seconds, use fallback materials.
+    // ==============================
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
         console.warn('Not all textures loaded in time, using fallback materials.');
@@ -711,9 +670,9 @@ function initLevel2() {
       }
     }, 5000);
 
-    // ===============================
+    // ==============================
     // 10. Resize Logic
-    // ===============================
+    // ==============================
     function handleResize() {
       const width = container.clientWidth;
       const height = container.clientHeight;
