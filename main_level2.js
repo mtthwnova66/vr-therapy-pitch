@@ -50,9 +50,9 @@ function initLevel2() {
     return;
   }
 
-  // Reference to the spider model (for custom bobbing/rotation animation)
+  // References for spider animation
   let spiderModelRef = null;
-  // We'll store a base position for the spider so we can apply a sine-wave bob.
+  let spiderLegNodes = [];       // for leg-twitch animations
   let spiderBasePosition = new THREE.Vector3();
 
   try {
@@ -93,14 +93,14 @@ function initLevel2() {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xa0a0a0);
 
-    // Move the camera a bit farther away so we don't start "inside" the spider
+    // Camera is a bit higher, looking at spider’s eyes
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     );
-    camera.position.set(0, 1.2, 5); // moved from 3.5 to 5
+    camera.position.set(0, 1.6, 4.5);
     camera.lookAt(0, 0.6, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -232,8 +232,8 @@ function initLevel2() {
     let animationPhase = 0; // 0: Wait, 1: Rotate, 2: Zoom, 3: Inside
     let animationProgress = 0;
     const animationDuration = { 
-      rotate: 3.0,  // seconds for rotation
-      zoom: 1.5,    // seconds for zoom (faster zoom to hide interior)
+      rotate: 3.0, 
+      zoom: 1.5,    
       transition: 1.5
     };
     let leftEyePosition = new THREE.Vector3();
@@ -248,12 +248,11 @@ function initLevel2() {
         'oculus_quest_vr_headset.glb',
         function(gltf) {
           vrHeadset = gltf.scene;
-          // Set initial orientation so the interior faces the viewer.
           vrHeadset.scale.set(5, 5, 5);
           vrHeadset.position.set(0, 0.8, 0);
           vrHeadset.rotation.set(0, 0, 0);
 
-          // Find the left eye lens for zooming.
+          // Find the left eye lens for zooming
           vrHeadset.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -274,8 +273,7 @@ function initLevel2() {
           }
           scene.add(vrHeadset);
 
-          // Adjust camera to look at the headset initially
-          camera.position.set(0, 1.2, 5);
+          camera.position.set(0, 1.6, 4.5);
           camera.lookAt(vrHeadset.position);
 
           if (loadingElement && loadingElement.parentNode) {
@@ -298,13 +296,13 @@ function initLevel2() {
       if (!vrHeadset) return;
       animationProgress += delta;
       switch(animationPhase) {
-        case 0: // Wait period
+        case 0: 
           if (animationProgress > 1.5) {
             animationPhase = 1;
             animationProgress = 0;
           }
           break;
-        case 1: // Rotate headset from 0 to Math.PI so left eye is exposed
+        case 1: 
           {
             const rotationProgress = Math.min(animationProgress / animationDuration.rotate, 1.0);
             const easedRotation = easeInOutCubic(rotationProgress);
@@ -315,13 +313,14 @@ function initLevel2() {
             }
           }
           break;
-        case 2: // Zoom into the left eye quickly
+        case 2: 
           {
             const zoomProgress = Math.min(animationProgress / animationDuration.zoom, 1.0);
             const easedZoom = easeInOutCubic(zoomProgress);
             const leftEyeWorld = new THREE.Vector3();
             leftEyePosition.clone().applyMatrix4(vrHeadset.matrixWorld);
             vrHeadset.localToWorld(leftEyeWorld.copy(leftEyePosition));
+
             const startPos = new THREE.Vector3(0, 1.2, 2.0);
             const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
             camera.position.lerpVectors(startPos, targetPos, easedZoom);
@@ -332,7 +331,6 @@ function initLevel2() {
             currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
             camera.lookAt(currentTarget);
 
-            // Reveal mainScene and fade out VR headset during last 30% of zoom.
             if (zoomProgress > 0.7) {
               const fadeProgress = (zoomProgress - 0.7) / 0.3;
               mainScene.visible = true;
@@ -346,7 +344,7 @@ function initLevel2() {
                 animationPhase = 3;
                 animationProgress = 0;
                 vrHeadset.visible = false;
-                camera.position.set(0, 1.2, 5);
+                camera.position.set(0, 1.6, 4.5);
                 camera.lookAt(0, 0.6, 0);
                 if (controls) {
                   controls.target.set(0, 0.6, 0);
@@ -371,8 +369,6 @@ function initLevel2() {
 
     // --------------------------------------------------------------------
     // Main Photorealistic Scene (Group: mainScene)
-    // All photorealistic objects (table, spider, dust) are added to mainScene.
-    // They remain hidden until the VR entrance animation completes.
     // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -408,7 +404,6 @@ function initLevel2() {
     });
 
     function createTable() {
-      // Larger table
       const tableGeometry = new THREE.BoxGeometry(14, 0.2, 10);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
@@ -428,9 +423,9 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Load the Spider Model and position it exactly on the table.
+    // Load the Spider Model
     // --------------------------------------------------------------------
-    let mixer; // For spider’s built-in (GLTF) animations if available
+    let mixer;
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -445,17 +440,17 @@ function initLevel2() {
         'jumping_spider_habronattus_coecatus_compressed.glb',
         function(gltf) {
           spiderModelRef = gltf.scene;
-          // Make the spider half its original size so it's not huge
+          // Make the spider half its original size
           spiderModelRef.scale.set(0.5, 0.5, 0.5);
           spiderModelRef.updateMatrixWorld(true);
 
-          // Compute bounding box to shift spider so it sits on the table
+          // Compute bounding box to place spider on table
           const bbox = new THREE.Box3().setFromObject(spiderModelRef);
           const minY = bbox.min.y;
           const center = new THREE.Vector3();
           bbox.getCenter(center);
 
-          // Place the spider so that bounding box bottom is at y=0.6 (table top)
+          // Place the spider so that bounding box bottom is at y=0.6
           spiderModelRef.position.set(
             -center.x,
             -minY + 0.6,
@@ -463,11 +458,17 @@ function initLevel2() {
           );
           spiderModelRef.updateMatrixWorld(true);
 
-          // Store base position for gentle bobbing
+          // Rotate spider 180 degrees so it faces the camera
+          spiderModelRef.rotation.y = Math.PI;
+
+          // Save base position for gentle bobbing
           spiderBasePosition.copy(spiderModelRef.position);
 
-          // Set up shadows & environment
+          // Collect legs for twitch animation
           spiderModelRef.traverse(function(node) {
+            if (node.name && node.name.toLowerCase().includes('leg')) {
+              spiderLegNodes.push(node);
+            }
             if (node.isMesh) {
               node.castShadow = true;
               node.receiveShadow = true;
@@ -478,10 +479,11 @@ function initLevel2() {
               }
             }
           });
+
           mainScene.add(spiderModelRef);
           spotLight.target = spiderModelRef;
 
-          // If the model has built-in animations, play the first one
+          // Built-in animations (if any)
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
             mixer = new THREE.AnimationMixer(spiderModelRef);
@@ -517,7 +519,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Add Dust Particles to mainScene
+    // Add Dust Particles
     // --------------------------------------------------------------------
     function addDustParticles() {
       const particlesCount = 100;
@@ -545,23 +547,34 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Gentle “alive” motion for the spider
+    // Gentle “alive” motion + leg twitch for the spider
     // --------------------------------------------------------------------
     function animateSpiderModel(elapsedTime, delta) {
       if (!spiderModelRef) return;
+
       // Gentle bobbing
-      const amplitude = 0.02;  // vertical bob amplitude
-      const speed = 2.0;       // bob frequency
+      const amplitude = 0.02;
+      const speed = 2.0;
       const offsetY = amplitude * Math.sin(elapsedTime * speed);
       spiderModelRef.position.y = spiderBasePosition.y + offsetY;
 
-      // Gentle slow rotation
-      const rotationSpeed = 0.1; 
+      // Gentle slow body rotation
+      const rotationSpeed = 0.1;
       spiderModelRef.rotation.y += rotationSpeed * delta;
+
+      // Leg twitch: small, quick rotation
+      // Each leg gets a slightly different frequency/phase
+      spiderLegNodes.forEach((leg, index) => {
+        const legAmplitude = 0.05;
+        const legSpeed = 10 + index; // vary speed by index
+        const legRotation = legAmplitude * Math.sin(elapsedTime * legSpeed);
+        // You can rotate around X, Y, or Z depending on the leg's orientation
+        leg.rotation.x = legRotation;
+      });
     }
 
     // --------------------------------------------------------------------
-    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
+    // FINALIZE THE SCENE & START THE ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
     function finalizeScene() {
@@ -577,10 +590,10 @@ function initLevel2() {
           updateVRHeadsetAnimation(delta);
         }
 
-        // If spider has GLTF animations, update them
+        // Update built-in GLTF animations (if any)
         if (mixer) mixer.update(delta);
 
-        // Custom spider bobbing/rotation
+        // Custom spider bobbing + leg twitch
         animateSpiderModel(elapsedTime, delta);
 
         // Dust float animations
@@ -595,7 +608,7 @@ function initLevel2() {
           window.dustParticles.rotation.y += delta * 0.01;
         }
 
-        // Controls (OrbitControls) handling
+        // Controls handling
         if (controls && animationPhase === 3) {
           controls.enabled = true;
           controls.update();
@@ -745,7 +758,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Fallback: If textures do not load within 5 seconds, use fallback materials.
+    // Fallback if textures do not load
     // --------------------------------------------------------------------
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
