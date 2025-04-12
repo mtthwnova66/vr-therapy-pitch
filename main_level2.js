@@ -404,7 +404,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Load the Spider Model ("spider2.glb") and position it exactly on the table.
+    // Load the Spider Model and position it exactly on the table.
     // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
@@ -417,10 +417,10 @@ function initLevel2() {
         gltfLoader.setDRACOLoader(dracoLoader);
       }
       gltfLoader.load(
-        'spider2.glb',
+        'assets/models/jumping_spider_habronattus_coecatus_compressed.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
-          spiderModel.scale.set(1.5, 1.5, 1.5);
+          spiderModel.scale.set(1.0, 1.0, 1.0); // Adjusted for jumping spider; tweak if needed
           spiderModel.updateMatrixWorld(true);
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           console.log('Spider bounding box:', bbox);
