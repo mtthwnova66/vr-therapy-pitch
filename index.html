@@ -202,7 +202,7 @@
       justify-content: center;
       align-items: center;
       position: relative;
-      padding: 2rem 1rem;
+      padding: 1rem 1rem; /* Reduced top padding to show upper border */
       text-align: center;
       background: var(--gradient-overlay);
     }
@@ -212,7 +212,7 @@
       background: rgba(4, 8, 18, 0.4);
       border: 2px solid var(--primary-glow);
       border-radius: 25px;
-      padding: 4rem 3rem 3rem; /* Increased top padding to move content lower */
+      padding: 4rem 3rem 3rem;
       max-width: 900px;
       width: 95%;
       box-shadow: var(--shadow-glow);
@@ -220,6 +220,7 @@
       position: relative;
       z-index: 1;
       transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      margin-top: 2rem; /* Added margin to ensure top border visibility */
     }
 
     .hero-inner:hover {
@@ -1332,7 +1333,7 @@
       camera.position.z = 30;
       
       const metaballs = [];
-      const largeMetaballCount = 12; // More larger metaballs
+      const largeMetaballCount = 16; // Increased number of larger metaballs
       const smallMetaballCount = 8; // Fewer smaller metaballs
       const heroHeight = document.querySelector('.hero').offsetHeight;
 
@@ -1366,7 +1367,7 @@
       
       // Larger metaballs for all sections
       for (let i = 0; i < largeMetaballCount; i++) {
-        const radius = Math.random() * 3 + 2; // Larger radius for main blobs
+        const radius = Math.random() * 4 + 3; // Increased size range (3–7 units)
         const geometry = new THREE.IcosahedronGeometry(radius, 8);
         const vertices = geometry.attributes.position.array;
         for (let j = 0; j < vertices.length; j += 3) {
