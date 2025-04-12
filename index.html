@@ -1385,7 +1385,7 @@
       });
     });
 
-    // Blob Canvas Animation with Cosmic Web
+    // Blob Canvas Animation with Galactic Starfield
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
@@ -1395,29 +1395,12 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 30;
+      const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 15;
 
-      // Materials
-      const strandMaterial = new THREE.LineBasicMaterial({
-        color: 0x8ab5ff, // Soft blue
-        transparent: true,
-        opacity: 0.3,
-        linewidth: 1.5,
-        blending: THREE.AdditiveBlending
-      });
-
-      const nodeMaterial = new THREE.PointsMaterial({
-        color: 0xffe4b5, // Warm gold
-        size: 0.4,
-        transparent: true,
-        opacity: 0.7,
-        blending: THREE.AdditiveBlending
-      });
-
-      // Circular particle texture
+      // Create a circular texture for round particles
       function createCircleTexture() {
-        const size = 32;
+        const size = 64;
         const canvas = document.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
@@ -1429,177 +1412,189 @@
         return new THREE.CanvasTexture(canvas);
       }
 
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0xb0c4ff, // Pale blue
-        size: 0.2, // Base size increased
-        map: createCircleTexture(), // Circular texture
+      const circleTexture = createCircleTexture();
+
+      // Materials for different particle types
+      const tinyStarMaterial = new THREE.PointsMaterial({
+        size: 0.05,
+        map: circleTexture,
+        transparent: true,
+        opacity: 0.4,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const mediumStarMaterial = new THREE.PointsMaterial({
+        size: 0.15,
+        map: circleTexture,
         transparent: true,
         opacity: 0.5,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
 
-      const nodes = [];
-      const strands = [];
-      const particles = [];
-      const nodeCount = 20;
+      const largeOrbMaterial = new THREE.PointsMaterial({
+        size: 0.4,
+        map: circleTexture,
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
 
-      // Initialize nodes
-      for (let i = 0; i < nodeCount; i++) {
-        const radius = 8 + Math.random() * 12;
+      // Particle systems
+      const tinyStars = [];
+      const mediumStars = [];
+      const largeOrbs = [];
+      const particleGroup = new THREE.Group(); // For global rotation
+      scene.add(particleGroup);
+
+      // Initialize tiny stars (1000)
+      const tinyStarGeometry = new THREE.BufferGeometry();
+      const tinyStarPositions = new Float32Array(1000 * 3);
+      const tinyStarColors = new Float32Array(1000 * 3);
+      for (let i = 0; i < 1000; i++) {
+        const radius = 20 + Math.random() * 30;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        const node = new THREE.Vector3(
-          radius * Math.sin(phi) * Math.cos(theta),
-          radius * Math.sin(phi) * Math.sin(theta),
-          radius * Math.cos(phi)
-        );
-        node.baseRadius = radius;
-        node.phase = Math.random() * Math.PI * 2;
-        node.frequency = 0.02 + Math.random() * 0.02; // Slower frequency
-        nodes.push(node);
+        tinyStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        tinyStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        tinyStarPositions[i * 3 + 2] = radius * Math.cos(phi);
+        // Assign colors
+        const colorChoice = Math.random();
+        let color;
+        if (colorChoice < 0.7) color = new THREE.Color(0xb0c4ff); // Pale blue
+        else if (colorChoice < 0.9) color = new THREE.Color(0xffe4b5); // Warm gold
+        else color = new THREE.Color(0x00e5ff); // Soft cyan
+        tinyStarColors[i * 3] = color.r;
+        tinyStarColors[i * 3 + 1] = color.g;
+        tinyStarColors[i * 3 + 2] = color.b;
       }
+      tinyStarGeometry.setAttribute('position', new THREE.BufferAttribute(tinyStarPositions, 3));
+      tinyStarGeometry.setAttribute('color', new THREE.BufferAttribute(tinyStarColors, 3));
+      tinyStarMaterial.vertexColors = true;
+      const tinyStarSystem = new THREE.Points(tinyStarGeometry, tinyStarMaterial);
+      particleGroup.add(tinyStarSystem);
+      tinyStars.push(tinyStarSystem);
 
-      // Update strands dynamically
-      function updateStrands() {
-        strands.forEach(strand => scene.remove(strand));
-        strands.length = 0;
-
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const node1 = nodes[i];
-            const node2 = nodes[j];
-            const distance = node1.distanceTo(node2);
-
-            if (distance < 12) {
-              const points = [];
-              const segments = 30;
-              for (let t = 0; t <= 1; t += 1 / segments) {
-                const point = new THREE.Vector3().lerpVectors(node1, node2, t);
-                const wave = Math.sin(t * Math.PI + node1.phase) * 0.3;
-                point.x += wave * Math.cos(t * Math.PI);
-                point.y += wave * Math.sin(t * Math.PI);
-                points.push(point);
-              }
-              const geometry = new THREE.BufferGeometry().setFromPoints(points);
-              const strand = new THREE.Line(geometry, strandMaterial);
-              scene.add(strand);
-              strands.push(strand);
-            }
-          }
-        }
+      // Initialize medium stars (900)
+      const mediumStarGeometry = new THREE.BufferGeometry();
+      const mediumStarPositions = new Float32Array(900 * 3);
+      const mediumStarColors = new Float32Array(900 * 3);
+      for (let i = 0; i < 900; i++) {
+        const radius = 15 + Math.random() * 25;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        mediumStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        mediumStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        mediumStarPositions[i * 3 + 2] = radius * Math.cos(phi);
+        // Assign colors
+        const colorChoice = Math.random();
+        let color;
+        if (colorChoice < 0.7) color = new THREE.Color(0xb0c4ff);
+        else if (colorChoice < 0.9) color = new THREE.Color(0xffe4b5);
+        else color = new THREE.Color(0x00e5ff);
+        mediumStarColors[i * 3] = color.r;
+        mediumStarColors[i * 3 + 1] = color.g;
+        mediumStarColors[i * 3 + 2] = color.b;
       }
+      mediumStarGeometry.setAttribute('position', new THREE.BufferAttribute(mediumStarPositions, 3));
+      mediumStarGeometry.setAttribute('color', new THREE.BufferAttribute(mediumStarColors, 3));
+      mediumStarMaterial.vertexColors = true;
+      const mediumStarSystem = new THREE.Points(mediumStarGeometry, mediumStarMaterial);
+      particleGroup.add(mediumStarSystem);
+      mediumStars.push(mediumStarSystem);
 
-      // Node visuals
-      const nodeGeometry = new THREE.BufferGeometry().setFromPoints(nodes);
-      const nodePoints = new THREE.Points(nodeGeometry, nodeMaterial);
-      scene.add(nodePoints);
-
-      // Particle system
-      function spawnParticles() {
-        const particleCount = 5;
-        const particleGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const velocities = [];
-        const sizes = new Float32Array(particleCount);
-
-        for (let i = 0; i < particleCount; i++) {
-          const node = nodes[Math.floor(Math.random() * nodes.length)];
-          positions[i * 3] = node.x;
-          positions[i * 3 + 1] = node.y;
-          positions[i * 3 + 2] = node.z;
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 0.02 + Math.random() * 0.03;
-          velocities.push(
-            new THREE.Vector3(
-              Math.cos(angle) * speed,
-              Math.sin(angle) * speed,
-              (Math.random() - 0.5) * speed * 0.5
-            )
-          );
-          sizes[i] = 0.15 + Math.random() * 0.1; // Size variation (0.15 to 0.25)
-        }
-
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-        const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-        particleSystem.velocities = velocities;
-        scene.add(particleSystem);
-        particles.push(particleSystem);
-
-        // Fade particles
-        setTimeout(() => {
-          new TWEEN.Tween(particleMaterial)
-            .to({ opacity: 0 }, 4000)
-            .onComplete(() => {
-              scene.remove(particleSystem);
-              particleGeometry.dispose();
-              particles.splice(particles.indexOf(particleSystem), 1);
-            })
-            .start();
-        }, 3000);
+      // Initialize large orbs (100)
+      const largeOrbGeometry = new THREE.BufferGeometry();
+      const largeOrbPositions = new Float32Array(100 * 3);
+      const largeOrbColors = new Float32Array(100 * 3);
+      for (let i = 0; i < 100; i++) {
+        const radius = 10 + Math.random() * 20;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        largeOrbPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        largeOrbPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        largeOrbPositions[i * 3 + 2] = radius * Math.cos(phi);
+        // Assign colors
+        const colorChoice = Math.random();
+        let color;
+        if (colorChoice < 0.7) color = new THREE.Color(0xb0c4ff);
+        else if (colorChoice < 0.9) color = new THREE.Color(0xffe4b5);
+        else color = new THREE.Color(0x00e5ff);
+        largeOrbColors[i * 3] = color.r;
+        largeOrbColors[i * 3 + 1] = color.g;
+        largeOrbColors[i * 3 + 2] = color.b;
       }
+      largeOrbGeometry.setAttribute('position', new THREE.BufferAttribute(largeOrbPositions, 3));
+      largeOrbGeometry.setAttribute('color', new THREE.BufferAttribute(largeOrbColors, 3));
+      largeOrbMaterial.vertexColors = true;
+      const largeOrbSystem = new THREE.Points(largeOrbGeometry, largeOrbMaterial);
+      particleGroup.add(largeOrbSystem);
+      largeOrbs.push(largeOrbSystem);
+
+      // Background nebula (faint gradient sphere)
+      const nebulaGeometry = new THREE.SphereGeometry(100, 32, 32);
+      const nebulaMaterial = new THREE.MeshBasicMaterial({
+        color: 0x1c2526,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.BackSide
+      });
+      const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+      scene.add(nebula);
 
       // Lighting
-      const ambientLight = new THREE.AmbientLight(0x1c2526, 0.5);
+      const ambientLight = new THREE.AmbientLight(0x1c2526, 0.3);
       scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0x8ab5ff, 0.6, 50);
-      pointLight.position.set(15, 15, 15);
+      const pointLight = new THREE.PointLight(0x8ab5ff, 0.4, 50);
+      pointLight.position.set(10, 10, 10);
       scene.add(pointLight);
 
       const clock = new THREE.Clock();
       let mouseX = 0, mouseY = 0;
 
       window.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX / window.innerWidth - 0.5) * 10;
-        mouseY = -(event.clientY / window.innerHeight - 0.5) * 10;
+        mouseX = (event.clientX / window.innerWidth - 0.5) * 5;
+        mouseY = -(event.clientY / window.innerHeight - 0.5) * 5;
       });
 
-      // Animation loop
-      let lastStrandUpdate = 0;
-      const strandUpdateInterval = 0.1; // Update strands every 100ms
+      // Fade animations for particles
+      function animateFades() {
+        // Tiny stars
+        new TWEEN.Tween(tinyStarMaterial)
+          .to({ opacity: 0.2 }, 5000)
+          .yoyo(true)
+          .repeat(Infinity)
+          .easing(TWEEN.Easing.Sinusoidal.InOut)
+          .start();
 
+        // Medium stars
+        new TWEEN.Tween(mediumStarMaterial)
+          .to({ opacity: 0.3 }, 6000)
+          .yoyo(true)
+          .repeat(Infinity)
+          .easing(TWEEN.Easing.Sinusoidal.InOut)
+          .start();
+
+        // Large orbs
+        new TWEEN.Tween(largeOrbMaterial)
+          .to({ opacity: 0.4 }, 7000)
+          .yoyo(true)
+          .repeat(Infinity)
+          .easing(TWEEN.Easing.Sinusoidal.InOut)
+          .start();
+      }
+
+      animateFades();
+
+      // Animation loop
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
 
-        // Update nodes with slower fluidic motion
-        nodes.forEach((node, i) => {
-          const time = elapsed * node.frequency;
-          const radius = node.baseRadius + Math.sin(time + node.phase) * 2;
-          const theta = time + node.phase;
-          const phi = Math.acos(2 * Math.random() - 1);
-          node.x = radius * Math.sin(phi) * Math.cos(theta);
-          node.y = radius * Math.sin(phi) * Math.sin(theta);
-          node.z = radius * Math.cos(phi);
-        });
-
-        nodeGeometry.attributes.position.needsUpdate = true;
-
-        // Update strands less frequently
-        if (elapsed - lastStrandUpdate > strandUpdateInterval) {
-          updateStrands();
-          lastStrandUpdate = elapsed;
-        }
-
-        // Update particles
-        particles.forEach(particleSystem => {
-          const positions = particleSystem.geometry.attributes.position.array;
-          const velocities = particleSystem.velocities;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i] += velocities[i / 3].x;
-            positions[i + 1] += velocities[i / 3].y;
-            positions[i + 2] += velocities[i / 3].z;
-            // Circular motion
-            const angle = elapsed * 0.1;
-            velocities[i / 3].x = Math.cos(angle) * 0.02;
-            velocities[i / 3].y = Math.sin(angle) * 0.02;
-          }
-          particleSystem.geometry.attributes.position.needsUpdate = true;
-        });
-
-        // Spawn particles sparingly
-        if (Math.random() < 0.05) spawnParticles();
+        // Global rotation for galactic effect
+        particleGroup.rotation.y += 0.001;
 
         // Gentle camera movement
         camera.position.x += (mouseX - camera.position.x) * 0.02;
@@ -1671,36 +1666,4 @@
       }
 
       // Handle window resize to keep the canvas sized correctly
-      window.addEventListener('resize', () => {
-        if (level1.style.display === 'block' && level1.querySelector('canvas')) {
-          const renderer = level1.querySelector('canvas').renderer;
-          renderer.setSize(level1.clientWidth, level1.clientHeight);
-        } else if (level2.style.display === 'block' && level2.querySelector('canvas')) {
-          const renderer = level2.querySelector('canvas').renderer;
-          renderer.setSize(level2.clientWidth, level2.clientHeight);
-        }
-      }, { passive: true });
-    }
-
-    // Sound Toggle Function
-    let isPlaying = false;
-
-    function toggleSound() {
-      const audio = document.getElementById('relaxingAudio');
-      const button = document.getElementById('soundToggleBtn');
-
-      if (isPlaying) {
-        audio.pause();
-        button.textContent = 'Turn On Relaxing Sound';
-      } else {
-        audio.play();
-        button.textContent = 'Turn Off Relaxing Sound';
-      }
-
-      isPlaying = !isPlaying;
-    }
-  </script>
-  <script src="main.js"></script>
-  <script src="main_level2.js"></script>
-</body>
-</html>
+      window.add
