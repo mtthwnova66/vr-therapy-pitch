@@ -25,6 +25,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
 
   <style>
     :root {
@@ -52,17 +53,8 @@
       --shadow-glow: 0 0 15px var(--primary-glow), 0 0 30px rgba(0, 0, 0, 0.3);
     }
     
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    html { 
-      scroll-behavior: smooth; 
-      font-size: 16px; 
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
     body {
       font-family: var(--font-main);
       background-color: var(--bg-dark);
@@ -84,7 +76,6 @@
       display: none;
     }
     
-    /* Loading Screen */
     #loading-screen {
       position: fixed;
       top: 0;
@@ -150,7 +141,6 @@
       z-index: 1;
     }
     
-    /* Typography */
     h1, h2, h3, h4, h5, h6 {
       font-family: var(--font-display);
       font-weight: 600;
@@ -194,7 +184,6 @@
       text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
 
-    /* Hero Section */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -212,7 +201,7 @@
       background: rgba(4, 8, 18, 0.4);
       border: 2px solid var(--primary-glow);
       border-radius: 25px;
-      padding: 4rem 3rem 3rem; /* Increased top padding to move content lower */
+      padding: 4rem 3rem 3rem;
       max-width: 900px;
       width: 95%;
       box-shadow: var(--shadow-glow);
@@ -264,7 +253,6 @@
       margin: 0 auto 2rem;
     }
 
-    /* Navigation */
     .navbar {
       position: fixed;
       top: 0;
@@ -343,7 +331,6 @@
       box-shadow: 0 0 5px var(--primary-glow);
     }
 
-    /* Button Styles */
     .btn {
       display: inline-block;
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
@@ -407,7 +394,6 @@
       justify-content: center;
     }
 
-    /* Section Styling */
     .section {
       padding: 8rem 2rem;
       position: relative;
@@ -447,7 +433,6 @@
       transform: scale(1.05);
     }
 
-    /* Feature Cards */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -521,7 +506,6 @@
       flex-grow: 1;
     }
 
-    /* Blob Background Elements */
     .blob-container {
       position: absolute;
       top: 0;
@@ -530,59 +514,9 @@
       height: 100%;
       overflow: hidden;
       pointer-events: none;
+      background: radial-gradient(circle at center, rgba(71, 160, 255, 0.05), transparent 70%);
     }
 
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.2;
-      animation: blob-float 15s infinite ease-in-out;
-    }
-
-    .blob-1 {
-      width: 800px;
-      height: 800px;
-      background: var(--primary);
-      top: -400px;
-      left: -400px;
-      animation-delay: 0s;
-    }
-
-    .blob-2 {
-      width: 600px;
-      height: 600px;
-      background: var(--accent);
-      bottom: -300px;
-      right: -300px;
-      animation-delay: -5s;
-    }
-
-    .blob-3 {
-      width: 500px;
-      height: 500px;
-      background: var(--neural-1);
-      top: 40%;
-      right: -250px;
-      animation-delay: -10s;
-    }
-
-    @keyframes blob-float {
-      0%, 100% {
-        transform: translate(0, 0) scale(1);
-      }
-      25% {
-        transform: translate(100px, 50px) scale(1.1);
-      }
-      50% {
-        transform: translate(50px, 100px) scale(0.9);
-      }
-      75% {
-        transform: translate(-50px, 50px) scale(1.05);
-      }
-    }
-
-    /* Team Section */
     .team-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -639,7 +573,6 @@
       color: var(--text-tertiary);
     }
 
-    /* Try-it-yourself Section */
     .vr-demo {
       background: var(--card-bg);
       border-radius: 20px;
@@ -665,7 +598,6 @@
       justify-content: center;
     }
 
-    /* Video Container for Technology Section */
     .video-container {
       display: flex;
       justify-content: center;
@@ -684,7 +616,7 @@
 
     .video-container iframe {
       width: 100%;
-      height: calc(56.25vw * 0.75); /* 16:9 aspect ratio scaled */
+      height: calc(56.25vw * 0.75);
       max-height: 420px;
       border: none;
       border-radius: 10px;
@@ -697,7 +629,6 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 15px var(--primary-glow);
     }
 
-    /* Contact Form */
     .contact-form input,
     .contact-form textarea {
       transition: all 0.3s ease;
@@ -712,35 +643,16 @@
       transform: scale(1.02);
     }
 
-    /* Responsive Design */
     @media (max-width: 992px) {
-      .section {
-        padding: 6rem 1.5rem;
-      }
-      
-      .vr-demo-canvas {
-        height: 500px;
-      }
-      
-      .feature-card, .team-card {
-        transform: none !important;
-      }
-      
-      .video-container iframe {
-        height: calc(56.25vw * 0.65); /* Adjusted for smaller screens */
-        max-height: 350px;
-      }
+      .section { padding: 6rem 1.5rem; }
+      .vr-demo-canvas { height: 500px; }
+      .feature-card, .team-card { transform: none !important; }
+      .video-container iframe { height: calc(56.25vw * 0.65); max-height: 350px; }
     }
 
     @media (max-width: 768px) {
-      .navbar {
-        padding: 1rem 1.5rem;
-      }
-      
-      .hamburger {
-        display: flex;
-      }
-      
+      .navbar { padding: 1rem 1.5rem; }
+      .hamburger { display: flex; }
       .nav-links {
         position: fixed;
         top: 70px;
@@ -753,76 +665,26 @@
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
       }
-      
-      .nav-links.active {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-      }
-      
-      .section {
-        padding: 5rem 1rem;
-      }
-      
-      .btn-group {
-        flex-direction: column;
-        width: 100%;
-      }
-      
-      .vr-demo-canvas {
-        height: 400px;
-      }
-      
-      .hero-logo img {
-        width: 100px;
-      }
-      
-      .video-container iframe {
-        height: calc(56.25vw * 0.55);
-        max-height: 300px;
-      }
-      
-      #updates .section-inner > div[style*="flex"] {
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      #updates img {
-        max-width: 300px;
-      }
+      .nav-links.active { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      .section { padding: 5rem 1rem; }
+      .btn-group { flex-direction: column; width: 100%; }
+      .vr-demo-canvas { height: 400px; }
+      .hero-logo img { width: 100px; }
+      .video-container iframe { height: calc(56.25vw * 0.55); max-height: 300px; }
+      #updates .section-inner > div[style*="flex"] { flex-direction: column; align-items: center; }
+      #updates img { max-width: 300px; }
     }
 
     @media (max-width: 576px) {
-      .hero-inner {
-        padding: 2rem 1.5rem;
-      }
-      
-      .btn {
-        width: 100%;
-        text-align: center;
-      }
-      
-      .vr-demo-canvas {
-        height: 300px;
-      }
-      
-      .vr-controls {
-        flex-direction: column;
-      }
-      
-      .video-container iframe {
-        height: calc(56.25vw * 0.45);
-        max-height: 250px;
-      }
-      
-      .hero-logo img {
-        width: 90px;
-      }
-      
-      #updates img {
-        max-width: 250px;
-      }
+      .hero-inner { padding: 2rem 1.5rem; }
+      .btn { width: 100%; text-align: center; }
+      .vr-demo-canvas { height: 300px; }
+      .vr-controls { flex-direction: column; }
+      .video-container iframe { height: calc(56.25vw * 0.45); max-height: 250px; }
+      .hero-logo img { width: 90px; }
+      #updates img { max-width: 250px; }
     }
 
-    /* Footer */
     .footer {
       background: rgba(2, 6, 14, 0.9);
       padding: 4rem 2rem 2rem;
@@ -929,7 +791,6 @@
 
 <body>
   <canvas id="global-blobCanvas"></canvas>
-  <!-- Loading Screen -->
   <div id="loading-screen">
     <canvas id="loadingCanvas"></canvas>
     <div class="loading-overlay">
@@ -1261,7 +1122,6 @@
   <audio id="relaxingAudio" src="relaxing.mp3" loop></audio>
 
   <script>
-    // Loading Screen Animation
     (function() {
       const canvas = document.getElementById('loadingCanvas');
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -1291,7 +1151,6 @@
       });
     })();
 
-    // Show loading bar and fade out
     window.addEventListener('load', function() {
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
@@ -1309,9 +1168,7 @@
       }, 1200);
     });
 
-    // Main initialization function
     document.addEventListener('DOMContentLoaded', function() {
-      // Navigation toggle
       const hamburger = document.getElementById('hamburger');
       const navLinks = document.getElementById('nav-links');
       
@@ -1320,7 +1177,6 @@
         hamburger.classList.toggle('active');
       });
       
-      // Close mobile menu when clicking a link
       document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function() {
           navLinks.classList.remove('active');
@@ -1328,7 +1184,6 @@
         });
       });
       
-      // Navbar scroll effect
       const navbar = document.getElementById('navbar');
       
       window.addEventListener('scroll', function() {
@@ -1339,13 +1194,10 @@
         }
       });
       
-      // Blob background animation with metaballs
       initBlobCanvas();
 
-      // Contact Form Submission
       document.getElementById('contact-form').addEventListener('submit', async function(event) {
-        event.preventDefault(); // Prevent page reload
-
+        event.preventDefault();
         const form = event.target;
         const formData = new FormData(form);
         const data = {
@@ -1370,7 +1222,7 @@
           if (response.ok) {
             messageElement.textContent = 'Message sent successfully!';
             messageElement.style.color = 'var(--success)';
-            form.reset(); // Clear the form
+            form.reset();
           } else {
             messageElement.textContent = result.error || 'Failed to send message.';
             messageElement.style.color = 'var(--neural-1)';
@@ -1384,7 +1236,6 @@
       });
     });
 
-    // Blob Canvas Animation with Sophisticated Metablobs
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
@@ -1392,13 +1243,14 @@
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true; // Enable shadows for depth
+      renderer.shadowMap.enabled = true;
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 30;
+      camera.position.z = 50;
 
-      // Advanced materials for realistic lighting
+      const simplex = new SimplexNoise();
+
       const blobMaterial = new THREE.MeshPhysicalMaterial({
         color: 0x47a0ff,
         metalness: 0.1,
@@ -1422,45 +1274,34 @@
         depthWrite: false,
       });
 
-      // Noise function for complex shapes
-      function noise3D(x, y, z, time) {
-        const frequency = 0.5;
-        const amplitude = 0.3;
-        return Math.sin(x * frequency + time) * Math.cos(y * frequency + time) * Math.sin(z * frequency + time) * amplitude;
-      }
-
-      // Create complex metaballs with morphing
       const metaballs = [];
-      const blobCount = 10; // Fewer but more detailed blobs
+      const blobCount = 15; // More blobs for complexity
 
       for (let i = 0; i < blobCount; i++) {
-        const baseRadius = Math.random() * 3 + 2;
-        const geometry = new THREE.IcosahedronGeometry(baseRadius, 4); // Higher subdivision for complexity
+        const baseRadius = Math.random() * 5 + 2;
+        const geometry = new THREE.IcosahedronGeometry(baseRadius, 4);
 
-        // Apply noise to vertices for fractal-like distortion
         const vertices = geometry.attributes.position.array;
         for (let j = 0; j < vertices.length; j += 3) {
           const x = vertices[j];
           const y = vertices[j + 1];
           const z = vertices[j + 2];
-          const noise = noise3D(x, y, z, performance.now() * 0.0001);
-          vertices[j] += x * noise;
-          vertices[j + 1] += y * noise;
-          vertices[j + 2] += z * noise;
+          vertices[j] += simplex.noise3D(x * 0.1, y * 0.1, z * 0.1) * 0.5;
+          vertices[j + 1] += simplex.noise3D(y * 0.1, z * 0.1, x * 0.1) * 0.5;
+          vertices[j + 2] += simplex.noise3D(z * 0.1, x * 0.1, y * 0.1) * 0.5;
         }
 
         const mesh = new THREE.Mesh(geometry, blobMaterial.clone());
-        mesh.position.x = (Math.random() - 0.5) * 50;
-        mesh.position.y = (Math.random() - 0.5) * 50 + (i * (window.innerHeight / blobCount) * 0.5);
-        mesh.position.z = (Math.random() - 0.5) * 40;
-        mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.03 };
-        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.005, y: (Math.random() - 0.5) * 0.005, z: (Math.random() - 0.5) * 0.005 };
-        mesh.morphTargetInfluences = []; // For morphing
+        mesh.position.x = (Math.random() - 0.5) * 80;
+        mesh.position.y = (Math.random() - 0.5) * 80;
+        mesh.position.z = (Math.random() - 0.5) * 60;
+        mesh.velocity = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 };
+        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.003 };
+        mesh.phase = Math.random() * Math.PI * 2;
 
-        // Add particle trail
         const particlesGeometry = new THREE.BufferGeometry();
         const particles = [];
-        for (let k = 0; k < 50; k++) {
+        for (let k = 0; k < 100; k++) {
           particles.push(
             mesh.position.x + Math.random() * 2 - 1,
             mesh.position.y + Math.random() * 2 - 1,
@@ -1476,7 +1317,6 @@
         metaballs.push({ mesh, targetRadius: baseRadius * (1 + Math.random() * 0.5) });
       }
 
-      // Lighting for depth and realism
       const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
       scene.add(ambientLight);
 
@@ -1489,7 +1329,6 @@
       pointLight.position.set(0, 10, 0);
       scene.add(pointLight);
 
-      // Morphing and animation
       const clock = new THREE.Clock();
       let mouseX = 0, mouseY = 0;
 
@@ -1503,45 +1342,48 @@
         const elapsed = clock.getElapsedTime();
 
         metaballs.forEach(({ mesh, targetRadius }) => {
-          // Morphing: Smoothly change size and shape
+          const noise = simplex.noise3D(mesh.position.x * 0.01, mesh.position.y * 0.01, elapsed * 0.1);
+          const wave = Math.sin(elapsed + mesh.phase) * 2;
+
+          mesh.position.x += mesh.velocity.x + noise * 0.1;
+          mesh.position.y += mesh.velocity.y + wave * 0.1;
+          mesh.position.z += mesh.velocity.z + noise * 0.1;
+
+          const boundary = 100;
+          if (Math.abs(mesh.position.x) > boundary) mesh.velocity.x *= -0.9;
+          if (Math.abs(mesh.position.y) > boundary) mesh.velocity.y *= -0.9;
+          if (Math.abs(mesh.position.z) > boundary) mesh.velocity.z *= -0.9;
+
+          mesh.rotation.x += mesh.rotationSpeed.x;
+          mesh.rotation.y += mesh.rotationSpeed.y;
+          mesh.rotation.z += mesh.rotationSpeed.z;
+
+          const vertices = mesh.geometry.attributes.position.array;
+          for (let i = 0; i < vertices.length; i += 3) {
+            const x = vertices[i];
+            const y = vertices[i + 1];
+            const z = vertices[i + 2];
+            const noiseValue = simplex.noise3D(x * 0.1 + elapsed * 0.01, y * 0.1 + elapsed * 0.01, z * 0.1 + elapsed * 0.01);
+            vertices[i] += noiseValue * 0.3;
+            vertices[i + 1] += noiseValue * 0.3;
+            vertices[i + 2] += noiseValue * 0.3;
+          }
+          mesh.geometry.attributes.position.needsUpdate = true;
+
           let currentRadius = mesh.scale.x;
           const speed = 0.01;
           if (Math.abs(currentRadius - targetRadius) > 0.01) {
             currentRadius += (targetRadius - currentRadius) * speed;
             mesh.scale.set(currentRadius, currentRadius, currentRadius);
           } else {
-            targetRadius = Math.random() * 3 + 2; // Randomly change target for continuous morphing
+            targetRadius = Math.random() * 5 + 2;
           }
 
-          // Position and velocity
-          mesh.position.x += mesh.velocity.x;
-          mesh.position.y += mesh.velocity.y;
-          mesh.position.z += mesh.velocity.z;
+          const dx = mouseX * 50 - mesh.position.x;
+          const dy = mouseY * 50 - mesh.position.y;
+          mesh.position.x += dx * 0.001;
+          mesh.position.y += dy * 0.001;
 
-          const boundary = 50;
-          if (Math.abs(mesh.position.x) > boundary) mesh.velocity.x *= -1;
-          if (Math.abs(mesh.position.y) > boundary) mesh.velocity.y *= -1;
-          if (Math.abs(mesh.position.z) > boundary) mesh.velocity.z *= -1;
-
-          // Rotation and distortion
-          mesh.rotation.x += mesh.rotationSpeed.x;
-          mesh.rotation.y += mesh.rotationSpeed.y;
-          mesh.rotation.z += mesh.rotationSpeed.z;
-
-          // Apply noise-based distortion
-          const vertices = mesh.geometry.attributes.position.array;
-          for (let i = 0; i < vertices.length; i += 3) {
-            const x = vertices[i];
-            const y = vertices[i + 1];
-            const z = vertices[i + 2];
-            const noise = noise3D(x, y, z, elapsed) * 0.3;
-            vertices[i] += noise * Math.sin(elapsed * 0.1);
-            vertices[i + 1] += noise * Math.cos(elapsed * 0.1);
-            vertices[i + 2] += noise * Math.sin(elapsed * 0.15);
-          }
-          mesh.geometry.attributes.position.needsUpdate = true;
-
-          // Update particle trail
           const positions = mesh.particles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
             positions[i] += (mesh.position.x - positions[i]) * 0.05;
@@ -1549,17 +1391,10 @@
             positions[i + 2] += (mesh.position.z - positions[i + 2]) * 0.05;
           }
           mesh.particles.geometry.attributes.position.needsUpdate = true;
-
-          // React to mouse
-          const dx = mouseX * 20 - mesh.position.x;
-          const dy = mouseY * 20 - mesh.position.y;
-          mesh.position.x += dx * 0.001;
-          mesh.position.y += dy * 0.001;
         });
 
-        // Subtle camera movement
-        camera.position.x += (mouseX * 5 - camera.position.x) * 0.01;
-        camera.position.y += (-mouseY * 5 - camera.position.y) * 0.01;
+        camera.position.x += (mouseX * 10 - camera.position.x) * 0.01;
+        camera.position.y += (-mouseY * 10 - camera.position.y) * 0.01;
         camera.lookAt(scene.position);
 
         renderer.render(scene, camera);
@@ -1574,7 +1409,6 @@
       });
     }
 
-    // Demo Level Toggle
     function showLevel(level) {
       const level1 = document.getElementById('arachnophobia-demo');
       const level2 = document.getElementById('arachnophobia-level2');
@@ -1589,42 +1423,35 @@
         level2Btn.classList.add('btn-outline');
 
         if (typeof initLevel1 === 'function') {
-          initLevel1(); // Call the existing initialization
-
-          // Ensure the renderer fills the canvas
+          initLevel1();
           const renderer = level1.querySelector('canvas') ? level1.querySelector('canvas').renderer : new THREE.WebGLRenderer({ canvas: level1 });
           renderer.setSize(level1.clientWidth, level1.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
-          level1.appendChild(renderer.domElement); // Ensure the renderer canvas is in the DOM
+          level1.appendChild(renderer.domElement);
         } else {
           console.log('initLevel1 not found, initializing default renderer');
           const renderer = new THREE.WebGLRenderer({ canvas: level1 });
           renderer.setSize(level1.clientWidth, level1.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
-          console.log('Renderer initialized:', renderer);
         }
       } else {
         level2Btn.classList.remove('btn-outline');
         level1Btn.classList.add('btn-outline');
 
         if (typeof initLevel2 === 'function') {
-          initLevel2(); // Call the existing initialization
-
-          // Ensure the renderer fills the canvas
+          initLevel2();
           const renderer = level2.querySelector('canvas') ? level2.querySelector('canvas').renderer : new THREE.WebGLRenderer({ canvas: level2 });
           renderer.setSize(level2.clientWidth, level2.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
-          level2.appendChild(renderer.domElement); // Ensure the renderer canvas is in the DOM
+          level2.appendChild(renderer.domElement);
         } else {
           console.log('initLevel2 not found, initializing default renderer');
           const renderer = new THREE.WebGLRenderer({ canvas: level2 });
           renderer.setSize(level2.clientWidth, level2.clientHeight);
           renderer.setPixelRatio(window.devicePixelRatio);
-          console.log('Renderer initialized:', renderer);
         }
       }
 
-      // Handle window resize to keep the canvas sized correctly
       window.addEventListener('resize', () => {
         if (level1.style.display === 'block' && level1.querySelector('canvas')) {
           const renderer = level1.querySelector('canvas').renderer;
@@ -1636,7 +1463,6 @@
       }, { passive: true });
     }
 
-    // Sound Toggle Function
     let isPlaying = false;
 
     function toggleSound() {
