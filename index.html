@@ -1184,21 +1184,22 @@
           <h2>Contact Us</h2>
           <p>Interested in learning more about Synaeon or exploring partnership opportunities? Reach out to our team.</p>
         </div>
-        <div class="contact-form" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light);">
+        <form id="contact-form" class="contact-form" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light);">
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Name</label>
-            <input type="text" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);">
+            <input type="text" name="name" required style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);" />
           </div>
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Email</label>
-            <input type="email" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);">
+            <input type="email" name="email" required style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);" />
           </div>
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Message</label>
-            <textarea rows="5" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary); resize: vertical;"></textarea>
+            <textarea name="message" rows="5" required style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary); resize: vertical;"></textarea>
           </div>
-          <button class="btn" style="width: 100%;">Send Message</button>
-        </div>
+          <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+          <p id="form-message" style="margin-top: 1rem; text-align: center; color: var(--text-secondary); display: none;"></p>
+        </form>
       </div>
     </section>
 
@@ -1335,6 +1336,47 @@
       
       // Blob background animation with metaballs
       initBlobCanvas();
+
+      // Contact Form Submission
+      document.getElementById('contact-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent page reload
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          message: formData.get('message'),
+        };
+
+        const messageElement = document.getElementById('form-message');
+        messageElement.style.display = 'none';
+
+        try {
+          const response = await fetch('http://localhost:3000/send-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            messageElement.textContent = 'Message sent successfully!';
+            messageElement.style.color = 'var(--success)';
+            form.reset(); // Clear the form
+          } else {
+            messageElement.textContent = result.error || 'Failed to send message.';
+            messageElement.style.color = 'var(--neural-1)';
+          }
+        } catch (error) {
+          messageElement.textContent = 'Error sending message. Please try again.';
+          messageElement.style.color = 'var(--neural-1)';
+        }
+
+        messageElement.style.display = 'block';
+      });
     });
 
     // Blob Canvas Animation with Metablobs
