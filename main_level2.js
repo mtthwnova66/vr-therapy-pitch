@@ -74,9 +74,7 @@ function initLevel2() {
       setTimeout(() => {
         loadingElement.style.transition = 'opacity 1s ease';
         loadingElement.style.opacity = 0;
-        setTimeout(() => {
-          loadingElement.remove();
-        }, 1000);
+        setTimeout(() => { loadingElement.remove(); }, 1000);
       }, 500);
     };
 
@@ -86,7 +84,7 @@ function initLevel2() {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xa0a0a0);
 
-    // For VR entrance, we use the same initial camera as in main.js, but later it will be repositioned.
+    // For the VR entrance, we start as in main.js.
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
@@ -221,7 +219,6 @@ function initLevel2() {
           vrHeadset.scale.set(5, 5, 5);
           vrHeadset.position.set(0, 0.8, 0);
           vrHeadset.rotation.set(0, 0, 0);
-
           vrHeadset.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -287,13 +284,11 @@ function initLevel2() {
           const startPos = new THREE.Vector3(0, 1.2, 2.0);
           const targetPos = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, 0.05));
           camera.position.lerpVectors(startPos, targetPos, easedZoom);
-
           const startTarget = vrHeadset.position.clone();
           const endTarget = leftEyeWorld.clone().add(new THREE.Vector3(0, 0, -1));
           const currentTarget = new THREE.Vector3();
           currentTarget.lerpVectors(startTarget, endTarget, easedZoom);
           camera.lookAt(currentTarget);
-
           if (zoomProgress > 0.7) {
             const fadeProgress = (zoomProgress - 0.7) / 0.3;
             mainScene.visible = true;
@@ -307,8 +302,8 @@ function initLevel2() {
               animationPhase = 3;
               animationProgress = 0;
               vrHeadset.visible = false;
-              // After VR entrance, set the camera a bit farther so the whole spider is visible.
-              camera.position.set(0, 1.2, 4.0);
+              // After VR entrance, distance the camera a lot from the spider.
+              camera.position.set(0, 1.2, 15);
               camera.lookAt(0, 0.6, 0);
               if (controls) {
                 controls.target.set(0, 0.6, 0);
@@ -328,8 +323,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // 7. Main Photorealistic Scene
-    // In Level 2 we now create a larger table and then load the jumping spider.
+    // 7. Main Photorealistic Scene: Create a larger table and load the spider.
     // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -364,9 +358,9 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
-    // Create a table 1.5× bigger than original (7.5 × 0.2 × 4.5)
+    // Double the table relative to the previous state: now (15, 0.2, 9)
     function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(7.5, 0.2, 4.5);
+      const tableGeometry = new THREE.BoxGeometry(15, 0.2, 9);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
@@ -376,16 +370,16 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // The table's top will be at: table.position.y + 0.2/2. With table.position.y set to -0.1, the top is 0.1.
+      // Place the table so its top is at y = (-0.1 + 0.2) = 0.1.
       table.position.y = -0.1;
       table.receiveShadow = true;
       mainScene.add(table);
       
-      // Now load the jumping spider.
+      // Load the jumping spider.
       loadSpiderModel();
     }
 
-    // Load the jumping spider model, make it smaller, and bring it closer to the table.
+    // Load the jumping spider, make it smaller, and push it further down.
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -400,18 +394,16 @@ function initLevel2() {
         'jumping_spider_habronattus_coecatus_compressed.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
-          // Make the spider smaller:
+          // Scale spider down to 1.0 for smaller size.
           spiderModel.scale.set(1, 1, 1);
           spiderModel.updateMatrixWorld(true);
-          // Compute bounding box to center the model and position it on the table.
+          // Calculate bounding box for positioning.
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-          // Table top is at 0.1; adjust offset so the spider's bottom sits on the table.
-          // Here we subtract an additional 0.05 to bring it closer.
-          const offsetY = 0.1 - bbox.min.y - 0.05;
+          // Table top is at 0.1; adjust vertical offset to bring the spider down further.
+          const offsetY = 0.1 - bbox.min.y - 0.15;
           spiderModel.position.set(-center.x, offsetY, -center.z);
-
           spiderModel.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -423,7 +415,6 @@ function initLevel2() {
             }
           });
           mainScene.add(spiderModel);
-          // Play built-in animations if available.
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
             mixer = new THREE.AnimationMixer(spiderModel);
@@ -434,7 +425,7 @@ function initLevel2() {
           } else {
             console.log('No animations found in the model');
           }
-          // Ensure the camera looks directly at the spider.
+          // Make sure the camera aims at the spider.
           camera.lookAt(spiderModel.position);
           addDustParticles();
           finalizeScene();
@@ -443,11 +434,7 @@ function initLevel2() {
             setTimeout(() => {
               loadingElement.style.opacity = '0';
               loadingElement.style.transition = 'opacity 1s ease';
-              setTimeout(() => {
-                if (loadingElement && loadingElement.parentNode) {
-                  loadingElement.remove();
-                }
-              }, 1000);
+              setTimeout(() => { if (loadingElement && loadingElement.parentNode) { loadingElement.remove(); } }, 1000);
             }, 1000);
           }
         },
@@ -492,19 +479,16 @@ function initLevel2() {
     const mainClock = new THREE.Clock();
     let mixer; // Spider animation mixer
     function finalizeScene() {
-      // Start the VR headset entrance animation.
+      // Start with the VR headset entrance animation.
       loadVRHeadset();
       
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
-        
         if (animationPhase < 3) {
           updateVRHeadsetAnimation(delta);
         }
-        
         if (mixer) mixer.update(delta);
-        
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
@@ -515,14 +499,12 @@ function initLevel2() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
-        
         if (controls && animationPhase === 3) {
           controls.enabled = true;
           controls.update();
         } else if (controls) {
           controls.enabled = false;
         }
-        
         renderer.render(scene, camera);
       }
       animate();
@@ -595,7 +577,7 @@ function initLevel2() {
         instructions.style.borderRadius = '5px';
         instructions.style.fontSize = '14px';
         instructions.style.zIndex = '10';
-        // Set the instructions text color to black.
+        // Ensure instruction text is black
         instructions.style.color = '#000';
         instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
         container.appendChild(instructions);
