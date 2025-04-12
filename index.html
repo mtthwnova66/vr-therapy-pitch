@@ -24,6 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
 
   <style>
     :root {
@@ -47,6 +48,8 @@
       --border-light: rgba(255, 255, 255, 0.1);
       --font-main: 'Inter', sans-serif;
       --font-display: 'Outfit', sans-serif;
+      --gradient-overlay: radial-gradient(circle at center, rgba(71, 160, 255, 0.1), transparent 70%);
+      --shadow-glow: 0 0 15px var(--primary-glow), 0 0 30px rgba(0, 0, 0, 0.3);
     }
     
     * { 
@@ -78,6 +81,7 @@
       width: 100%;
       height: 100%;
       z-index: -1;
+      display: none;
     }
     
     /* Loading Screen */
@@ -122,6 +126,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px var(--primary-glow);
     }
     
     #loading-bar-container {
@@ -130,6 +135,7 @@
       border: 1px solid var(--border-light);
       border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 0 5px var(--primary-glow);
     }
     
     #loading-bar {
@@ -149,6 +155,8 @@
       font-family: var(--font-display);
       font-weight: 600;
       line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
     }
     
     h1 { 
@@ -183,6 +191,7 @@
       line-height: 1.7; 
       color: var(--text-secondary); 
       margin-bottom: 1.5rem; 
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
 
     /* Hero Section */
@@ -193,29 +202,48 @@
       justify-content: center;
       align-items: center;
       position: relative;
-      padding: 0 1rem;
+      padding: 2rem 1rem;
       text-align: center;
+      background: var(--gradient-overlay);
     }
 
     .hero-inner {
-      backdrop-filter: blur(10px);
-      background: rgba(4, 8, 18, 0.3);
-      border: 1px solid var(--border-light);
-      border-radius: 20px;
-      padding: 2.5rem;
-      max-width: 800px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 
-                  0 0 20px var(--primary-glow),
-                  0 0 40px rgba(0, 0, 0, 0.3) inset;
+      backdrop-filter: blur(12px);
+      background: rgba(4, 8, 18, 0.4);
+      border: 2px solid var(--primary-glow);
+      border-radius: 25px;
+      padding: 3rem;
+      max-width: 900px;
+      width: 95%;
+      box-shadow: var(--shadow-glow);
       animation: float 6s infinite ease-in-out;
       position: relative;
       z-index: 1;
+      transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .hero-inner:hover {
+      transform: translateY(-5px);
     }
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
+    }
+
+    .hero-logo {
+      margin-bottom: 2rem;
+    }
+
+    .hero-logo img {
+      width: 120px;
+      height: auto;
+      filter: drop-shadow(0 0 10px var(--primary-glow));
+      transition: transform 0.3s ease;
+    }
+
+    .hero-logo img:hover {
+      transform: scale(1.05);
     }
 
     .hero-tagline {
@@ -226,6 +254,7 @@
       color: var(--accent-light);
       margin-bottom: 1.5rem;
       opacity: 0.9;
+      text-shadow: 0 0 5px var(--accent-glow);
     }
 
     .hero-text {
@@ -250,11 +279,13 @@
       backdrop-filter: blur(10px);
       background: rgba(4, 8, 18, 0.7);
       border-bottom: 1px solid var(--border-light);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .navbar.scrolled {
       padding: 0.9rem 2rem;
       background: rgba(4, 8, 18, 0.9);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .nav-links {
@@ -266,9 +297,10 @@
       color: var(--text-secondary);
       text-decoration: none;
       font-weight: 500;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
       position: relative;
       padding: 0.5rem 0;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
 
     .nav-link::after {
@@ -284,6 +316,7 @@
 
     .nav-link:hover {
       color: var(--text-primary);
+      transform: translateY(-2px);
     }
 
     .nav-link:hover::after {
@@ -307,6 +340,7 @@
       background: var(--text-primary);
       border-radius: 2px;
       transition: all 0.3s ease;
+      box-shadow: 0 0 5px var(--primary-glow);
     }
 
     /* Button Styles */
@@ -321,8 +355,8 @@
       border-radius: 30px;
       border: none;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 113, 227, 0.4);
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: 0 4px 15px rgba(0, 113, 227, 0.4), 0 0 10px var(--primary-glow);
       position: relative;
       overflow: hidden;
       z-index: 1;
@@ -343,7 +377,7 @@
 
     .btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 7px 20px rgba(0, 113, 227, 0.6);
+      box-shadow: 0 7px 20px rgba(0, 113, 227, 0.6), 0 0 15px var(--primary-glow);
     }
 
     .btn:hover::before {
@@ -363,6 +397,7 @@
 
     .btn-outline:hover {
       color: white;
+      box-shadow: 0 7px 20px rgba(0, 113, 227, 0.6), 0 0 15px var(--primary-glow);
     }
 
     .btn-group {
@@ -376,6 +411,7 @@
     .section {
       padding: 8rem 2rem;
       position: relative;
+      background: var(--gradient-overlay);
     }
 
     .section-inner {
@@ -403,6 +439,12 @@
       border: 1px solid var(--border-light);
       border-radius: 30px;
       background: rgba(255, 193, 7, 0.1);
+      box-shadow: 0 0 10px var(--accent-glow);
+      transition: transform 0.3s ease;
+    }
+
+    .section-label:hover {
+      transform: scale(1.05);
     }
 
     /* Feature Cards */
@@ -417,17 +459,18 @@
       border-radius: 20px;
       padding: 2rem;
       border: 1px solid var(--border-light);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
       height: 100%;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow: hidden;
+      box-shadow: var(--shadow-glow);
     }
 
     .feature-card::before {
       content: '';
-      position: absolute;
+      position: silent absolute;
       top: 0;
       left: 0;
       width: 100%;
@@ -459,6 +502,12 @@
       border: 1px solid var(--primary-light);
       color: var(--primary-light);
       font-size: 1.5rem;
+      box-shadow: 0 0 10px var(--primary-glow);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: rotate(360deg);
     }
 
     .feature-title {
@@ -545,7 +594,8 @@
       border-radius: 20px;
       overflow: hidden;
       border: 1px solid var(--border-light);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: var(--shadow-glow);
     }
 
     .team-image-container {
@@ -559,7 +609,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.5s ease;
+      transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     .team-card:hover .team-image {
@@ -581,6 +631,7 @@
       margin-bottom: 1rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
+      text-shadow: 0 0 5px var(--accent-glow);
     }
 
     .team-bio {
@@ -594,13 +645,14 @@
       border-radius: 20px;
       overflow: hidden;
       border: 1px solid var(--border-light);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--shadow-glow);
     }
 
     .vr-demo-canvas {
       width: 100%;
       height: 500px;
       background: var(--bg-dark);
+      border-radius: 20px 20px 0 0;
     }
 
     .vr-controls {
@@ -620,19 +672,40 @@
       margin-top: 2rem;
     }
 
+    .video-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 560px;
+    }
+
     .video-container iframe {
       width: 100%;
-      max-width: 560px;
       height: 315px;
       border: none;
       border-radius: 10px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease;
     }
 
     .video-container iframe:hover {
       transform: scale(1.01);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 15px var(--primary-glow);
+    }
+
+    /* Contact Form */
+    .contact-form input,
+    .contact-form textarea {
+      transition: all 0.3s ease;
+      box-shadow: 0 0 5px var(--border-light);
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 10px var(--primary-glow);
+      transform: scale(1.02);
     }
 
     /* Responsive Design */
@@ -707,6 +780,10 @@
       .vr-controls {
         flex-direction: column;
       }
+      
+      .hero-logo img {
+        width: 100px;
+      }
     }
 
     /* Footer */
@@ -715,6 +792,7 @@
       padding: 4rem 2rem 2rem;
       position: relative;
       border-top: 1px solid var(--border-light);
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .footer-content {
@@ -740,6 +818,7 @@
       position: relative;
       display: inline-block;
       padding-bottom: 0.5rem;
+      text-shadow: 0 0 5px var(--primary-glow);
     }
 
     .footer-title::after {
@@ -761,7 +840,19 @@
     .footer-link {
       color: var(--text-tertiary);
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      position: relative;
+    }
+
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent-light);
+      transition: width 0.3s ease;
     }
 
     .footer-link:hover {
@@ -769,10 +860,15 @@
       transform: translateX(5px);
     }
 
+    .footer-link:hover::after {
+      width: 100%;
+    }
+
     .footer-text {
       color: var(--text-tertiary);
-      font-size:_argument0.9rem;
+      font-size: 0.9rem;
       margin-bottom: 1.5rem;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
 
     .footer-bottom {
@@ -790,6 +886,7 @@
     .copyright {
       color: var(--text-tertiary);
       font-size: 0.85rem;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
@@ -832,9 +929,12 @@
         <div class="blob blob-3"></div>
       </div>
       <div class="hero-inner">
+        <div class="hero-logo">
+          <img src="syneon_image.png" alt="Synaeon Logo">
+        </div>
         <div class="hero-tagline">The Future of Mental Health</div>
         <h1>AI-Powered VR Therapy That Builds Worlds Around You</h1>
-        <p class="hero-text">Experience real-time, adaptive VR environments that transform mental health treatment with personalized exposure therapy.</p>
+        <p class="hero-text">Transforming Mental Health with AI-Driven VR Therapy</p>
         <div class="btn-group">
           <a href="#about" class="btn">Explore Our Vision</a>
           <a href="#contact" class="btn btn-outline">Contact Us</a>
@@ -980,13 +1080,15 @@
           <h2>Cutting-Edge Innovation</h2>
           <p>Our platform combines speech-to-3D generative AI, biometric sensors, and advanced VR technology to create a seamless therapeutic experience that adapts in real-time.</p>
         </div>
-        <div id="tech-demo" class="vr-demo" style="margin-top: 3rem;">
-          <div id="tech-canvas" class="vr-demo-canvas"></div>
-        </div>
-        <h3>Demo Videos</h3>
         <div class="video-container">
-          <iframe src="https://www.youtube.com/embed/XGhYnE62GOk" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <div class="video-item">
+            <h3>Who Are We?</h3>
+            <iframe src="https://www.youtube.com/embed/XGhYnE62GOk" title="Synaeon Intro Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+          <div class="video-item">
+            <h3>How Does It Work?</h3>
+            <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
         </div>
       </div>
     </section>
@@ -999,10 +1101,11 @@
           <p>This interactive simulation demonstrates our AI-driven approach to exposure therapy for arachnophobia. Choose your comfort level and experience how our technology creates adaptive scenarios.</p>
         </div>
         <div class="vr-demo">
-          <div id="arachnophobia-demo" class="vr-demo-canvas"></div>
+          <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: block;"></div>
+          <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;"></div>
           <div class="vr-controls">
-            <button class="btn" id="level1-btn">Level 1: Mild Exposure</button>
-            <button class="btn btn-outline" id="level2-btn">Level 2: Intense Exposure</button>
+            <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Mild Exposure</button>
+            <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Intense Exposure</button>
           </div>
         </div>
       </div>
@@ -1018,7 +1121,7 @@
         <div class="team-grid">
           <div class="team-card">
             <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image" style="width: 150px; height: 150px; object-fit: cover;">
+              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image">
             </div>
             <div class="team-info">
               <h3 class="team-name">Matei Seleușan</h3>
@@ -1028,7 +1131,7 @@
           </div>
           <div class="team-card">
             <div class="team-image-container">
-              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image" style="width: 150px; height: 150px; object-fit: cover;">
+              <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image">
             </div>
             <div class="team-info">
               <h3 class="team-name">Răzvan Crețu</h3>
@@ -1047,8 +1150,20 @@
           <h2>Contact Us</h2>
           <p>Interested in learning more about Synaeon or exploring partnership opportunities? Reach out to our team.</p>
         </div>
-        <div class="contact-form" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light); text-align: center;">
-          <p>Please contact us at: <a href="mailto:mateiseleusan@gmail.com" style="color: var(--primary-light);">mateiseleusan@gmail.com</a></p>
+        <div class="contact-form" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light);">
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Name</label>
+            <input type="text" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);">
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Email</label>
+            <input type="email" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary);">
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Message</label>
+            <textarea rows="5" style="width: 100%; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary); resize: vertical;"></textarea>
+          </div>
+          <button class="btn" style="width: 100%;">Send Message</button>
         </div>
       </div>
     </section>
@@ -1061,7 +1176,7 @@
           <p>Stay tuned for our latest events, investor updates, and company milestones.</p>
         </div>
         <div style="text-align: center;">
-          <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 200px; width: 100%; border-radius: 10px;">
+          <img src="times_square.JPG" alt="Synaeon in Times Square" style="max-width: 400px; width: 100%; border-radius: 10px;">
           <p style="margin-top: 1rem; font-style: italic;">Synaeon has reached Times Square.</p>
         </div>
       </div>
@@ -1089,6 +1204,7 @@
           <h4 class="footer-title">Contact</h4>
           <div class="footer-links">
             <a href="mailto:mateiseleusan@gmail.com" class="footer-link">mateiseleusan@gmail.com</a>
+            <a href="mailto:razvanmihaicretu@gmail.com" class="footer-link">razvanmihaicretu@gmail.com</a>
           </div>
         </div>
       </div>
@@ -1134,6 +1250,7 @@
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
+      const blobCanvas = document.getElementById('global-blobCanvas');
       
       loadingBar.style.width = '100%';
       setTimeout(function() {
@@ -1141,6 +1258,7 @@
         setTimeout(function() {
           loadingScreen.style.display = 'none';
           mainContent.style.display = 'block';
+          blobCanvas.style.display = 'block';
         }, 500);
       }, 1200);
     });
@@ -1175,39 +1293,11 @@
         }
       });
       
-      // Blob background animation with new metaballs
+      // Blob background animation with metaballs
       initBlobCanvas();
-      
-      // Demo buttons
-      const level1Btn = document.getElementById('level1-btn');
-      const level2Btn = document.getElementById('level2-btn');
-      
-      if (level1Btn && level2Btn) {
-        level1Btn.addEventListener('click', function() {
-          console.log('Level 1 Demo Loaded');
-          level1Btn.classList.remove('btn-outline');
-          level2Btn.classList.add('btn-outline');
-        });
-        
-        level2Btn.addEventListener('click', function() {
-          console.log('Level 2 Demo Loaded');
-          level2Btn.classList.remove('btn-outline');
-          level1Btn.classList.add('btn-outline');
-        });
-        
-        // Initialize first level demo by default
-        setTimeout(() => {
-          console.log('Level 1 Demo Loaded');
-        }, 1000);
-      }
-
-      // Initialize the tech demo
-      if (document.getElementById('tech-canvas')) {
-        initTechDemo();
-      }
     });
 
-    // New Blob Canvas Animation with Metaballs
+    // Blob Canvas Animation with Metablobs
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
@@ -1221,8 +1311,8 @@
       camera.position.z = 30;
       
       const metaballs = [];
-      const metaballCount = 10; // Background metaballs
-      const titleMetaballCount = 15; // Smaller metaballs around title
+      const metaballCount = 8; // Larger metaballs for sections
+      const titleMetaballCount = 15; // Smaller metaballs for hero
       
       const materials = [
         new THREE.MeshStandardMaterial({
@@ -1252,39 +1342,10 @@
         return Math.sin(x * 0.1) * Math.sin(y * 0.1) * Math.sin(z * 0.1);
       }
       
-      // Background metaballs
-      for (let i = 0; i < metaballCount; i++) {
-        const radius = Math.random() * 3 + 1;
-        const geometry = new THREE.IcosahedronGeometry(radius, 8);
-        const vertices = geometry.attributes.position.array;
-        for (let j = 0; j < vertices.length; j += 3) {
-          const x = vertices[j];
-          const y = vertices[j+1];
-          const z = vertices[j+2];
-          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
-          vertices[j] += x * n;
-          vertices[j+1] += y * n;
-          vertices[j+2] += z * n;
-        }
-        const material = materials[Math.floor(Math.random() * materials.length)].clone();
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = (Math.random() - 0.5) * 40;
-        mesh.position.y = (Math.random() - 0.5) * 40;
-        mesh.position.z = (Math.random() - 0.5) * 30;
-        mesh.velocity = { x: (Math.random() - 0.5) * 0.05, y: (Math.random() - 0.5) * 0.05, z: (Math.random() - 0.5) * 0.05 };
-        mesh.rotation.x = Math.random() * Math.PI;
-        mesh.rotation.y = Math.random() * Math.PI;
-        mesh.rotation.z = Math.random() * Math.PI;
-        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
-        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
-        mesh.material.color = mesh.originalColor;
-        scene.add(mesh);
-        metaballs.push(mesh);
-      }
-      
-      // Smaller metaballs concentrated around title
+      // Hero section metaballs (smaller)
+      const heroSection = document.querySelector('.hero');
       for (let i = 0; i < titleMetaballCount; i++) {
-        const radius = Math.random() * 0.8 + 0.3; // Smaller size
+        const radius = Math.random() * 0.8 + 0.3;
         const geometry = new THREE.IcosahedronGeometry(radius, 8);
         const vertices = geometry.attributes.position.array;
         for (let j = 0; j < vertices.length; j += 3) {
@@ -1312,7 +1373,37 @@
         metaballs.push(mesh);
       }
       
-      const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.3 });
+      // Larger metaballs for other sections
+      for (let i = 0; i < metaballCount; i++) {
+        const radius = Math.random() * 3 + 2; // Larger size
+        const geometry = new THREE.IcosahedronGeometry(radius, 8);
+        const vertices = geometry.attributes.position.array;
+        for (let j = 0; j < vertices.length; j += 3) {
+          const x = vertices[j];
+          const y = vertices[j+1];
+          const z = vertices[j+2];
+          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          vertices[j] += x * n;
+          vertices[j+1] += y * n;
+          vertices[j+2] += z * n;
+        }
+        const material = materials[Math.floor(Math.random() * materials.length)].clone();
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = (Math.random() - 0.5) * 40;
+        mesh.position.y = (Math.random() - 0.5) * 40;
+        mesh.position.z = (Math.random() - 0.5) * 30;
+        mesh.velocity = { x: (Math.random() - 0.5) * 0.05, y: (Math.random() - 0.5) * 0.05, z: (Math.random() - 0.5) * 0.05 };
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        mesh.rotation.z = Math.random() * Math.PI;
+        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
+        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
+        mesh.material.color = mesh.originalColor;
+        scene.add(mesh);
+        metaballs.push(mesh);
+      }
+      
+      const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.2 });
       const connections = [];
       function updateConnections() {
         connections.forEach(conn => {
@@ -1328,7 +1419,8 @@
             const dy = ball1.position.y - ball2.position.y;
             const dz = ball1.position.z - ball2.position.z;
             const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (distance < 10) {
+            const maxDistance = ball1.geometry.parameters.radius > 1 ? 15 : 10;
+            if (distance < maxDistance) {
               const geometry = new THREE.BufferGeometry().setFromPoints([ball1.position, ball2.position]);
               const line = new THREE.Line(geometry, connectionMaterial);
               scene.add(line);
@@ -1385,178 +1477,23 @@
       });
     }
 
-    // Technology Demo Visualization - Neural network visualization
-    function initTechDemo() {
-      const container = document.getElementById('tech-canvas');
-      if (!container) return;
-      
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      container.appendChild(renderer.domElement);
-      
-      const scene = new THREE.Scene();
-      
-      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-      camera.position.z = 20;
-      
-      const nodeCount = 50;
-      const nodes = [];
-      
-      for (let i = 0; i < nodeCount; i++) {
-        const geometry = new THREE.SphereGeometry(0.2 + Math.random() * 0.3, 16, 16);
-        const material = new THREE.MeshBasicMaterial({ 
-          color: new THREE.Color(
-            Math.random() * 0.3 + 0.5,
-            Math.random() * 0.3 + 0.5,
-            Math.random() * 0.3 + 0.5
-          ),
-          transparent: true,
-          opacity: 0.7
-        });
-        
-        const node = new THREE.Mesh(geometry, material);
-        
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(Math.random() * 2 - 1);
-        const radius = Math.random() * 15;
-        
-        node.position.x = radius * Math.sin(phi) * Math.cos(theta);
-        node.position.y = radius * Math.sin(phi) * Math.sin(theta);
-        node.position.z = radius * Math.cos(phi);
-        
-        node.velocity = {
-          x: (Math.random() - 0.5) * 0.05,
-          y: (Math.random() - 0.5) * 0.05,
-          z: (Math.random() - 0.5) * 0.05
-        };
-        
-        scene.add(node);
-        nodes.push(node);
+    // Demo Level Toggle
+    function showLevel(level) {
+      const level1 = document.getElementById('arachnophobia-demo');
+      const level2 = document.getElementById('arachnophobia-level2');
+      const level1Btn = document.getElementById('level1-btn');
+      const level2Btn = document.getElementById('level2-btn');
+      level1.style.display = level === 'level1' ? 'block' : 'none';
+      level2.style.display = level === 'level2' ? 'block' : 'none';
+      if (level === 'level1') {
+        level1Btn.classList.remove('btn-outline');
+        level2Btn.classList.add('btn-outline');
+        if (typeof initLevel1 === 'function') initLevel1();
+      } else {
+        level2Btn.classList.remove('btn-outline');
+        level1Btn.classList.add('btn-outline');
+        if (typeof initLevel2 === 'function') initLevel2();
       }
-      
-      const lineGroup = new THREE.Group();
-      scene.add(lineGroup);
-      
-      function updateConnections() {
-        while(lineGroup.children.length > 0) {
-          const line = lineGroup.children[0];
-          lineGroup.remove(line);
-          line.geometry.dispose();
-          line.material.dispose();
-        }
-        
-        for (let i = 0; i < nodes.length; i++) {
-          const node1 = nodes[i];
-          
-          for (let j = i + 1; j < nodes.length; j++) {
-            const node2 = nodes[j];
-            
-            const dx = node1.position.x - node2.position.x;
-            const dy = node1.position.y - node2.position.y;
-            const dz = node1.position.z - node2.position.z;
-            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            
-            if (distance < 8) {
-              const strength = 1 - distance / 8;
-              
-              const material = new THREE.LineBasicMaterial({ 
-                color: 0x47a0ff,
-                transparent: true,
-                opacity: strength * 0.5
-              });
-              
-              const points = [];
-              points.push(new THREE.Vector3(node1.position.x, node1.position.y, node1.position.z));
-              points.push(new THREE.Vector3(node2.position.x, node2.position.y, node2.position.z));
-              
-              const geometry = new THREE.BufferGeometry().setFromPoints(points);
-              const line = new THREE.Line(geometry, material);
-              
-              lineGroup.add(line);
-            }
-          }
-        }
-      }
-      
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-      scene.add(ambientLight);
-      
-      const particlesCount = 500;
-      const particlesGeometry = new THREE.BufferGeometry();
-      const particlesPositions = new Float32Array(particlesCount * 3);
-      const particlesSizes = new Float32Array(particlesCount);
-      
-      for (let i = 0; i < particlesCount; i++) {
-        const i3 = i * 3;
-        particlesPositions[i3] = (Math.random() - 0.5) * 50;
-        particlesPositions[i3 + 1] = (Math.random() - 0.5) * 50;
-        particlesPositions[i3 + 2] = (Math.random() - 0.5) * 50;
-        particlesSizes[i] = Math.random() * 2;
-      }
-      
-      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
-      particlesGeometry.setAttribute('size', new THREE.BufferAttribute(particlesSizes, 1));
-      
-      const particlesMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.1,
-        transparent: true,
-        opacity: 0.4
-      });
-      
-      const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-      scene.add(particles);
-      
-      const clock = new THREE.Clock();
-      function animate() {
-        requestAnimationFrame(animate);
-        
-        const elapsedTime = clock.getElapsedTime();
-        
-        scene.rotation.y = elapsedTime * 0.05;
-        
-        nodes.forEach(node => {
-          const scale = 1 + Math.sin(elapsedTime * 2 + node.position.x) * 0.2;
-          node.scale.set(scale, scale, scale);
-          
-          node.position.x += node.velocity.x;
-          node.position.y += node.velocity.y;
-          node.position.z += node.velocity.z;
-          
-          if (Math.abs(node.position.x) > 15) node.velocity.x *= -1;
-          if (Math.abs(node.position.y) > 15) node.velocity.y *= -1;
-          if (Math.abs(node.position.z) > 15) node.velocity.z *= -1;
-        });
-        
-        if (Math.random() < 0.05) {
-          updateConnections();
-        }
-        
-        const positions = particles.geometry.attributes.position.array;
-        for (let i = 0; i < particlesCount; i++) {
-          const i3 = i * 3;
-          positions[i3 + 1] += 0.01 * Math.sin(elapsedTime + i);
-          
-          if (Math.abs(positions[i3]) > 25 || 
-              Math.abs(positions[i3 + 1]) > 25 || 
-              Math.abs(positions[i3 + 2]) > 25) {
-            positions[i3] = (Math.random() - 0.5) * 50;
-            positions[i3 + 1] = (Math.random() - 0.5) * 50;
-            positions[i3 + 2] = (Math.random() - 0.5) * 50;
-          }
-        }
-        particles.geometry.attributes.position.needsUpdate = true;
-        
-        renderer.render(scene, camera);
-      }
-      
-      animate();
-      
-      window.addEventListener('resize', () => {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-      });
     }
   </script>
   <script src="main.js"></script>
