@@ -385,7 +385,8 @@ function initLevel2() {
     });
 
     function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(7, 0.2, 5);
+      // Change: Make the table (second table) way larger by doubling its dimensions.
+      const tableGeometry = new THREE.BoxGeometry(14, 0.2, 10);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
@@ -404,7 +405,7 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // Load the Spider Model ("spider2.glb") and position it exactly on the table.
+    // Load the Spider Model ("jumping_spider_habronattus_coecatus_compressed.glb") and position it exactly on the table.
     // --------------------------------------------------------------------
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
@@ -420,7 +421,8 @@ function initLevel2() {
         'jumping_spider_habronattus_coecatus_compressed.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
-          spiderModel.scale.set(1.5, 1.5, 1.5);
+          // Change: Make the spider 1.5 times smaller by adjusting its scale.
+          spiderModel.scale.set(1.0, 1.0, 1.0);
           spiderModel.updateMatrixWorld(true);
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           console.log('Spider bounding box:', bbox);
