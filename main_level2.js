@@ -36,7 +36,7 @@ function initLevel2() {
     return;
   }
 
-  // Check if THREE and GLTFLoader are available
+  // Library Checks
   if (typeof THREE === 'undefined') {
     console.error('THREE is not defined. Make sure Three.js is loaded.');
     container.innerHTML = '<p style="padding:20px;text-align:center;">Failed to load 3D libraries.</p>';
@@ -86,7 +86,7 @@ function initLevel2() {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xa0a0a0);
 
-    // Camera is placed a bit farther (z=4.5 initially).
+    // For VR entrance, we use the same initial camera as in main.js, but later it will be repositioned.
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
@@ -193,7 +193,7 @@ function initLevel2() {
     scene.add(rimLight);
 
     // --------------------------------------------------------------------
-    // VR Headset Entrance Animation (same as main.js)
+    // VR Headset Entrance Animation (Same as main.js)
     // --------------------------------------------------------------------
     let vrHeadset;
     let mainScene = new THREE.Group();
@@ -221,6 +221,7 @@ function initLevel2() {
           vrHeadset.scale.set(5, 5, 5);
           vrHeadset.position.set(0, 0.8, 0);
           vrHeadset.rotation.set(0, 0, 0);
+
           vrHeadset.traverse(function(node) {
             if (node.isMesh) {
               node.castShadow = true;
@@ -240,7 +241,6 @@ function initLevel2() {
             leftEyePosition.applyMatrix4(vrHeadset.matrixWorld);
           }
           scene.add(vrHeadset);
-          // Initially, camera is close to the VR headset
           camera.position.set(0, 1.2, 3.5);
           camera.lookAt(vrHeadset.position);
           if (loadingElement && loadingElement.parentNode) {
@@ -307,8 +307,8 @@ function initLevel2() {
               animationPhase = 3;
               animationProgress = 0;
               vrHeadset.visible = false;
-              // After VR entrance, place the camera farther from the spider
-              camera.position.set(0, 1.2, 5); // more distance
+              // After VR entrance, set the camera a bit farther so the whole spider is visible.
+              camera.position.set(0, 1.2, 4.0);
               camera.lookAt(0, 0.6, 0);
               if (controls) {
                 controls.target.set(0, 0.6, 0);
@@ -329,7 +329,7 @@ function initLevel2() {
 
     // --------------------------------------------------------------------
     // 7. Main Photorealistic Scene
-    // Table is now bigger, spider is smaller, and offset so it doesn’t float.
+    // In Level 2 we now create a larger table and then load the jumping spider.
     // --------------------------------------------------------------------
     const woodTextures = { map: null, normalMap: null, roughnessMap: null };
     let texturesLoaded = 0;
@@ -364,9 +364,9 @@ function initLevel2() {
       createTableIfTexturesLoaded();
     });
 
-    // Table is 2× bigger: 10×0.2×6 instead of 5×0.2×3
+    // Create a table 1.5× bigger than original (7.5 × 0.2 × 4.5)
     function createTable() {
-      const tableGeometry = new THREE.BoxGeometry(10, 0.2, 6);
+      const tableGeometry = new THREE.BoxGeometry(7.5, 0.2, 4.5);
       const tableMaterial = new THREE.MeshStandardMaterial({
         map: woodTextures.map,
         normalMap: woodTextures.normalMap,
@@ -376,16 +376,16 @@ function initLevel2() {
         envMap: envMap
       });
       const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      // Table’s top at y=0.1
+      // The table's top will be at: table.position.y + 0.2/2. With table.position.y set to -0.1, the top is 0.1.
       table.position.y = -0.1;
       table.receiveShadow = true;
       mainScene.add(table);
-
-      // Immediately load the spider
+      
+      // Now load the jumping spider.
       loadSpiderModel();
     }
 
-    let mixer; // For GLTF animations
+    // Load the jumping spider model, make it smaller, and bring it closer to the table.
     function loadSpiderModel() {
       if (loadingElement && loadingElement.parentNode) {
         loadingElement.textContent = 'Loading spider model...';
@@ -400,18 +400,16 @@ function initLevel2() {
         'jumping_spider_habronattus_coecatus_compressed.glb',
         function(gltf) {
           const spiderModel = gltf.scene;
-          // Spider is now smaller (scale=0.8) instead of 1.5
-          spiderModel.scale.set(0.8, 0.8, 0.8);
+          // Make the spider smaller:
+          spiderModel.scale.set(1, 1, 1);
           spiderModel.updateMatrixWorld(true);
-
-          // Calculate bounding box to place spider on table
+          // Compute bounding box to center the model and position it on the table.
           const bbox = new THREE.Box3().setFromObject(spiderModel);
           const center = new THREE.Vector3();
           bbox.getCenter(center);
-
-          // Let table’s top = y=0.1, so spider bottom is at 0.1
-          // i.e. spiderModel.position.y = 0.1 - bbox.min.y
-          const offsetY = 0.1 - bbox.min.y;
+          // Table top is at 0.1; adjust offset so the spider's bottom sits on the table.
+          // Here we subtract an additional 0.05 to bring it closer.
+          const offsetY = 0.1 - bbox.min.y - 0.05;
           spiderModel.position.set(-center.x, offsetY, -center.z);
 
           spiderModel.traverse(function(node) {
@@ -425,8 +423,7 @@ function initLevel2() {
             }
           });
           mainScene.add(spiderModel);
-
-          // If spider has built-in animations, play them
+          // Play built-in animations if available.
           if (gltf.animations && gltf.animations.length > 0) {
             console.log(`Spider model has ${gltf.animations.length} animations`);
             mixer = new THREE.AnimationMixer(spiderModel);
@@ -437,7 +434,8 @@ function initLevel2() {
           } else {
             console.log('No animations found in the model');
           }
-
+          // Ensure the camera looks directly at the spider.
+          camera.lookAt(spiderModel.position);
           addDustParticles();
           finalizeScene();
           if (loadingElement && loadingElement.parentNode) {
@@ -489,22 +487,24 @@ function initLevel2() {
     }
 
     // --------------------------------------------------------------------
-    // FINALIZE THE SCENE SETUP & START THE ANIMATION LOOP
+    // FINALIZE THE SCENE SETUP & ANIMATION LOOP
     // --------------------------------------------------------------------
     const mainClock = new THREE.Clock();
+    let mixer; // Spider animation mixer
     function finalizeScene() {
+      // Start the VR headset entrance animation.
       loadVRHeadset();
-
+      
       function animate() {
         requestAnimationFrame(animate);
         const delta = mainClock.getDelta();
-
+        
         if (animationPhase < 3) {
           updateVRHeadsetAnimation(delta);
         }
-
+        
         if (mixer) mixer.update(delta);
-
+        
         if (window.dustParticles) {
           const positions = window.dustParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
@@ -515,20 +515,20 @@ function initLevel2() {
           window.dustParticles.geometry.attributes.position.needsUpdate = true;
           window.dustParticles.rotation.y += delta * 0.01;
         }
-
+        
         if (controls && animationPhase === 3) {
           controls.enabled = true;
           controls.update();
         } else if (controls) {
           controls.enabled = false;
         }
-
+        
         renderer.render(scene, camera);
       }
       animate();
 
       // ------------------------------
-      // UI CONTROLS: Fullscreen, Auto-Rotate, Instructions, Resize Handling
+      // UI CONTROLS
       // ------------------------------
       function addUIControls() {
         const fsButton = document.createElement('button');
@@ -595,7 +595,7 @@ function initLevel2() {
         instructions.style.borderRadius = '5px';
         instructions.style.fontSize = '14px';
         instructions.style.zIndex = '10';
-        // Make instruction text black
+        // Set the instructions text color to black.
         instructions.style.color = '#000';
         instructions.innerHTML = 'Click and drag to rotate<br>Scroll to zoom';
         container.appendChild(instructions);
@@ -663,11 +663,11 @@ function initLevel2() {
       }
 
       addUIControls();
-      console.log('Scene setup completed (Level 2 photorealistic scene with VR headset entrance).');
+      console.log('Scene setup completed (photorealistic scene with VR headset entrance).');
     }
 
     // --------------------------------------------------------------------
-    // Fallback if textures do not load within 5 seconds
+    // Fallback: Use fallback materials if textures do not load in time.
     // --------------------------------------------------------------------
     setTimeout(() => {
       if (texturesLoaded < requiredTextures) {
@@ -680,7 +680,7 @@ function initLevel2() {
     }, 5000);
 
     // --------------------------------------------------------------------
-    // Resize logic
+    // Resize Logic
     // --------------------------------------------------------------------
     function handleResize() {
       const width = container.clientWidth;
