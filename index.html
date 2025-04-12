@@ -25,7 +25,6 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
 
   <style>
     :root {
@@ -1340,7 +1339,7 @@
         }
       });
       
-      // Blob background animation with cosmic web
+      // Blob background animation with metaballs
       initBlobCanvas();
 
       // Contact Form Submission
@@ -1385,215 +1384,183 @@
       });
     });
 
-    // Blob Canvas Animation with Cosmic Web
+    // Blob Canvas Animation with Metablobs
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
-
+      
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
+      
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 50;
+      camera.position.z = 30;
+      
+      const metaballs = [];
+      const largeMetaballCount = 12; // More larger metaballs
+      const smallMetaballCount = 8; // Fewer smaller metaballs
+      const heroHeight = document.querySelector('.hero').offsetHeight;
 
-      // Cosmic strand material
-      const strandMaterial = new THREE.LineBasicMaterial({
-        color: 0x47a0ff,
-        transparent: true,
-        opacity: 0.6,
-        linewidth: 2,
-        blending: THREE.AdditiveBlending
-      });
-
-      // Node material for glowing points
-      const nodeMaterial = new THREE.PointsMaterial({
-        color: 0xffd166,
-        size: 0.5,
-        transparent: true,
-        opacity: 0.8,
-        blending: THREE.AdditiveBlending
-      });
-
-      // Particle material for ethereal sparks
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0xff3366,
-        size: 0.2,
-        transparent: true,
-        opacity: 0.7,
-        blending: THREE.AdditiveBlending
-      });
-
-      const nodes = [];
-      const strands = [];
-      const particles = [];
-      const nodeCount = 30; // Nodes forming the cosmic web
-
-      // Create nodes in a galaxy-like distribution
-      for (let i = 0; i < nodeCount; i++) {
-        const angle = (i / nodeCount) * Math.PI * 2;
-        const radius = 10 + Math.random() * 20;
-        const z = (Math.random() - 0.5) * 10;
-        const node = new THREE.Vector3(
-          Math.cos(angle) * radius,
-          Math.sin(angle) * radius,
-          z
-        );
-        node.velocity = new THREE.Vector3(
-          (Math.random() - 0.5) * 0.01,
-          (Math.random() - 0.5) * 0.01,
-          (Math.random() - 0.5) * 0.01
-        );
-        node.phase = Math.random() * Math.PI * 2;
-        nodes.push(node);
+      const materials = [
+        new THREE.MeshStandardMaterial({
+          color: 0x47a0ff,
+          metalness: 0.2,
+          roughness: 0.8,
+          transparent: true,
+          opacity: 0.8
+        }),
+        new THREE.MeshStandardMaterial({
+          color: 0xffd166,
+          metalness: 0.3,
+          roughness: 0.7,
+          transparent: true,
+          opacity: 0.7
+        }),
+        new THREE.MeshStandardMaterial({
+          color: 0xff3366,
+          metalness: 0.1,
+          roughness: 0.9,
+          transparent: true,
+          opacity: 0.6
+        })
+      ];
+      
+      function noise3D(x, y, z) {
+        return Math.sin(x * 0.1) * Math.sin(y * 0.1) * Math.sin(z * 0.1);
+      }
+      
+      // Larger metaballs for all sections
+      for (let i = 0; i < largeMetaballCount; i++) {
+        const radius = Math.random() * 3 + 2; // Larger radius for main blobs
+        const geometry = new THREE.IcosahedronGeometry(radius, 8);
+        const vertices = geometry.attributes.position.array;
+        for (let j = 0; j < vertices.length; j += 3) {
+          const x = vertices[j];
+          const y = vertices[j+1];
+          const z = vertices[j+2];
+          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          vertices[j] += x * n;
+          vertices[j+1] += y * n;
+          vertices[j+2] += z * n;
+        }
+        const material = materials[Math.floor(Math.random() * materials.length)].clone();
+        const mesh = new THREE.Mesh(geometry, material);
+        const sectionOffset = (i * (window.innerHeight / largeMetaballCount) * 0.5) + (Math.random() - 0.5) * 20;
+        mesh.position.x = (Math.random() - 0.5) * 40;
+        mesh.position.y = sectionOffset;
+        mesh.position.z = (Math.random() - 0.5) * 30;
+        mesh.velocity = { x: (Math.random() - 0.5) * 0.05, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.05 };
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        mesh.rotation.z = Math.random() * Math.PI;
+        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
+        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
+        mesh.material.color = mesh.originalColor;
+        scene.add(mesh);
+        metaballs.push(mesh);
       }
 
-      // Create strands connecting nodes
-      function updateStrands() {
-        strands.forEach(strand => scene.remove(strand));
-        strands.length = 0;
+      // Smaller metaballs for hero and subtle connections
+      for (let i = 0; i < smallMetaballCount; i++) {
+        const radius = Math.random() * 0.8 + 0.3; // Smaller radius
+        const geometry = new THREE.IcosahedronGeometry(radius, 8);
+        const vertices = geometry.attributes.position.array;
+        for (let j = 0; j < vertices.length; j += 3) {
+          const x = vertices[j];
+          const y = vertices[j+1];
+          const z = vertices[j+2];
+          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
+          vertices[j] += x * n;
+          vertices[j+1] += y * n;
+          vertices[j+2] += z * n;
+        }
+        const material = materials[Math.floor(Math.random() * materials.length)].clone();
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = (Math.random() - 0.5) * 10;
+        mesh.position.y = (Math.random() - 0.5) * 10 + (Math.random() * heroHeight * 0.2);
+        mesh.position.z = (Math.random() - 0.5) * 5;
+        mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.03 };
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        mesh.rotation.z = Math.random() * Math.PI;
+        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 };
+        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
+        mesh.material.color = mesh.originalColor;
+        scene.add(mesh);
+        metaballs.push(mesh);
+      }
 
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const node1 = nodes[i];
-            const node2 = nodes[j];
-            const distance = node1.distanceTo(node2);
+      const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.1 }); // Subtle connections
+      const connections = [];
 
-            if (distance < 15) { // Connect nodes within range
-              const points = [];
-              const segments = 20; // Smooth curves
-              for (let t = 0; t <= 1; t += 1 / segments) {
-                const point = new THREE.Vector3().lerpVectors(node1, node2, t);
-                // Add wave-like bending
-                const offset = Math.sin(t * Math.PI + node1.phase) * 0.5;
-                point.x += offset * Math.cos(t * Math.PI);
-                point.y += offset * Math.sin(t * Math.PI);
-                points.push(point);
-              }
-              const geometry = new THREE.BufferGeometry().setFromPoints(points);
-              const strand = new THREE.Line(geometry, strandMaterial);
-              scene.add(strand);
-              strands.push(strand);
+      function updateConnections() {
+        connections.forEach(conn => {
+          scene.remove(conn);
+          if (conn.geometry) conn.geometry.dispose();
+        });
+        connections.length = 0;
+
+        for (let i = 0; i < metaballs.length; i++) {
+          const ball1 = metaballs[i];
+          for (let j = i + 1; j < metaballs.length; j++) {
+            const ball2 = metaballs[j];
+            const dx = ball1.position.x - ball2.position.x;
+            const dy = ball1.position.y - ball2.position.y;
+            const dz = ball1.position.z - ball2.position.z;
+            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            const maxDistance = ball1.geometry.parameters.radius < 1 ? 5 : 20; // Connect smaller blobs within 5 units
+
+            if (distance < maxDistance && ball1.geometry.parameters.radius < 1 && ball2.geometry.parameters.radius < 1) { // Only connect smaller blobs
+              const geometry = new THREE.BufferGeometry().setFromPoints([ball1.position, ball2.position]);
+              const line = new THREE.Line(geometry, connectionMaterial);
+              scene.add(line);
+              connections.push(line);
             }
           }
         }
       }
-
-      // Create node visuals
-      const nodeGeometry = new THREE.BufferGeometry().setFromPoints(nodes);
-      const nodePoints = new THREE.Points(nodeGeometry, nodeMaterial);
-      scene.add(nodePoints);
-
-      // Create particle system
-      function spawnParticles() {
-        const particleCount = 10;
-        const particleGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const velocities = new Float32Array(particleCount * 3);
-
-        for (let i = 0; i < particleCount; i++) {
-          const node = nodes[Math.floor(Math.random() * nodes.length)];
-          positions[i * 3] = node.x;
-          positions[i * 3 + 1] = node.y;
-          positions[i * 3 + 2] = node.z;
-          // Particles move toward camera
-          const direction = new THREE.Vector3(0, 0, 50).sub(node).normalize();
-          velocities[i * 3] = direction.x * (0.1 + Math.random() * 0.2);
-          velocities[i * 3 + 1] = direction.y * (0.1 + Math.random() * 0.2);
-          velocities[i * 3 + 2] = direction.z * (0.1 + Math.random() * 0.2);
-        }
-
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        particleGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
-        const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-        scene.add(particleSystem);
-        particles.push(particleSystem);
-
-        // Fade out particles
-        setTimeout(() => {
-          new TWEEN.Tween(particleMaterial)
-            .to({ opacity: 0 }, 2000)
-            .onComplete(() => {
-              scene.remove(particleSystem);
-              particleGeometry.dispose();
-              particles.splice(particles.indexOf(particleSystem), 1);
-            })
-            .start();
-        }, 2000);
-      }
-
-      // Lighting for cosmic effect
-      const ambientLight = new THREE.AmbientLight(0x0a1a2a, 0.3);
+      
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0x47a0ff, 0.8, 100);
-      pointLight.position.set(20, 20, 20);
-      scene.add(pointLight);
-
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(10, 10, 10);
+      scene.add(directionalLight);
+      
       const clock = new THREE.Clock();
       let mouseX = 0, mouseY = 0;
-
       window.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX / window.innerWidth - 0.5) * 20;
-        mouseY = -(event.clientY / window.innerHeight - 0.5) * 20;
+        mouseX = event.clientX - window.innerWidth / 2;
+        mouseY = event.clientY - window.innerHeight / 2;
       });
-
-      // Animation loop
+      
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-
-        // Update nodes with fluid motion
-        nodes.forEach((node, i) => {
-          // Galactic spiral motion
-          const angle = elapsed * 0.1 + node.phase;
-          const radius = 10 + Math.sin(elapsed * 0.05 + node.phase) * 5;
-          node.x += Math.cos(angle) * radius * 0.001 + node.velocity.x;
-          node.y += Math.sin(angle) * radius * 0.001 + node.velocity.y;
-          node.z += node.velocity.z;
-          node.velocity.multiplyScalar(0.98); // Damping
-
-          // Keep nodes within bounds
-          const dist = node.length();
-          if (dist > 30) {
-            node.normalize().multiplyScalar(30);
-            node.velocity.multiplyScalar(-0.5);
-          }
+        metaballs.forEach(ball => {
+          ball.position.x += ball.velocity.x;
+          ball.position.y += ball.velocity.y;
+          ball.position.z += ball.velocity.z;
+          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15;
+          if (Math.abs(ball.position.x) > boundary) ball.velocity.x *= -1;
+          if (Math.abs(ball.position.y) > boundary) ball.velocity.y *= -1;
+          if (Math.abs(ball.position.z) > boundary) ball.velocity.z *= -1;
+          ball.rotation.x += ball.rotationSpeed.x;
+          ball.rotation.y += ball.rotationSpeed.y;
+          ball.rotation.z += ball.rotationSpeed.z;
+          const scale = 1 + Math.sin(elapsed * 2 + ball.position.x * 0.5) * 0.1;
+          ball.scale.set(scale, scale, scale);
+          const hue = (elapsed * 0.05 + ball.position.x * 0.01) % 1;
+          ball.material.color.setHSL(hue, 0.6, 0.6);
         });
-
-        // Update node visuals
-        nodeGeometry.attributes.position.needsUpdate = true;
-
-        // Update strands
-        updateStrands();
-
-        // Update particles
-        particles.forEach(particleSystem => {
-          const positions = particleSystem.geometry.attributes.position.array;
-          const velocities = particleSystem.geometry.attributes.velocity.array;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i] += velocities[i];
-            positions[i + 1] += velocities[i + 1];
-            positions[i + 2] += velocities[i + 2];
-          }
-          particleSystem.geometry.attributes.position.needsUpdate = true;
-        });
-
-        // Spawn new particles periodically
-        if (Math.random() < 0.1) spawnParticles();
-
-        // Camera movement for immersion
-        camera.position.x += (mouseX - camera.position.x) * 0.05;
-        camera.position.y += (mouseY - camera.position.y) * 0.05;
-        camera.lookAt(scene.position);
-
+        if (Math.random() < 0.05) updateConnections(); // Update connections less frequently to avoid performance issues
+        scene.rotation.y += ((mouseX * 0.0001) - scene.rotation.y) * 0.01;
+        scene.rotation.x += ((mouseY * 0.0001) - scene.rotation.x) * 0.01;
         renderer.render(scene, camera);
-        TWEEN.update();
       }
-
+      
       animate();
-
-      // Handle window resize
+      
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
