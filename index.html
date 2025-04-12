@@ -25,6 +25,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
 
   <style>
     :root {
@@ -1384,183 +1385,247 @@
       });
     });
 
-    // Blob Canvas Animation with Metablobs
+    // Blob Canvas Animation with Metablobs (Sci-Fi, Fluid, Thematic)
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) return;
-      
+
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      
+
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 30;
-      
-      const metaballs = [];
-      const largeMetaballCount = 12; // More larger metaballs
-      const smallMetaballCount = 8; // Fewer smaller metaballs
-      const heroHeight = document.querySelector('.hero').offsetHeight;
 
+      // Materials for different blob types (sci-fi glow)
       const materials = [
-        new THREE.MeshStandardMaterial({
-          color: 0x47a0ff,
-          metalness: 0.2,
-          roughness: 0.8,
-          transparent: true,
-          opacity: 0.8
-        }),
-        new THREE.MeshStandardMaterial({
-          color: 0xffd166,
-          metalness: 0.3,
-          roughness: 0.7,
-          transparent: true,
-          opacity: 0.7
-        }),
-        new THREE.MeshStandardMaterial({
-          color: 0xff3366,
+        new THREE.MeshPhysicalMaterial({
+          color: 0x47a0ff, // Primary blue (calm, high-tech)
           metalness: 0.1,
-          roughness: 0.9,
+          roughness: 0.2,
+          emissive: 0x0a3d7a, // Subtle glow
+          emissiveIntensity: 0.5,
           transparent: true,
-          opacity: 0.6
+          opacity: 0.9,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.1
+        }),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xffd166, // Warm accent (hope, rebirth)
+          metalness: 0.15,
+          roughness: 0.25,
+          emissive: 0x664d00,
+          emissiveIntensity: 0.4,
+          transparent: true,
+          opacity: 0.85,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.15
+        }),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xff3366, // Energetic pink (life, transformation)
+          metalness: 0.1,
+          roughness: 0.3,
+          emissive: 0x660033,
+          emissiveIntensity: 0.6,
+          transparent: true,
+          opacity: 0.8,
+          clearcoat: 0.9,
+          clearcoatRoughness: 0.2
         })
       ];
-      
-      function noise3D(x, y, z) {
-        return Math.sin(x * 0.1) * Math.sin(y * 0.1) * Math.sin(z * 0.1);
-      }
-      
-      // Larger metaballs for all sections
-      for (let i = 0; i < largeMetaballCount; i++) {
-        const radius = Math.random() * 3 + 2; // Larger radius for main blobs
-        const geometry = new THREE.IcosahedronGeometry(radius, 8);
+
+      // Create a system of interconnected blobs
+      const blobSystem = [];
+      const blobCount = 8; // Fewer, larger blobs for elegance
+      const baseRadius = 3; // Larger, more substantial blobs
+
+      // Wave-like motion parameters
+      const waveFrequency = 0.005;
+      const waveAmplitude = 5;
+      const connectionDistance = 15; // How close blobs need to be to connect
+
+      // Initialize blobs in a circular pattern (symbolizing unity and creation)
+      for (let i = 0; i < blobCount; i++) {
+        const angle = (i / blobCount) * Math.PI * 2;
+        const radius = 20; // Circular arrangement radius
+        const geometry = new THREE.IcosahedronGeometry(baseRadius, 8);
+        
+        // Subtle noise for organic shape
         const vertices = geometry.attributes.position.array;
         for (let j = 0; j < vertices.length; j += 3) {
           const x = vertices[j];
-          const y = vertices[j+1];
-          const z = vertices[j+2];
-          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
-          vertices[j] += x * n;
-          vertices[j+1] += y * n;
-          vertices[j+2] += z * n;
+          const y = vertices[j + 1];
+          const z = vertices[j + 2];
+          const noise = Math.sin(x * 0.5 + y * 0.5 + z * 0.5) * 0.3;
+          vertices[j] += x * noise;
+          vertices[j + 1] += y * noise;
+          vertices[j + 2] += z * noise;
         }
+
         const material = materials[Math.floor(Math.random() * materials.length)].clone();
         const mesh = new THREE.Mesh(geometry, material);
-        const sectionOffset = (i * (window.innerHeight / largeMetaballCount) * 0.5) + (Math.random() - 0.5) * 20;
-        mesh.position.x = (Math.random() - 0.5) * 40;
-        mesh.position.y = sectionOffset;
-        mesh.position.z = (Math.random() - 0.5) * 30;
-        mesh.velocity = { x: (Math.random() - 0.5) * 0.05, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.05 };
-        mesh.rotation.x = Math.random() * Math.PI;
-        mesh.rotation.y = Math.random() * Math.PI;
-        mesh.rotation.z = Math.random() * Math.PI;
-        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 };
-        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
-        mesh.material.color = mesh.originalColor;
+        mesh.position.x = Math.cos(angle) * radius;
+        mesh.position.y = Math.sin(angle) * radius;
+        mesh.position.z = 0;
+        mesh.originalPosition = mesh.position.clone(); // Store initial position for wave motion
+        mesh.phase = Math.random() * Math.PI * 2; // Phase offset for wave synchronization
+        mesh.velocity = new THREE.Vector3(0, 0, 0); // Controlled movement
+        mesh.targetPosition = mesh.position.clone(); // For smooth transitions
+
+        // Add subtle rotation for sci-fi elegance
+        mesh.rotationSpeed = new THREE.Vector3(
+          (Math.random() - 0.5) * 0.002,
+          (Math.random() - 0.5) * 0.002,
+          (Math.random() - 0.5) * 0.002
+        );
+
         scene.add(mesh);
-        metaballs.push(mesh);
+        blobSystem.push(mesh);
       }
 
-      // Smaller metaballs for hero and subtle connections
-      for (let i = 0; i < smallMetaballCount; i++) {
-        const radius = Math.random() * 0.8 + 0.3; // Smaller radius
-        const geometry = new THREE.IcosahedronGeometry(radius, 8);
-        const vertices = geometry.attributes.position.array;
-        for (let j = 0; j < vertices.length; j += 3) {
-          const x = vertices[j];
-          const y = vertices[j+1];
-          const z = vertices[j+2];
-          const n = noise3D(x * 5, y * 5, z * 5) * 0.5;
-          vertices[j] += x * n;
-          vertices[j+1] += y * n;
-          vertices[j+2] += z * n;
-        }
-        const material = materials[Math.floor(Math.random() * materials.length)].clone();
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = (Math.random() - 0.5) * 10;
-        mesh.position.y = (Math.random() - 0.5) * 10 + (Math.random() * heroHeight * 0.2);
-        mesh.position.z = (Math.random() - 0.5) * 5;
-        mesh.velocity = { x: (Math.random() - 0.5) * 0.03, y: (Math.random() - 0.5) * 0.03, z: (Math.random() - 0.5) * 0.03 };
-        mesh.rotation.x = Math.random() * Math.PI;
-        mesh.rotation.y = Math.random() * Math.PI;
-        mesh.rotation.z = Math.random() * Math.PI;
-        mesh.rotationSpeed = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 };
-        mesh.originalColor = new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.4, Math.random() * 0.5 + 0.5);
-        mesh.material.color = mesh.originalColor;
-        scene.add(mesh);
-        metaballs.push(mesh);
-      }
+      // Lighting for sci-fi atmosphere
+      const ambientLight = new THREE.AmbientLight(0x0a1a2a, 0.3); // Dark, moody ambient
+      scene.add(ambientLight);
 
-      const connectionMaterial = new THREE.LineBasicMaterial({ color: 0x47a0ff, transparent: true, opacity: 0.1 }); // Subtle connections
-      const connections = [];
+      const pointLight = new THREE.PointLight(0x47a0ff, 0.8, 100);
+      pointLight.position.set(10, 10, 10);
+      scene.add(pointLight);
 
-      function updateConnections() {
-        connections.forEach(conn => {
-          scene.remove(conn);
-          if (conn.geometry) conn.geometry.dispose();
+      const clock = new THREE.Clock();
+      let mouseX = 0, mouseY = 0;
+
+      window.addEventListener('mousemove', (event) => {
+        mouseX = (event.clientX / window.innerWidth - 0.5) * 10;
+        mouseY = -(event.clientY / window.innerHeight - 0.5) * 10;
+      });
+
+      // Function to create smooth, wave-like motion
+      function updateBlobPositions(elapsed) {
+        blobSystem.forEach((blob, index) => {
+          // Wave motion (calming, synchronized)
+          const waveOffset = Math.sin(elapsed * waveFrequency + blob.phase) * waveAmplitude;
+          blob.targetPosition.copy(blob.originalPosition);
+          blob.targetPosition.y += waveOffset;
+
+          // Smoothly interpolate to target position
+          blob.position.lerp(blob.targetPosition, 0.05);
+
+          // Subtle attraction/repulsion between blobs (fluid recombination)
+          blobSystem.forEach(otherBlob => {
+            if (blob !== otherBlob) {
+              const distance = blob.position.distanceTo(otherBlob.position);
+              if (distance < connectionDistance) {
+                const direction = otherBlob.position.clone().sub(blob.position).normalize();
+                const force = (connectionDistance - distance) * 0.01;
+                blob.velocity.add(direction.multiplyScalar(force));
+              }
+            }
+          });
+
+          // Apply velocity with damping
+          blob.position.add(blob.velocity);
+          blob.velocity.multiplyScalar(0.95); // Damping for smooth flow
+
+          // Rotate subtly
+          blob.rotation.x += blob.rotationSpeed.x;
+          blob.rotation.y += blob.rotationSpeed.y;
+          blob.rotation.z += blob.rotationSpeed.z;
+
+          // Pulse effect (breathing, rebirth)
+          const pulse = 1 + Math.sin(elapsed * 0.5 + index) * 0.05;
+          blob.scale.set(pulse, pulse, pulse);
+
+          // Subtle color shift for sci-fi glow
+          const hueShift = Math.sin(elapsed * 0.1 + index) * 0.1;
+          blob.material.color.setHSL(
+            (blob.material.color.getHSL().h + hueShift) % 1,
+            0.6,
+            0.6
+          );
         });
-        connections.length = 0;
 
-        for (let i = 0; i < metaballs.length; i++) {
-          const ball1 = metaballs[i];
-          for (let j = i + 1; j < metaballs.length; j++) {
-            const ball2 = metaballs[j];
-            const dx = ball1.position.x - ball2.position.x;
-            const dy = ball1.position.y - ball2.position.y;
-            const dz = ball1.position.z - ball2.position.z;
-            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            const maxDistance = ball1.geometry.parameters.radius < 1 ? 5 : 20; // Connect smaller blobs within 5 units
+        // Recombination and detachment (simulating world formation)
+        for (let i = 0; i < blobSystem.length; i++) {
+          for (let j = i + 1; j < blobSystem.length; j++) {
+            const blob1 = blobSystem[i];
+            const blob2 = blobSystem[j];
+            const distance = blob1.position.distanceTo(blob2.position);
 
-            if (distance < maxDistance && ball1.geometry.parameters.radius < 1 && ball2.geometry.parameters.radius < 1) { // Only connect smaller blobs
-              const geometry = new THREE.BufferGeometry().setFromPoints([ball1.position, ball2.position]);
-              const line = new THREE.Line(geometry, connectionMaterial);
-              scene.add(line);
-              connections.push(line);
+            if (distance < baseRadius * 2) { // Close enough to merge or split
+              // Simulate merging by averaging positions
+              const newPos = blob1.position.clone().lerp(blob2.position, 0.5);
+              blob1.targetPosition.copy(newPos);
+              blob2.targetPosition.copy(newPos);
+
+              // Slightly increase size to suggest growth
+              blob1.scale.multiplyScalar(1.01);
+              blob2.scale.multiplyScalar(1.01);
+
+              // Emit a small particle effect (visual rebirth)
+              createParticleEffect(newPos, blob1.material.color);
             }
           }
         }
       }
-      
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-      scene.add(ambientLight);
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(10, 10, 10);
-      scene.add(directionalLight);
-      
-      const clock = new THREE.Clock();
-      let mouseX = 0, mouseY = 0;
-      window.addEventListener('mousemove', (event) => {
-        mouseX = event.clientX - window.innerWidth / 2;
-        mouseY = event.clientY - window.innerHeight / 2;
-      });
-      
+
+      // Particle effect for rebirth/visual impact
+      function createParticleEffect(position, color) {
+        const particleGeometry = new THREE.BufferGeometry();
+        const particleCount = 20;
+        const positions = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+          positions[i] = position.x + (Math.random() - 0.5) * 2;
+          positions[i + 1] = position.y + (Math.random() - 0.5) * 2;
+          positions[i + 2] = position.z + (Math.random() - 0.5) * 2;
+        }
+
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMaterial = new THREE.PointsMaterial({
+          color: color,
+          size: 0.1,
+          transparent: true,
+          opacity: 0.8
+        });
+
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particles);
+
+        // Fade out and remove
+        setTimeout(() => {
+          new TWEEN.Tween(particleMaterial)
+            .to({ opacity: 0 }, 1000)
+            .onComplete(() => {
+              scene.remove(particles);
+              particleGeometry.dispose();
+              particleMaterial.dispose();
+            })
+            .start();
+        }, 1000);
+      }
+
+      // Animation loop
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-        metaballs.forEach(ball => {
-          ball.position.x += ball.velocity.x;
-          ball.position.y += ball.velocity.y;
-          ball.position.z += ball.velocity.z;
-          const boundary = ball.geometry.parameters.radius > 1 ? 25 : 15;
-          if (Math.abs(ball.position.x) > boundary) ball.velocity.x *= -1;
-          if (Math.abs(ball.position.y) > boundary) ball.velocity.y *= -1;
-          if (Math.abs(ball.position.z) > boundary) ball.velocity.z *= -1;
-          ball.rotation.x += ball.rotationSpeed.x;
-          ball.rotation.y += ball.rotationSpeed.y;
-          ball.rotation.z += ball.rotationSpeed.z;
-          const scale = 1 + Math.sin(elapsed * 2 + ball.position.x * 0.5) * 0.1;
-          ball.scale.set(scale, scale, scale);
-          const hue = (elapsed * 0.05 + ball.position.x * 0.01) % 1;
-          ball.material.color.setHSL(hue, 0.6, 0.6);
-        });
-        if (Math.random() < 0.05) updateConnections(); // Update connections less frequently to avoid performance issues
-        scene.rotation.y += ((mouseX * 0.0001) - scene.rotation.y) * 0.01;
-        scene.rotation.x += ((mouseY * 0.0001) - scene.rotation.x) * 0.01;
+
+        // Update blob positions with wave-like motion
+        updateBlobPositions(elapsed);
+
+        // Slight camera movement for immersion
+        camera.position.x = mouseX * 0.1;
+        camera.position.y = mouseY * 0.1;
+        camera.lookAt(scene.position);
+
         renderer.render(scene, camera);
+
+        TWEEN.update();
       }
-      
+
       animate();
-      
+
+      // Handle window resize
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
