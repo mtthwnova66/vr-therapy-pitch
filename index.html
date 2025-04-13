@@ -1584,7 +1584,7 @@
       pointLight2.position.set(-10, -10, -10);
       scene.add(pointLight2);
 
-      // Fade animations
+      // Fade animations (run as before)
       function animateFades() {
         new TWEEN.Tween(tinyStarMaterial).to({ opacity: 0.2 }, 5000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
         new TWEEN.Tween(mediumStarMaterial).to({ opacity: 0.3 }, 6000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
@@ -1647,6 +1647,13 @@
             radius * Math.sin(phi) * Math.sin(theta),
             radius * Math.cos(phi)
           );
+        });
+
+        // Prevent fading: Reset opacities on every frame
+        tinyStarMaterial.opacity = 0.4;
+        mediumStarMaterial.opacity = 0.5;
+        largeOrbGroup.children.forEach(orb => {
+          orb.material.opacity = 0.7;
         });
 
         renderer.render(scene, camera);
