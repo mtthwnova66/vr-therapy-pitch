@@ -12,8 +12,11 @@
   <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://synaeon.com/">
+  <!-- Added image metadata -->
+  <meta property="og:image" content="Scris_final_final copy.png">
+  <meta name="twitter:image" content="Scris_final_final copy.png">
   <meta name="twitter:card" content="summary_large_image">
-  
+
   <link rel="icon" type="image/png" href="syneon_image.png">
   <link rel="apple-touch-icon" href="syneon_image.png">
   
@@ -221,7 +224,7 @@
       position: relative;
       z-index: 1;
       transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-      margin-top: 15vh; /* Shift significantly lower to show nav and stars */
+      margin-top: 15vh;
     }
 
     .hero-inner:hover {
@@ -238,7 +241,7 @@
     }
 
     .hero-logo img {
-      width: 160px; /* Larger logo */
+      width: 160px;
       height: auto;
       filter: drop-shadow(0 0 10px var(--primary-glow));
       transition: transform 0.3s ease;
@@ -353,8 +356,8 @@
       font-family: var(--font-display);
       font-weight: 500;
       text-decoration: none;
-      padding: 0.8rem 3rem; /* Increased padding for longer buttons */
-      border-radius: 50px; /* Rounded buttons */
+      padding: 0.8rem 3rem;
+      border-radius: 50px;
       border: none;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -362,7 +365,7 @@
       position: relative;
       overflow: hidden;
       z-index: 1;
-      min-width: 250px; /* Longer buttons to prevent overflow */
+      min-width: 250px;
       text-align: center;
     }
 
@@ -393,9 +396,9 @@
       border: 1px solid var(--primary-light);
       color: var(--primary-light);
       box-shadow: 0 4px 15px rgba(0, 113, 227, 0.2);
-      border-radius: 50px; /* Rounded buttons */
-      padding: 0.8rem 3rem; /* Increased padding for longer buttons */
-      min-width: 250px; /* Longer buttons to prevent overflow */
+      border-radius: 50px;
+      padding: 0.8rem 3rem;
+      min-width: 250px;
     }
 
     .btn-outline::before {
@@ -785,7 +788,7 @@
       }
       
       .hero-logo img {
-        width: 120px; /* Slightly smaller for mobile */
+        width: 120px;
       }
       
       .video-container iframe {
@@ -803,20 +806,20 @@
       }
       
       .hero-inner {
-        margin-top: 20vh; /* Adjust for mobile */
+        margin-top: 20vh;
       }
     }
 
     @media (max-width: 576px) {
       .hero-inner {
         padding: 2rem 1.5rem;
-        margin-top: 25vh; /* Further adjust for smaller screens */
+        margin-top: 25vh;
       }
       
       .btn {
         width: 100%;
-        min-width: 100%; /* Full width for smaller screens */
-        padding: 0.8rem 1.5rem; /* Adjust padding */
+        min-width: 100%;
+        padding: 0.8rem 1.5rem;
       }
       
       .btn-outline {
@@ -1386,42 +1389,6 @@
       
       // Blob background animation with starfield
       initBlobCanvas();
-
-      // Contact Form Submission (Disabled)
-      // document.getElementById('contact-form').addEventListener('submit', async function(event) {
-      //   event.preventDefault();
-      //   const form = event.target;
-      //   const formData = new FormData(form);
-      //   const data = {
-      //     name: formData.get('name'),
-      //     email: formData.get('email'),
-      //     message: formData.get('message'),
-      //   };
-      //   const messageElement = document.getElementById('form-message');
-      //   messageElement.style.display = 'none';
-      //   try {
-      //     const response = await fetch('http://localhost:3000/send-email', {
-      //       method: 'POST',
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //       body: JSON.stringify(data),
-      //     });
-      //     const result = await response.json();
-      //     if (response.ok) {
-      //       messageElement.textContent = 'Message sent successfully!';
-      //       messageElement.style.color = 'var(--success)';
-      //       form.reset();
-      //     } else {
-      //       messageElement.textContent = result.error || 'Failed to send message.';
-      //       messageElement.style.color = 'var(--neural-1)';
-      //     }
-      //   } catch (error) {
-      //     messageElement.textContent = 'Error sending message. Please try again.';
-      //     messageElement.style.color = 'var(--neural-1)';
-      //   }
-      //   messageElement.style.display = 'block';
-      // });
     });
 
     // Starfield Animation (Galactic, Serene, Exuberant)
@@ -1676,7 +1643,7 @@
       });
     }
 
-        // VR Demo Controls
+    // VR Demo Controls
     let currentLevel = null;
     let audioPlaying = false;
     const audio = document.getElementById('relaxingAudio');
@@ -1715,7 +1682,6 @@
         }
       }
 
-      // Handle resize to keep canvas sized correctly
       window.addEventListener('resize', () => {
         if (level1Canvas.style.display === 'block' && level1Canvas.querySelector('canvas')) {
           const canvas = level1Canvas.querySelector('canvas');
