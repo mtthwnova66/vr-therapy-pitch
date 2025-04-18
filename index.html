@@ -1,448 +1,1854 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <!-- =========================================
-       Synaeon – AI‑Powered VR Therapy – v2
-       Crafted April 2025 by ChatGPT o3
-       ========================================= -->
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Primary Meta Tags -->
-  <title>Synaeon | AI‑Powered VR Therapy for Modern Mental Health</title>
-  <meta name="title" content="Synaeon | AI‑Powered VR Therapy for Modern Mental Health">
-  <meta name="description" content="Synaeon fuses generative AI with advanced bio‑sensing to deliver clinician‑guided VR exposure therapy that adapts in real‑time to every heartbeat and breath."/>
-  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare, digital therapeutics" />
-  <meta name="author" content="Synaeon" />
-  <link rel="canonical" href="https://synaeon.com/" />
+  <title>Synaeon - AI-Powered VR Therapy | The Future of Mental Healing</title>
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://synaeon.com/" />
-  <meta property="og:title" content="Synaeon | AI‑Powered VR Therapy for Modern Mental Health" />
-  <meta property="og:description" content="Generative AI builds worlds around each patient – clinicians retain full control." />
-  <meta property="og:image" content="https://synaeon.com/og-cover.jpg" />
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Synaeon | AI‑Powered VR Therapy" />
-  <meta name="twitter:description" content="Generative AI builds worlds around each patient – clinicians retain full control." />
-  <meta name="twitter:image" content="https://synaeon.com/og-cover.jpg" />
+  <meta name="description" content="Synaeon pioneers AI-driven VR exposure therapy, crafting dynamic, adaptive, and deeply immersive environments for transformative mental health treatment.">
+  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, PTSD treatment, phobia treatment, digital therapeutics, VR healthcare, adaptive therapy, biofeedback therapy, Synaeon">
+  <meta name="author" content="Synaeon, Inc.">
+  <meta property="og:title" content="Synaeon - Real-Time Adaptive VR Therapy">
+  <meta property="og:description" content="Experience the next generation of mental healthcare with Synaeon's AI that builds therapeutic VR worlds responsive to your needs.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://synaeon.com/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
+  <meta property="og:image:alt" content="Abstract visualization of AI and VR merging for therapy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
+  <meta name="twitter:image:alt" content="Abstract visualization of AI and VR merging for therapy">
+  <meta name="twitter:title" content="Synaeon - AI-Powered VR Therapy">
+  <meta name="twitter:description" content="Revolutionizing mental health with adaptive, AI-generated VR exposure therapy.">
 
-  <!-- Theme / PWA -->
-  <meta name="theme-color" content="#040812" media="(prefers-color-scheme: dark)" />
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="icon" href="/favicon.ico" sizes="any" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="syneon_image.png">
+  <link rel="apple-touch-icon" href="syneon_image.png">
 
-  <!-- Fonts – preload first, then async‑load full family -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" /></noscript>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Styles -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js" defer></script>
+
   <style>
-    /* === CSS Custom Properties ======================================= */
     :root {
-      /* Brand */
-      --clr-primary-500: #0071e3;
-      --clr-primary-600: #005bb5;
-      --clr-accent-500: #ffc107;
-      --clr-accent-300: #ffdb66;
-      --clr-success: #34c759;
-      --clr-danger: #ff3366;
-      --clr-bg-950: #02060e;
-      --clr-bg-900: #040812;
-      --clr-surface-800: rgba(10, 17, 40, 0.75);
-      --clr-white: #ffffff;
-      --clr-white-800: rgba(255,255,255,0.8);
-      --clr-white-500: rgba(255,255,255,0.6);
-      --shadow-glow: 0 0 15px rgba(71,160,255,0.35),0 0 35px rgba(0,0,0,0.45);
-      /* Typography */
-      --ff-body: 'Inter', sans-serif;
-      --ff-display: 'Outfit', sans-serif;
+      --primary: #0077ff; /* Slightly brighter primary */
+      --primary-dark: #005fc4;
+      --primary-light: #66b0ff;
+      --primary-glow: rgba(0, 119, 255, 0.65); /* Enhanced glow */
+      --accent: #ffb700; /* Richer accent */
+      --accent-light: #ffd04d;
+      --accent-ultra: #fff5cc;
+      --accent-glow: rgba(255, 183, 0, 0.65); /* Enhanced glow */
+      --success: #2ecc71; /* More vibrant success */
+      --neural-1: #e74c3c; /* Adjusted neural colors */
+      --neural-2: #8e44ad;
+      --neural-3: #3498db;
+      --bg-dark: #010307; /* Even darker background */
+      --bg-gradient: linear-gradient(180deg, #030710 0%, #010307 100%);
+      --card-bg: rgba(12, 20, 48, 0.8); /* Slightly adjusted card bg */
+      --card-bg-hover: rgba(18, 30, 70, 0.9);
+      --text-primary: #f8f9fa; /* Brighter primary text */
+      --text-secondary: rgba(235, 235, 245, 0.85); /* Increased secondary opacity */
+      --text-tertiary: rgba(235, 235, 245, 0.6); /* Increased tertiary opacity */
+      --border-light: rgba(255, 255, 255, 0.12); /* Slightly more visible border */
+      --border-medium: rgba(255, 255, 255, 0.25);
+      --border-interactive: var(--primary-light);
+      --font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+      --gradient-overlay: radial-gradient(ellipse at 50% 30%, rgba(0, 119, 255, 0.09), transparent 75%); /* Subtle overlay */
+      --shadow-glow-subtle: 0 0 10px rgba(0, 119, 255, 0.35);
+      --shadow-glow-medium: 0 2px 25px var(--primary-glow), 0 5px 20px rgba(0, 0, 0, 0.45);
+      --shadow-glow-intense: 0 0 40px var(--primary-glow), 0 8px 30px rgba(0, 0, 0, 0.55);
+      --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* Refined bezier */
+      --transition-bounce: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.375); /* Adjusted bounce */
+      --transition-long: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @media (prefers-color-scheme: light) {
-      :root {
-        --clr-bg-950: #ffffff;
-        --clr-bg-900: #f7f7f9;
-        --clr-surface-800: rgba(250,250,255,0.85);
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px; /* Base font size */
+      scrollbar-width: thin; /* For Firefox */
+      scrollbar-color: var(--primary-light) var(--bg-dark); /* For Firefox */
+    }
+
+    /* Custom Scrollbar for Webkit browsers */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--primary);
+        border-radius: 10px;
+        border: 2px solid var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--primary-light);
+    }
+
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-dark);
+      background-image: var(--bg-gradient);
+      color: var(--text-primary);
+      line-height: 1.75; /* Generous line height */
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Canvas for background animations */
+    #global-particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 1.2s ease-in; /* Slower fade-in */
+      pointer-events: none; /* Ensure it doesn't interfere with interaction */
+    }
+    body.loaded #global-particleCanvas {
+        opacity: 0.7; /* Slightly subtle particle background */
+    }
+
+    /* Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      transition: opacity 0.8s ease-out, visibility 0.8s ease-out; /* Smooth fade */
+      visibility: visible;
+      opacity: 1;
+    }
+    #loading-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+    #loading-screen canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.9; /* Slightly more visible loading animation */
+    }
+    .loading-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-primary);
+      z-index: 1;
+    }
+    .loading-overlay h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 7vw, 4rem); /* Adjusted size */
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light), var(--neural-3));
+      background-size: 300% auto; /* Slower shine */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 0 20px var(--primary-glow), 0 0 10px var(--accent-glow); /* Combined glow */
+      animation: textShine 4s linear infinite;
+    }
+    @keyframes textShine {
+      to { background-position: 300% center; }
+    }
+    #loading-bar-container {
+      width: 350px; /* Wider bar */
+      max-width: 85%;
+      height: 6px; /* Thinner bar */
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 10px var(--primary-glow);
+      background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
+    }
+    #loading-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      border-radius: 6px;
+      transition: width 1.8s cubic-bezier(0.65, 0, 0.35, 1); /* Slower, smoother bar fill */
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3); /* Inner glow */
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.8s ease-in 0.3s; /* Slightly longer fade-in with delay */
+    }
+    body.loaded .main-content {
+        opacity: 1;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.3; /* Slightly increased line-height */
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); /* Enhanced text shadow */
+    }
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem); /* Larger H1 */
+      font-weight: 800;
+      letter-spacing: -0.035em; /* Tighter letter spacing */
+      background: linear-gradient(90deg, var(--primary-light), var(--accent), var(--primary-light)); /* Repeat color for better loop */
+      background-size: 200% auto; /* Ready for animation */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 1.8rem;
+      animation: textGradientShift 12s ease infinite alternate; /* Subtle gradient animation */
+    }
+     @keyframes textGradientShift {
+         0% { background-position: 0% 50%; }
+         100% { background-position: 100% 50%; }
+     }
+    h2 {
+      font-size: clamp(2.2rem, 5.5vw, 3.2rem); /* Adjusted H2 size */
+      margin-bottom: 2rem;
+      background: linear-gradient(90deg, var(--text-primary), var(--primary-light));
+      background-size: 100% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h3 {
+      font-size: clamp(1.5rem, 4vw, 2rem); /* Adjusted H3 size */
+      margin-bottom: 1.2rem;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    p {
+      font-size: clamp(1.05rem, 2.3vw, 1.2rem); /* Larger paragraph text */
+      color: var(--text-secondary);
+      margin-bottom: 1.8rem;
+      max-width: 75ch; /* Optimized readability */
+    }
+    strong {
+      color: var(--accent-light);
+      font-weight: 600;
+    }
+    a {
+        color: var(--primary-light);
+        text-decoration: none;
+        transition: var(--transition-smooth);
+        position: relative; /* For potential underline effects */
+    }
+    a:hover, a:focus {
+        color: var(--accent-light);
+        /* Optional: Subtle underline effect */
+        /* text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px; */
+    }
+    a:focus-visible { /* Improved focus indication */
+        outline: 2px solid var(--accent-light);
+        outline-offset: 4px;
+        border-radius: 3px;
+        background-color: rgba(255, 183, 0, 0.1); /* Subtle focus background */
+    }
+
+
+    /* Utility Classes for Animations */
+    .reveal-on-scroll {
+        opacity: 0;
+        transform: translateY(40px) scale(0.98); /* Add subtle scale */
+        transition: opacity 0.9s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.9s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition-delay: 0.15s; /* Slightly longer delay */
+        will-change: opacity, transform;
+    }
+    .reveal-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    .reveal-on-scroll.delay-1 { transition-delay: 0.25s; }
+    .reveal-on-scroll.delay-2 { transition-delay: 0.35s; }
+    .reveal-on-scroll.delay-3 { transition-delay: 0.45s; }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 9rem 1rem 5rem; /* More top padding */
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-inner {
+      backdrop-filter: blur(12px) saturate(140%); /* Increased saturation */
+      background: rgba(6, 11, 24, 0.6); /* Slightly darker, less transparent */
+      border: 1px solid var(--border-medium);
+      border-radius: 35px; /* Even more rounded */
+      padding: clamp(3rem, 9vw, 4.5rem) clamp(2.5rem, 7vw, 4rem);
+      max-width: 1000px; /* Wider hero box */
+      width: 95%;
+      box-shadow: var(--shadow-glow-medium);
+      animation: float 9s infinite ease-in-out; /* Slower float */
+      position: relative;
+      z-index: 1;
+      transition: transform 0.5s var(--transition-bounce), box-shadow 0.5s ease; /* Use bounce transition */
+      margin-top: 4vh; /* Adjusted margin */
+      border-image: linear-gradient(to bottom right, rgba(0, 119, 255, 0.3), rgba(255, 183, 0, 0.3)) 1; /* Subtle border gradient */
+    }
+    .hero-inner:hover {
+      transform: translateY(-10px) scale(1.015); /* More lift and scale */
+      box-shadow: var(--shadow-glow-intense);
+      border-image: linear-gradient(to bottom right, rgba(0, 119, 255, 0.6), rgba(255, 183, 0, 0.6)) 1; /* Brighter border on hover */
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); } /* Increased float distance */
+    }
+    .hero-logo {
+      margin-bottom: 2.5rem; /* More space below logo */
+    }
+    .hero-logo img {
+      width: clamp(130px, 22vw, 200px); /* Larger responsive logo */
+      height: auto;
+      filter: drop-shadow(0 0 15px var(--primary-glow)); /* Stronger glow */
+      transition: transform 0.6s var(--transition-bounce); /* Longer bounce */
+    }
+    .hero-logo img:hover {
+      transform: scale(1.15) rotate(7deg); /* More pronounced hover effect */
+    }
+    .hero-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(0.95rem, 2.2vw, 1.2rem); /* Slightly larger tagline */
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3em; /* Even wider spacing */
+      color: var(--accent-light);
+      margin-bottom: 1.2rem;
+      opacity: 0.95;
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+    .hero h1 { margin-bottom: 1.2rem; }
+    .hero-text {
+      font-size: clamp(1.15rem, 2.8vw, 1.45rem); /* Larger hero description */
+      color: var(--text-secondary);
+      max-width: 700px; /* Wider text block */
+      margin: 0 auto 3rem; /* More space before buttons */
+    }
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.5rem 2.5rem; /* Increased initial padding */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease; /* Smoother transitions */
+      background-color: transparent;
+      border-bottom: 1px solid transparent;
+    }
+    .navbar.scrolled {
+      padding: 1rem 2.5rem; /* Adjusted scrolled padding */
+      background-color: rgba(3, 7, 16, 0.88); /* Slightly more opaque when scrolled */
+      backdrop-filter: blur(15px) saturate(160%); /* Stronger blur/saturation */
+      border-bottom-color: var(--border-light);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
+    }
+    .nav-logo a {
+      display: inline-block;
+      line-height: 0;
+    }
+    .nav-logo a:hover, .nav-logo a:focus {
+        text-decoration: none;
+        outline: none;
+    }
+    .nav-logo img {
+        height: 40px; /* Slightly larger nav logo */
+        width: auto;
+        transition: var(--transition-smooth);
+        opacity: 0.95;
+        vertical-align: middle;
+    }
+    .nav-logo img:hover, .nav-logo a:focus img {
+        opacity: 1;
+        transform: scale(1.08); /* More scale on hover */
+        filter: drop-shadow(0 0 5px var(--primary-glow)); /* Add glow on hover */
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem; /* Wider gap */
+      align-items: center;
+    }
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 600; /* Bolder nav links */
+      font-size: 1rem; /* Slightly larger nav links */
+      transition: var(--transition-bounce);
+      position: relative;
+      padding: 0.8rem 0.3rem; /* More vertical padding */
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2.5px; /* Thicker underline */
+      bottom: 5px; /* Adjusted position */
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      transition: width 0.4s ease; /* Slower underline transition */
+      border-radius: 2px;
+      opacity: 0; /* Start hidden */
+    }
+    .nav-link:hover, .nav-link:focus {
+      color: var(--text-primary);
+      transform: translateY(-4px); /* More lift */
+      text-decoration: none;
+      outline: none;
+    }
+    .nav-link:hover::after, .nav-link:focus::after {
+      width: 70%; /* Underline width */
+      opacity: 1; /* Fade in */
+    }
+    .nav-link:focus-visible::after {
+        width: 70%;
+        opacity: 1;
+    }
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      width: 32px; /* Slightly larger */
+      height: 24px;
+      position: relative;
+      z-index: 1001;
+      background: none;
+      border: none;
+      padding: 6px; /* Larger click target */
+      margin: -6px;
+      transition: transform 0.3s ease; /* Add transition */
+    }
+    .hamburger:hover {
+        transform: scale(1.1); /* Scale on hover */
+    }
+    .hamburger span {
+      display: block;
+      height: 2.5px; /* Slightly thicker lines */
+      width: 100%;
+      background: var(--text-primary);
+      border-radius: 3px;
+      transition: all 0.35s ease-in-out; /* Slightly longer transition */
+      position: absolute;
+      left: 0;
+      box-shadow: 0 0 6px var(--primary-glow);
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 10px; transition-delay: 0.1s; }
+    .hamburger span:nth-child(3) { top: 20px; }
+    /* Hamburger animation */
+    .hamburger.active span:nth-child(1) {
+        transform: translateY(10px) rotate(135deg); /* Steeper angle */
+    }
+    .hamburger.active span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    .hamburger.active span:nth-child(3) {
+        transform: translateY(-10px) rotate(-135deg); /* Steeper angle */
+    }
+
+    /* Button Styles */
+    .btn {
+      display: inline-block;
+      background: linear-gradient(95deg, var(--primary), var(--primary-dark)); /* Slightly angled gradient */
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(0.95rem, 2.1vw, 1.05rem);
+      text-decoration: none;
+      padding: 1rem 3rem; /* Adjusted padding */
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition-bounce);
+      box-shadow: 0 6px 20px rgba(0, 119, 255, 0.45), 0 0 15px var(--primary-glow); /* Enhanced shadow */
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      min-width: 230px; /* Adjusted width */
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 0.03em; /* Subtle letter spacing */
+    }
+    .btn::before { /* Enhanced Shimmer effect */
+      content: '';
+      position: absolute;
+      top: -10%; /* Start slightly off */
+      left: -150%;
+      width: 80%; /* Narrower shimmer */
+      height: 120%;
+      background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg); /* Angle the shimmer */
+      transition: left 0.75s cubic-bezier(0.23, 1, 0.32, 1); /* Smoother shimmer */
+      z-index: 1;
+    }
+    .btn:hover::before {
+      left: 150%;
+    }
+    .btn:hover, .btn:focus {
+      transform: translateY(-5px) scale(1.04); /* More lift/scale */
+      box-shadow: 0 10px 30px rgba(0, 119, 255, 0.65), 0 0 20px var(--primary-glow); /* Stronger hover shadow */
+      color: white;
+      text-decoration: none;
+      outline: none;
+    }
+    .btn:focus-visible {
+       box-shadow: 0 10px 30px rgba(0, 119, 255, 0.65), 0 0 20px var(--primary-glow), 0 0 0 3px var(--bg-dark), 0 0 0 5px var(--accent-light);
+    }
+    .btn:active {
+        transform: translateY(-2px) scale(0.97); /* More pronounced active state */
+        box-shadow: 0 4px 12px rgba(0, 119, 255, 0.55), 0 0 12px var(--primary-glow);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 2.5px solid var(--primary-light); /* Thicker outline */
+      color: var(--primary-light);
+      box-shadow: 0 5px 18px rgba(0, 119, 255, 0.25); /* Adjusted shadow */
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .btn-outline::after { /* Improved Fill effect */
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--primary-light);
+        transform: scaleY(0); /* Animate vertically */
+        transform-origin: bottom; /* Start from bottom */
+        transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: -1;
+    }
+    .btn-outline:hover, .btn-outline:focus {
+      color: var(--bg-dark); /* Text changes to dark */
+      border-color: var(--primary-light);
+      box-shadow: 0 8px 25px rgba(0, 119, 255, 0.45), 0 0 18px var(--primary-glow); /* Stronger hover shadow */
+      outline: none;
+    }
+     .btn-outline:hover::after, .btn-outline:focus::after {
+        transform: scaleY(1); /* Fill vertically */
+    }
+    .btn-outline:focus-visible {
+       box-shadow: 0 8px 25px rgba(0, 119, 255, 0.45), 0 0 18px var(--primary-glow), 0 0 0 3px var(--bg-dark), 0 0 0 5px var(--accent-light);
+    }
+    .btn-group {
+      display: flex;
+      gap: 1.8rem; /* Wider gap */
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    /* Section Styling */
+    .section {
+      padding: clamp(6rem, 12vh, 9rem) 2rem; /* Responsive padding */
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .section:last-of-type {
+        border-bottom: none;
+    }
+    /* Remove ::before gradient overlay for cleaner look, rely on bg gradient */
+    /* .section::before { ... } */
+    .section-inner {
+      max-width: 1250px; /* Wider content area */
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 4.5rem; /* More space below header */
+      max-width: 850px; /* Constrain header width */
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section-label {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 0.9rem; /* Slightly larger */
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3em; /* Wider spacing */
+      color: var(--accent-light);
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 1.5rem; /* Adjusted padding */
+      border: 1px solid var(--border-medium);
+      border-radius: 30px;
+      background: rgba(255, 183, 0, 0.18); /* Stronger accent bg */
+      box-shadow: 0 0 15px var(--accent-glow); /* Stronger glow */
+      transition: var(--transition-bounce);
+    }
+    .section-label:hover {
+      transform: scale(1.1) rotate(-3deg); /* Adjusted hover effect */
+      background: rgba(255, 183, 0, 0.3);
+      box-shadow: 0 0 20px var(--accent-glow);
+      color: var(--accent-ultra); /* Brighter text on hover */
+    }
+    .section-header h2 { margin-bottom: 1.2rem; }
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: clamp(1.1rem, 2.6vw, 1.25rem); /* Larger section description */
+      margin-bottom: 0;
+      max-width: 700px; /* Constrain description width */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Feature Cards */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); /* Slightly larger min width */
+      gap: 3rem; /* Wider gap */
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 30px; /* More rounded */
+      padding: 3rem; /* More padding */
+      border: 1px solid var(--border-light);
+      transition: transform 0.5s var(--transition-bounce), box-shadow 0.5s ease, border-color 0.5s ease, background-color 0.5s ease; /* Added background transition */
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-glow-subtle);
+      backdrop-filter: blur(8px) saturate(110%); /* Increased blur/saturation */
+    }
+    .feature-card::before { /* Enhanced Top highlight bar */
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px; /* Thicker highlight */
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1.2); /* Add slight overshoot */
+      opacity: 0; /* Start hidden */
+    }
+    .feature-card:hover {
+      transform: translateY(-15px) scale(1.03); /* Even more lift/scale */
+      box-shadow: var(--shadow-glow-intense);
+      background: var(--card-bg-hover);
+      border-color: var(--border-medium);
+    }
+    .feature-card:hover::before {
+      transform: scaleX(1);
+      opacity: 1; /* Fade in */
+    }
+    .feature-icon {
+      width: 70px; /* Larger icon container */
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(140deg, rgba(0, 119, 255, 0.2), rgba(0, 119, 255, 0.08)); /* Steeper gradient */
+      border: 1.5px solid var(--primary-light); /* Thicker border */
+      color: var(--primary-light);
+      font-size: 2rem; /* Larger icon SVG size */
+      box-shadow: 0 0 18px var(--primary-glow); /* Stronger icon glow */
+      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease; /* Added background transition */
+    }
+    .feature-card:hover .feature-icon {
+        transform: rotateY(360deg) scale(1.1); /* 3D rotation effect */
+        background: linear-gradient(140deg, rgba(255, 183, 0, 0.25), rgba(255, 183, 0, 0.1)); /* Change to accent on hover */
+        border-color: var(--accent-light);
+        color: var(--accent-light);
+        box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .feature-card h3 { /* Feature title */
+        font-size: clamp(1.3rem, 3vw, 1.6rem); /* Adjusted title size */
+        color: var(--text-primary);
+        margin-bottom: 0.8rem; /* Reduced margin */
+        transition: color 0.4s ease;
+    }
+    .feature-card:hover h3 {
+        color: var(--accent-light); /* Change title color on hover */
+    }
+    .feature-card p { /* Feature text */
+        color: var(--text-tertiary);
+        margin-bottom: 0; /* Remove bottom margin */
+        flex-grow: 1; /* Ensure text pushes footer elements down */
+        font-size: clamp(1rem, 2.1vw, 1.1rem); /* Adjusted text size */
+        line-height: 1.65;
+    }
+
+    /* Added SVG specific styles for better control if needed */
+    .feature-icon svg {
+        width: 50%; /* Control SVG size within the container */
+        height: 50%;
+        transition: transform 0.5s ease;
+    }
+     .feature-card:hover .feature-icon svg {
+         transform: scale(1.1); /* Subtle scale for SVG */
+     }
+
+     /* --- Add styles for other sections similarly (Team, Demo, Contact, Footer) --- */
+
+    /* Example: Team Card Enhancement */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem; /* Increased gap */
+    }
+    .team-card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        transition: var(--transition-long); /* Longer transition */
+        box-shadow: var(--shadow-glow-subtle);
+        backdrop-filter: blur(8px);
+        display: flex;
+        flex-direction: column;
+    }
+    .team-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: var(--shadow-glow-medium);
+        border-color: var(--border-medium);
+        background: var(--card-bg-hover);
+    }
+    .team-image-container {
+        width: 100%;
+        padding-top: 100%; /* Aspect ratio 1:1 */
+        position: relative;
+        overflow: hidden;
+        background-color: rgba(255, 255, 255, 0.05); /* Placeholder bg */
+    }
+    .team-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s ease; /* Smoother zoom */
+        filter: grayscale(30%) contrast(105%); /* Subtle filter */
+    }
+    .team-card:hover .team-image {
+        transform: scale(1.08);
+        filter: grayscale(0%) contrast(100%); /* Remove filter on hover */
+    }
+    .team-info {
+        padding: 2rem; /* Increased padding */
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .team-name {
+        font-size: 1.6rem; /* Larger name */
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+    }
+    .team-role {
+        color: var(--accent-light);
+        font-size: 0.95rem;
+        margin-bottom: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em; /* Wider spacing */
+        text-shadow: 0 0 8px var(--accent-glow);
+        font-weight: 500;
+    }
+    .team-bio {
+        font-size: 1rem;
+        color: var(--text-tertiary);
+        flex-grow: 1;
+        line-height: 1.6;
+    }
+
+    /* VR Demo Section */
+    .vr-demo {
+      background: var(--card-bg);
+      border-radius: 30px; /* Match cards */
+      overflow: hidden;
+      border: 1px solid var(--border-medium); /* Stronger border */
+      box-shadow: var(--shadow-glow-medium); /* More prominent shadow */
+      margin-top: 2rem;
+      backdrop-filter: blur(10px);
+    }
+    .vr-demo-canvas {
+      width: 100%;
+      min-height: 550px; /* Min height */
+      height: 65vh; /* Relative height */
+      max-height: 700px; /* Max height */
+      background: var(--bg-dark); /* Match body bg */
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-medium); /* Separator */
+      display: flex; /* Center potential loading messages */
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+      font-style: italic;
+    }
+    /* Style for the canvas element itself if needed */
+     .vr-demo-canvas canvas {
+        display: block; /* Remove extra space below canvas */
+     }
+    .vr-controls {
+      display: flex;
+      gap: 1.5rem;
+      padding: 2rem; /* More padding */
+      background: rgba(0, 0, 0, 0.2); /* Slightly darker controls bg */
+      justify-content: center;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    /* Contact Section */
+    .contact-card {
+        max-width: 700px;
+        margin: 2rem auto 0;
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: clamp(2rem, 5vw, 3rem);
+        border: 1px solid var(--border-light);
+        text-align: center;
+        box-shadow: var(--shadow-glow-subtle);
+        transition: var(--transition-long);
+        backdrop-filter: blur(8px);
+    }
+    .contact-card:hover {
+        box-shadow: var(--shadow-glow-medium);
+        border-color: var(--border-medium);
+        background: var(--card-bg-hover);
+    }
+    .contact-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem; /* Increased gap */
+        font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+        margin-bottom: 1.5rem; /* More spacing */
+        transition: transform 0.3s ease;
+    }
+     .contact-item:last-child {
+         margin-bottom: 0;
+     }
+    .contact-item a { /* Style links within contact items */
+        color: var(--primary-light);
+        text-decoration: none;
+        display: inline-flex; /* Align icon and text */
+        align-items: center;
+        gap: 0.7rem; /* Gap between text and icon */
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+    .contact-item a:hover {
+        color: var(--accent-light);
+        text-shadow: 0 0 8px var(--accent-glow);
+    }
+    .contact-item svg {
+        width: 28px; /* Larger icons */
+        height: 28px;
+        fill: currentColor; /* Inherit color from link */
+        transition: transform 0.4s var(--transition-bounce);
+    }
+    .contact-item a:hover svg {
+        transform: scale(1.2) rotate(-5deg); /* Animate icon on hover */
+    }
+
+    /* Updates Section */
+    .updates-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 3rem; /* Increased gap */
+        margin-top: 1rem;
+    }
+    .update-item {
+        text-align: center;
+        max-width: 450px; /* Slightly larger max width */
+        width: 100%;
+        background: var(--card-bg); /* Add card background */
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-glow-subtle);
+        transition: var(--transition-bounce);
+    }
+    .update-item:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: var(--shadow-glow-medium);
+        border-color: var(--border-medium);
+    }
+    .update-item img {
+        max-width: 100%;
+        border-radius: 15px; /* More rounded images */
+        margin-bottom: 1.5rem; /* Space below image */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.5s ease;
+    }
+    .update-item:hover img {
+        transform: scale(1.03);
+    }
+    .update-item p {
+        margin-top: 0; /* Reset margin */
+        margin-bottom: 0; /* Reset margin */
+        font-style: italic;
+        color: var(--text-tertiary);
+        font-size: 0.95rem;
+    }
+
+
+    /* Footer */
+    .footer {
+      background: rgba(1, 3, 7, 0.95); /* Darker footer */
+      padding: 5rem 2rem 2.5rem; /* More top padding */
+      position: relative;
+      border-top: 1px solid var(--border-medium); /* Stronger top border */
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3); /* Enhanced top shadow */
+      margin-top: 3rem; /* Add space above footer */
+    }
+    .footer-content {
+      max-width: 1250px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjusted min width */
+      gap: 3.5rem; /* Wider gap */
+    }
+    .footer-column {
+      display: flex;
+      flex-direction: column;
+    }
+    .footer-title {
+      font-size: 1.3rem; /* Larger title */
+      margin-bottom: 1.8rem;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block; /* Ensure underline fits content */
+      padding-bottom: 0.6rem;
+      text-shadow: 0 0 6px var(--primary-glow);
+      font-weight: 600;
+    }
+    .footer-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px; /* Longer underline */
+      height: 2.5px; /* Thicker underline */
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      border-radius: 1px;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem; /* Increased gap */
+    }
+    .footer-link {
+      color: var(--text-tertiary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      position: relative;
+      display: inline-block; /* Fit underline */
+      padding: 0.2rem 0; /* Add slight padding for hover effect */
+    }
+    .footer-link::after { /* Underline effect for footer links */
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: var(--accent-light);
+      transition: width 0.4s ease;
+    }
+    .footer-link:hover {
+      color: var(--primary-light);
+      transform: translateX(6px); /* More indent */
+      text-shadow: 0 0 5px rgba(0, 119, 255, 0.5); /* Add subtle glow */
+    }
+    .footer-link:hover::after {
+      width: 100%;
+    }
+    .footer-text {
+      color: var(--text-tertiary);
+      font-size: 1rem; /* Larger footer text */
+      margin-bottom: 1.8rem;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+      line-height: 1.7;
+    }
+     .footer-text:last-of-type {
+         margin-bottom: 0;
+     }
+    .footer-bottom {
+      max-width: 1250px;
+      margin: 3.5rem auto 0; /* More space above bottom */
+      padding-top: 2rem; /* More padding */
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .copyright {
+      color: var(--text-tertiary);
+      font-size: 0.9rem; /* Larger copyright */
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Responsive Design Adjustments */
+    @media (max-width: 992px) {
+      .section { padding: clamp(5rem, 10vh, 7rem) 1.5rem; }
+      .vr-demo-canvas { min-height: 500px; height: 60vh; }
+      .features-grid, .team-grid { gap: 2rem; }
+      .feature-card, .team-card, .update-item {
+          /* Disable hover lift on touch devices if desired */
+          /* transform: none !important; */
       }
     }
 
-    /* === Reset & base ================================================ */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{font-family:var(--ff-body);background:var(--clr-bg-900);color:var(--clr-white);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-    img,svg{max-width:100%;display:block}
-    a{color:inherit;text-decoration:none}
-    button{font-family:inherit;cursor:pointer;border:none;background:none}
-    
-    /* === Accessibility ============================================== */
-    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px)}
-
-    /* === Utility Classes ============================================ */
-    .container{width:min(92vw,1200px);margin-inline:auto}
-    .flow > * + *{margin-top:var(--flow-space,1.5rem)}
-    .gradient-text{background:linear-gradient(90deg,var(--clr-primary-500),var(--clr-accent-500));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-    /* === Navigation ================================================== */
-    nav{position:fixed;top:0;inset-inline:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:rgba(4,8,18,.6);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);transition:padding .3s}
-    nav.scrolled{padding:.5rem 2rem;background:rgba(4,8,18,.9)}
-    .brand{display:flex;align-items:center;gap:.75rem;font-family:var(--ff-display);font-size:1.25rem;font-weight:600;letter-spacing:-.02em}
-    .brand img{width:40px;filter:drop-shadow(0 0 6px rgba(71,160,255,.55))}
-    .nav-links{display:flex;gap:1.5rem;font-weight:500}
-    .nav-links a{position:relative;opacity:.8;transition:opacity .3s}
-    .nav-links a::after{content:"";position:absolute;bottom:-2px;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--clr-primary-500),var(--clr-accent-500));transition:width .3s}
-    .nav-links a:hover{opacity:1}
-    .nav-links a:hover::after{width:100%}
-    .theme-toggle{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.12);box-shadow:0 2px 8px rgba(0,0,0,.28);transition:transform .3s}
-    .theme-toggle svg{width:24px;height:24px}
-    .theme-toggle:hover{transform:translateY(-2px)}
-
-    /* === Hero ======================================================== */
-    .hero{min-height:100vh;display:grid;place-content:center;padding-block:6rem;position:relative;text-align:center}
-    .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(71,160,255,.15),transparent 70%);pointer-events:none}
-    .hero .inner{backdrop-filter:blur(14px);background:var(--clr-surface-800);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:4rem 3rem;box-shadow:var(--shadow-glow);animation:float 8s ease-in-out infinite}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-    .hero-logo{margin-inline:auto;margin-bottom:2rem;width:160px}
-    h1{font-family:var(--ff-display);font-weight:700;font-size:clamp(2.4rem,5vw,4.2rem);line-height:1.1;letter-spacing:-.03em}
-    h2{font-family:var(--ff-display);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600}
-    h3{font-family:var(--ff-display);font-size:1.35rem;font-weight:600}
-    p.lead{font-size:clamp(1.05rem,2vw,1.2rem);max-width:42ch;margin-inline:auto;opacity:.85}
-
-    /* === Buttons ===================================================== */
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 2.75rem;border-radius:999px;font-family:var(--ff-display);font-weight:500;position:relative;isolation:isolate;box-shadow:0 6px 18px rgba(0,113,227,.45);transition:transform .25s}
-    .btn::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,var(--clr-primary-500),var(--clr-primary-600));z-index:-1;transition:opacity .25s}
-    .btn:hover{transform:translateY(-4px)}
-    .btn:hover::before{opacity:.85}
-    .btn.outline{box-shadow:none;background:none;border:1px solid var(--clr-primary-500)}
-    .btn.outline::before{background:var(--clr-primary-500);opacity:0}
-    .btn.outline:hover{color:var(--clr-white)}
-
-    /* === Sections ==================================================== */
-    section{padding-block:7rem;position:relative}
-    section:nth-of-type(even){background:rgba(255,255,255,.02)}
-
-    .section-header{margin-bottom:3.5rem;text-align:center}
-    .section-label{display:inline-block;padding:.35rem 1rem;border-radius:999px;font-size:.8rem;font-weight:600;letter-spacing:.1em;background:rgba(255,193,7,.12);border:1px solid rgba(255,255,255,.1);color:var(--clr-accent-300);text-transform:uppercase}
-
-    /* === Grid & Cards =============================================== */
-    .grid{display:grid;gap:2rem}
-    @media (min-width:46rem){
-      .grid.cols-3{grid-template-columns:repeat(3,1fr)}
-      .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+    @media (max-width: 768px) {
+      html { font-size: 15px; } /* Slightly smaller base font */
+      h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); }
+      h2 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+      .navbar { padding: 1rem 1.5rem; background-color: rgba(3, 7, 16, 0.9); /* Always show bg on mobile */ backdrop-filter: blur(12px); border-bottom-color: var(--border-light); }
+      .navbar.scrolled { padding: 1rem 1.5rem; } /* Keep padding consistent */
+      .nav-logo img { height: 35px; }
+      .nav-links {
+          position: fixed;
+          top: 0; /* Align to top */
+          left: 0;
+          right: 0;
+          bottom: 0; /* Full height */
+          flex-direction: column;
+          background: rgba(4, 8, 18, 0.98); /* More opaque */
+          padding: 6rem 2rem 2rem; /* Add top padding */
+          align-items: center; /* Center links */
+          justify-content: center; /* Center links */
+          clip-path: circle(0% at top right); /* Animate from corner */
+          transition: clip-path 0.5s cubic-bezier(0.77, 0, 0.175, 1); /* Smooth animation */
+          backdrop-filter: blur(15px);
+          gap: 1.5rem; /* Adjust gap for vertical layout */
+          z-index: 1000; /* Below hamburger */
+          overflow-y: auto; /* Allow scrolling if needed */
+      }
+      .nav-links.active {
+          clip-path: circle(150% at top right); /* Expand fully */
+      }
+      .nav-link { font-size: 1.3rem; /* Larger links in mobile menu */ }
+      .nav-link::after { bottom: -2px; } /* Adjust underline */
+      .hamburger { display: block; /* Use block instead of flex */ z-index: 1001; /* Ensure hamburger is above menu */}
+      .section { padding: clamp(4rem, 8vh, 6rem) 1rem; }
+      .btn-group { flex-direction: column; width: 90%; max-width: 350px; margin-left: auto; margin-right: auto; gap: 1.2rem; }
+      .btn, .btn-outline { width: 100%; min-width: auto; } /* Full width buttons */
+      .vr-demo-canvas { min-height: 400px; height: 50vh; }
+      .hero-inner { padding: 2.5rem 1.5rem; margin-top: 8vh; }
+      .updates-grid { gap: 2rem; }
+      .footer-content { grid-template-columns: 1fr; text-align: center; } /* Stack footer columns */
+      .footer-title { display: inline-block; }
+      .footer-title::after { left: 50%; transform: translateX(-50%); } /* Center underline */
+      .footer-links { align-items: center; } /* Center links */
+      .footer-link:hover { transform: translateX(0); } /* Disable indent */
+      .footer-bottom { flex-direction: column; text-align: center; }
     }
-    .card{background:var(--clr-surface-800);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:2rem;box-shadow:var(--shadow-glow);transition:transform .3s}
-    .card:hover{transform:translateY(-10px)}
-    .card-icon{display:grid;place-content:center;width:54px;height:54px;border-radius:50%;margin-bottom:1.25rem;background:rgba(71,160,255,.12);color:var(--clr-primary-500)}
 
-    /* === Team Cards ================================================== */
-    .team-card{overflow:hidden}
-    .team-card img{aspect-ratio:4/5;object-fit:cover;filter:grayscale(.1);transition:transform .5s}
-    .team-card:hover img{transform:scale(1.05)}
-    .team-info{padding:1.5rem}
+    @media (max-width: 576px) {
+      html { font-size: 14px; }
+      .hero-inner { padding: 2rem 1rem; border-radius: 25px; margin-top: 10vh; }
+      .hero h1 { margin-bottom: 1rem;}
+      .hero-text { font-size: 1.1rem; margin-bottom: 2rem; }
+      .hero-logo img { width: 100px; }
+      .vr-demo-canvas { min-height: 350px; height: 45vh; }
+      .vr-controls { padding: 1.5rem; }
+      .feature-card, .team-card, .update-item { padding: 1.8rem; border-radius: 20px; }
+      .feature-icon { width: 60px; height: 60px; font-size: 1.8rem; margin-bottom: 1.5rem;}
+      .team-info { padding: 1.5rem; }
+      .contact-card { padding: 1.5rem; }
+    }
 
-    /* === Footer ====================================================== */
-    footer{margin-top:auto;background:rgba(2,6,14,.9);border-top:1px solid rgba(255,255,255,.08)}
-    footer .grid{padding-block:4rem}
-    .ft-title{font-family:var(--ff-display);font-size:1.1rem;margin-bottom:1.1rem}
-    .copyright{font-size:.85rem;opacity:.6;padding-block:1.5rem;text-align:center}
 
-    /* === Dark‑mode toggle ============================================ */
-    html.dark{color-scheme:dark}
-    html.light{color-scheme:light}
   </style>
-
-  <!-- three.js and helpers – defer to avoid blocking -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
 </head>
 
-<body>
-  <a href="#main" class="visually-hidden focusable">Skip to main content</a>
+<body > <canvas id="global-particleCanvas"></canvas>
 
-  <!-- ======================== Navigation =========================== -->
-  <nav id="site-nav" aria-label="Primary">
-    <a href="#" class="brand"><img src="/syneon_image.png" alt="Synaeon logo">Synaeon</a>
-    <ul class="nav-links" role="list">
-      <li><a href="#about">About</a></li>
-      <li><a href="#problem">Problem</a></li>
-      <li><a href="#solution">Solution</a></li>
-      <li><a href="#technology">Tech</a></li>
-      <li><a href="#experience">Demo</a></li>
-      <li><a href="#team">Team</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle light / dark theme">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-        <circle cx="12" cy="12" r="5"></circle>
-        <path d="M12 1v2"></path><path d="M12 21v2"></path>
-        <path d="M4.22 4.22l1.42 1.42"></path><path d="M18.36 18.36l1.42 1.42"></path>
-        <path d="M1 12h2"></path><path d="M21 12h2"></path>
-        <path d="M4.22 19.78l1.42-1.42"></path><path d="M18.36 5.64l1.42-1.42"></path>
-      </svg>
-    </button>
-  </nav>
-
-  <!-- ======================== Hero ================================ -->
-  <header class="hero" id="main" role="banner">
-    <div class="inner flow">
-      <div class="hero-logo"><img src="/syneon_image.png" alt="Synaeon logo" loading="lazy"></div>
-      <p class="section-label">The Future of Mental Health</p>
-      <h1 class="gradient-text">AI‑Powered VR Worlds Built Around You</h1>
-      <p class="lead">Synaeon blends generative AI, biometrics, and clinician‑first design to transform modern exposure therapy.</p>
-      <div class="flow" style="--flow-space:1rem">
-        <a href="#about" class="btn">Explore our vision</a>
-        <a href="#contact" class="btn outline">Talk to us</a>
+  <div id="loading-screen">
+    <canvas id="loadingCanvas"></canvas>
+    <div class="loading-overlay">
+      <h1>Synaeon</h1> <div id="loading-bar-container">
+        <div id="loading-bar"></div>
       </div>
     </div>
-    <canvas id="starfield" aria-hidden="true"></canvas>
-  </header>
+  </div>
 
-  <!-- ======================== About =============================== -->
-  <section id="about" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">Our Vision</span>
-      <h2 class="gradient-text">Re‑imagining evidence‑based therapy for the 2020s</h2>
-      <p class="lead">We craft adaptive, immersive VR spaces that respond to the physiological signals of each patient in real‑time, under the expert guidance of their therapist.</p>
-    </div>
-    <div class="grid cols-3">
-      <article class="card flow" aria-labelledby="ai-title">
-        <div class="card-icon" aria-hidden="true">🔮</div>
-        <h3 id="ai-title">Generative AI Engine</h3>
-        <p>Our proprietary speech‑to‑3D engine turns a therapist’s words into bespoke, photorealistic worlds in under a second.</p>
-      </article>
-      <article class="card flow" aria-labelledby="bio-title">
-        <div class="card-icon" aria-hidden="true">💓</div>
-        <h3 id="bio-title">Adaptive Biofeedback</h3>
-        <p>Synaeon’s sensor fusion tracks heart‑rate variability, eye‑gaze and galvanic skin response – adapting scene intensity accordingly.</p>
-      </article>
-      <article class="card flow" aria-labelledby="dash-title">
-        <div class="card-icon" aria-hidden="true">🎛️</div>
-        <h3 id="dash-title">Clinician Dashboard</h3>
-        <p>Fine‑grained controls, progress analytics and HIPAA‑ready data pipelines keep clinicians firmly in command.</p>
-      </article>
-    </div>
-  </section>
+  <div class="main-content"> <nav class="navbar" id="navbar">
+       <div class="nav-logo">
+           <a href="#" aria-label="Synaeon Home"> <img src="syneon_image.png" alt="Synaeon Logo Small">
+           </a>
+       </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links"> <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#problem" class="nav-link">Challenge</a> <a href="#solution" class="nav-link">Solution</a>
+        <a href="#technology" class="nav-link">Technology</a>
+        <a href="#experience" class="nav-link">Demo</a> <a href="#team" class="nav-link">Team</a>
+        <a href="#updates" class="nav-link">Updates</a> <a href="#contact" class="nav-link">Contact</a>
+      </div>
+    </nav>
 
-  <!-- ======================== Problem ============================= -->
-  <section id="problem" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">The Challenge</span>
-      <h2 class="gradient-text">Why traditional exposure therapy falls short</h2>
-      <p class="lead">Static media, minimal personalization and limited engagement lead to <strong>50 % dropout rates</strong> across anxiety treatments.</p>
-    </div>
-    <div class="grid cols-3">
-      <article class="card flow" aria-labelledby="immers-title">
-        <div class="card-icon" aria-hidden="true">🖼️</div>
-        <h3 id="immers-title">Low immersion</h3>
-        <p>Images and pre‑recorded videos struggle to evoke the emotional salience required for neural reconsolidation.</p>
-      </article>
-      <article class="card flow" aria-labelledby="adapt-title">
-        <div class="card-icon" aria-hidden="true">⚖️</div>
-        <h3 id="adapt-title">Limited adaptation</h3>
-        <p>One‑size‑fits‑all scenarios cannot calibrate exposure intensity to a patient’s moment‑to‑moment needs.</p>
-      </article>
-      <article class="card flow" aria-labelledby="drop-title">
-        <div class="card-icon" aria-hidden="true">⏳</div>
-        <h3 id="drop-title">High dropout</h3>
-        <p>Without rapid wins and clear progress feedback, motivation wanes – and therapy stalls.</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- ======================== Solution ============================ -->
-  <section id="solution" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">Our Solution</span>
-      <h2 class="gradient-text">Real‑time, AI‑driven VR treatment</h2>
-      <p class="lead">Dynamic worlds, bio‑adaptive difficulty and machine‑driven personalization – all orchestrated by the therapist.</p>
-    </div>
-    <div class="grid cols-3">
-      <article class="card flow"><div class="card-icon" aria-hidden="true">🌌</div><h3>Infinite Scenes</h3><p>From a crowded metro to a serenely lit rooftop, environments morph within seconds to suit therapeutic goals.</p></article>
-      <article class="card flow"><div class="card-icon" aria-hidden="true">📈</div><h3>Bio‑adaptive Intensity</h3><p>Physiological signals continuously steer exposure levels, avoiding over‑ or under‑stimulation.</p></article>
-      <article class="card flow"><div class="card-icon" aria-hidden="true">🤖</div><h3>Self‑optimizing Protocols</h3><p>Session data trains personalized models that recommend the optimal next challenge and timeline.</p></article>
-    </div>
-  </section>
-
-  <!-- ======================== Technology ========================= -->
-  <section id="technology" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">Technology</span>
-      <h2 class="gradient-text">How it works under the hood</h2>
-      <p class="lead">Speech‑to‑3D diffusion models, WebXR‑ready rendering and multi‑modal biosensing converge in a secure, FDA‑path DTx platform.</p>
-    </div>
-    <div class="grid cols-2">
-      <iframe src="https://www.youtube.com/embed/XGhYnE62GOk" title="Synaeon overview video" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);"></iframe>
-      <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" title="Synaeon demo" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);"></iframe>
-    </div>
-  </section>
-
-  <!-- ======================== Experience / Demo ================== -->
-  <section id="experience" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">Try it yourself</span>
-      <h2 class="gradient-text">Live arachnophobia demo</h2>
-      <p class="lead">Choose your comfort level – Synaeon does the rest. <em>(WebXR compatible – best experienced in VR.)</em></p>
-    </div>
-    <div class="flow" style="--flow-space:1.5rem">
-      <div class="flow" style="--flow-space:1rem">
-        <div class="btn-group" role="group" aria-label="Demo level selector">
-          <button class="btn" data-level="1">Level 1</button>
-          <button class="btn outline" data-level="2">Level 2</button>
-          <button class="btn outline" id="soundToggle" aria-pressed="false">Play ambient</button>
+    <section class="hero">
+      <div class="hero-inner reveal-on-scroll">
+        <div class="hero-logo">
+          <img src="syneon_image.png" alt="Synaeon Logo">
         </div>
-        <div id="demoCanvas" style="height:520px;border-radius:18px;background:var(--clr-bg-900);overflow:hidden"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================== Team =============================== -->
-  <section id="team" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">Our Team</span>
-      <h2 class="gradient-text">Meet the visionaries</h2>
-    </div>
-    <div class="grid cols-2">
-      <article class="card team-card">
-        <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan – CEO &amp; Founder" loading="lazy">
-        <div class="team-info flow">
-          <h3>Matei Seleușan</h3><p class="section-label" style="font-size:.75rem">CEO · Founder</p>
-          <p>Biomedical scientist &amp; OCD survivor. Former ETH Zürich MSc candidate turned entrepreneur on a mission.</p>
+        <div class="hero-tagline">The Future of Mental Healing</div>
+        <h1>AI Builds Therapeutic Worlds Around You</h1>
+        <p class="hero-text">Experience the next generation of mental healthcare with Synaeon's AI-driven VR exposure therapy, dynamically adapting to individual needs.</p>
+        <div class="btn-group">
+          <a href="#solution" class="btn">Discover the Solution</a>
+          <a href="#experience" class="btn btn-outline">Try the Demo</a>
         </div>
-      </article>
-      <article class="card team-card">
-        <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu – CTO &amp; Co‑Founder" loading="lazy">
-        <div class="team-info flow">
-          <h3>Răzvan Crețu</h3><p class="section-label" style="font-size:.75rem">CTO · Co‑Founder</p>
-          <p>Hardware whisperer &amp; AI integration ace. Built successful robotics startups before turning to mental health.</p>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="section-inner">
+        <div class="section-header reveal-on-scroll">
+          <span class="section-label">Our Vision</span>
+          <h2>Revolutionizing Mental Health Treatment</h2>
+          <p>Synaeon pioneers AI-driven VR exposure therapy, crafting dynamic, adaptive, and deeply immersive environments for transformative mental health treatment. Our mission is to make effective therapy more accessible and engaging.</p>
         </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- ======================== Contact ============================ -->
-  <section id="contact" class="container flow">
-    <div class="section-header flow">
-      <span class="section-label">Get in touch</span>
-      <h2 class="gradient-text">Connect with us</h2>
-      <p class="lead">We’d love to hear from clinicians, partners and investors alike.</p>
-    </div>
-    <ul role="list" class="flow" style="--flow-space:1rem;max-width:28rem;margin-inline:auto">
-      <li class="card" style="display:flex;align-items:center;gap:.75rem;justify-content:space-between"><span>mateiseleusan@gmail.com</span><a href="https://www.linkedin.com/in/matei-seleușan-737a83222" aria-label="Matei on LinkedIn" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.875 20.452H3.8V9h3.075v11.452z"/></svg></a></li>
-      <li class="card" style="display:flex;align-items:center;gap:.75rem;justify-content:space-between"><span>razvanmihaicretu@gmail.com</span><a href="https://www.linkedin.com/in/razvan-cretu-703111164" aria-label="Răzvan on LinkedIn" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.875 20.452H3.8V9h3.075v11.452z"/></svg></a></li>
-    </ul>
-  </section>
-
-  <!-- ======================== Footer ============================= -->
-  <footer>
-    <div class="container grid cols-3">
-      <div class="flow">
-        <p class="ft-title gradient-text" style="font-size:1.2rem">Synaeon, Inc.</p>
-        <p style="opacity:.7">“That which you need most is to be found where you least want to look.” – Carl Jung</p>
+        <div class="features-grid">
+          <div class="feature-card reveal-on-scroll delay-1">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-9.8 11.3c.5 3.7 3.1 6.8 6.4 8.4l.6.3-.1-1.4c-.1-.8 0-1.6.2-2.3.3-1 .7-1.9 1.3-2.7.6-.8 1.3-1.4 2.2-1.9.9-.5 1.8-.8 2.8-.9 1-.1 2 0 3 .4.4.2.8.4 1.1.7l.7.5-.5.7c-.3.3-.6.7-.8 1s-.4.7-.6 1c-.2.4-.3.8-.4 1.2-.1.4-.1.8-.1 1.3 0 .4.1.8.2 1.2s.3.8.5 1.1l.5.7-.7.4c-1.1.6-2.3 1-3.5 1.1-.6.1-1.2.1-1.8.1-1.2 0-2.4-.3-3.5-.8-.5-.2-.9-.5-1.3-.8l-.8-.6.3-.9c.2-.5.4-1 .5-1.5s.2-1 .3-1.5c.1-.5.1-1 0-1.5s-.1-1-.3-1.5c-.1-.5-.3-1-.5-1.4l-.5-.8.8-.5c.9-.6 1.8-1.1 2.8-1.4.5-.2 1-.3 1.5-.4.5-.1 1-.1 1.5-.1s1 .1 1.5.2c.5.1 1 .3 1.5.5l.8.4-.4.9c-.2.5-.4.9-.6 1.4s-.3.9-.4 1.4c-.1.5-.1 1-.1 1.5s0 1 .1 1.4c.1.5.2.9.4 1.4l.5.8-.8.5c-.9.6-1.8 1-2.8 1.3-.5.1-1 .2-1.5.3-.5.1-1 .1-1.5.1s-1-.1-1.5-.2c-.5-.1-1-.3-1.5-.5l-.8-.4.4-.9c.3-.5.5-1 .7-1.6.2-.6.3-1.2.3-1.8 0-.6-.1-1.2-.3-1.8-.2-.6-.4-1.1-.7-1.6l-.7-.9.9-.4c1.1-.5 2.3-.8 3.5-.9.6-.1 1.2-.1 1.8-.1 1.2 0 2.4.2 3.5.7.5.2.9.5 1.3.8l.8.6-.3.9c-.2.5-.4 1-.5 1.5s-.2 1-.3 1.5c-.1.5-.1 1 0 1.5.1.5.1 1 .3 1.5.1.5.3 1 .5 1.4l.5.8-.8.5c-.9.6-1.8 1.1-2.8 1.4-.5.2-1 .3-1.5.4-.5.1-1 .1-1.5.1z"/></svg>
+            </div>
+            <h3>Advanced Generative AI</h3>
+            <p>Our proprietary AI instantly translates therapist input and patient data into dynamic, responsive 3D environments tailored to the therapeutic journey.</p>
+          </div>
+          <div class="feature-card reveal-on-scroll delay-2">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 9.13c-.01-1.33-1.1-2.41-2.44-2.41H4.86c-1.33 0-2.43 1.07-2.44 2.4C2.4 10.46 3.48 11.5 4.81 11.5h14.38c1.34 0 2.4-.99 2.39-2.37zM4.86 12.5c-1.3 0-2.38.94-2.44 2.18-.02.6.2 1.17.63 1.59l.9.9c.5.5 1.18.83 1.92.83h.01c.73 0 1.41-.32 1.92-.84l.89-.9c.44-.43.66-1.01.64-1.6-.07-1.25-1.15-2.16-2.47-2.16zm14.28 0c-1.32 0-2.4.91-2.47 2.16-.02.59.2 1.17.64 1.6l.89.9c.51.52 1.19.84 1.92.84h.01c.74 0 1.42-.33 1.92-.83l.9-.9c.43-.42.64-.99.63-1.59-.06-1.24-1.14-2.18-2.44-2.18zM12 1.5C6.2 1.5 1.5 6.2 1.5 12S6.2 22.5 12 22.5 22.5 17.8 22.5 12 17.8 1.5 12 1.5zm0 19.5c-4.7 0-8.5-3.8-8.5-8.5S7.3 5 12 5s8.5 3.8 8.5 8.5-3.8 8.5-8.5 8.5z"/></svg>
+            </div>
+            <h3>Deep Immersion</h3>
+            <p>High-fidelity VR provides unparalleled presence, making therapeutic scenarios feel real and enhancing the effectiveness of exposure techniques.</p>
+          </div>
+          <div class="feature-card reveal-on-scroll delay-3">
+            <div class="feature-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
+            </div>
+            <h3>Adaptive Biofeedback</h3>
+            <p>Real-time physiological monitoring (e.g., heart rate) informs the AI, dynamically adjusting the VR experience for optimal therapeutic intensity and safety.</p>
+          </div>
+        </div>
       </div>
-      <nav class="flow" aria-label="Footer">
-        <p class="ft-title">Navigate</p>
-        <a href="#about">About</a><a href="#solution">Solution</a><a href="#technology">Technology</a><a href="#team">Team</a>
-      </nav>
-      <div class="flow">
-        <p class="ft-title">Legal</p>
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/terms.html">Terms of Service</a>
-      </div>
-    </div>
-    <p class="copyright">© 2025 Synaeon, Inc. All rights reserved.</p>
-  </footer>
+    </section>
 
-  <!-- ======================== Scripts ============================ -->
+    <section class="section" id="problem">
+      <div class="section-inner">
+        <div class="section-header reveal-on-scroll">
+          <span class="section-label">The Challenge</span>
+          <h2>Limitations of Traditional Therapy</h2>
+          <p>Current exposure therapy often struggles with inconsistent immersion, lack of personalization, and logistical barriers, contributing to patient discomfort and high dropout rates (up to 50%).</p>
+        </div>
+        <div class="features-grid">
+           <div class="feature-card reveal-on-scroll delay-1" style="border-color: var(--neural-1); --card-bg: rgba(231, 76, 60, 0.1);"> <div class="feature-icon" style="color: var(--neural-1); border-color: var(--neural-1); background: rgba(231, 76, 60, 0.15);">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6c0-1.544-.57-2.97-1.53-4.096A5.91 5.91 0 0 0 12 6.75a5.91 5.91 0 0 0-4.47 1.904A5.905 5.905 0 0 0 6 12.75a6 6 0 0 0 6 6Zm0 0H6.75m5.25 0H17.25" /></svg>
+             </div>
+             <h3>Inconsistent Immersion</h3>
+             <p>Imagination-based or static media exposures lack the realism needed for effective processing, making it hard for patients to engage fully.</p>
+           </div>
+           <div class="feature-card reveal-on-scroll delay-2" style="border-color: var(--neural-1); --card-bg: rgba(231, 76, 60, 0.1);">
+             <div class="feature-icon" style="color: var(--neural-1); border-color: var(--neural-1); background: rgba(231, 76, 60, 0.15);">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+             </div>
+             <h3>Lack of Personalization</h3>
+             <p>Generic scenarios don't address specific patient triggers effectively. Real-time adaptation to patient reactions is often impossible.</p>
+           </div>
+           <div class="feature-card reveal-on-scroll delay-3" style="border-color: var(--neural-1); --card-bg: rgba(231, 76, 60, 0.1);">
+             <div class="feature-icon" style="color: var(--neural-1); border-color: var(--neural-1); background: rgba(231, 76, 60, 0.15);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" /></svg>
+             </div>
+             <h3>Accessibility & Dropout</h3>
+             <p>Practical challenges, cost, and discomfort with traditional methods lead to high treatment abandonment, preventing sustained recovery.</p>
+           </div>
+         </div>
+      </div>
+    </section>
+
+     <section class="section" id="solution">
+      <div class="section-inner">
+        <div class="section-header reveal-on-scroll">
+          <span class="section-label">Our Solution</span>
+          <h2>Dynamic, Adaptive VR Therapy</h2>
+          <p>Synaeon leverages AI and VR to create truly personalized, immersive, and responsive therapeutic environments, overcoming the limitations of traditional methods and enhancing patient engagement.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card reveal-on-scroll delay-1">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-7h10v2H7v-2z"/></svg>
+            </div>
+            <h3>AI-Generated Scenarios</h3>
+            <p>Therapists describe scenarios, and our AI generates corresponding immersive 3D worlds in real-time, allowing for infinite customization and relevance.</p>
+          </div>
+          <div class="feature-card reveal-on-scroll delay-2">
+            <div class="feature-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            </div>
+            <h3>Biofeedback Integration</h3>
+            <p>The VR environment intelligently responds to the patient's physiological state, ensuring exposure is always within the optimal therapeutic window.</p>
+          </div>
+          <div class="feature-card reveal-on-scroll delay-3">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+            </div>
+            <h3>Data-Driven Insights</h3>
+            <p>Track progress objectively with detailed session data. Our platform learns and adapts, offering clinicians valuable insights to refine treatment strategies.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="technology">
+       <div class="section-inner">
+         <div class="section-header reveal-on-scroll">
+           <span class="section-label">Technology</span>
+           <h2>The Synaeon Engine</h2>
+           <p>Our platform integrates cutting-edge generative AI for real-time world-building, advanced biometric sensors for adaptive feedback, and high-fidelity VR for deep immersion.</p>
+         </div>
+         <div class="video-container reveal-on-scroll">
+           <div class="video-item reveal-on-scroll delay-1">
+             <h3>See It In Action</h3> <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=x7G8z_zY0Kj9R2vT" title="Synaeon Technology Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border: 1px solid var(--border-light); border-radius: 15px; box-shadow: var(--shadow-glow-subtle);"></iframe>
+           </div>
+           <div class="video-item reveal-on-scroll delay-2">
+             <h3>The Vision Explained</h3> <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=x7G8z_zY0Kj9R2vT" title="Synaeon Vision Overview" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border: 1px solid var(--border-light); border-radius: 15px; box-shadow: var(--shadow-glow-subtle);"></iframe>
+           </div>
+         </div>
+       </div>
+     </section>
+
+     <section class="section" id="experience">
+      <div class="section-inner">
+        <div class="section-header reveal-on-scroll">
+          <span class="section-label">Interactive Demo</span>
+          <h2>Step Into the Experience</h2>
+          <p>Engage with a simplified simulation of our adaptive arachnophobia exposure therapy. Select an intensity level and observe how the environment can be tailored. (Requires Desktop & WebGL)</p>
+        </div>
+        <div class="vr-demo reveal-on-scroll delay-1">
+           <div class="vr-controls">
+             <button class="btn" onclick="showLevel('level1')" id="level1-btn" aria-pressed="false">Level 1: Mild Exposure</button>
+             <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn" aria-pressed="false">Level 2: Moderate Exposure</button>
+             <button class="btn btn-outline" id="soundToggleBtn" onclick="toggleSound()" aria-pressed="false">Ambient Sound</button>
+           </div>
+           <div id="arachnophobia-demo" class="vr-demo-canvas">Initializing Demo Level 1...</div>
+           <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;">Initializing Demo Level 2...</div>
+         </div>
+      </div>
+    </section>
+
+     <section class="section" id="team">
+       <div class="section-inner">
+         <div class="section-header reveal-on-scroll">
+           <span class="section-label">Our Team</span>
+           <h2>Meet The Visionaries</h2>
+           <p>A passionate fusion of clinical insight, technical expertise, and personal experience drives Synaeon's mission to redefine mental healthcare through technology.</p>
+         </div>
+         <div class="team-grid">
+           <div class="team-card reveal-on-scroll delay-1">
+             <div class="team-image-container">
+               <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Photo of Matei Seleușan" class="team-image">
+             </div>
+             <div class="team-info">
+               <h3 class="team-name">Matei Seleușan</h3>
+               <p class="team-role">CEO & Founder</p>
+               <p class="team-bio">Biomedical science background fueled by personal success with exposure therapy. Driving the clinical vision and product strategy. Former ETH Zürich Master's candidate.</p>
+             </div>
+           </div>
+           <div class="team-card reveal-on-scroll delay-2">
+             <div class="team-image-container">
+               <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Photo of Răzvan Crețu" class="team-image">
+             </div>
+             <div class="team-info">
+               <h3 class="team-name">Răzvan Crețu</h3>
+               <p class="team-role">CTO & Co-Founder</p>
+               <p class="team-bio">Deep expertise in hardware, AI integration, and robotics. Proven entrepreneur architecting Synaeon's core technology and ensuring seamless execution.</p>
+             </div>
+           </div>
+           </div>
+       </div>
+     </section>
+
+     <section class="section" id="updates">
+       <div class="section-inner">
+         <div class="section-header reveal-on-scroll">
+           <span class="section-label">News & Updates</span>
+           <h2>Stay Informed</h2>
+           <p>Follow our journey as we reach new milestones, share insights, and participate in industry events.</p>
+         </div>
+         <div class="updates-grid">
+           <div class="update-item reveal-on-scroll delay-1">
+             <img src="times_square.JPG" alt="Synaeon featured on a billboard in Times Square">
+             <p>Synaeon makes its mark in Times Square! Thrilled to share our vision on a global stage.</p>
+           </div>
+           <div class="update-item reveal-on-scroll delay-2">
+             <img src="razvan_skyline.JPG" alt="Răzvan Crețu overlooking the New York City skyline">
+             <p>Exploring new horizons. Our CTO, Răzvan, engaging in strategic meetings in NYC.</p>
+           </div>
+           </div>
+       </div>
+     </section>
+
+
+     <section class="section" id="contact">
+       <div class="section-inner">
+         <div class="section-header reveal-on-scroll">
+           <span class="section-label">Connect</span>
+           <h2>Get In Touch</h2>
+           <p>We're excited to connect with clinicians, investors, and partners who share our vision for the future of mental health. Reach out to learn more or discuss collaboration opportunities.</p>
+         </div>
+         <div class="contact-card reveal-on-scroll delay-1">
+           <div class="contact-item">
+              <a href="mailto:mateiseleusan@gmail.com" title="Email Matei Seleușan">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                 mateiseleusan@gmail.com
+              </a>
+              <a href="https://www.linkedin.com/in/matei-seleușan-737a83222" target="_blank" rel="noopener noreferrer" title="Matei Seleușan on LinkedIn">
+                 <svg role="img" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.538 13.019H3.8V9h3.075v11.452zM22.225 0H1.771C.792 0 0 .771 0 1.723v20.554C0 23.229.792 24 1.771 24h20.451C23.2 24 24 23.229 24 22.277V1.723C24 .771 23.2 0 22.225 0z"/></svg>
+                 LinkedIn
+              </a>
+           </div>
+           <div class="contact-item">
+             <a href="mailto:razvanmihaicretu@gmail.com" title="Email Răzvan Crețu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                razvanmihaicretu@gmail.com
+             </a>
+             <a href="https://www.linkedin.com/in/razvan-cretu-703111164/?originalSubdomain=ro" target="_blank" rel="noopener noreferrer" title="Răzvan Crețu on LinkedIn">
+                <svg role="img" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.538 13.019H3.8V9h3.075v11.452zM22.225 0H1.771C.792 0 0 .771 0 1.723v20.554C0 23.229.792 24 1.771 24h20.451C23.2 24 24 23.229 24 22.277V1.723C24 .771 23.2 0 22.225 0z"/></svg>
+                LinkedIn
+             </a>
+           </div>
+         </div>
+       </div>
+     </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4 class="footer-title">Synaeon, Inc.</h4>
+          <p class="footer-text">Pioneering the future of mental healthcare with adaptive, AI-powered virtual reality therapy.</p>
+          <p class="footer-text" style="font-style: italic; opacity: 0.8;">"The cave you fear to enter holds the treasure you seek." - Joseph Campbell</p> </div>
+        <div class="footer-column">
+          <h4 class="footer-title">Navigate</h4>
+          <div class="footer-links">
+            <a href="#about" class="footer-link">About Us</a>
+            <a href="#problem" class="footer-link">The Challenge</a>
+            <a href="#solution" class="footer-link">Our Solution</a>
+            <a href="#technology" class="footer-link">Technology</a>
+            <a href="#experience" class="footer-link">Demo</a>
+            <a href="#team" class="footer-link">Team</a>
+            <a href="#updates" class="footer-link">Updates</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-title">Contact</h4>
+          <div class="footer-links">
+            <a href="mailto:mateiseleusan@gmail.com" class="footer-link">Matei Seleușan</a>
+            <a href="mailto:razvanmihaicretu@gmail.com" class="footer-link">Răzvan Crețu</a>
+            <a href="#contact" class="footer-link">Contact Section</a> </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 Synaeon, Inc. All rights reserved. | Healing Minds, Virtually.</p>
+        </div>
+    </footer>
+  </div>
+
+  <audio id="relaxingAudio" src="relaxing.mp3" loop></audio>
+
+  <script src="main.js" defer></script>
+  <script src="main_level2.js" defer></script>
+
   <script>
-    // ========= Nav shrink on scroll =========
-    const nav = document.getElementById('site-nav');
-    const shrink = () => nav.classList.toggle('scrolled', window.scrollY > 50);
-    shrink();
-    window.addEventListener('scroll', shrink, {passive:true});
+    // Inline script for critical setup like loading and nav toggle
+    document.addEventListener('DOMContentLoaded', function() {
 
-    // ========= Theme toggle ================
-    const htmlEl = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
-    const current = localStorage.getItem('theme');
-    if(current) htmlEl.classList.add(current);
-    themeToggle.addEventListener('click', ()=>{
-      const isLight = htmlEl.classList.toggle('light');
-      htmlEl.classList.toggle('dark', !isLight);
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    });
+        // --- Loading Screen Logic ---
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingBar = document.getElementById('loading-bar');
+        const mainContent = document.querySelector('.main-content');
+        const body = document.body;
 
-    // ========= Starfield canvas ============
-    window.addEventListener('load',()=>{
-      const canvas = document.getElementById('starfield');
-      const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-      function resize(){renderer.setSize(innerWidth,innerHeight)}
-      resize();
-      window.addEventListener('resize', resize);
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
-      camera.position.z = 5;
-      const geometry = new THREE.BufferGeometry();
-      const COUNT = 1600;
-      const positions = new Float32Array(COUNT*3);
-      for(let i=0;i<COUNT;i++){
-        const r = 60*Math.random();
-        const theta = Math.random()*2*Math.PI;
-        const phi = Math.acos(2*Math.random()-1);
-        positions.set([
-          r*Math.sin(phi)*Math.cos(theta),
-          r*Math.sin(phi)*Math.sin(theta),
-          r*Math.cos(phi)
-        ], i*3);
+        // Simulate loading progress
+        loadingBar.style.width = '100%';
+
+        // Wait for animation and a little extra time
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            body.classList.add('loaded'); // Add 'loaded' class to body
+            mainContent.style.opacity = 1; // Trigger main content fade-in (redundant if using body.loaded)
+
+            // Clean up loading screen from DOM after transition
+            loadingScreen.addEventListener('transitionend', () => {
+                loadingScreen.remove();
+            }, { once: true });
+
+        }, 2000); // Adjust timing as needed (should be >= loading bar transition)
+
+
+        // --- Loading Canvas Animation (Minimalistic) ---
+        (function() {
+            const canvas = document.getElementById('loadingCanvas');
+            if (!canvas || !window.THREE) return; // Check if THREE is loaded
+
+            try {
+                const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 4; // Slightly further back
+
+                const geometry = new THREE.IcosahedronGeometry(1.2, 1); // Slightly larger, less detail
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0x0077ff,
+                    metalness: 0.3,
+                    roughness: 0.6,
+                    wireframe: true,
+                    wireframeLinewidth: 1.5 // Thicker lines
+                });
+                const shape = new THREE.Mesh(geometry, material);
+                scene.add(shape);
+
+                const light1 = new THREE.PointLight(0x66b0ff, 1.5, 100); // Stronger primary light
+                light1.position.set(5, 5, 5);
+                scene.add(light1);
+
+                const light2 = new THREE.PointLight(0xffb700, 1.0, 100); // Accent light
+                light2.position.set(-5, -5, 2);
+                scene.add(light2);
+
+                const ambient = new THREE.AmbientLight(0xffffff, 0.1); // Low ambient
+                 scene.add(ambient);
+
+                let requestId;
+                function animate() {
+                    requestId = requestAnimationFrame(animate);
+                    shape.rotation.x += 0.004;
+                    shape.rotation.y += 0.006;
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }, { passive: true });
+
+                // Stop animation when loading screen is hidden
+                const observer = new MutationObserver((mutationsList) => {
+                    for(let mutation of mutationsList) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            if (loadingScreen.classList.contains('hidden') && requestId) {
+                                cancelAnimationFrame(requestId);
+                                observer.disconnect(); // Stop observing
+                                // console.log("Loading animation stopped.");
+                            }
+                        }
+                    }
+                });
+                observer.observe(loadingScreen, { attributes: true });
+
+            } catch (error) {
+                console.error("Error initializing loading canvas:", error);
+                // Hide canvas if Three.js fails
+                 if(canvas) canvas.style.display = 'none';
+            }
+        })();
+
+
+      // --- Navigation Toggle ---
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('nav-links');
+
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+          const isActive = navLinks.classList.toggle('active');
+          hamburger.classList.toggle('active');
+          hamburger.setAttribute('aria-expanded', isActive);
+          // Optional: Toggle body scroll lock
+          // body.style.overflow = isActive ? 'hidden' : '';
+        });
+
+        // Close menu when a link is clicked
+        navLinks.addEventListener('click', (e) => {
+          if (e.target.classList.contains('nav-link')) {
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            // body.style.overflow = '';
+          }
+        });
+         // Close menu if clicking outside the nav when open
+         document.addEventListener('click', (e) => {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                 navLinks.classList.remove('active');
+                 hamburger.classList.remove('active');
+                 hamburger.setAttribute('aria-expanded', 'false');
+            }
+         });
       }
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      const material = new THREE.PointsMaterial({color:0x8ab5ff, size:0.06, sizeAttenuation:true, transparent:true, opacity:.55});
-      const stars = new THREE.Points(geometry, material);
-      scene.add(stars);
-      const animate = ()=>{
-        requestAnimationFrame(animate);
-        stars.rotation.y += 0.0007;
-        renderer.render(scene,camera);
-      };
-      animate();
-    });
 
-    // ========= Demo controls (placeholder) ==
-    document.querySelectorAll('[data-level]').forEach(btn=>btn.addEventListener('click',()=>{
-      document.querySelectorAll('[data-level]').forEach(b=>b.classList.add('outline'));
-      btn.classList.remove('outline');
-    }));
-    const soundBtn = document.getElementById('soundToggle');
-    const audio = new Audio('/relaxing.mp3');
-    soundBtn.addEventListener('click',()=>{
-      if(audio.paused){audio.loop=true;audio.play();soundBtn.setAttribute('aria-pressed','true');soundBtn.textContent='Mute ambient'}
-      else {audio.pause();soundBtn.setAttribute('aria-pressed','false');soundBtn.textContent='Play ambient'}
-    });
+      // --- Navbar Scroll Effect ---
+      const navbar = document.getElementById('navbar');
+      let lastScrollTop = 0;
+      const scrollThreshold = 50; // Pixels to scroll before reacting
+
+      window.addEventListener('scroll', function() {
+         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+         if (scrollTop > scrollThreshold) {
+             navbar.classList.add('scrolled');
+         } else {
+             navbar.classList.remove('scrolled');
+         }
+
+         // Optional: Hide nav on scroll down, show on scroll up
+         // if (scrollTop > lastScrollTop && scrollTop > navbar.offsetHeight){
+         //     // Scroll Down
+         //     navbar.style.top = `-${navbar.offsetHeight}px`;
+         // } else {
+         //     // Scroll Up
+         //     navbar.style.top = "0";
+         // }
+         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+      }, { passive: true }); // Use passive listener for performance
+
+
+      // --- Scroll Reveal Animation ---
+      const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+      const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  // Optional: Stop observing once visible
+                  // revealObserver.unobserve(entry.target);
+              } else {
+                  // Optional: Remove class to re-animate on scroll up
+                  entry.target.classList.remove('is-visible');
+              }
+          });
+      }, {
+          threshold: 0.1, // Trigger when 10% of the element is visible
+          // rootMargin: "0px 0px -50px 0px" // Optional: Adjust viewport bounds
+      });
+
+      revealElements.forEach(el => {
+          revealObserver.observe(el);
+      });
+
+      // --- VR Demo Controls & Audio (Keep as is, loaded by external JS) ---
+       // Logic moved to inline script for faster interaction setup
+
+       let currentLevel = null;
+       let audioPlaying = false;
+       const audio = document.getElementById('relaxingAudio');
+       const level1CanvasContainer = document.getElementById('arachnophobia-demo');
+       const level2CanvasContainer = document.getElementById('arachnophobia-level2');
+       const level1Btn = document.getElementById('level1-btn');
+       const level2Btn = document.getElementById('level2-btn');
+       const soundBtn = document.getElementById('soundToggleBtn');
+
+       // Function to handle demo level switching
+       window.showLevel = function(levelId) { // Make it global
+           if (levelId === currentLevel) return; // Do nothing if already active
+
+           const isLevel1 = levelId === 'level1';
+           level1CanvasContainer.style.display = isLevel1 ? 'flex' : 'none'; // Use flex to center text initially
+           level2CanvasContainer.style.display = !isLevel1 ? 'flex' : 'none';
+
+           level1Btn.classList.toggle('btn', isLevel1);
+           level1Btn.classList.toggle('btn-outline', !isLevel1);
+           level1Btn.setAttribute('aria-pressed', isLevel1);
+
+           level2Btn.classList.toggle('btn', !isLevel1);
+           level2Btn.classList.toggle('btn-outline', isLevel1);
+           level2Btn.setAttribute('aria-pressed', !isLevel1);
+
+           currentLevel = levelId;
+
+           // Initialize the correct Three.js scene (assuming functions initLevel1/initLevel2 exist)
+           if (isLevel1) {
+               if (typeof initLevel1 === 'function') {
+                   // Check if canvas already exists, prevent re-init if possible
+                   if (!level1CanvasContainer.querySelector('canvas')) {
+                       level1CanvasContainer.innerHTML = ''; // Clear placeholder
+                       initLevel1();
+                   }
+               } else {
+                   level1CanvasContainer.textContent = 'Error: Demo Level 1 script not loaded.';
+                   console.error('initLevel1 is not defined.');
+               }
+           } else {
+               if (typeof initLevel2 === 'function') {
+                    if (!level2CanvasContainer.querySelector('canvas')) {
+                       level2CanvasContainer.innerHTML = ''; // Clear placeholder
+                       initLevel2();
+                    }
+               } else {
+                    level2CanvasContainer.textContent = 'Error: Demo Level 2 script not loaded.';
+                    console.error('initLevel2 is not defined.');
+               }
+           }
+           // Note: Resize logic should be handled within initLevel1/initLevel2
+       }
+
+        // Function to toggle sound
+       window.toggleSound = function() { // Make it global
+           if (!audio) return;
+           try {
+               if (audioPlaying) {
+                   audio.pause();
+                   soundBtn.textContent = 'Ambient Sound';
+                   soundBtn.classList.add('btn-outline');
+                   soundBtn.classList.remove('btn'); // Make it look inactive
+                   soundBtn.setAttribute('aria-pressed', 'false');
+               } else {
+                   audio.play().then(() => {
+                       soundBtn.textContent = 'Mute Sound';
+                       soundBtn.classList.remove('btn-outline');
+                       soundBtn.classList.add('btn'); // Make it look active
+                       soundBtn.setAttribute('aria-pressed', 'true');
+                   }).catch(error => {
+                       console.error('Audio play failed:', error);
+                       soundBtn.textContent = 'Audio Error';
+                       // Handle browsers blocking autoplay without interaction
+                   });
+               }
+               audioPlaying = !audioPlaying;
+           } catch (error) {
+               console.error("Error toggling sound:", error);
+               soundBtn.textContent = 'Audio N/A';
+           }
+       }
+
+        // Initially select level 1 after a short delay to allow scripts to load
+        // setTimeout(() => {
+        //     showLevel('level1');
+        // }, 500); // Delay might be needed depending on external script loading
+
+
+    }); // End DOMContentLoaded
+
+    // Global Particle background (Consider moving to a separate deferred JS file)
+    // Ensure THREE is loaded before running this
+     function initGlobalParticles() {
+         const canvas = document.getElementById('global-particleCanvas');
+         if (!canvas || !window.THREE) return; // Exit if no canvas or THREE
+
+         try {
+             const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+             renderer.setSize(window.innerWidth, window.innerHeight);
+             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+             const scene = new THREE.Scene();
+             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+             camera.position.z = 5; // Start closer
+
+             const particleCount = 5000; // More particles
+             const positions = new Float32Array(particleCount * 3);
+             const colors = new Float32Array(particleCount * 3);
+             const sizes = new Float32Array(particleCount);
+             const velocities = new Float32Array(particleCount * 3); // Store velocity
+
+             const colorPrimary = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--primary-light').trim() || '#66b0ff');
+             const colorAccent = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent-light').trim() || '#ffd04d');
+             const colorWhite = new THREE.Color('#ffffff');
+
+             for (let i = 0; i < particleCount; i++) {
+                 const i3 = i * 3;
+                 positions[i3] = (Math.random() - 0.5) * 20; // Wider spread initially
+                 positions[i3 + 1] = (Math.random() - 0.5) * 20;
+                 positions[i3 + 2] = (Math.random() - 0.5) * 20; // Start in 3D space
+
+                 // Velocities (random direction, slow speed)
+                  velocities[i3] = (Math.random() - 0.5) * 0.005;
+                  velocities[i3 + 1] = (Math.random() - 0.5) * 0.005;
+                  velocities[i3 + 2] = (Math.random() - 0.5) * 0.005;
+
+
+                 const randColor = Math.random();
+                 const color = randColor < 0.4 ? colorPrimary : (randColor < 0.7 ? colorAccent : colorWhite);
+                 colors[i3] = color.r;
+                 colors[i3 + 1] = color.g;
+                 colors[i3 + 2] = color.b;
+
+                 sizes[i] = Math.random() * 0.08 + 0.02; // Size variation
+             }
+
+             const geometry = new THREE.BufferGeometry();
+             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+             geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+             // Particle texture
+             const textureLoader = new THREE.TextureLoader();
+             const particleTexture = textureLoader.load('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMC8xMC8yMGzt3XM höhereAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAAjdJREFUWEftl79rFFcUxp/7vLvzZnZnl7uNFkULpVARBAURIZRQEIJaCFZEsbISiIiICLWxsBELsVCwkYUIYqGkEQTNBC00GAQhERFREFEUBEE/z+6dmffej9mM3WX3ZmZ39+d8P+f7O+ffuQgh/Gk/Q8QFMRoBwgB3gGuAw8AVoA+4DLwD7AAHl+vi65kRghC+l5fny0cUuBHkAV2AO8AVoA/4FngEnAP+A/+D9r4NfM5v5wzAw8uXn59/S0s/QwYgAhgDPAZ+AH8B3wCvgeH/CjQ14gB2AZuAZ8B8oBeYBo4Cby6/3V1d31y2t4AJQAowBHgNfAC+AN8Cr4Hh7wKaGvFAe3sD7/v8vPj4/PzycuF/AEAAMA+4DLwD7AAHlL/9AHwD/gPb+zbwOb/dMwMP/sAFoA/4FngEnAP+A/+D9v4NfM5v95mBh7/nQdCXS3/7AHgGfAPa+zbwOb/dMwMP/sAFoA/4FngEnAP+A/+D9v4NfM5v98zAw79vAQgD3AGuAw8Av4B9wGXgH/AeaOvXwOb8tmcGDvwdA0B7ewPv+/y8+Pj8/PLyYvE/AEAAOAy8A+wAB5S//QB8A/4D2/s28Dm/3TMDD/7ABaAP+BZ4BJwD/gP/g/b+DbzOb/eZgYf/5wHQ10p/+wB4BvwD2vs28Dm/3TMDD/7ABaAP+BZ4BJwD/gP/g/b+DbzOb/fMwMO/bwEIA9wBrgMPgH/APuAy8B/wHmjr18Dm/LZmBhz8nQNAe3sD7/v8vPj4/Pzy8mLxPwBAAHAZuAfsAAeUv/0AfAP+A9v7NvA5v90zA4+rN0EIA9wBrgMPAL+AfcBl4B9gD1jv28Dm/LRmAhz8nQNAe3sD7/v8vPj4/Pzy8mLRPwBAADAPuAy8A+wAB5Q//QC8DGwD7X0beFfN7w0AGAFGA48AlwEALgL/x/c9gAPLz/p8gYlM77v+6a3/50GgqxUn468L8CbwFPjP+C99xN/9L3tX37Y73+p2f0QyA6wG/pf5F1+6+B/Ah3zY0z8+fB8D+P8E/AL+Nf5N/AH+N/6B/wP+G/+99+bN/n/1f/k//6H/P8i/+H/+Nf5/8w/u/83f+wH8B4g9A0+c4JkNAAAAAElFTkSuQmCC'); // Simple dot texture (inline)
+
+             const material = new THREE.PointsMaterial({
+                 size: 0.1, // Base size
+                 sizeAttenuation: true, // Scale with distance
+                 map: particleTexture,
+                 vertexColors: true,
+                 transparent: true,
+                 opacity: 0.8,
+                 blending: THREE.AdditiveBlending,
+                 depthWrite: false, // Don't write to depth buffer
+             });
+
+             const points = new THREE.Points(geometry, material);
+             scene.add(points);
+
+             // Mouse interaction
+             const mouse = new THREE.Vector2();
+             let targetRotationX = 0.0005; // Slower base rotation
+             let targetRotationY = 0.0005;
+
+             function onMouseMove(event) {
+                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                 // Adjust target rotation based on mouse position (subtle effect)
+                 targetRotationX = mouse.y * 0.001;
+                 targetRotationY = mouse.x * 0.001;
+             }
+             window.addEventListener('mousemove', onMouseMove, { passive: true });
+
+             const clock = new THREE.Clock();
+             let requestIdParticles;
+             function animateParticles() {
+                 requestIdParticles = requestAnimationFrame(animateParticles);
+                 const delta = clock.getDelta();
+                 const elapsed = clock.getElapsedTime();
+
+                 // Update particle positions based on velocity
+                 const currentPositions = geometry.attributes.position.array;
+                 for (let i = 0; i < particleCount; i++) {
+                     const i3 = i * 3;
+                      // Simple linear movement - could be more complex (e.g., noise)
+                     currentPositions[i3] += velocities[i3];
+                     currentPositions[i3 + 1] += velocities[i3 + 1];
+                     currentPositions[i3 + 2] += velocities[i3 + 2];
+
+                     // Optional: Boundary checks (wrap around or reset)
+                     // Example: Reset if too far
+                     if (Math.abs(currentPositions[i3]) > 15 || Math.abs(currentPositions[i3+1]) > 15 || Math.abs(currentPositions[i3+2]) > 15) {
+                         currentPositions[i3] = (Math.random() - 0.5) * 2; // Reset closer to center
+                         currentPositions[i3 + 1] = (Math.random() - 0.5) * 2;
+                         currentPositions[i3 + 2] = (Math.random() - 0.5) * 2;
+                     }
+                 }
+                 geometry.attributes.position.needsUpdate = true; // Important!
+
+
+                 // Lerp current rotation towards target rotation for smooth mouse follow
+                 points.rotation.x += (targetRotationX - points.rotation.x) * 0.05;
+                 points.rotation.y += (targetRotationY - points.rotation.y) * 0.05;
+
+                 // Subtle camera movement
+                 camera.position.x = Math.sin(elapsed * 0.1) * 0.5;
+                 camera.lookAt(scene.position); // Ensure camera always looks at center
+
+                 renderer.render(scene, camera);
+                 if (window.TWEEN) TWEEN.update(); // Update tweens if used
+             }
+             animateParticles();
+
+             // Resize handling
+             window.addEventListener('resize', () => {
+                 const width = window.innerWidth;
+                 const height = window.innerHeight;
+                 renderer.setSize(width, height);
+                 camera.aspect = width / height;
+                 camera.updateProjectionMatrix();
+             }, { passive: true });
+
+              // Stop animation if body loses 'loaded' class (e.g., during navigation)
+                const bodyObserver = new MutationObserver((mutationsList) => {
+                    for(let mutation of mutationsList) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            if (!document.body.classList.contains('loaded') && requestIdParticles) {
+                                cancelAnimationFrame(requestIdParticles);
+                                // console.log("Particle animation stopped.");
+                                bodyObserver.disconnect();
+                                return; // Stop checking once stopped
+                            }
+                        }
+                    }
+                });
+                bodyObserver.observe(document.body, { attributes: true });
+
+
+         } catch (error) {
+             console.error("Error initializing global particles:", error);
+             if (canvas) canvas.style.display = 'none'; // Hide canvas on error
+         }
+     }
+
+      // Initialize particles only after THREE.js is likely loaded
+      // Use window.onload or check THREE existence more robustly if needed
+      setTimeout(initGlobalParticles, 500); // Delay particle init slightly
+
   </script>
 
-  <!-- ======================== Structured Data ==================== -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Synaeon, Inc.",
-    "url": "https://synaeon.com/",
-    "logo": "https://synaeon.com/syneon_image.png",
-    "sameAs": [
-      "https://www.linkedin.com/company/synaeon"
-    ],
-    "description": "AI‑powered VR therapy platform delivering real‑time, bio‑adaptive exposure treatment."
-  }
-  </script>
 </body>
 </html>
