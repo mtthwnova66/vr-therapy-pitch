@@ -3,24 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synaeon - Generative AI VR Therapy | The Future of Mental Healing</title>
-  <meta name="description" content="Synaeon pioneers generative AI-powered VR therapy, transforming mental health treatment with adaptive, real-time exposure environments for clinically effective results.">
-  <meta name="keywords" content="VR therapy, AI therapy, generative AI, exposure therapy, mental health technology, anxiety treatment, PTSD treatment, virtual reality healthcare, Synaeon, AI mental health, digital therapeutics">
-  <meta name="author" content="Synaeon, Inc.">
+  <title>Synaeon - Generative AI VR Therapy | The Future of Mental Healing</title> <meta name="description" content="Synaeon pioneers generative AI-powered VR therapy, transforming mental health treatment with adaptive, real-time exposure environments for clinically effective results."> <meta name="keywords" content="VR therapy, AI therapy, generative AI, exposure therapy, mental health technology, anxiety treatment, PTSD treatment, virtual reality healthcare, Synaeon, AI mental health, digital therapeutics"> <meta name="author" content="Synaeon, Inc.">
   <meta property="og:title" content="Synaeon - Generative AI VR Therapy | The Future of Mental Healing">
-  <meta property="og:description" content="Experience hyper-realistic, AI-generated VR environments adapting in real-time for truly personalized and effective exposure therapy. Discover Synaeon.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://synaeon.com/">
-  <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
-  <meta property="og:image:width" content="1200">
+  <meta property="og:description" content="Experience hyper-realistic, AI-generated VR environments adapting in real-time for truly personalized and effective exposure therapy. Discover Synaeon."> <meta property="og:type" content="website">
+  <meta property="og:url" content="https://synaeon.com/"> <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg"> <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Synaeon - AI-Powered VR Therapy">
   <meta name="twitter:description" content="AI-driven VR environments adapting in real-time for effective exposure therapy.">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
 
-  <link rel="icon" type="image/png" href="syneon_image.png">
-  <link rel="apple-touch-icon" href="syneon_image.png">
+  <link rel="icon" type="image/png" href="syneon_image.png"> <link rel="apple-touch-icon" href="syneon_image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,11 +24,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
-
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-  <style>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script> <style>
     /* --- CSS Overhaul for Extraordinary Visuals --- */
     :root {
       /* Palette: Futuristic Blues, Accented Gold/Amber, Deep Space */
@@ -94,7 +83,6 @@
       --shadow-card: 0 15px 45px rgba(0, 0, 0, 0.5); /* Deeper card shadow */
       --shadow-button: 0 6px 20px rgba(0, 170, 255, 0.4);
       --shadow-button-hover: 0 10px 30px rgba(0, 170, 255, 0.6);
-      --shadow-button-active: inset 0 3px 6px rgba(0, 0, 0, 0.3), 0 2px 5px rgba(0, 170, 255, 0.3); /* Active state shadow */
 
       --border-radius-sm: 8px;
       --border-radius-md: 16px;
@@ -123,17 +111,16 @@
       background-color: var(--bg-dark); /* Ensure body bg matches html */
     }
 
-    /* Background Canvas Styling - Restored */
+    /* Enhanced Background Canvas (Handles Starfield/Nebula via JS) */
     #global-backgroundCanvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100vh;
-      z-index: -2; /* Place behind content */
-      opacity: 0; /* Start hidden */
-      transition: opacity 1.5s ease 0.5s; /* Fade in via JS */
-      /* background-color: transparent; */ /* Ensure no solid color */
+      z-index: -2;
+      opacity: 1; /* Adjusted for visibility */
+      /* transition: opacity 1.5s ease 0.5s; */ /* Removed transition tied to loading */
     }
 
     /* Loading Screen - More Dramatic */
@@ -264,7 +251,6 @@
       filter: drop-shadow(0 0 18px var(--primary-glow)) drop-shadow(0 0 8px var(--accent-glow));
       transition: transform 0.5s var(--transition-impact), filter 0.5s ease;
     }
-    /* Logo hover effect remains as requested */
     .hero-logo img:hover { transform: scale(1.12) rotate(-4deg); filter: drop-shadow(0 0 30px var(--primary-glow)) drop-shadow(0 0 15px var(--accent-glow)); }
     .hero-tagline {
       font-family: var(--font-display); font-size: clamp(1rem, 2.2vw, 1.25rem);
@@ -354,17 +340,7 @@
     .btn:hover::before { opacity: 1; }
     .btn:hover::after { transform: rotate(45deg) scale(1.5); opacity: 1; transition: transform 0.8s ease, opacity 0.8s ease; }
     .btn:hover, .btn:focus { transform: translateY(-5px) scale(1.04); box-shadow: var(--shadow-button-hover), var(--shadow-glow-lg); outline: none; }
-
-    /* Active state for button press feedback */
-    .btn:active {
-      transform: translateY(-1px) scale(0.99); /* Slightly press down */
-      box-shadow: var(--shadow-button-active), var(--shadow-glow-sm); /* Inset shadow + reduced glow */
-      transition-duration: 0.1s; /* Faster transition for active state */
-    }
-    .btn:active::before {
-        background: var(--primary-dark); /* Darker background when pressed */
-        opacity: 1;
-    }
+    .btn:active { transform: translateY(-2px) scale(1.01); } /* Click feedback */
 
     .btn-outline {
       background: transparent; border: 2px solid var(--primary-light); color: var(--primary-light);
@@ -380,19 +356,6 @@
       box-shadow: 0 0 25px rgba(0, 170, 255, 0.4); transform: translateY(-5px) scale(1.04); outline: none;
     }
     .btn-outline:hover::after, .btn-outline:focus::after { transform: scaleX(1); }
-
-    /* Active state for outline button */
-    .btn-outline:active {
-      transform: translateY(-1px) scale(0.99);
-      box-shadow: inset 0 2px 4px rgba(0, 170, 255, 0.3); /* Subtle inset glow */
-      color: var(--primary-light); /* Keep text color */
-      transition-duration: 0.1s;
-    }
-    .btn-outline:active::after {
-        transform: scaleX(1); /* Ensure fill is visible */
-        background: var(--primary-dark); /* Darker fill when pressed */
-    }
-
 
     .btn-group { display: flex; gap: 1.8rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
 
@@ -486,14 +449,8 @@
       display: flex; /* Use flex to center loading message */
       align-items: center; justify-content: center;
     }
-     /* Style for potential loading/error messages inside canvas container */
-    .vr-demo-canvas p { color: var(--text-secondary); font-size: 1.1rem; padding: 1rem; text-align: center; }
-    .vr-demo-canvas p.error-message { /* Specific style for errors */
-        color: var(--danger); background: rgba(220, 53, 69, 0.1);
-        border: 1px solid var(--danger); border-radius: var(--border-radius-sm);
-        max-width: 80%;
-    }
-
+     /* Style for potential loading messages inside canvas container */
+    .vr-demo-canvas p { color: var(--text-secondary); font-size: 1.1rem; }
 
     .vr-controls {
       display: flex; gap: 1.5rem; padding: 2rem;
@@ -643,8 +600,7 @@
   <canvas id="global-backgroundCanvas"></canvas>
 
   <div id="loading-screen">
-    <canvas id="loadingCanvas"></canvas>
-    <div class="loading-overlay" data-aos="fade-in" data-aos-delay="100" data-aos-duration="1000">
+    <canvas id="loadingCanvas"></canvas> <div class="loading-overlay" data-aos="fade-in" data-aos-delay="100" data-aos-duration="1000">
       <h1>Synaeon</h1>
       <div id="loading-bar-container">
         <div id="loading-bar"></div>
@@ -697,22 +653,19 @@
           <div class="features-grid">
             <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
               <div class="feature-icon">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.4 3.9a2 2 0 0 1 3.2 0l5.1 8.6a2 2 0 0 1-.7 2.8c-1 .6-2.4.4-3.1-.4l-1.1-1.4a2 2 0 0 0-3.2 0l-1.1 1.4c-.7.9-2.1 1-3.1.4a2 2 0 0 1-.7-2.8l5.1-8.6zM12 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>
-              </div>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.4 3.9a2 2 0 0 1 3.2 0l5.1 8.6a2 2 0 0 1-.7 2.8c-1 .6-2.4.4-3.1-.4l-1.1-1.4a2 2 0 0 0-3.2 0l-1.1 1.4c-.7.9-2.1 1-3.1.4a2 2 0 0 1-.7-2.8l5.1-8.6zM12 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg> </div>
               <h3 class="feature-title">Generative AI Core</h3>
               <p class="feature-text">Our proprietary AI instantly translates therapist descriptions or pre-set protocols into rich, interactive 3D environments, offering limitless scenario possibilities.</p>
             </div>
             <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
               <div class="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
-              </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg> </div>
               <h3 class="feature-title">Adaptive Biofeedback Loop</h3>
               <p class="feature-text">Real-time physiological monitoring (e.g., heart rate, EDA) dynamically adjusts the VR experience intensity, optimizing therapeutic engagement and efficacy.</p>
             </div>
             <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
               <div class="feature-icon">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
-              </div>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg> </div>
               <h3 class="feature-title">Intelligent Clinician Control</h3>
               <p class="feature-text">A comprehensive dashboard provides therapists with precise control over the environment, scenario parameters, and real-time monitoring of patient progress.</p>
             </div>
@@ -729,18 +682,15 @@
           </div>
           <div class="features-grid">
             <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-               <h3 class="feature-title">Insufficient Realism</h3>
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div> <h3 class="feature-title">Insufficient Realism</h3>
               <p class="feature-text">Imagination-based or static media scenarios often fail to evoke the necessary emotional response for profound therapeutic processing.</p>
             </div>
             <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-               <h3 class="feature-title">One-Size-Fits-All</h3>
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div> <h3 class="feature-title">One-Size-Fits-All</h3>
               <p class="feature-text">Traditional methods lack the dynamic adaptability required to precisely match exposure levels to individual patient thresholds and progress.</p>
             </div>
             <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div>
-               <h3 class="feature-title">Engagement & Adherence</h3>
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div> <h3 class="feature-title">Engagement & Adherence</h3>
               <p class="feature-text">The absence of deep immersion and personalization contributes significantly to patient disengagement and high treatment dropout rates.</p>
             </div>
           </div>
@@ -756,18 +706,15 @@
           </div>
           <div class="features-grid">
             <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="m12 22.08 V 12"/></svg></div>
-               <h3 class="feature-title">Infinite Environment Generation</h3>
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="m12 22.08 V 12"/></svg></div> <h3 class="feature-title">Infinite Environment Generation</h3>
               <p class="feature-text">Go beyond static scenarios. Our AI generates unique, contextually relevant 3D environments on the fly, tailored precisely to the therapeutic need.</p>
             </div>
             <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M7 13l-2.5 2.5M10 16l-1.5 1.5M14 16l1.5 1.5M17 13l2.5 2.5"/></svg></div>
-              <h3 class="feature-title">Intelligent Adaptation</h3>
+              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M7 13l-2.5 2.5M10 16l-1.5 1.5M14 16l1.5 1.5M17 13l2.5 2.5"/></svg></div> <h3 class="feature-title">Intelligent Adaptation</h3>
               <p class="feature-text">Integrated biometric sensors provide closed-loop feedback, enabling the AI to modulate exposure intensity for optimal therapeutic windows.</p>
             </div>
             <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="M16 16l2 2 4-4"/></svg></div>
-               <h3 class="feature-title">Continuous Improvement</h3>
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="M16 16l2 2 4-4"/></svg></div> <h3 class="feature-title">Continuous Improvement</h3>
               <p class="feature-text">The platform learns from every session, refining its understanding of patient triggers and coping mechanisms to enhance future therapeutic outcomes.</p>
             </div>
           </div>
@@ -802,14 +749,13 @@
             <p>Engage with our interactive simulation showcasing the AI-driven approach for arachnophobia exposure. Select a level to begin your adaptive experience.</p>
           </div>
           <div class="vr-demo" data-aos="fade-up" data-aos-delay="100">
-            <div class="vr-controls" id="level-buttons">
-              <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Controlled Exposure</button>
+            <div class="vr-controls" id="level-buttons"> <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Controlled Exposure</button>
               <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Immersive Scenario</button>
-            </div>
+              </div>
             <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: none;">
-                <p>Select a level above to begin.</p> </div>
+                <p>Loading Level 1...</p> </div>
             <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;">
-                <p>Select a level above to begin.</p> </div>
+                <p>Loading Level 2...</p> </div>
           </div>
         </div>
       </section>
@@ -824,7 +770,7 @@
           <div class="team-grid">
             <div class="team-card" data-aos="fade-up" data-aos-delay="100">
               <div class="team-image-container">
-                <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image" onerror="this.style.display='none'">
+                <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image">
               </div>
               <div class="team-info">
                 <h3 class="team-name">Matei Seleușan</h3>
@@ -834,7 +780,7 @@
             </div>
             <div class="team-card" data-aos="fade-up" data-aos-delay="200">
               <div class="team-image-container">
-                <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image" onerror="this.style.display='none'">
+                <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/razvi.png?raw=true" alt="Răzvan Crețu" class="team-image">
               </div>
               <div class="team-info">
                 <h3 class="team-name">Răzvan Crețu</h3>
@@ -879,11 +825,11 @@
           </div>
           <div class="updates-grid">
             <div class="update-item" data-aos="fade-up" data-aos-delay="100">
-              <img src="times_square.JPG" alt="Synaeon featured in Times Square" onerror="this.src='https://placehold.co/600x400/080f21/f0f8ff?text=Times+Square+Update'">
+              <img src="times_square.JPG" alt="Synaeon featured in Times Square">
               <p>Synaeon's vision reaches the heart of NYC - featured in Times Square!</p>
             </div>
             <div class="update-item" data-aos="fade-up" data-aos-delay="200">
-              <img src="razvan_skyline.JPG" alt="Răzvan Crețu overlooking NYC skyline" onerror="this.src='https://placehold.co/600x400/080f21/f0f8ff?text=NYC+Skyline+Update'">
+              <img src="razvan_skyline.JPG" alt="Răzvan Crețu overlooking NYC skyline">
               <p>Defining new frontiers. Productive meetings and exciting developments in NYC.</p>
             </div>
           </div>
@@ -921,7 +867,7 @@
       </div>
       <div class="footer-bottom">
         <p class="copyright">© 2025 Synaeon, Inc. All rights reserved. Innovating for a better mind.</p>
-      </div>
+        </div>
     </footer>
   </div> <script>
     // --- Enhanced Inline JavaScript ---
@@ -939,16 +885,15 @@
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
-      const backgroundCanvas = document.getElementById('global-backgroundCanvas'); // Get canvas for fade-in
+      const backgroundCanvas = document.getElementById('global-backgroundCanvas');
 
       // Ensure loading bar exists
       if (!loadingBar) {
           console.error("Loading bar element not found!");
           // Fallback: Hide loading screen immediately if bar is missing
-          if (loadingScreen) loadingScreen.classList.add('hidden');
-          if (mainContent) mainContent.classList.add('loaded');
-          // Attempt to fade in background even on error
-          if (backgroundCanvas) backgroundCanvas.style.opacity = '1';
+          loadingScreen.classList.add('hidden');
+          mainContent.classList.add('loaded');
+          // if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Already set via CSS
            // Initialize AOS after content is potentially visible
           AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
           return;
@@ -959,14 +904,13 @@
 
       // Wait for progress bar animation + a buffer
       setTimeout(() => {
-        if (loadingScreen) loadingScreen.classList.add('hidden'); // Start fade out
+        loadingScreen.classList.add('hidden'); // Start fade out
         loadingComplete = true;
 
         // Wait for fade out transition to complete
         setTimeout(() => {
-          if (mainContent) mainContent.classList.add('loaded'); // Fade in main content
-          // Restore background fade-in
-          if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Fade in background
+          mainContent.classList.add('loaded'); // Fade in main content
+          // if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Already set via CSS
 
           // Initialize AOS after main content starts fading in
           AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
@@ -1033,64 +977,49 @@
       }
     }
 
-    // --- Background Starfield/Nebula Animation (FIXED) ---
+    // --- Background Starfield/Nebula Animation ---
     function initBackgroundCanvas() {
-      // console.log("Attempting to initialize background canvas..."); // DEBUG logs removed
       const canvas = document.getElementById('global-backgroundCanvas');
-      if (!canvas) {
-          console.error("Background canvas element not found!");
-          return;
-      }
-      if (typeof THREE === 'undefined') {
-          console.error("THREE object not found for background canvas!");
-          return;
-      }
-
-      let renderer, scene, camera, particleGroup, starData, materials, clock, mouse; // Declare variables
+      if (!canvas || typeof THREE === 'undefined') return;
 
       try {
-        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-        // Check if renderer was created
-        if (!renderer) {
-            console.error("Failed to create WebGLRenderer for background canvas.");
-            return;
-        }
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.z = 5;
-        // console.log("Renderer, Scene, Camera created."); // DEBUG logs removed
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        const scene = new THREE.Scene();
+        // Wider FOV for more immersive feel
+        const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.z = 5; // Start closer
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        particleGroup = new THREE.Group();
+        const particleGroup = new THREE.Group();
         scene.add(particleGroup);
 
         const textures = {
             star: createCircleTexture(16, '#ffffff'),
-            glow: createGlowTexture(64, 0.8)
+            glow: createGlowTexture(64, 0.8) // Texture for larger, glowing stars
         };
-        // console.log("Textures created."); // DEBUG logs removed
 
-        materials = {
+        // Particle Materials
+        const materials = {
           tiny: new THREE.PointsMaterial({ size: 0.03, map: textures.star, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true }),
           medium: new THREE.PointsMaterial({ size: 0.08, map: textures.star, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true }),
           glow: new THREE.PointsMaterial({ size: 0.4, map: textures.glow, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true })
         };
 
-        starData = { tiny: [], medium: [], glow: [] };
+        const starData = { tiny: [], medium: [], glow: [] };
         const numStars = { tiny: 2500, medium: 1500, glow: 300 };
 
-        // console.log("Creating stars..."); // DEBUG logs removed
+        // Create Stars
         ['tiny', 'medium', 'glow'].forEach(type => {
           const geometry = new THREE.BufferGeometry();
           const positions = new Float32Array(numStars[type] * 3);
           const colors = new Float32Array(numStars[type] * 3);
-          const scales = new Float32Array(numStars[type]);
+          const scales = new Float32Array(numStars[type]); // For size variation
           const initialRadii = new Float32Array(numStars[type]);
 
           for (let i = 0; i < numStars[type]; i++) {
-            const radius = 10 + Math.random() * (type === 'tiny' ? 100 : type === 'medium' ? 60 : 40);
+            const radius = 10 + Math.random() * (type === 'tiny' ? 100 : type === 'medium' ? 60 : 40); // Depth variation
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
             const i3 = i * 3;
@@ -1103,21 +1032,21 @@
             colors[i3 + 1] = color.g;
             colors[i3 + 2] = color.b;
 
-            scales[i] = 0.5 + Math.random() * 0.8;
+            scales[i] = 0.5 + Math.random() * 0.8; // Random scale factor
             initialRadii[i] = radius;
           }
           geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
           geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-          geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+          geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1)); // Add scale attribute
           const points = new THREE.Points(geometry, materials[type]);
           starData[type] = { points, initialRadii };
           particleGroup.add(points);
         });
-        // console.log("Stars created."); // DEBUG logs removed
 
+        // Add subtle nebula planes
         const nebulaMaterial = new THREE.MeshBasicMaterial({
-          map: createNebulaTexture(512),
-          transparent: true, opacity: 0.08,
+          map: createNebulaTexture(512), // Generate texture
+          transparent: true, opacity: 0.08, // Very subtle
           blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
         });
         for(let i=0; i<3; i++) {
@@ -1126,62 +1055,57 @@
             plane.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
             scene.add(plane);
         }
-        // console.log("Nebula planes added."); // DEBUG logs removed
 
-        mouse = new THREE.Vector2();
+        // --- Mouse Interaction ---
+        const mouse = new THREE.Vector2();
         function onMouseMove(event) {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         }
         window.addEventListener('mousemove', onMouseMove, false);
 
-        clock = new THREE.Clock();
+        // Animation Loop
+        const clock = new THREE.Clock();
         function animate() {
-          try {
-              backgroundAnimationId = requestAnimationFrame(animate);
-              const delta = clock.getDelta();
-              const elapsed = clock.getElapsedTime();
+          backgroundAnimationId = requestAnimationFrame(animate);
+          const delta = clock.getDelta();
+          const elapsed = clock.getElapsedTime();
 
-              camera.position.x += (mouse.x * 2 - camera.position.x) * 0.02;
-              camera.position.y += (mouse.y * 2 - camera.position.y) * 0.02;
-              camera.lookAt(scene.position);
+          // Camera parallax effect based on mouse
+          camera.position.x += (mouse.x * 2 - camera.position.x) * 0.02; // Adjust multiplier for sensitivity
+          camera.position.y += (mouse.y * 2 - camera.position.y) * 0.02;
+          camera.lookAt(scene.position); // Look towards center
 
-              particleGroup.rotation.y += delta * 0.01;
-              particleGroup.rotation.x += delta * 0.005;
+          // Rotate the whole particle group slowly
+          particleGroup.rotation.y += delta * 0.01;
+          particleGroup.rotation.x += delta * 0.005;
 
-              ['tiny', 'medium', 'glow'].forEach(type => {
-                const data = starData[type];
-                if (!data || !data.points) return;
-                const { points, initialRadii } = data;
-                const positions = points.geometry.attributes.position.array;
-                const opacityFactor = type === 'tiny' ? 0.01 : type === 'medium' ? 0.02 : 0.03;
+          // Animate individual stars (subtle drift/twinkle)
+          ['tiny', 'medium', 'glow'].forEach(type => {
+            const { points, initialRadii } = starData[type];
+            const positions = points.geometry.attributes.position.array;
+            const scales = points.geometry.attributes.scale.array;
+            const opacityFactor = type === 'tiny' ? 0.01 : type === 'medium' ? 0.02 : 0.03;
 
-                for (let i = 0; i < numStars[type]; i++) {
-                  const i3 = i * 3;
-                  let radius = initialRadii[i] + Math.sin(elapsed * 0.1 + initialRadii[i]) * 0.5;
-                  const originalVec = new THREE.Vector3(positions[i3], positions[i3 + 1], positions[i3 + 2]).normalize();
-                  positions[i3] = originalVec.x * radius;
-                  positions[i3 + 1] = originalVec.y * radius;
-                  positions[i3 + 2] = originalVec.z * radius;
+            for (let i = 0; i < numStars[type]; i++) {
+              const i3 = i * 3;
+              // Subtle radial drift based on elapsed time and initial radius
+              let radius = initialRadii[i] + Math.sin(elapsed * 0.1 + initialRadii[i]) * 0.5;
+              const originalVec = new THREE.Vector3(positions[i3], positions[i3 + 1], positions[i3 + 2]).normalize();
+              positions[i3] = originalVec.x * radius;
+              positions[i3 + 1] = originalVec.y * radius;
+              positions[i3 + 2] = originalVec.z * radius;
 
-                  if (materials[type]) {
-                      materials[type].opacity = 0.4 + Math.sin(elapsed * (1 + Math.random()) + i) * opacityFactor;
-                  }
-                }
-                points.geometry.attributes.position.needsUpdate = true;
-              });
+              // Twinkle effect by modulating scale
+              materials[type].opacity = 0.4 + Math.sin(elapsed * (1 + Math.random()) + i) * opacityFactor; // Subtle opacity twinkle
+            }
+            points.geometry.attributes.position.needsUpdate = true;
+            // points.geometry.attributes.scale.needsUpdate = true; // Only if scale changes
+          });
 
-              renderer.render(scene, camera);
-
-              // *** THE FIX: Removed the incorrect TWEEN call ***
-              // TWEEN.update(elapsed * 1000); // <-- This line caused the error
-
-          } catch (error) {
-              console.error("Error inside background animate loop:", error);
-              if (backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId);
-          }
+          renderer.render(scene, camera);
+          TWEEN.update(elapsed * 1000); // Pass time in ms to Tween
         }
-        // console.log("Starting background animation loop..."); // DEBUG logs removed
         animate();
 
         // --- Helper Functions for Textures ---
@@ -1207,41 +1131,43 @@
             const ctx = canvas.getContext('2d');
             const imageData = ctx.createImageData(size, size);
             const data = imageData.data;
+            // Simple noise generation (replace with Perlin/Simplex for better results if needed)
             for (let i = 0; i < data.length; i += 4) {
-                const value = Math.random() * 50 + 20;
+                const value = Math.random() * 50 + 20; // Base blueish value
                 const r = Math.random();
-                data[i] = value * (0.8 + r * 0.2); data[i + 1] = value * (0.9 + r * 0.1); data[i + 2] = value * 1.0; data[i + 3] = Math.random() * 60 + 20;
+                data[i] = value * (0.8 + r * 0.2); // R
+                data[i + 1] = value * (0.9 + r * 0.1); // G
+                data[i + 2] = value * 1.0;             // B (dominant blue)
+                data[i + 3] = Math.random() * 60 + 20; // Alpha variation
             }
             ctx.putImageData(imageData, 0, 0);
-            ctx.filter = 'blur(5px)'; ctx.drawImage(canvas, 0, 0); ctx.filter = 'none';
+            // Add some blur
+            ctx.filter = 'blur(5px)';
+            ctx.drawImage(canvas, 0, 0);
+            ctx.filter = 'none';
             return new THREE.CanvasTexture(canvas);
         }
         function getRandomStarColor() {
             const rand = Math.random();
-            if (rand < 0.6) return new THREE.Color(0xa0c0ff); if (rand < 0.85) return new THREE.Color(0xfff0d0); if (rand < 0.95) return new THREE.Color(0xffa0a0); return new THREE.Color(0x00ffff);
+            if (rand < 0.6) return new THREE.Color(0xa0c0ff); // Blueish white
+            if (rand < 0.85) return new THREE.Color(0xfff0d0); // Yellowish white
+            if (rand < 0.95) return new THREE.Color(0xffa0a0); // Reddish white
+            return new THREE.Color(0x00ffff); // Cyan hints
         }
 
         // Resize Handling
         function handleResize() {
-          try {
-              const width = window.innerWidth;
-              const height = window.innerHeight;
-              if (renderer && camera) {
-                  renderer.setSize(width, height);
-                  camera.aspect = width / height;
-                  camera.updateProjectionMatrix();
-                  // console.log("Background canvas resized."); // DEBUG logs removed
-              }
-          } catch(error) {
-              console.error("Error during background resize:", error);
-          }
+          const width = window.innerWidth;
+          const height = window.innerHeight;
+          renderer.setSize(width, height);
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
         }
         window.addEventListener('resize', handleResize);
-        // console.log("Background canvas initialization complete."); // DEBUG logs removed
 
       } catch (error) {
         console.error("Error initializing background canvas:", error);
-        if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId);
+        if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId); // Stop on error
       }
     }
 
@@ -1260,6 +1186,7 @@
       hamburger.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         hamburger.classList.toggle('active');
+        document.body.classList.toggle('no-scroll'); // Prevent scrolling when menu open
       });
 
       // Close menu on link click & smooth scroll
@@ -1267,10 +1194,19 @@
         link.addEventListener('click', (e) => {
           navLinks.classList.remove('active');
           hamburger.classList.remove('active');
+          document.body.classList.remove('no-scroll');
+
+          // Smooth scroll logic (optional, browser handles it via CSS `scroll-behavior`)
+          // const targetId = link.getAttribute('href');
+          // const targetElement = document.querySelector(targetId);
+          // if(targetElement) {
+          //   e.preventDefault();
+          //   targetElement.scrollIntoView({ behavior: 'smooth' });
+          // }
         });
       });
 
-      // Navbar scroll effect
+      // Navbar scroll effect (add/remove 'scrolled' class)
       let lastScrollY = window.scrollY;
       window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -1278,12 +1214,19 @@
         } else {
           navbar.classList.remove('scrolled');
         }
-        lastScrollY = window.scrollY;
-      }, { passive: true });
+        // Optional: Hide nav on scroll down, show on scroll up
+        // if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        //   navbar.style.transform = 'translateY(-100%)';
+        // } else {
+        //    navbar.style.transform = 'translateY(0)';
+        // }
+        // lastScrollY = window.scrollY;
+      }, { passive: true }); // Use passive listener for performance
     }
 
     // --- VR Demo Control Logic ---
     function initDemoControls() {
+        // Select buttons once
         const level1Btn = document.getElementById('level1-btn');
         const level2Btn = document.getElementById('level2-btn');
         const level1CanvasContainer = document.getElementById('arachnophobia-demo');
@@ -1294,61 +1237,58 @@
             return;
         }
 
-        window.showLevel = function(level) {
+        window.showLevel = function(level) { // Make globally accessible
             console.log(`Attempting to show level: ${level}`);
-            currentLevel = level;
+            currentLevel = level; // Update global state
 
-            const displayError = (container, message) => {
-                container.innerHTML = `<p class="error-message">${message}</p>`;
-                console.error(message);
-            };
-
+            // Reset button styles
             level1Btn.classList.remove('btn');
             level1Btn.classList.add('btn-outline');
             level2Btn.classList.remove('btn');
             level2Btn.classList.add('btn-outline');
 
+            // Hide both containers initially
             level1CanvasContainer.style.display = 'none';
-            level1CanvasContainer.innerHTML = '<p>Loading Level 1...</p>';
             level2CanvasContainer.style.display = 'none';
-            level2CanvasContainer.innerHTML = '<p>Loading Level 2...</p>';
 
-            if (window.cleanupLevel1 && typeof window.cleanupLevel1 === 'function') {
-                try { window.cleanupLevel1(); } catch (e) { console.error("Error cleaning up Level 1:", e); }
-            }
-            if (window.cleanupLevel2 && typeof window.cleanupLevel2 === 'function') {
-                try { window.cleanupLevel2(); } catch (e) { console.error("Error cleaning up Level 2:", e); }
-            }
+            // Clear previous level's content/renderer if necessary (handled in main.js/main_level2.js now)
+            // Example: if (window.cleanupLevel1) window.cleanupLevel1();
 
             if (level === 'level1') {
-                level1CanvasContainer.style.display = 'flex';
+                level1CanvasContainer.style.display = 'flex'; // Use flex for centering placeholders
                 level1Btn.classList.remove('btn-outline');
                 level1Btn.classList.add('btn');
                 if (typeof initLevel1 === 'function') {
-                    try { initLevel1(level1CanvasContainer); } catch (error) { displayError(level1CanvasContainer, `Error initializing Level 1: ${error.message}`); }
-                } else { displayError(level1CanvasContainer, 'Error: Level 1 script (main.js) could not be loaded or is missing the initLevel1 function.'); }
+                    initLevel1(level1CanvasContainer); // Pass container
+                } else {
+                    console.error('initLevel1 is not defined. Ensure main.js is loaded.');
+                    level1CanvasContainer.innerHTML = '<p>Error loading Level 1. Check console.</p>';
+                }
             } else if (level === 'level2') {
-                level2CanvasContainer.style.display = 'flex';
+                level2CanvasContainer.style.display = 'flex'; // Use flex
                 level2Btn.classList.remove('btn-outline');
                 level2Btn.classList.add('btn');
                  if (typeof initLevel2 === 'function') {
-                    try { initLevel2(level2CanvasContainer); } catch (error) { displayError(level2CanvasContainer, `Error initializing Level 2: ${error.message}`); }
-                } else { displayError(level2CanvasContainer, 'Error: Level 2 script (main_level2.js) could not be loaded or is missing the initLevel2 function.'); }
+                    initLevel2(level2CanvasContainer); // Pass container
+                } else {
+                    console.error('initLevel2 is not defined. Ensure main_level2.js is loaded.');
+                    level2CanvasContainer.innerHTML = '<p>Error loading Level 2. Check console.</p>';
+                }
             }
         }
     }
 
     // --- Initialization ---
     document.addEventListener('DOMContentLoaded', () => {
-      // console.log("DOM Content Loaded. Initializing scripts..."); // DEBUG logs removed
       try {
-        initLoadingAnimation();
+        initLoadingAnimation(); // Start loading animation immediately
+        initBackgroundCanvas(); // Start background animation
         initNavigation();
         initDemoControls();
-        // Initialize background last
-        initBackgroundCanvas();
+        // Don't init AOS here, wait for loading screen fade out
       } catch (error) {
         console.error("Initialization error:", error);
+        // Fallback: Ensure content is visible even if JS fails
         const loadingScreen = document.getElementById('loading-screen');
         const mainContent = document.querySelector('.main-content');
         if (loadingScreen) loadingScreen.classList.add('hidden');
@@ -1357,10 +1297,7 @@
     });
 
     // Handle loading screen fade out on window load
-    window.addEventListener('load', () => {
-        // console.log("Window Load event fired."); // DEBUG logs removed
-        handleLoadingScreen();
-    });
+    window.addEventListener('load', handleLoadingScreen);
 
   </script>
 
