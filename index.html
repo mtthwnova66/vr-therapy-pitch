@@ -23,10 +23,8 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-  <style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script> <style>
     /* --- CSS Overhaul for Extraordinary Visuals --- */
     :root {
       /* Palette: Futuristic Blues, Accented Gold/Amber, Deep Space */
@@ -871,9 +869,7 @@
         <p class="copyright">© 2025 Synaeon, Inc. All rights reserved. Innovating for a better mind.</p>
         </div>
     </footer>
-  </div>
-
-  <script>
+  </div> <script>
     // --- Enhanced Inline JavaScript ---
 
     // Strict mode for safety
@@ -984,12 +980,7 @@
     // --- Background Starfield/Nebula Animation ---
     function initBackgroundCanvas() {
       const canvas = document.getElementById('global-backgroundCanvas');
-      // Ensure TWEEN is available before proceeding
-      if (!canvas || typeof THREE === 'undefined' || typeof TWEEN === 'undefined') {
-          console.error("Error initializing background canvas: THREE.js or TWEEN.js not loaded/defined.");
-          return; // Stop if libraries aren't ready
-      }
-
+      if (!canvas || typeof THREE === 'undefined') return;
 
       try {
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
@@ -1113,11 +1104,7 @@
           });
 
           renderer.render(scene, camera);
-
-          // Ensure TWEEN exists before calling update
-          if (typeof TWEEN !== 'undefined') {
-              TWEEN.update(elapsed * 1000); // Pass time in ms to Tween
-          }
+          TWEEN.update(elapsed * 1000); // Pass time in ms to Tween
         }
         animate();
 
@@ -1179,7 +1166,7 @@
         window.addEventListener('resize', handleResize);
 
       } catch (error) {
-        console.error("Error during background canvas setup:", error);
+        console.error("Error initializing background canvas:", error);
         if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId); // Stop on error
       }
     }
@@ -1295,21 +1282,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       try {
         initLoadingAnimation(); // Start loading animation immediately
-        // Delay background init slightly or ensure TWEEN is ready
-        // A simple check:
-        if (typeof TWEEN !== 'undefined') {
-             initBackgroundCanvas(); // Start background animation if TWEEN exists
-        } else {
-             // Optionally, try again after a short delay if TWEEN was moved to the end
-             setTimeout(() => {
-                if (typeof TWEEN !== 'undefined') {
-                     initBackgroundCanvas();
-                } else {
-                     console.error("TWEEN still not defined after delay. Background animation cannot start.");
-                }
-             }, 50); // 50ms delay, adjust if needed
-        }
-
+        initBackgroundCanvas(); // Start background animation
         initNavigation();
         initDemoControls();
         // Don't init AOS here, wait for loading screen fade out
@@ -1328,7 +1301,6 @@
 
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
   <script src="main.js"></script>
   <script src="main_level2.js"></script>
 </body>
