@@ -123,17 +123,17 @@
       background-color: var(--bg-dark); /* Ensure body bg matches html */
     }
 
-    /* Enhanced Background Canvas (Handles Starfield/Nebula via JS) */
+    /* Background Canvas Styling - Restored */
     #global-backgroundCanvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100vh;
-      z-index: -2;
-      /* DEBUG: Start slightly visible to test rendering */
-      opacity: 0.5;
-      /* transition: opacity 1.5s ease 0.5s; */ /* Fade-in handled differently now */
+      z-index: -2; /* Place behind content */
+      opacity: 0; /* Start hidden */
+      transition: opacity 1.5s ease 0.5s; /* Fade in via JS */
+      /* background-color: transparent; */ /* Ensure no solid color */
     }
 
     /* Loading Screen - More Dramatic */
@@ -939,8 +939,7 @@
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
-      // DEBUG: Background canvas fade-in is handled by CSS opacity now
-      // const backgroundCanvas = document.getElementById('global-backgroundCanvas');
+      const backgroundCanvas = document.getElementById('global-backgroundCanvas'); // Get canvas for fade-in
 
       // Ensure loading bar exists
       if (!loadingBar) {
@@ -948,8 +947,8 @@
           // Fallback: Hide loading screen immediately if bar is missing
           if (loadingScreen) loadingScreen.classList.add('hidden');
           if (mainContent) mainContent.classList.add('loaded');
-          // DEBUG: No longer fading in background canvas via JS
-          // if (backgroundCanvas) backgroundCanvas.style.opacity = '1';
+          // Attempt to fade in background even on error
+          if (backgroundCanvas) backgroundCanvas.style.opacity = '1';
            // Initialize AOS after content is potentially visible
           AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
           return;
@@ -966,8 +965,8 @@
         // Wait for fade out transition to complete
         setTimeout(() => {
           if (mainContent) mainContent.classList.add('loaded'); // Fade in main content
-          // DEBUG: No longer fading in background canvas via JS
-          // if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Fade in background
+          // Restore background fade-in
+          if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Fade in background
 
           // Initialize AOS after main content starts fading in
           AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
@@ -1034,16 +1033,16 @@
       }
     }
 
-    // --- REVERTED: Background Starfield/Nebula Animation (Original + Debugging) ---
+    // --- Background Starfield/Nebula Animation (FIXED) ---
     function initBackgroundCanvas() {
-      console.log("Attempting to initialize background canvas..."); // DEBUG
+      // console.log("Attempting to initialize background canvas..."); // DEBUG logs removed
       const canvas = document.getElementById('global-backgroundCanvas');
       if (!canvas) {
-          console.error("Background canvas element not found!"); // DEBUG
+          console.error("Background canvas element not found!");
           return;
       }
       if (typeof THREE === 'undefined') {
-          console.error("THREE object not found for background canvas!"); // DEBUG
+          console.error("THREE object not found for background canvas!");
           return;
       }
 
@@ -1051,11 +1050,15 @@
 
       try {
         renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        // Check if renderer was created
+        if (!renderer) {
+            console.error("Failed to create WebGLRenderer for background canvas.");
+            return;
+        }
         scene = new THREE.Scene();
-        // Wider FOV for more immersive feel
         camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.z = 5; // Start closer
-        console.log("Renderer, Scene, Camera created."); // DEBUG
+        camera.position.z = 5;
+        // console.log("Renderer, Scene, Camera created."); // DEBUG logs removed
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1065,11 +1068,10 @@
 
         const textures = {
             star: createCircleTexture(16, '#ffffff'),
-            glow: createGlowTexture(64, 0.8) // Texture for larger, glowing stars
+            glow: createGlowTexture(64, 0.8)
         };
-        console.log("Textures created."); // DEBUG
+        // console.log("Textures created."); // DEBUG logs removed
 
-        // Particle Materials
         materials = {
           tiny: new THREE.PointsMaterial({ size: 0.03, map: textures.star, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true }),
           medium: new THREE.PointsMaterial({ size: 0.08, map: textures.star, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true }),
@@ -1079,17 +1081,16 @@
         starData = { tiny: [], medium: [], glow: [] };
         const numStars = { tiny: 2500, medium: 1500, glow: 300 };
 
-        // Create Stars
-        console.log("Creating stars..."); // DEBUG
+        // console.log("Creating stars..."); // DEBUG logs removed
         ['tiny', 'medium', 'glow'].forEach(type => {
           const geometry = new THREE.BufferGeometry();
           const positions = new Float32Array(numStars[type] * 3);
           const colors = new Float32Array(numStars[type] * 3);
-          const scales = new Float32Array(numStars[type]); // For size variation
+          const scales = new Float32Array(numStars[type]);
           const initialRadii = new Float32Array(numStars[type]);
 
           for (let i = 0; i < numStars[type]; i++) {
-            const radius = 10 + Math.random() * (type === 'tiny' ? 100 : type === 'medium' ? 60 : 40); // Depth variation
+            const radius = 10 + Math.random() * (type === 'tiny' ? 100 : type === 'medium' ? 60 : 40);
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
             const i3 = i * 3;
@@ -1102,22 +1103,21 @@
             colors[i3 + 1] = color.g;
             colors[i3 + 2] = color.b;
 
-            scales[i] = 0.5 + Math.random() * 0.8; // Random scale factor
+            scales[i] = 0.5 + Math.random() * 0.8;
             initialRadii[i] = radius;
           }
           geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
           geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-          geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1)); // Add scale attribute
+          geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
           const points = new THREE.Points(geometry, materials[type]);
           starData[type] = { points, initialRadii };
           particleGroup.add(points);
         });
-        console.log("Stars created."); // DEBUG
+        // console.log("Stars created."); // DEBUG logs removed
 
-        // Add subtle nebula planes
         const nebulaMaterial = new THREE.MeshBasicMaterial({
-          map: createNebulaTexture(512), // Generate texture
-          transparent: true, opacity: 0.08, // Very subtle
+          map: createNebulaTexture(512),
+          transparent: true, opacity: 0.08,
           blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
         });
         for(let i=0; i<3; i++) {
@@ -1126,9 +1126,8 @@
             plane.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
             scene.add(plane);
         }
-        console.log("Nebula planes added."); // DEBUG
+        // console.log("Nebula planes added."); // DEBUG logs removed
 
-        // --- Mouse Interaction ---
         mouse = new THREE.Vector2();
         function onMouseMove(event) {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -1136,69 +1135,56 @@
         }
         window.addEventListener('mousemove', onMouseMove, false);
 
-        // Animation Loop
         clock = new THREE.Clock();
-        let frameCount = 0; // DEBUG
         function animate() {
-          try { // Add try...catch inside animate
+          try {
               backgroundAnimationId = requestAnimationFrame(animate);
               const delta = clock.getDelta();
               const elapsed = clock.getElapsedTime();
 
-              // DEBUG: Log occasionally to avoid flooding console
-              if (frameCount % 120 === 0) {
-                  console.log(`Background animate loop running... Delta: ${delta.toFixed(4)}`);
-              }
-              frameCount++;
-
-              // Camera parallax effect based on mouse
-              camera.position.x += (mouse.x * 2 - camera.position.x) * 0.02; // Adjust multiplier for sensitivity
+              camera.position.x += (mouse.x * 2 - camera.position.x) * 0.02;
               camera.position.y += (mouse.y * 2 - camera.position.y) * 0.02;
-              camera.lookAt(scene.position); // Look towards center
+              camera.lookAt(scene.position);
 
-              // Rotate the whole particle group slowly
               particleGroup.rotation.y += delta * 0.01;
               particleGroup.rotation.x += delta * 0.005;
 
-              // Animate individual stars (subtle drift/twinkle)
               ['tiny', 'medium', 'glow'].forEach(type => {
                 const data = starData[type];
-                if (!data || !data.points) return; // Add safety check
+                if (!data || !data.points) return;
                 const { points, initialRadii } = data;
                 const positions = points.geometry.attributes.position.array;
-                // const scales = points.geometry.attributes.scale.array; // Scale not animated here
                 const opacityFactor = type === 'tiny' ? 0.01 : type === 'medium' ? 0.02 : 0.03;
 
                 for (let i = 0; i < numStars[type]; i++) {
                   const i3 = i * 3;
-                  // Subtle radial drift based on elapsed time and initial radius
                   let radius = initialRadii[i] + Math.sin(elapsed * 0.1 + initialRadii[i]) * 0.5;
                   const originalVec = new THREE.Vector3(positions[i3], positions[i3 + 1], positions[i3 + 2]).normalize();
                   positions[i3] = originalVec.x * radius;
                   positions[i3 + 1] = originalVec.y * radius;
                   positions[i3 + 2] = originalVec.z * radius;
 
-                  // Twinkle effect by modulating scale
-                  if (materials[type]) { // Check if material exists
-                      materials[type].opacity = 0.4 + Math.sin(elapsed * (1 + Math.random()) + i) * opacityFactor; // Subtle opacity twinkle
+                  if (materials[type]) {
+                      materials[type].opacity = 0.4 + Math.sin(elapsed * (1 + Math.random()) + i) * opacityFactor;
                   }
                 }
                 points.geometry.attributes.position.needsUpdate = true;
-                // points.geometry.attributes.scale.needsUpdate = true; // Only if scale changes
               });
 
               renderer.render(scene, camera);
-              // TWEEN is not used in this background animation
-              // TWEEN.update(elapsed * 1000);
+
+              // *** THE FIX: Removed the incorrect TWEEN call ***
+              // TWEEN.update(elapsed * 1000); // <-- This line caused the error
+
           } catch (error) {
-              console.error("Error inside background animate loop:", error); // DEBUG
-              if (backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId); // Stop loop on error
+              console.error("Error inside background animate loop:", error);
+              if (backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId);
           }
         }
-        console.log("Starting background animation loop..."); // DEBUG
+        // console.log("Starting background animation loop..."); // DEBUG logs removed
         animate();
 
-        // --- Helper Functions for Textures (Must be defined within or before this scope) ---
+        // --- Helper Functions for Textures ---
         function createCircleTexture(size, color) {
             const canvas = document.createElement('canvas'); canvas.width = size; canvas.height = size;
             const ctx = canvas.getContext('2d');
@@ -1221,51 +1207,41 @@
             const ctx = canvas.getContext('2d');
             const imageData = ctx.createImageData(size, size);
             const data = imageData.data;
-            // Simple noise generation (replace with Perlin/Simplex for better results if needed)
             for (let i = 0; i < data.length; i += 4) {
-                const value = Math.random() * 50 + 20; // Base blueish value
+                const value = Math.random() * 50 + 20;
                 const r = Math.random();
-                data[i] = value * (0.8 + r * 0.2); // R
-                data[i + 1] = value * (0.9 + r * 0.1); // G
-                data[i + 2] = value * 1.0;             // B (dominant blue)
-                data[i + 3] = Math.random() * 60 + 20; // Alpha variation
+                data[i] = value * (0.8 + r * 0.2); data[i + 1] = value * (0.9 + r * 0.1); data[i + 2] = value * 1.0; data[i + 3] = Math.random() * 60 + 20;
             }
             ctx.putImageData(imageData, 0, 0);
-            // Add some blur
-            ctx.filter = 'blur(5px)';
-            ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'none';
+            ctx.filter = 'blur(5px)'; ctx.drawImage(canvas, 0, 0); ctx.filter = 'none';
             return new THREE.CanvasTexture(canvas);
         }
         function getRandomStarColor() {
             const rand = Math.random();
-            if (rand < 0.6) return new THREE.Color(0xa0c0ff); // Blueish white
-            if (rand < 0.85) return new THREE.Color(0xfff0d0); // Yellowish white
-            if (rand < 0.95) return new THREE.Color(0xffa0a0); // Reddish white
-            return new THREE.Color(0x00ffff); // Cyan hints
+            if (rand < 0.6) return new THREE.Color(0xa0c0ff); if (rand < 0.85) return new THREE.Color(0xfff0d0); if (rand < 0.95) return new THREE.Color(0xffa0a0); return new THREE.Color(0x00ffff);
         }
 
         // Resize Handling
         function handleResize() {
-          try { // Add try...catch
+          try {
               const width = window.innerWidth;
               const height = window.innerHeight;
-              if (renderer && camera) { // Check if they exist
+              if (renderer && camera) {
                   renderer.setSize(width, height);
                   camera.aspect = width / height;
                   camera.updateProjectionMatrix();
-                  console.log("Background canvas resized."); // DEBUG
+                  // console.log("Background canvas resized."); // DEBUG logs removed
               }
           } catch(error) {
-              console.error("Error during background resize:", error); // DEBUG
+              console.error("Error during background resize:", error);
           }
         }
         window.addEventListener('resize', handleResize);
-        console.log("Background canvas initialization complete."); // DEBUG
+        // console.log("Background canvas initialization complete."); // DEBUG logs removed
 
       } catch (error) {
-        console.error("Error initializing background canvas:", error); // DEBUG
-        if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId); // Stop on error
+        console.error("Error initializing background canvas:", error);
+        if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId);
       }
     }
 
@@ -1284,8 +1260,6 @@
       hamburger.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         hamburger.classList.toggle('active');
-        // Optional: Prevent body scroll when mobile menu is open
-        // document.body.classList.toggle('no-scroll');
       });
 
       // Close menu on link click & smooth scroll
@@ -1293,13 +1267,10 @@
         link.addEventListener('click', (e) => {
           navLinks.classList.remove('active');
           hamburger.classList.remove('active');
-          // document.body.classList.remove('no-scroll');
-
-          // Smooth scroll is handled by CSS `scroll-behavior: smooth;`
         });
       });
 
-      // Navbar scroll effect (add/remove 'scrolled' class)
+      // Navbar scroll effect
       let lastScrollY = window.scrollY;
       window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -1308,12 +1279,11 @@
           navbar.classList.remove('scrolled');
         }
         lastScrollY = window.scrollY;
-      }, { passive: true }); // Use passive listener for performance
+      }, { passive: true });
     }
 
     // --- VR Demo Control Logic ---
     function initDemoControls() {
-        // Select buttons once
         const level1Btn = document.getElementById('level1-btn');
         const level2Btn = document.getElementById('level2-btn');
         const level1CanvasContainer = document.getElementById('arachnophobia-demo');
@@ -1324,86 +1294,61 @@
             return;
         }
 
-        // Make showLevel globally accessible
         window.showLevel = function(level) {
             console.log(`Attempting to show level: ${level}`);
-            currentLevel = level; // Update global state
+            currentLevel = level;
 
-            // Helper function to display errors in canvas
             const displayError = (container, message) => {
                 container.innerHTML = `<p class="error-message">${message}</p>`;
                 console.error(message);
             };
 
-            // Reset button styles
             level1Btn.classList.remove('btn');
             level1Btn.classList.add('btn-outline');
             level2Btn.classList.remove('btn');
             level2Btn.classList.add('btn-outline');
 
-            // Hide both containers initially and clear previous content/errors
             level1CanvasContainer.style.display = 'none';
-            level1CanvasContainer.innerHTML = '<p>Loading Level 1...</p>'; // Reset placeholder
+            level1CanvasContainer.innerHTML = '<p>Loading Level 1...</p>';
             level2CanvasContainer.style.display = 'none';
-            level2CanvasContainer.innerHTML = '<p>Loading Level 2...</p>'; // Reset placeholder
+            level2CanvasContainer.innerHTML = '<p>Loading Level 2...</p>';
 
-            // --- Call cleanup functions if they exist ---
-            // This ensures the previous Three.js instance is properly disposed
             if (window.cleanupLevel1 && typeof window.cleanupLevel1 === 'function') {
                 try { window.cleanupLevel1(); } catch (e) { console.error("Error cleaning up Level 1:", e); }
             }
             if (window.cleanupLevel2 && typeof window.cleanupLevel2 === 'function') {
                 try { window.cleanupLevel2(); } catch (e) { console.error("Error cleaning up Level 2:", e); }
             }
-            // --- End Cleanup ---
-
 
             if (level === 'level1') {
-                level1CanvasContainer.style.display = 'flex'; // Use flex for centering placeholders
+                level1CanvasContainer.style.display = 'flex';
                 level1Btn.classList.remove('btn-outline');
                 level1Btn.classList.add('btn');
-                // Check if the init function exists before calling
                 if (typeof initLevel1 === 'function') {
-                    try {
-                        initLevel1(level1CanvasContainer); // Pass container
-                    } catch (error) {
-                        displayError(level1CanvasContainer, `Error initializing Level 1: ${error.message}`);
-                    }
-                } else {
-                    // Function not found - likely main.js didn't load or has errors
-                    displayError(level1CanvasContainer, 'Error: Level 1 script (main.js) could not be loaded or is missing the initLevel1 function.');
-                }
+                    try { initLevel1(level1CanvasContainer); } catch (error) { displayError(level1CanvasContainer, `Error initializing Level 1: ${error.message}`); }
+                } else { displayError(level1CanvasContainer, 'Error: Level 1 script (main.js) could not be loaded or is missing the initLevel1 function.'); }
             } else if (level === 'level2') {
-                level2CanvasContainer.style.display = 'flex'; // Use flex
+                level2CanvasContainer.style.display = 'flex';
                 level2Btn.classList.remove('btn-outline');
                 level2Btn.classList.add('btn');
-                 // Check if the init function exists before calling
                  if (typeof initLevel2 === 'function') {
-                    try {
-                        initLevel2(level2CanvasContainer); // Pass container
-                    } catch (error) {
-                        displayError(level2CanvasContainer, `Error initializing Level 2: ${error.message}`);
-                    }
-                } else {
-                    // Function not found - likely main_level2.js didn't load or has errors
-                    displayError(level2CanvasContainer, 'Error: Level 2 script (main_level2.js) could not be loaded or is missing the initLevel2 function.');
-                }
+                    try { initLevel2(level2CanvasContainer); } catch (error) { displayError(level2CanvasContainer, `Error initializing Level 2: ${error.message}`); }
+                } else { displayError(level2CanvasContainer, 'Error: Level 2 script (main_level2.js) could not be loaded or is missing the initLevel2 function.'); }
             }
         }
     }
 
     // --- Initialization ---
     document.addEventListener('DOMContentLoaded', () => {
-      console.log("DOM Content Loaded. Initializing scripts..."); // DEBUG
+      // console.log("DOM Content Loaded. Initializing scripts..."); // DEBUG logs removed
       try {
-        initLoadingAnimation(); // Start loading animation immediately
-        initBackgroundCanvas(); // Start background animation
+        initLoadingAnimation();
         initNavigation();
         initDemoControls();
-        // Don't init AOS here, wait for loading screen fade out
+        // Initialize background last
+        initBackgroundCanvas();
       } catch (error) {
         console.error("Initialization error:", error);
-        // Fallback: Ensure content is visible even if JS fails
         const loadingScreen = document.getElementById('loading-screen');
         const mainContent = document.querySelector('.main-content');
         if (loadingScreen) loadingScreen.classList.add('hidden');
@@ -1413,7 +1358,7 @@
 
     // Handle loading screen fade out on window load
     window.addEventListener('load', () => {
-        console.log("Window Load event fired."); // DEBUG
+        // console.log("Window Load event fired."); // DEBUG logs removed
         handleLoadingScreen();
     });
 
