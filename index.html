@@ -123,7 +123,7 @@
       background-color: var(--bg-dark); /* Ensure body bg matches html */
     }
 
-    /* Enhanced Background Canvas (Handles Morphogenesis via JS) */
+    /* Enhanced Background Canvas (Handles Starfield/Nebula via JS) */
     #global-backgroundCanvas {
       position: fixed;
       top: 0;
@@ -131,8 +131,9 @@
       width: 100%;
       height: 100vh;
       z-index: -2;
-      opacity: 0; /* Fade in via JS */
-      transition: opacity 1.5s ease 0.5s;
+      /* DEBUG: Start slightly visible to test rendering */
+      opacity: 0.5;
+      /* transition: opacity 1.5s ease 0.5s; */ /* Fade-in handled differently now */
     }
 
     /* Loading Screen - More Dramatic */
@@ -354,7 +355,7 @@
     .btn:hover::after { transform: rotate(45deg) scale(1.5); opacity: 1; transition: transform 0.8s ease, opacity 0.8s ease; }
     .btn:hover, .btn:focus { transform: translateY(-5px) scale(1.04); box-shadow: var(--shadow-button-hover), var(--shadow-glow-lg); outline: none; }
 
-    /* NEW: Active state for button press feedback */
+    /* Active state for button press feedback */
     .btn:active {
       transform: translateY(-1px) scale(0.99); /* Slightly press down */
       box-shadow: var(--shadow-button-active), var(--shadow-glow-sm); /* Inset shadow + reduced glow */
@@ -380,7 +381,7 @@
     }
     .btn-outline:hover::after, .btn-outline:focus::after { transform: scaleX(1); }
 
-    /* NEW: Active state for outline button */
+    /* Active state for outline button */
     .btn-outline:active {
       transform: translateY(-1px) scale(0.99);
       box-shadow: inset 0 2px 4px rgba(0, 170, 255, 0.3); /* Subtle inset glow */
@@ -938,7 +939,8 @@
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
-      const backgroundCanvas = document.getElementById('global-backgroundCanvas');
+      // DEBUG: Background canvas fade-in is handled by CSS opacity now
+      // const backgroundCanvas = document.getElementById('global-backgroundCanvas');
 
       // Ensure loading bar exists
       if (!loadingBar) {
@@ -946,7 +948,8 @@
           // Fallback: Hide loading screen immediately if bar is missing
           if (loadingScreen) loadingScreen.classList.add('hidden');
           if (mainContent) mainContent.classList.add('loaded');
-          if (backgroundCanvas) backgroundCanvas.style.opacity = '1';
+          // DEBUG: No longer fading in background canvas via JS
+          // if (backgroundCanvas) backgroundCanvas.style.opacity = '1';
            // Initialize AOS after content is potentially visible
           AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
           return;
@@ -963,7 +966,8 @@
         // Wait for fade out transition to complete
         setTimeout(() => {
           if (mainContent) mainContent.classList.add('loaded'); // Fade in main content
-          if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Fade in background
+          // DEBUG: No longer fading in background canvas via JS
+          // if (backgroundCanvas) backgroundCanvas.style.opacity = '1'; // Fade in background
 
           // Initialize AOS after main content starts fading in
           AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
@@ -1030,180 +1034,171 @@
       }
     }
 
-    // --- NEW: Background Morphogenesis Animation ---
+    // --- REVERTED: Background Starfield/Nebula Animation (Original + Debugging) ---
     function initBackgroundCanvas() {
+      console.log("Attempting to initialize background canvas..."); // DEBUG
       const canvas = document.getElementById('global-backgroundCanvas');
-      if (!canvas || typeof THREE === 'undefined') return;
+      if (!canvas) {
+          console.error("Background canvas element not found!"); // DEBUG
+          return;
+      }
+      if (typeof THREE === 'undefined') {
+          console.error("THREE object not found for background canvas!"); // DEBUG
+          return;
+      }
+
+      let renderer, scene, camera, particleGroup, starData, materials, clock, mouse; // Declare variables
 
       try {
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 50; // Start further back
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        scene = new THREE.Scene();
+        // Wider FOV for more immersive feel
+        camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.z = 5; // Start closer
+        console.log("Renderer, Scene, Camera created."); // DEBUG
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const particleCount = 15000; // Increase particle count for density
-        const positions = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
-        const sizes = new Float32Array(particleCount);
-        const velocities = new Float32Array(particleCount * 3); // Store velocity for movement
-        const life = new Float32Array(particleCount); // Store particle life
+        particleGroup = new THREE.Group();
+        scene.add(particleGroup);
 
-        const color1 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#00aaff');
-        const color2 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ffc107');
-        const color3 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim() || '#6f42c1');
-        const baseColor = new THREE.Color(0xffffff);
+        const textures = {
+            star: createCircleTexture(16, '#ffffff'),
+            glow: createGlowTexture(64, 0.8) // Texture for larger, glowing stars
+        };
+        console.log("Textures created."); // DEBUG
 
-        // Initialize particles
-        for (let i = 0; i < particleCount; i++) {
-          resetParticle(i); // Initialize position, color, size, velocity, life
-        }
+        // Particle Materials
+        materials = {
+          tiny: new THREE.PointsMaterial({ size: 0.03, map: textures.star, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true }),
+          medium: new THREE.PointsMaterial({ size: 0.08, map: textures.star, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true }),
+          glow: new THREE.PointsMaterial({ size: 0.4, map: textures.glow, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true, sizeAttenuation: true })
+        };
 
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-        // We'll manage velocity and life separately in the update loop
+        starData = { tiny: [], medium: [], glow: [] };
+        const numStars = { tiny: 2500, medium: 1500, glow: 300 };
 
-        // Shader Material for more control
-        const vertexShader = `
-          attribute float size;
-          attribute vec3 color;
-          varying vec3 vColor;
-          void main() {
-            vColor = color;
-            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-            gl_PointSize = size * ( 300.0 / -mvPosition.z ); // Perspective sizing
-            gl_Position = projectionMatrix * mvPosition;
+        // Create Stars
+        console.log("Creating stars..."); // DEBUG
+        ['tiny', 'medium', 'glow'].forEach(type => {
+          const geometry = new THREE.BufferGeometry();
+          const positions = new Float32Array(numStars[type] * 3);
+          const colors = new Float32Array(numStars[type] * 3);
+          const scales = new Float32Array(numStars[type]); // For size variation
+          const initialRadii = new Float32Array(numStars[type]);
+
+          for (let i = 0; i < numStars[type]; i++) {
+            const radius = 10 + Math.random() * (type === 'tiny' ? 100 : type === 'medium' ? 60 : 40); // Depth variation
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const i3 = i * 3;
+            positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+            positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+            positions[i3 + 2] = radius * Math.cos(phi);
+
+            const color = getRandomStarColor();
+            colors[i3] = color.r;
+            colors[i3 + 1] = color.g;
+            colors[i3 + 2] = color.b;
+
+            scales[i] = 0.5 + Math.random() * 0.8; // Random scale factor
+            initialRadii[i] = radius;
           }
-        `;
-
-        const fragmentShader = `
-          varying vec3 vColor;
-          uniform sampler2D pointTexture;
-          void main() {
-            gl_FragColor = vec4( vColor, 1.0 );
-            gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
-            // Additive blending effect in shader
-            gl_FragColor.a *= 0.8; // Adjust alpha for desired blend intensity
-          }
-        `;
-
-        const material = new THREE.ShaderMaterial({
-          uniforms: {
-            pointTexture: { value: createCircleTexture(32, '#ffffff') } // Simple white circle texture
-          },
-          vertexShader: vertexShader,
-          fragmentShader: fragmentShader,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-          transparent: true,
-          vertexColors: true
+          geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+          geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+          geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1)); // Add scale attribute
+          const points = new THREE.Points(geometry, materials[type]);
+          starData[type] = { points, initialRadii };
+          particleGroup.add(points);
         });
+        console.log("Stars created."); // DEBUG
 
-        const particleSystem = new THREE.Points(geometry, material);
-        scene.add(particleSystem);
+        // Add subtle nebula planes
+        const nebulaMaterial = new THREE.MeshBasicMaterial({
+          map: createNebulaTexture(512), // Generate texture
+          transparent: true, opacity: 0.08, // Very subtle
+          blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
+        });
+        for(let i=0; i<3; i++) {
+            const plane = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), nebulaMaterial);
+            plane.position.set((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50, -50 - Math.random() * 100);
+            plane.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            scene.add(plane);
+        }
+        console.log("Nebula planes added."); // DEBUG
 
         // --- Mouse Interaction ---
-        const mouse = new THREE.Vector2(0,0);
-        let targetRotation = { x: 0, y: 0 };
+        mouse = new THREE.Vector2();
         function onMouseMove(event) {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            // Map mouse position to target rotation (adjust sensitivity)
-            targetRotation.y = mouse.x * 0.2;
-            targetRotation.x = mouse.y * 0.2;
         }
         window.addEventListener('mousemove', onMouseMove, false);
 
-        // --- Helper function to reset particle state ---
-        function resetParticle(i) {
-          const i3 = i * 3;
-          // Start particles in a sphere or other initial shape
-          const radius = Math.random() * 60 + 10;
-          const theta = Math.random() * Math.PI * 2;
-          const phi = Math.acos(2 * Math.random() - 1);
-          positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
-          positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-          positions[i3 + 2] = radius * Math.cos(phi);
-
-          // Initial velocity (e.g., moving towards center or outwards)
-          const speed = Math.random() * 0.1 + 0.05;
-          velocities[i3] = (Math.random() - 0.5) * speed;
-          velocities[i3 + 1] = (Math.random() - 0.5) * speed;
-          velocities[i3 + 2] = (Math.random() - 0.5) * speed;
-
-          // Color based on position or random
-          const mixRatio = Math.random();
-          const mixRatio2 = Math.random();
-          const tempColor = baseColor.clone().lerp(color1, mixRatio).lerp(color2, mixRatio2 * 0.5).lerp(color3, Math.random() * 0.3);
-          colors[i3] = tempColor.r;
-          colors[i3 + 1] = tempColor.g;
-          colors[i3 + 2] = tempColor.b;
-
-          sizes[i] = Math.random() * 2.5 + 1.0; // Size variation
-          life[i] = Math.random() * 5 + 2; // Lifetime in seconds
-        }
-
         // Animation Loop
-        const clock = new THREE.Clock();
+        clock = new THREE.Clock();
+        let frameCount = 0; // DEBUG
         function animate() {
-          backgroundAnimationId = requestAnimationFrame(animate);
-          const delta = clock.getDelta();
-          const elapsed = clock.getElapsedTime();
+          try { // Add try...catch inside animate
+              backgroundAnimationId = requestAnimationFrame(animate);
+              const delta = clock.getDelta();
+              const elapsed = clock.getElapsedTime();
 
-          // Smoothly rotate the camera towards the target rotation
-          camera.rotation.x += (targetRotation.x - camera.rotation.x) * 0.05;
-          camera.rotation.y += (targetRotation.y - camera.rotation.y) * 0.05;
-          camera.lookAt(scene.position); // Keep looking at the center
+              // DEBUG: Log occasionally to avoid flooding console
+              if (frameCount % 120 === 0) {
+                  console.log(`Background animate loop running... Delta: ${delta.toFixed(4)}`);
+              }
+              frameCount++;
 
-          // Update particle positions, colors, sizes, life
-          const posAttribute = particleSystem.geometry.attributes.position;
-          const colAttribute = particleSystem.geometry.attributes.color;
-          const sizeAttribute = particleSystem.geometry.attributes.size;
+              // Camera parallax effect based on mouse
+              camera.position.x += (mouse.x * 2 - camera.position.x) * 0.02; // Adjust multiplier for sensitivity
+              camera.position.y += (mouse.y * 2 - camera.position.y) * 0.02;
+              camera.lookAt(scene.position); // Look towards center
 
-          for (let i = 0; i < particleCount; i++) {
-            const i3 = i * 3;
+              // Rotate the whole particle group slowly
+              particleGroup.rotation.y += delta * 0.01;
+              particleGroup.rotation.x += delta * 0.005;
 
-            life[i] -= delta; // Decrease life
+              // Animate individual stars (subtle drift/twinkle)
+              ['tiny', 'medium', 'glow'].forEach(type => {
+                const data = starData[type];
+                if (!data || !data.points) return; // Add safety check
+                const { points, initialRadii } = data;
+                const positions = points.geometry.attributes.position.array;
+                // const scales = points.geometry.attributes.scale.array; // Scale not animated here
+                const opacityFactor = type === 'tiny' ? 0.01 : type === 'medium' ? 0.02 : 0.03;
 
-            if (life[i] <= 0) {
-              resetParticle(i); // Respawn particle
-            }
+                for (let i = 0; i < numStars[type]; i++) {
+                  const i3 = i * 3;
+                  // Subtle radial drift based on elapsed time and initial radius
+                  let radius = initialRadii[i] + Math.sin(elapsed * 0.1 + initialRadii[i]) * 0.5;
+                  const originalVec = new THREE.Vector3(positions[i3], positions[i3 + 1], positions[i3 + 2]).normalize();
+                  positions[i3] = originalVec.x * radius;
+                  positions[i3 + 1] = originalVec.y * radius;
+                  positions[i3 + 2] = originalVec.z * radius;
 
-            // Update position based on velocity
-            posAttribute.array[i3] += velocities[i3] * delta * 60; // Scale velocity by delta
-            posAttribute.array[i3 + 1] += velocities[i3 + 1] * delta * 60;
-            posAttribute.array[i3 + 2] += velocities[i3 + 2] * delta * 60;
+                  // Twinkle effect by modulating scale
+                  if (materials[type]) { // Check if material exists
+                      materials[type].opacity = 0.4 + Math.sin(elapsed * (1 + Math.random()) + i) * opacityFactor; // Subtle opacity twinkle
+                  }
+                }
+                points.geometry.attributes.position.needsUpdate = true;
+                // points.geometry.attributes.scale.needsUpdate = true; // Only if scale changes
+              });
 
-            // Add some turbulence/noise field influence (optional, requires noise function)
-            // Example: velocities[i3+1] += Math.sin(elapsed + posAttribute.array[i3] * 0.1) * 0.01;
-
-            // Fade particles based on life (optional)
-            const lifeRatio = Math.max(0, life[i] / (Math.random() * 5 + 2)); // Normalize life
-            // Could modulate color alpha or size based on lifeRatio if needed in shader
-
-            // Slowly change color over time (subtle shift)
-            const timeFactor = Math.sin(elapsed * 0.5 + i * 0.1) * 0.5 + 0.5; // 0 to 1 oscillation
-            const tempColor = new THREE.Color(colAttribute.array[i3], colAttribute.array[i3+1], colAttribute.array[i3+2]);
-            tempColor.lerp(color1, timeFactor * 0.005); // Slowly lerp towards primary
-            colAttribute.array[i3] = tempColor.r;
-            colAttribute.array[i3+1] = tempColor.g;
-            colAttribute.array[i3+2] = tempColor.b;
-
+              renderer.render(scene, camera);
+              // TWEEN is not used in this background animation
+              // TWEEN.update(elapsed * 1000);
+          } catch (error) {
+              console.error("Error inside background animate loop:", error); // DEBUG
+              if (backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId); // Stop loop on error
           }
-
-          posAttribute.needsUpdate = true;
-          colAttribute.needsUpdate = true;
-          // sizeAttribute.needsUpdate = true; // Only if size changes dynamically
-
-          renderer.render(scene, camera);
         }
+        console.log("Starting background animation loop..."); // DEBUG
         animate();
 
-        // --- Helper Function for Circle Texture ---
+        // --- Helper Functions for Textures (Must be defined within or before this scope) ---
         function createCircleTexture(size, color) {
             const canvas = document.createElement('canvas'); canvas.width = size; canvas.height = size;
             const ctx = canvas.getContext('2d');
@@ -1211,19 +1206,65 @@
             ctx.fillStyle = color; ctx.fill();
             return new THREE.CanvasTexture(canvas);
         }
+        function createGlowTexture(size, intensity) {
+            const canvas = document.createElement('canvas'); canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+            gradient.addColorStop(0, `rgba(255, 255, 255, ${intensity})`);
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = gradient; ctx.fillRect(0, 0, size, size);
+            return new THREE.CanvasTexture(canvas);
+        }
+       function createNebulaTexture(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.createImageData(size, size);
+            const data = imageData.data;
+            // Simple noise generation (replace with Perlin/Simplex for better results if needed)
+            for (let i = 0; i < data.length; i += 4) {
+                const value = Math.random() * 50 + 20; // Base blueish value
+                const r = Math.random();
+                data[i] = value * (0.8 + r * 0.2); // R
+                data[i + 1] = value * (0.9 + r * 0.1); // G
+                data[i + 2] = value * 1.0;             // B (dominant blue)
+                data[i + 3] = Math.random() * 60 + 20; // Alpha variation
+            }
+            ctx.putImageData(imageData, 0, 0);
+            // Add some blur
+            ctx.filter = 'blur(5px)';
+            ctx.drawImage(canvas, 0, 0);
+            ctx.filter = 'none';
+            return new THREE.CanvasTexture(canvas);
+        }
+        function getRandomStarColor() {
+            const rand = Math.random();
+            if (rand < 0.6) return new THREE.Color(0xa0c0ff); // Blueish white
+            if (rand < 0.85) return new THREE.Color(0xfff0d0); // Yellowish white
+            if (rand < 0.95) return new THREE.Color(0xffa0a0); // Reddish white
+            return new THREE.Color(0x00ffff); // Cyan hints
+        }
 
-        // --- Resize Handling ---
+        // Resize Handling
         function handleResize() {
-          const width = window.innerWidth;
-          const height = window.innerHeight;
-          renderer.setSize(width, height);
-          camera.aspect = width / height;
-          camera.updateProjectionMatrix();
+          try { // Add try...catch
+              const width = window.innerWidth;
+              const height = window.innerHeight;
+              if (renderer && camera) { // Check if they exist
+                  renderer.setSize(width, height);
+                  camera.aspect = width / height;
+                  camera.updateProjectionMatrix();
+                  console.log("Background canvas resized."); // DEBUG
+              }
+          } catch(error) {
+              console.error("Error during background resize:", error); // DEBUG
+          }
         }
         window.addEventListener('resize', handleResize);
+        console.log("Background canvas initialization complete."); // DEBUG
 
       } catch (error) {
-        console.error("Error initializing background canvas:", error);
+        console.error("Error initializing background canvas:", error); // DEBUG
         if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId); // Stop on error
       }
     }
@@ -1353,9 +1394,10 @@
 
     // --- Initialization ---
     document.addEventListener('DOMContentLoaded', () => {
+      console.log("DOM Content Loaded. Initializing scripts..."); // DEBUG
       try {
         initLoadingAnimation(); // Start loading animation immediately
-        initBackgroundCanvas(); // Start NEW background animation
+        initBackgroundCanvas(); // Start background animation
         initNavigation();
         initDemoControls();
         // Don't init AOS here, wait for loading screen fade out
@@ -1370,7 +1412,10 @@
     });
 
     // Handle loading screen fade out on window load
-    window.addEventListener('load', handleLoadingScreen);
+    window.addEventListener('load', () => {
+        console.log("Window Load event fired."); // DEBUG
+        handleLoadingScreen();
+    });
 
   </script>
 
