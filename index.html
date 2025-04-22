@@ -772,4 +772,300 @@
             <div class="contact-item">
               <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a>
               <a href="https://www.linkedin.com/in/razvan-cretu-703111164/?originalSubdomain=ro" target="_blank" rel="noopener noreferrer" aria-label="Răzvan Crețu LinkedIn Profile">
-                <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d
+                <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.875 20.452H3.8V9h3.075v11.452zM22.225 0H1.771C.792 0 0 .771 0 1.723v20.554C0 23.229.792 24 1.771 24h20.451C23.2 24 24 23.229 24 22.277V1.723C24 .771 23.2 0 22.225 0z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+        <section class="section" id="updates">
+        <div class="section-inner">
+          <div class="section-header" data-aos="fade-up">
+            <span class="section-label">Updates</span>
+            <h2>Latest Developments</h2>
+            <p>Follow our journey as we innovate and grow.</p>
+          </div>
+          <div class="updates-grid">
+            <div class="update-item" data-aos="fade-up" data-aos-delay="100">
+              <img src="times_square.JPG" alt="Synaeon featured in Times Square">
+              <p>Synaeon's vision reaches the heart of NYC - featured in Times Square!</p>
+            </div>
+            <div class="update-item" data-aos="fade-up" data-aos-delay="200">
+              <img src="razvan_skyline.JPG" alt="Răzvan Crețu overlooking NYC skyline">
+              <p>Defining new frontiers. Productive meetings and exciting developments in NYC.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column" data-aos="fade-up" data-aos-delay="100">
+          <h4 class="footer-title">Synaeon, Inc.</h4>
+          <p class="footer-text">Pioneering the next generation of mental healthcare through adaptive, AI-powered VR therapy.</p>
+          <p class="footer-text" style="font-style: italic;">"The cave you fear to enter holds the treasure you seek." - Joseph Campbell</p>
+        </div>
+        <div class="footer-column" data-aos="fade-up" data-aos-delay="200">
+          <h4 class="footer-title">Navigate</h4>
+          <div class="footer-links">
+            <a href="#about" class="footer-link">About</a>
+            <a href="#problem" class="footer-link">Challenge</a>
+            <a href="#solution" class="footer-link">Solution</a>
+            <a href="#technology" class="footer-link">Technology</a>
+            <a href="#experience" class="footer-link">Demo</a>
+            <a href="#team" class="footer-link">Team</a>
+            <a href="#contact" class="footer-link">Contact</a>
+          </div>
+        </div>
+        <div class="footer-column" data-aos="fade-up" data-aos-delay="300">
+          <h4 class="footer-title">Connect</h4>
+          <div class="footer-links">
+             <a href="mailto:mateiseleusan@gmail.com" class="footer-link">Matei Seleușan</a>
+             <a href="mailto:razvanmihaicretu@gmail.com" class="footer-link">Răzvan Crețu</a>
+             <a href="https://www.linkedin.com/company/synaeon/" target="_blank" rel="noopener noreferrer" class="footer-link">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 Synaeon, Inc. All rights reserved. Innovating for a better mind.</p>
+        </div>
+    </footer>
+  </div> <script>
+    // --- Enhanced Inline JavaScript ---
+    'use strict';
+    let currentLevel = null;
+    let backgroundAnimationId = null;
+    let loadingComplete = false; // Restore loading logic flag
+
+    // --- Loading Screen Logic ---
+    function handleLoadingScreen() {
+      const loadingBar = document.getElementById('loading-bar');
+      const loadingScreen = document.getElementById('loading-screen');
+      const mainContent = document.querySelector('.main-content');
+      const backgroundCanvas = document.getElementById('global-backgroundCanvas');
+      if (!loadingBar) {
+          console.error("Loading bar element not found!");
+          loadingScreen.classList.add('hidden');
+          mainContent.classList.add('loaded');
+          if (backgroundCanvas) backgroundCanvas.style.opacity = '1';
+          AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
+          return;
+      }
+      loadingBar.style.width = '100%';
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        loadingComplete = true;
+        setTimeout(() => {
+          mainContent.classList.add('loaded');
+          if (backgroundCanvas) {
+              console.log("Attempting to set backgroundCanvas opacity to 1");
+              backgroundCanvas.style.opacity = '1'; // Fade in background
+          } else {
+              console.log("Background canvas not found when trying to set opacity.")
+          }
+          AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
+        }, 800);
+      }, 2000);
+    }
+
+    // Loading Screen 3D Animation
+    function initLoadingAnimation() {
+      const canvas = document.getElementById('loadingCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+      try {
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 2.5;
+        const geometry = new THREE.IcosahedronGeometry(0.8, 1);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x00aaff, emissive: 0x0077cc, wireframe: true, roughness: 0.8, metalness: 0.2
+         });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        const light = new THREE.PointLight(0xffffff, 0.8);
+        light.position.set(3, 3, 3);
+        scene.add(light);
+        const ambient = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambient);
+        let animationId;
+        function animate() {
+          animationId = requestAnimationFrame(animate);
+          mesh.rotation.x += 0.004;
+          mesh.rotation.y += 0.006;
+          renderer.render(scene, camera);
+        }
+        animate();
+        function handleResize() {
+            if (!loadingComplete) {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            } else {
+                 if (animationId) cancelAnimationFrame(animationId);
+                 window.removeEventListener('resize', handleResize);
+            }
+        }
+        window.addEventListener('resize', handleResize);
+        handleResize();
+      } catch (error) {
+        console.error("Error initializing loading animation:", error);
+      }
+    }
+
+    // --- Debug Background Canvas ---
+    function initBackgroundCanvas() {
+      const canvas = document.getElementById('global-backgroundCanvas');
+      if (!canvas || typeof THREE === 'undefined') {
+        console.error("Background canvas or THREE.js not found!");
+        return;
+      }
+      let renderer, scene, camera, cube; // Declare variables
+      let renderLoopRunning = false;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false }); // alpha: false
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // *** Set a clear color ***
+        renderer.setClearColor(0x000055, 1); // Dark blue clear color, fully opaque
+
+        console.log("Renderer Info:", renderer.info);
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100); // Use 75 FoV
+
+        // *** Position camera explicitly ***
+        camera.position.set(0, 0, 5); // Look from Z=5 towards origin
+        camera.lookAt(0, 0, 0); // Ensure it looks at the center
+
+        // *** Add a simple, visible mesh ***
+        const geometry = new THREE.BoxGeometry(1, 1, 1); // 1x1x1 cube
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ffff }); // Bright cyan basic material (no light needed)
+        cube = new THREE.Mesh(geometry, material);
+        scene.add(cube); // Add cube to the scene
+
+        const clock = new THREE.Clock();
+        function animate() {
+          backgroundAnimationId = requestAnimationFrame(animate);
+          if (!renderLoopRunning) {
+              console.log("Background render loop (animate function) is running.");
+              renderLoopRunning = true;
+          }
+          const delta = clock.getDelta();
+          if (cube) { // Animate the cube
+              cube.rotation.x += delta * 0.2;
+              cube.rotation.y += delta * 0.2;
+          }
+          if(renderer && scene && camera) {
+             renderer.render(scene, camera); // Render the scene
+          }
+        }
+        animate(); // Start the animation loop
+
+        function handleResize() {
+          if (!renderer || !camera) return;
+          const width = window.innerWidth;
+          const height = window.innerHeight;
+          renderer.setSize(width, height);
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+           console.log(`Background canvas resized to ${width}x${height}`);
+        }
+        window.addEventListener('resize', handleResize, { passive: true });
+        handleResize(); // Call once for initial size
+
+        console.log("Debug background canvas initialized with cube.");
+
+      } catch (error) {
+        console.error("Error initializing debug background canvas:", error);
+        if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId);
+      }
+    }
+
+    // --- Navigation Logic ---
+    function initNavigation() {
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('nav-links');
+      const navbar = document.getElementById('navbar');
+      if (!hamburger || !navLinks || !navbar) return;
+      hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        document.body.classList.toggle('no-scroll');
+      });
+      navLinks.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          navLinks.classList.remove('active');
+          hamburger.classList.remove('active');
+          document.body.classList.remove('no-scroll');
+        });
+      });
+      window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 50);
+      }, { passive: true });
+       // AOS should be initialized after loading screen fades
+       // Moved back into handleLoadingScreen
+    }
+
+    // --- VR Demo Control Logic ---
+    function initDemoControls() {
+        const level1Btn = document.getElementById('level1-btn');
+        const level2Btn = document.getElementById('level2-btn');
+        const level1CanvasContainer = document.getElementById('arachnophobia-demo');
+        const level2CanvasContainer = document.getElementById('arachnophobia-level2');
+        if (!level1Btn || !level2Btn || !level1CanvasContainer || !level2CanvasContainer) return;
+        window.showLevel = function(level) {
+            console.log(`Attempting to show level: ${level}`);
+            currentLevel = level;
+            level1Btn.classList.replace('btn', 'btn-outline');
+            level2Btn.classList.replace('btn', 'btn-outline');
+            level1CanvasContainer.style.display = 'none';
+            level2CanvasContainer.style.display = 'none';
+            if (window.audioInstanceLevel1 && !window.audioInstanceLevel1.paused) window.audioInstanceLevel1.pause();
+            if (window.audioInstanceLevel2 && !window.audioInstanceLevel2.paused) window.audioInstanceLevel2.pause();
+            level1Btn.querySelector('.voice-icon')?.remove();
+            level2Btn.querySelector('.voice-icon')?.remove();
+             if (level === 'level1') {
+                if (typeof window.cleanupLevel2 === 'function') window.cleanupLevel2();
+                level1CanvasContainer.style.display = 'flex';
+                level1Btn.classList.replace('btn-outline', 'btn');
+                if (typeof initLevel1 === 'function') initLevel1(level1CanvasContainer);
+                else console.error('initLevel1 not defined.');
+             } else if (level === 'level2') {
+                if (typeof window.cleanupLevel1 === 'function') window.cleanupLevel1();
+                level2CanvasContainer.style.display = 'flex';
+                level2Btn.classList.replace('btn-outline', 'btn');
+                 if (typeof initLevel2 === 'function') initLevel2(level2CanvasContainer);
+                 else console.error('initLevel2 not defined.');
+            }
+        }
+    }
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        initLoadingAnimation(); // Restore loading screen init
+        initBackgroundCanvas(); // Start debug background animation
+        initNavigation();
+        initDemoControls();
+      } catch (error) {
+        console.error("Initialization error:", error);
+        // Fallback logic
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.querySelector('.main-content');
+        if (loadingScreen) loadingScreen.classList.add('hidden');
+        if (mainContent) mainContent.classList.add('loaded');
+      }
+    });
+
+     // RESTORE loading screen handler
+     window.addEventListener('load', handleLoadingScreen);
+
+  </script>
+
+  </body>
+</html>
