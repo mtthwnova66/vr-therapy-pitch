@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synaeon - Test No Loading Screen</title> <meta name="description" content="Synaeon pioneers generative AI-powered VR therapy, transforming mental health treatment with adaptive, real-time exposure environments for clinically effective results."> <meta name="keywords" content="VR therapy, AI therapy, generative AI, exposure therapy, mental health technology, anxiety treatment, PTSD treatment, virtual reality healthcare, Synaeon, AI mental health, digital therapeutics"> <meta name="author" content="Synaeon, Inc.">
+  <title>Synaeon - Test Z-Index</title> <meta name="description" content="Synaeon pioneers generative AI-powered VR therapy, transforming mental health treatment with adaptive, real-time exposure environments for clinically effective results."> <meta name="keywords" content="VR therapy, AI therapy, generative AI, exposure therapy, mental health technology, anxiety treatment, PTSD treatment, virtual reality healthcare, Synaeon, AI mental health, digital therapeutics"> <meta name="author" content="Synaeon, Inc.">
   <meta property="og:title" content="Synaeon - Generative AI VR Therapy | The Future of Mental Healing">
   <meta property="og:description" content="Experience hyper-realistic, AI-generated VR environments adapting in real-time for truly personalized and effective exposure therapy. Discover Synaeon."> <meta property="og:type" content="website">
   <meta property="og:url" content="https://synaeon.com/"> <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg"> <meta property="og:image:width" content="1200">
@@ -29,7 +29,7 @@
     /* --- CSS --- */
     :root {
       /* ... Your root variables ... */
-      --primary: #00aaff;
+       --primary: #00aaff;
       --primary-dark: #0077cc;
       --primary-light: #80dfff;
       --primary-glow: rgba(0, 170, 255, 0.5);
@@ -97,33 +97,26 @@
       background-color: var(--bg-dark);
     }
 
-    /* TEST: Force background canvas visibility */
+    /* TEST: Force background canvas visibility AND bring to front */
     #global-backgroundCanvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100vh;
-      z-index: -1; /* Ensure it's behind main content */
+      z-index: 10; /* <-- Bring IN FRONT of main-content (z-index: 1) */
       opacity: 1 !important; /* FORCE Opacity */
       background-color: lime !important; /* FORCE Background color */
     }
 
-    /* REMOVE Loading Screen styles (or keep if needed for structure) */
-    /* #loading-screen { ... } */
-    /* ... etc ... */
-
     /* Main Content - Make visible immediately */
     .main-content {
       position: relative;
-      z-index: 1;
-      opacity: 1; /* Make main content visible immediately */
-      /* transition: opacity 1.2s ease-in; <- Remove transition */
+      z-index: 1; /* Default stacking context */
+      opacity: 1;
     }
-    /* .main-content.loaded { opacity: 1; } <- No longer needed */
 
-    /* --- Keep Rest of CSS (Typography, Hero, Nav, Sections, etc.) --- */
-    /* --- ... (Your existing styles below) ... --- */
+    /* --- Keep Rest of CSS --- */
      h1, h2, h3, h4, h5, h6 {
       font-family: var(--font-display); font-weight: 700; line-height: 1.3;
       letter-spacing: -0.01em; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
@@ -199,29 +192,26 @@
 
     /* --- Navigation - Sleek & Animated --- */
     .navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 0.7rem 2.5rem; /* Tighter vertical padding */
-      display: flex; justify-content: space-between; /* Align logo left, links right */
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000; /* Navbar has high z-index */
+      padding: 0.7rem 2.5rem;
+      display: flex; justify-content: space-between;
       align-items: center;
       transition: all 0.45s var(--transition-smooth);
       backdrop-filter: blur(16px) saturate(120%);
-      background: rgba(2, 4, 10, 0.7); /* Very dark base */
+      background: rgba(2, 4, 10, 0.7);
       border-bottom: 1px solid var(--border-light);
-      /* transform: translateY(-100%); */ /* Don't hide initially */
-      /* animation: slideInNav 1s ease-out 0.8s forwards; */ /* Don't delay */
     }
-    /* @keyframes slideInNav { to { transform: translateY(0); } } */
     .navbar.scrolled {
       padding: 0.5rem 2.5rem;
       background: rgba(2, 4, 10, 0.85);
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     }
-    .nav-logo { /* Added for potential logo in nav */
+    .nav-logo {
         font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;
         color: var(--text-primary); text-decoration: none;
         letter-spacing: 0.05em;
     }
-    .nav-logo img { height: 30px; vertical-align: middle; /* Adjust if using image logo */ }
+    .nav-logo img { height: 30px; vertical-align: middle; }
 
     .nav-links { display: flex; gap: 2.5rem; align-items: center; }
     .nav-link {
@@ -231,7 +221,7 @@
     }
     .nav-link::after {
       content: ''; position: absolute; width: 0; height: 2px; bottom: 0px; left: 50%;
-      transform: translateX(-50%); background: var(--gradient-accent); /* Use accent gradient */
+      transform: translateX(-50%); background: var(--gradient-accent);
       transition: width 0.35s ease, background 0.35s ease; border-radius: 1px;
     }
     .nav-link:hover, .nav-link:focus, .nav-link.active {
@@ -247,8 +237,8 @@
     .hamburger.active span:nth-child(2) { transform: scaleX(0); opacity: 0; }
     .hamburger.active span:nth-child(3) { transform: translateY(-10.5px) rotate(-45deg); }
 
-    /* --- Button Styles - Futuristic & Interactive --- */
-    .btn {
+    /* --- Button Styles --- */
+     .btn {
       display: inline-block; background: var(--gradient-primary); color: white;
       font-family: var(--font-display); font-weight: 600; font-size: 1.1rem;
       text-decoration: none; padding: 1rem 3rem; border-radius: var(--border-radius-pill);
@@ -258,13 +248,12 @@
       transform: perspective(1px) translateZ(0); /* GPU hint */
       will-change: transform, box-shadow; /* Optimize */
     }
-    /* Enhanced Hover/Click Effect (Subtle Shine + Background Shift) */
-    .btn::before { /* Background shift layer */
+    .btn::before {
       content: ''; position: absolute; inset: 0; border-radius: var(--border-radius-pill);
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       opacity: 0; transition: opacity 0.4s ease; z-index: -1;
     }
-    .btn::after { /* Shine layer */
+    .btn::after {
       content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
       background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
       transform: rotate(45deg); transition: transform 0.6s ease; opacity: 0;
@@ -273,13 +262,13 @@
     .btn:hover::before { opacity: 1; }
     .btn:hover::after { transform: rotate(45deg) scale(1.5); opacity: 1; transition: transform 0.8s ease, opacity 0.8s ease; }
     .btn:hover, .btn:focus { transform: translateY(-5px) scale(1.04); box-shadow: var(--shadow-button-hover), var(--shadow-glow-lg); outline: none; }
-    .btn:active { transform: translateY(-2px) scale(1.01); } /* Click feedback */
+    .btn:active { transform: translateY(-2px) scale(1.01); }
 
     .btn-outline {
       background: transparent; border: 2px solid var(--primary-light); color: var(--primary-light);
       box-shadow: none; padding: calc(1rem - 2px) calc(3rem - 2px); position: relative; overflow: hidden;
     }
-    .btn-outline::after { /* Fill effect */
+    .btn-outline::after {
       content: ''; position: absolute; inset: 0; background: var(--primary);
       z-index: -1; transform: scaleX(0); transform-origin: left;
       transition: transform 0.45s var(--transition-smooth);
@@ -289,12 +278,11 @@
       box-shadow: 0 0 25px rgba(0, 170, 255, 0.4); transform: translateY(-5px) scale(1.04); outline: none;
     }
     .btn-outline:hover::after, .btn-outline:focus::after { transform: scaleX(1); }
-
     .btn-group { display: flex; gap: 1.8rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
 
-    /* --- Section Styling - Polished & Animated --- */
+    /* --- Section Styling --- */
     .section { padding: 8rem 2rem; position: relative; overflow: hidden; }
-    .section:nth-child(even) { background: var(--gradient-bg-subtle); } /* Subtle bg variation */
+    .section:nth-child(even) { background: var(--gradient-bg-subtle); }
     .section-inner { max-width: 1250px; margin: 0 auto; position: relative; z-index: 2; }
     .section-header { text-align: center; margin-bottom: 5rem; max-width: 900px; margin-left: auto; margin-right: auto; }
     .section-header p { margin-left: auto; margin-right: auto; color: var(--text-secondary); font-size: clamp(1.1rem, 2.4vw, 1.25rem); }
@@ -307,7 +295,7 @@
     }
     .section-label:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 0 25px var(--accent-glow); background: rgba(255, 193, 7, 0.18); }
 
-    /* --- Feature Cards - Glassmorphism & Interactive --- */
+    /* --- Feature Cards --- */
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 3rem; }
     .feature-card {
       background: var(--bg-card); backdrop-filter: blur(12px) saturate(120%);
@@ -316,9 +304,8 @@
       transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s ease, background 0.4s ease;
       height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden;
       box-shadow: var(--shadow-card); transform: perspective(1200px) rotateY(0deg) translateZ(0);
-      will-change: transform, box-shadow; /* Optimize animation */
+      will-change: transform, box-shadow;
     }
-    /* Enhanced Border Glow */
     .feature-card::before {
       content: ''; position: absolute; inset: -1px; border-radius: var(--border-radius-md);
       background: conic-gradient(from var(--angle), transparent 25%, var(--primary), var(--accent), transparent 75%);
@@ -328,7 +315,6 @@
     }
     @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
     @keyframes spinBorder { to { --angle: 360deg; } }
-
     .feature-card:hover {
       transform: translateY(-15px) rotateY(1deg) scale(1.02);
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px var(--primary-glow);
@@ -336,14 +322,13 @@
       border-color: var(--border-glow);
     }
     .feature-card:hover::before { opacity: 0.7; animation-play-state: running; }
-
     .feature-icon {
       width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
       margin-bottom: 2rem;
       background: linear-gradient(145deg, rgba(0, 170, 255, 0.15), rgba(0, 170, 255, 0.3));
       border: 1px solid var(--primary); color: var(--primary-light); font-size: 2rem;
       box-shadow: 0 0 18px var(--primary-glow), inset 0 1px 4px rgba(255,255,255,0.15);
-      transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, border-color 0.4s ease; /* Bounce + smooth color */
+      transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, border-color 0.4s ease;
     }
     .feature-card:hover .feature-icon {
       transform: rotateY(360deg) scale(1.15);
@@ -354,7 +339,7 @@
     .feature-title { font-size: 1.6rem; margin-bottom: 1.2rem; color: var(--text-primary); font-weight: 600; }
     .feature-text { color: var(--text-secondary); margin-bottom: 0; flex-grow: 1; font-size: 1rem; line-height: 1.7; }
 
-    /* --- Team Section - Professional & Clean --- */
+    /* --- Team Section --- */
     .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 3rem; }
     .team-card {
       background: var(--bg-medium); border-radius: var(--border-radius-md); overflow: hidden;
@@ -365,26 +350,23 @@
     .team-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--transition-smooth), filter 0.4s ease; filter: grayscale(30%); }
     .team-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--secondary-glow); border-color: var(--secondary-glow); }
     .team-card:hover .team-image { transform: scale(1.05); filter: grayscale(0%); }
-    .team-info { padding: 2rem; flex-grow: 1; background: var(--bg-medium); /* Ensure consistent bg */ }
+    .team-info { padding: 2rem; flex-grow: 1; background: var(--bg-medium); }
     .team-name { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
-    .team-role { color: var(--secondary-light); /* Use secondary color */ font-size: 0.95rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; text-shadow: 0 0 8px var(--secondary-glow); }
+    .team-role { color: var(--secondary-light); font-size: 0.95rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; text-shadow: 0 0 8px var(--secondary-glow); }
     .team-bio { font-size: 1rem; line-height: 1.65; color: var(--text-tertiary); }
 
-    /* --- Try-it-yourself Section (VR Demo) - Focused --- */
-    .vr-demo {
+    /* --- VR Demo Section --- */
+     .vr-demo {
       background: var(--bg-medium); border-radius: var(--border-radius-lg); overflow: hidden;
       border: 1px solid var(--border-medium); box-shadow: var(--shadow-card);
       margin-top: 3rem;
     }
     .vr-demo-canvas {
-      width: 100%; height: 650px; /* Increased height */ background: var(--bg-dark);
+      width: 100%; height: 650px; background: var(--bg-dark);
       position: relative; overflow: hidden; border-bottom: 1px solid var(--border-medium);
-      display: flex; /* Use flex to center loading message */
-      align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-     /* Style for potential loading messages inside canvas container */
     .vr-demo-canvas p { color: var(--text-secondary); font-size: 1.1rem; }
-
     .vr-controls {
       display: flex; gap: 1.5rem; padding: 2rem;
       background: rgba(0, 0, 0, 0.4); justify-content: center; flex-wrap: wrap;
@@ -393,34 +375,31 @@
     /* --- Technology Section (Video) --- */
     .video-container { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 3rem; }
     .video-item { display: flex; flex-direction: column; align-items: center; max-width: 600px; width: 100%; }
-    .video-item h3 { margin-bottom: 1.5rem; color: var(--tertiary-light); /* Use tertiary */ text-shadow: 0 0 8px var(--tertiary-glow); }
+    .video-item h3 { margin-bottom: 1.5rem; color: var(--tertiary-light); text-shadow: 0 0 8px var(--tertiary-glow); }
     .video-container iframe {
-      width: 100%; aspect-ratio: 16 / 9; /* Maintain aspect ratio */ max-height: 450px;
+      width: 100%; aspect-ratio: 16 / 9; max-height: 450px;
       border: none; border-radius: var(--border-radius-md);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s ease;
     }
     .video-container iframe:hover { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 25px var(--primary-glow); }
 
-    /* --- Contact Section - Cleaned Up --- */
-    .contact-details-container {
+    /* --- Contact Section --- */
+     .contact-details-container {
       max-width: 700px; margin: 2rem auto 0; background: var(--bg-card);
       border-radius: var(--border-radius-md); padding: 3rem; border: 1px solid var(--border-light);
       text-align: center; box-shadow: var(--shadow-card);
     }
     .contact-item {
-      display: flex; justify-content: center; align-items: center; gap: 1rem; /* Increased gap */
+      display: flex; justify-content: center; align-items: center; gap: 1rem;
       font-size: clamp(1.05rem, 2.5vw, 1.2rem); margin-bottom: 1.5rem;
     }
-    .contact-item a:first-child { /* Email link */
+    .contact-item a:first-child {
       color: var(--primary-light); text-decoration: none; transition: color 0.3s ease;
-      word-break: break-all; /* Prevent long emails overflowing */
+      word-break: break-all;
     }
     .contact-item a:first-child:hover { color: var(--accent-light); }
-    .contact-item a:last-child { /* LinkedIn link */
-      line-height: 0; /* Prevent extra space */
-      transition: transform 0.3s ease;
-    }
+    .contact-item a:last-child { line-height: 0; transition: transform 0.3s ease; }
     .contact-item a:last-child:hover { transform: scale(1.15); }
     .contact-item svg { width: 28px; height: 28px; fill: var(--primary-light); transition: fill 0.3s ease; }
     .contact-item a:last-child:hover svg { fill: var(--accent-light); }
@@ -432,9 +411,9 @@
     .update-item img:hover { transform: scale(1.03); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
     .update-item p { margin-top: 1.5rem; font-style: italic; color: var(--text-tertiary); font-size: 0.95rem; }
 
-    /* --- Footer - Enhanced --- */
+    /* --- Footer --- */
     .footer {
-      background: linear-gradient(rgba(2, 4, 10, 0.9), rgba(1, 2, 4, 1)); /* Dark gradient */
+      background: linear-gradient(rgba(2, 4, 10, 0.9), rgba(1, 2, 4, 1));
       padding: 5rem 2rem 2.5rem; position: relative;
       border-top: 1px solid var(--border-light);
       box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.3);
@@ -446,7 +425,7 @@
     .footer-column {}
     .footer-title {
       font-size: 1.3rem; margin-bottom: 1.8rem; font-weight: 600;
-      background: var(--gradient-accent); /* Accent title */
+      background: var(--gradient-accent);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       position: relative; display: inline-block; padding-bottom: 0.6rem;
       text-shadow: 0 0 8px var(--accent-glow);
@@ -476,15 +455,14 @@
       .hero-inner { max-width: 90%; }
       .features-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
     }
-
     @media (max-width: 768px) {
-      .navbar { padding: 0.8rem 1.5rem; justify-content: space-between; } /* Ensure space for hamburger */
+      .navbar { padding: 0.8rem 1.5rem; justify-content: space-between; }
       .nav-logo { font-size: 1.3rem; }
       .hamburger { display: flex; }
       .nav-links {
-        position: fixed; top: 60px; /* Adjust based on final nav height */ left: 0; right: 0;
-        flex-direction: column; align-items: center; /* Center mobile links */
-        background: rgba(8, 15, 33, 0.98); /* Darker mobile nav */
+        position: fixed; top: 60px; left: 0; right: 0;
+        flex-direction: column; align-items: center;
+        background: rgba(8, 15, 33, 0.98);
         padding: 2rem; gap: 1.5rem;
         clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
         transition: clip-path 0.4s ease-in-out, backdrop-filter 0.4s ease;
@@ -493,8 +471,7 @@
         box-shadow: 0 10px 20px rgba(0,0,0,0.3);
       }
       .nav-links.active { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
-      .nav-link { font-size: 1.1rem; padding: 0.8rem 0; } /* Larger touch targets */
-
+      .nav-link { font-size: 1.1rem; padding: 0.8rem 0; }
       .section { padding: 5rem 1rem; }
       .btn-group { flex-direction: column; width: 100%; max-width: 400px; margin: 1.5rem auto 0; }
       .vr-demo-canvas { height: 450px; }
@@ -505,7 +482,6 @@
       .footer-content { grid-template-columns: 1fr; }
       .footer-bottom { flex-direction: column; text-align: center; }
     }
-
     @media (max-width: 576px) {
       h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); }
       h2 { font-size: clamp(1.8rem, 7vw, 2.5rem); }
@@ -522,16 +498,18 @@
     }
 
     /* AOS Animation Overrides (Optional) */
-    [data-aos="fade-up"] { transition-property: transform, opacity; } /* Ensure smooth fade */
-    body.aos-animate [data-aos] { pointer-events: auto; } /* Fix potential interaction issues */
+    [data-aos="fade-up"] { transition-property: transform, opacity; }
+    body.aos-animate [data-aos] { pointer-events: auto; }
     body.aos-init [data-aos] { pointer-events: none; }
+
   </style>
 </head>
 
 <body>
   <canvas id="global-backgroundCanvas"></canvas>
 
-  <div class="main-content"> <nav class="navbar" id="navbar">
+  <div class="main-content">
+    <nav class="navbar" id="navbar">
        <a href="#" class="nav-logo">
          SYNAEON
        </a>
@@ -564,8 +542,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="about">
+        <section class="section" id="about">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">Our Vision</span>
@@ -594,8 +571,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="problem">
+        <section class="section" id="problem">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">The Challenge</span>
@@ -618,8 +594,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="solution">
+        <section class="section" id="solution">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">The Synaeon Solution</span>
@@ -642,8 +617,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="technology">
+        <section class="section" id="technology">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">Core Technology</span>
@@ -662,8 +636,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="experience">
+        <section class="section" id="experience">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">Interactive Demo</span>
@@ -681,8 +654,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="team">
+        <section class="section" id="team">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">Our Team</span>
@@ -713,8 +685,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="contact">
+        <section class="section" id="contact">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">Connect</span>
@@ -737,8 +708,7 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="updates">
+        <section class="section" id="updates">
         <div class="section-inner">
           <div class="section-header" data-aos="fade-up">
             <span class="section-label">Updates</span>
@@ -792,19 +762,10 @@
         </div>
     </footer>
   </div> <script>
-    // --- Enhanced Inline JavaScript ---
-
-    // Strict mode for safety
+    // --- Inline JavaScript ---
     'use strict';
-
-    // Global state variables
     let currentLevel = null;
     let backgroundAnimationId = null;
-    // let loadingComplete = false; // No longer needed
-
-    // --- REMOVED Loading Screen Logic ---
-    // function handleLoadingScreen() { ... }
-    // function initLoadingAnimation() { ... }
 
     // --- SIMPLIFIED Background Starfield ---
     function initBackgroundCanvas() {
@@ -813,22 +774,16 @@
         console.error("Background canvas or THREE.js not found!");
         return;
       }
-
-      let renderer, scene, camera, starField; // Declare variables
-      let renderLoopRunning = false; // Flag to prevent multiple logs
-
+      let renderer, scene, camera, starField;
+      let renderLoopRunning = false;
       try {
-        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); // Assign to outer scope variable
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Log renderer info after creation
-        console.log("Renderer Info:", renderer.info);
-
-        scene = new THREE.Scene(); // Assign
-        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000); // Assign
+        console.log("Renderer Info:", renderer.info); // Log renderer info
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 5;
-
         const starsGeometry = new THREE.BufferGeometry();
         const starsCount = 5000;
         const posArray = new Float32Array(starsCount * 3);
@@ -836,39 +791,32 @@
           posArray[i] = (Math.random() - 0.5) * 100;
         }
         starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
         const starsMaterial = new THREE.PointsMaterial({
           size: 0.05, color: 0xffffff, transparent: true,
           opacity: 0.8, blending: THREE.AdditiveBlending, sizeAttenuation: true
         });
-
-        starField = new THREE.Points(starsGeometry, starsMaterial); // Assign
+        starField = new THREE.Points(starsGeometry, starsMaterial);
         scene.add(starField);
         scene.add(new THREE.AmbientLight(0x404040, 1.0));
-
         const clock = new THREE.Clock();
         function animate() {
           backgroundAnimationId = requestAnimationFrame(animate);
-
-          // Log only once that the loop is running
           if (!renderLoopRunning) {
               console.log("Background render loop (animate function) is running.");
               renderLoopRunning = true;
           }
-
           const delta = clock.getDelta();
-          if (starField) { // Check if starField exists
+          if (starField) {
                 starField.rotation.x += delta * 0.01;
                 starField.rotation.y += delta * 0.015;
           }
-          if(renderer && scene && camera) { // Check before rendering
+          if(renderer && scene && camera) {
              renderer.render(scene, camera);
           }
         }
-        animate(); // Start animation
-
+        animate();
         function handleResize() {
-          if (!renderer || !camera) return; // Check if objects exist
+          if (!renderer || !camera) return;
           const width = window.innerWidth;
           const height = window.innerHeight;
           renderer.setSize(width, height);
@@ -876,16 +824,13 @@
           camera.updateProjectionMatrix();
         }
         window.addEventListener('resize', handleResize, { passive: true });
-        handleResize(); // Initial size setup
-
-        console.log("Simplified background canvas initialized.");
-
+        handleResize();
+        console.log("Simplified background canvas initialized."); // Log success
       } catch (error) {
         console.error("Error initializing simplified background canvas:", error);
         if(backgroundAnimationId) cancelAnimationFrame(backgroundAnimationId);
       }
     }
-
 
     // --- Navigation Logic ---
     function initNavigation() {
@@ -893,7 +838,6 @@
       const navLinks = document.getElementById('nav-links');
       const navbar = document.getElementById('navbar');
       if (!hamburger || !navLinks || !navbar) return;
-
       hamburger.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         hamburger.classList.toggle('active');
@@ -909,7 +853,7 @@
       window.addEventListener('scroll', () => {
         navbar.classList.toggle('scrolled', window.scrollY > 50);
       }, { passive: true });
-       // Initialize AOS immediately since loading screen is removed
+       // Initialize AOS immediately
        AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
     }
 
@@ -920,24 +864,17 @@
         const level1CanvasContainer = document.getElementById('arachnophobia-demo');
         const level2CanvasContainer = document.getElementById('arachnophobia-level2');
         if (!level1Btn || !level2Btn || !level1CanvasContainer || !level2CanvasContainer) return;
-
         window.showLevel = function(level) {
             console.log(`Attempting to show level: ${level}`);
             currentLevel = level;
-
             level1Btn.classList.replace('btn', 'btn-outline');
             level2Btn.classList.replace('btn', 'btn-outline');
             level1CanvasContainer.style.display = 'none';
             level2CanvasContainer.style.display = 'none';
-
-            // Stop previous level's audio if running
             if (window.audioInstanceLevel1 && !window.audioInstanceLevel1.paused) window.audioInstanceLevel1.pause();
             if (window.audioInstanceLevel2 && !window.audioInstanceLevel2.paused) window.audioInstanceLevel2.pause();
-            // Remove voice icons
             level1Btn.querySelector('.voice-icon')?.remove();
             level2Btn.querySelector('.voice-icon')?.remove();
-
-            // Cleanup previous scene ONLY if switching levels
              if (level === 'level1') {
                 if (typeof window.cleanupLevel2 === 'function') window.cleanupLevel2();
                 level1CanvasContainer.style.display = 'flex';
@@ -957,19 +894,15 @@
     // --- Initialization ---
     document.addEventListener('DOMContentLoaded', () => {
       try {
-        // REMOVED initLoadingAnimation();
         initBackgroundCanvas(); // Start background animation immediately
         initNavigation();
         initDemoControls();
       } catch (error) {
         console.error("Initialization error:", error);
-        // Fallback for main content visibility if needed
         const mainContent = document.querySelector('.main-content');
         if (mainContent) mainContent.style.opacity = '1';
       }
     });
-
-    // REMOVED window.addEventListener('load', handleLoadingScreen);
 
   </script>
 
