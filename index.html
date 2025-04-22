@@ -1,38 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Canvas Test</title>
+    <style>
+        body { margin: 20px; background-color: #333; } /* Simple body */
+
+        /* Test static canvas */
+        #static-test-canvas {
+            width: 500px;  /* Fixed pixel width */
+            height: 300px; /* Fixed pixel height */
+            background-color: lime !important; /* Force background */
+            display: block; /* Ensure it's displayed */
+            margin-bottom: 20px; /* Add some space below */
+        }
+
+        h1 { color: white; }
+    </style>
+</head>
 <body>
-  <canvas id="global-backgroundCanvas"></canvas>
-  <div class="main-content">
-    ```
-
-There are a few reasons this could happen:
-
-1.  **JavaScript Interference:** Some script running on the page might be *removing* the canvas element after the initial HTML is parsed but before you inspect it.
-2.  **Build Process Issue:** Since you mentioned Netlify, if there's a build step involved before the site is served locally, that build process might be altering the HTML and removing the canvas.
-3.  **Browser Issue/Source Mismatch:** There might be a mismatch between the code file you are editing and what the browser is actually loading (e.g., caching issue, wrong file being served).
-
-**Let's try these steps:**
-
-**1. Verify the Source Code:**
-   * In your browser (Chrome or Safari), right-click on the non-working page and select **"View Page Source"**.
-   * A new tab/window will open showing the raw HTML code the browser received.
-   * **Search** that source code (Ctrl+F or Cmd+F). Is the line `<canvas id="global-backgroundCanvas"></canvas>` actually present in the source code you are viewing?
-
-**2. Test with NO Canvas JavaScript:**
-   Let's see if the canvas element appears if we *only* have the HTML tag and the CSS, but *comment out* the JavaScript that tries to use it.
-
-   * Use the **exact same HTML file from the previous step** (the one with no loading screen and the lime green CSS test).
-   * Find the `initBackgroundCanvas()` function within the main `<script>` block at the bottom.
-   * **Comment out the line that calls it** within the `DOMContentLoaded` event listener, like this:
-
-   ```javascript
-    // --- Initialization ---
-    document.addEventListener('DOMContentLoaded', () => {
-      try {
-        // initBackgroundCanvas(); // <--- COMMENT THIS LINE OUT
-        initNavigation();
-        initDemoControls();
-      } catch (error) {
-        console.error("Initialization error:", error);
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent) mainContent.style.opacity = '1';
-      }
-    });
+    <h1>Static Canvas Test</h1>
+    <p style="color: white;">Do you see a lime green rectangle below this text?</p>
+    <canvas id="static-test-canvas"></canvas>
+    <p style="color: white;">Some text after the canvas.</p>
+</body>
+</html>
