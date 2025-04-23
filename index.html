@@ -9,7 +9,7 @@
   <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
   <meta name="author" content="Synaeon">
   <meta property="og:title" content="Synaeon - AI-Powered VR Therapy">
-  <meta property="og:description" content="Revolutionizing mental health treatment HENSLER AI-powered VR exposure therapy.">
+  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://synaeon.com/">
   <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
@@ -84,8 +84,70 @@
       width: 100%;
       height: 100%;
       z-index: -1;
+      display: none;
     }
     
+    /* Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      transition: opacity 0.5s ease;
+    }
+    
+    #loading-screen canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .loading-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-primary);
+    }
+    
+    .loading-overlay h1 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px var(--primary-glow);
+    }
+    
+    #loading-bar-container {
+      width: 300px;
+      height: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 5px var(--primary-glow);
+    }
+    
+    #loading-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      transition: width 1.2s ease-in-out;
+    }
+
     .main-content {
       position: relative;
       z-index: 1;
@@ -161,7 +223,7 @@
       position: relative;
       z-index: 1;
       transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-      margin-top: 15vh; /* Shift significantly lower to show nav and stars */
+      margin-top: 15vh;
     }
 
     .hero-inner:hover {
@@ -178,7 +240,7 @@
     }
 
     .hero-logo img {
-      width: 160px; /* Larger logo */
+      width: 160px;
       height: auto;
       filter: drop-shadow(0 0 10px var(--primary-glow));
       transition: transform 0.3s ease;
@@ -293,8 +355,8 @@
       font-family: var(--font-display);
       font-weight: 500;
       text-decoration: none;
-      padding: 0.8rem 3rem; /* Increased padding for longer buttons */
-      border-radius: 50px; /* Rounded buttons */
+      padding: 0.8rem 3rem;
+      border-radius: 50px;
       border: none;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -302,7 +364,7 @@
       position: relative;
       overflow: hidden;
       z-index: 1;
-      min-width: 250px; /* Longer buttons to prevent overflow */
+      min-width: 250px;
       text-align: center;
     }
 
@@ -333,9 +395,9 @@
       border: 1px solid var(--primary-light);
       color: var(--primary-light);
       box-shadow: 0 4px 15px rgba(0, 113, 227, 0.2);
-      border-radius: 50px; /* Rounded buttons */
-      padding: 0.8rem 3rem; /* Increased padding for longer buttons */
-      min-width: 250px; /* Longer buttons to prevent overflow */
+      border-radius: 50px;
+      padding: 0.8rem 3rem;
+      min-width: 250px;
     }
 
     .btn-outline::before {
@@ -412,7 +474,7 @@
       flex-direction: column;
       position: relative;
       overflow: hidden;
-      box-shadow: var(--shadow-glow);
+      box-shadow: var Russia; /* Assuming this is a typo and should be var(--shadow-glow) */
     }
 
     .feature-card::before {
@@ -468,7 +530,7 @@
       flex-grow: 1;
     }
 
-    /* Blob Background Elements */
+    /* Blob Container (Adjusted for Starfield) */
     .blob-container {
       position: absolute;
       top: 0;
@@ -609,7 +671,7 @@
       gap: 1rem;
       padding: 1.5rem;
       background: rgba(0, 0, 0, 0.3);
-      justify-content: center;
+      justify    justify-content: center;
     }
 
     /* Video Container for Technology Section */
@@ -725,7 +787,7 @@
       }
       
       .hero-logo img {
-        width: 120px; /* Slightly smaller for mobile */
+        width: 120px;
       }
       
       .video-container iframe {
@@ -743,20 +805,20 @@
       }
       
       .hero-inner {
-        margin-top: 20vh; /* Adjust for mobile */
+        margin-top: 20vh;
       }
     }
 
     @media (max-width: 576px) {
       .hero-inner {
         padding: 2rem 1.5rem;
-        margin-top: 25vh; /* Further adjust for smaller screens */
+        margin-top: 25vh;
       }
       
       .btn {
         width: 100%;
-        min-width: 100%; /* Full width for smaller screens */
-        padding: 0.8rem 1.5rem; /* Adjust padding */
+        min-width: 100%;
+        padding: 0.8rem 1.5rem;
       }
       
       .btn-outline {
@@ -894,7 +956,18 @@
 
 <body>
   <canvas id="global-blobCanvas"></canvas>
-  <div class="main-content">
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <canvas id="loadingCanvas"></canvas>
+    <div class="loading-overlay">
+      <h1>Welcome to Synaeon</h1>
+      <div id="loading-bar-container">
+        <div id="loading-bar"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="main-content" style="display: none;">
     <nav class="navbar" id="navbar">
       <div class="hamburger" id="hamburger">
         <span></span>
@@ -1077,7 +1150,7 @@
           </div>
           <div class="video-item">
             <h3>How Does It Work?</h3>
-            <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" title="Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/Py1ML8l-Y0E" title ■■"Synaeon Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
         </div>
       </div>
@@ -1144,8 +1217,8 @@
         </div>
         <div class="contact-details" style="max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-light); text-align: center;">
           <div class="contact-item">
-            <a href="/cdn-cgi/l/email-protection#0c616d7869657f696069797f6d624c6b616d6560226f6361" style="color: var(--primary-light); text-decoration: none;">
-              <span class="__cf_email__" data-cfemail="4f222e3b2a263c2a232a3a3c2e210f28222e2623602d2123">[email protected]</span>
+            <a href="/cdn-cgi/l/email-protection#2954485d4c405a4c454c5c5a4847694e44484045074a4644" style="color: var(--primary-light); text-decoration: none;">
+              <span class="__cf_email__" data-cfemail="b69b9782939f85939a9383859798b6919b979f9ad895999b">[email&#160;protected]</span>
             </a>
             <a href="https://www.linkedin.com/in/matei-seleușan-737a83222" target="_blank" style="text-decoration: none;">
               <!-- LinkedIn SVG Icon -->
@@ -1161,8 +1234,8 @@
             </a>
           </div>
           <div class="contact-item">
-            <a href="/cdn-cgi/l/email-protection#91a3b0aba7b0bfbcb8b9b0b8b2a3b4a5a491b6bcb0b8bdffb2bebc" style="color: var(--primary-light); text-decoration: none;">
-              <span class="__cf_email__" data-cfemail="4b39382b27392b282c2d242c26372839380b2c262a222765282426">[email protected]</span>
+            <a href="/cdn-cgi/l/email-protection#aa988b909c8b848783828b8389988f9e9faa8d878b8386c4898587" style="color: var(--primary-light); text-decoration: none;">
+              <span class="__cf_email__" data-cfemail="sab8abb0bcaba4a7a3a2aba3a9b8afbebf8aada7aba3a6e4a9a5a7">[email&#160;protected]</span>
             </a>
             <a href="https://www.linkedin.com/in/razvan-cretu-703111164/?originalSubdomain=ro" target="_blank" style="text-decoration: none;">
               <!-- LinkedIn SVG Icon -->
@@ -1222,8 +1295,8 @@
         <div class="footer-column">
           <h4 class="footer-title">Contact</h4>
           <div class="footer-links">
-            <a href="/cdn-cgi/l/email-protection#a3cec2d7c6cad0c6cfc6d6d0c2cde3c4cec2cacf8dc0ccce" class="footer-link"><span class="__cf_email__" data-cfemail="4f222e3b2a263c2a232a3a3c2e210f28222e2623602d2123">[email protected]</span></a>
-            <a href="/cdn-cgi/l/email-protection#d1a3b0aba7b0bfbcb8b9b0b8b2a3b4a5a491b6bcb0b8bdffb2bebc" class="footer-link"><span class="__cf_email__" data-cfemail="4b39382b27392b282c2d242c26372839380b2c262a222765282426">[email protected]</span></a>
+            <a href="/cdn-cgi/l/email-protection#5b363a2f3e32283e373e2e283a351b3c363a323775383436" class="footer-link"><span class="__cf_email__" data-cfemail="2e434f5a4b475d4b424b5b5d4f406e49434f4742004d4143">[email&#160;protected]</span></a>
+            <a href="/cdn-cgi/l/email-protection#2153405b57404f4c48494048425344555461464c40484d0f424e4c" class="footer-link"><span class="__cf_email__" data-cfemail="5d2f3c272b3c333034353c343e2f3829281d3a303c3431733e3230">[email&#160;protected]</span></a>
           </div>
         </div>
       </div>
@@ -1236,6 +1309,54 @@
   <audio id="relaxingAudio" src="relaxing.mp3" loop></audio>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
+    // Loading Screen Animation
+    (function() {
+      const canvas = document.getElementById('loadingCanvas');
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 3;
+      const geometry = new THREE.IcosahedronGeometry(1, 2);
+      const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
+      const ball = new THREE.Mesh(geometry, material);
+      scene.add(ball);
+      const light = new THREE.PointLight(0xffffff, 1);
+      light.position.set(5, 5, 5);
+      scene.add(light);
+      function animate() {
+        requestAnimationFrame(animate);
+        ball.rotation.x += 0.003;
+        ball.rotation.y += 0.005;
+        renderer.render(scene, camera);
+      }
+      animate();
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    })();
+
+    // Show loading bar and fade out
+    window.addEventListener('load', function() {
+      const loadingBar = document.getElementById('loading-bar');
+      const loadingScreen = document.getElementById('loading-screen');
+      const mainContent = document.querySelector('.main-content');
+      const blobCanvas = document.getElementById('global-blobCanvas');
+      
+      loadingBar.style.width = '100%';
+      setTimeout(function() {
+        loadingScreen.style.opacity = '0';
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+          mainContent.style.display = 'block';
+          blobCanvas.style.display = 'block';
+        }, 500);
+      }, 1200);
+    });
+
     // Main initialization function
     document.addEventListener('DOMContentLoaded', function() {
       // Navigation toggle
@@ -1266,15 +1387,15 @@
         }
       });
       
-      // Blob background animation with starfield
+      // Initialize starfield background
       initBlobCanvas();
     });
 
-    // Starfield Animation (Galactic, Serene, Exuberant)
+    // Complex Starfield with Central Nebula
     function initBlobCanvas() {
       const canvas = document.getElementById('global-blobCanvas');
       if (!canvas) {
-        console.error('Blob canvas not found');
+        console.error('Canvas not found');
         return;
       }
 
@@ -1284,11 +1405,10 @@
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 15;
+      camera.position.z = 20;
 
-      // Circular texture for tiny and medium stars
-      function createCircleTexture() {
-        const size = 16;
+      // Circular texture for stars
+      function createCircleTexture(size = 16) {
         const canvas = document.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
@@ -1304,20 +1424,20 @@
 
       // Particle materials
       const tinyStarMaterial = new THREE.PointsMaterial({
-        size: 0.02,
+        size: 0.03,
         map: circleTexture,
         transparent: true,
-        opacity: 0.4,
+        opacity: 0.6,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
         vertexColors: true
       });
 
       const mediumStarMaterial = new THREE.PointsMaterial({
-        size: 0.1,
+        size: 0.15,
         map: circleTexture,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.7,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
         vertexColors: true
@@ -1326,21 +1446,21 @@
       const particleGroup = new THREE.Group();
       scene.add(particleGroup);
 
-      // Tiny stars (1600)
+      // Tiny stars (2000)
       const tinyStarGeometry = new THREE.BufferGeometry();
-      const tinyStarPositions = new Float32Array(1600 * 3);
-      const tinyStarColors = new Float32Array(1600 * 3);
-      const tinyStarVelocities = new Float32Array(1600);
-      for (let i = 0; i < 1600; i++) {
-        const radius = 20 + Math.random() * 30;
+      const tinyStarPositions = new Float32Array(2000 * 3);
+      const tinyStarColors = new Float32Array(2000 * 3);
+      const tinyStarVelocities = new Float32Array(2000);
+      for (let i = 0; i < 2000; i++) {
+        const radius = 30 + Math.random() * 40;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
         tinyStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
         tinyStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
         tinyStarPositions[i * 3 + 2] = radius * Math.cos(phi);
         const colorChoice = Math.random();
-        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
-                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
+        const color = colorChoice < 0.6 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.85 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
         tinyStarColors[i * 3] = color.r;
         tinyStarColors[i * 3 + 1] = color.g;
         tinyStarColors[i * 3 + 2] = color.b;
@@ -1351,21 +1471,21 @@
       const tinyStarSystem = new THREE.Points(tinyStarGeometry, tinyStarMaterial);
       particleGroup.add(tinyStarSystem);
 
-      // Medium stars (1300)
+      // Medium stars (1500)
       const mediumStarGeometry = new THREE.BufferGeometry();
-      const mediumStarPositions = new Float32Array(1300 * 3);
-      const mediumStarColors = new Float32Array(1300 * 3);
-      const mediumStarVelocities = new Float32Array(1300);
-      for (let i = 0; i < 1300; i++) {
-        const radius = 15 + Math.random() * 25;
+      const mediumStarPositions = new Float32Array(1500 * 3);
+      const mediumStarColors = new Float32Array(1500 * 3);
+      const mediumStarVelocities = new Float32Array(1500);
+      for (let i = 0; i < 1500; i++) {
+        const radius = 20 + Math.random() * 30;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
         mediumStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
         mediumStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
         mediumStarPositions[i * 3 + 2] = radius * Math.cos(phi);
         const colorChoice = Math.random();
-        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
-                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
+        const color = colorChoice < 0.6 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.85 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
         mediumStarColors[i * 3] = color.r;
         mediumStarColors[i * 3 + 1] = color.g;
         mediumStarColors[i * 3 + 2] = color.b;
@@ -1376,28 +1496,28 @@
       const mediumStarSystem = new THREE.Points(mediumStarGeometry, mediumStarMaterial);
       particleGroup.add(mediumStarSystem);
 
-      // Large orbs (300)
+      // Large orbs (400)
       const largeOrbGroup = new THREE.Group();
       particleGroup.add(largeOrbGroup);
-      const sphereGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+      const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16);
       const largeOrbVelocities = [];
-      for (let i = 0; i < 300; i++) {
+      for (let i = 0; i < 400; i++) {
         const colorChoice = Math.random();
-        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
-                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
+        const color = colorChoice < 0.6 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.85 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
         const material = new THREE.MeshPhongMaterial({
           color: color,
           emissive: color,
-          emissiveIntensity: 0.3,
+          emissiveIntensity: 0.5,
           specular: 0xffffff,
           shininess: 50,
           transparent: true,
-          opacity: 0.7,
+          opacity: 0.8,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         });
         const orb = new THREE.Mesh(sphereGeometry, material);
-        const radius = 10 + Math.random() * 20;
+        const radius = 15 + Math.random() * 25;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
         orb.position.set(
@@ -1409,105 +1529,86 @@
         largeOrbVelocities.push(radius);
       }
 
-      // Nebula background
-      const nebulaGeometry = new THREE.SphereGeometry(100, 16, 16);
+      // Central Nebula
+      const nebulaGroup = new THREE.Group();
+      scene.add(nebulaGroup);
+      const nebulaGeometry = new THREE.SphereGeometry(10, 32, 32);
       const nebulaMaterial = new THREE.MeshBasicMaterial({
-        color: 0x1c2526,
+        color: 0x47a0ff,
         transparent: true,
-        opacity: 0.15,
-        side: THREE.BackSide
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide
       });
       const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
-      scene.add(nebula);
+      nebulaGroup.add(nebula);
+
+      // Nebula glow layers
+      const glowGeometry = new THREE.SphereGeometry(12, 32, 32);
+      const glowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00e5ff,
+        transparent: true,
+        opacity: 0.15,
+        blending: THREE.AdditiveBlending
+      });
+      const nebulaGlow = new THREE.Mesh(glowGeometry, glowMaterial);
+      nebulaGroup.add(nebulaGlow);
+
+      // Nebula particles
+      const nebulaParticleGeometry = new THREE.BufferGeometry();
+      const nebulaParticlePositions = new Float32Array(500 * 3);
+      const nebulaParticleColors = new Float32Array(500 * 3);
+      for (let i = 0; i < 500; i++) {
+        const radius = 8 + Math.random() * 4;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        nebulaParticlePositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        nebulaParticlePositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        nebulaParticlePositions[i * 3 + 2] = radius * Math.cos(phi);
+        const color = new THREE.Color().setHSL(Math.random(), 0.7, 0.5);
+        nebulaParticleColors[i * 3] = color.r;
+        nebulaParticleColors[i * 3 + 1] = color.g;
+        nebulaParticleColors[i * 3 + 2] = color.b;
+      }
+      nebulaParticleGeometry.setAttribute('position', new THREE.BufferAttribute(nebulaParticlePositions, 3));
+      nebulaParticleGeometry.setAttribute('color', new THREE.BufferAttribute(nebulaParticleColors, 3));
+      const nebulaParticleMaterial = new THREE.PointsMaterial({
+        size: 0.1,
+        map: circleTexture,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending,
+        vertexColors: true
+      });
+      const nebulaParticles = new THREE.Points(nebulaParticleGeometry, nebulaParticleMaterial);
+      nebulaGroup.add(nebulaParticles);
+
+      // Background sphere
+      const backgroundGeometry = new THREE.SphereGeometry(100, 16, 16);
+      const backgroundMaterial = new THREE.MeshBasicMaterial({
+        color: 0x0a0e1a,
+        transparent: true,
+        opacity: 0.2,
+        side: THREE.BackSide
+      });
+      const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+      scene.add(background);
 
       // Lighting
-      const ambientLight = new THREE.AmbientLight(0x1c2526, 0.4);
+      const ambientLight = new THREE.AmbientLight(0x1c2526, 0.5);
       scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0x8ab5ff, 0.6, 50);
-      pointLight.position.set(10, 10, 10);
+      const pointLight = new THREE.PointLight(0x8ab5ff, 0.8, 50);
+      pointLight.position.set(15, 15, 15);
       scene.add(pointLight);
-      const pointLight2 = new THREE.PointLight(0x8ab5ff, 0.4, 50);
-      pointLight2.position.set(-10, -10, -10);
+      const pointLight2 = new THREE.PointLight(0x8ab5ff, 0.6, 50);
+      pointLight2.position.set(-15, -15, -15);
       scene.add(pointLight2);
 
-      // Fade animations (run as before)
+      // Fade animations
       function animateFades() {
-        new TWEEN.Tween(tinyStarMaterial).to({ opacity: 0.2 }, 5000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
-        new TWEEN.Tween(mediumStarMaterial).to({ opacity: 0.3 }, 6000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        new TWEEN.Tween(tinyStarMaterial).to({ opacity: 0.3 }, 4000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        new TWEEN.Tween(mediumStarMaterial).to({ opacity: 0.4 }, 5000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        new TWEEN.Tween(nebulaMaterial).to({ opacity: 0.2 }, 6000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+        new TWEEN.Tween(nebulaParticleMaterial).to({ opacity: 0.5 }, 5500).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
         largeOrbGroup.children.forEach(orb => {
-          new TWEEN.Tween(orb.material).to({ opacity: 0.4 }, 7000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
-        });
-      }
-
-      try {
-        animateFades();
-      } catch (error) {
-        console.error('Error in animateFades:', error);
-      }
-
-      // Animation loop
-      const clock = new THREE.Clock();
-      function animate() {
-        requestAnimationFrame(animate);
-        const elapsed = clock.getElapsedTime();
-
-        // Global rotation
-        particleGroup.rotation.y += 0.001;
-
-        // Subtle camera oscillation
-        camera.position.y = Math.sin(elapsed * 0.1) * 0.5;
-
-        // Radial drift for tiny and medium stars
-        const tinyPositions = tinyStarGeometry.attributes.position.array;
-        for (let i = 0; i < 1600; i++) {
-          let radius = tinyStarVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
-          const theta = Math.atan2(tinyPositions[i * 3 + 1], tinyPositions[i * 3]);
-          const phi = Math.acos(tinyPositions[i * 3 + 2] / tinyStarVelocities[i]);
-          radius = Math.min(radius, 50);
-          tinyPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-          tinyPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-          tinyPositions[i * 3 + 2] = radius * Math.cos(phi);
-        }
-        tinyStarGeometry.attributes.position.needsUpdate = true;
-
-        const mediumPositions = mediumStarGeometry.attributes.position.array;
-        for (let i = 0; i < 1300; i++) {
-          let radius = mediumStarVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
-          const theta = Math.atan2(mediumPositions[i * 3 + 1], mediumPositions[i * 3]);
-          const phi = Math.acos(mediumPositions[i * 3 + 2] / mediumStarVelocities[i]);
-          radius = Math.min(radius, 40);
-          mediumPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-          mediumPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-          mediumPositions[i * 3 + 2] = radius * Math.cos(phi);
-        }
-        mediumStarGeometry.attributes.position.needsUpdate = true;
-
-        // Update large orbs
-        largeOrbGroup.children.forEach((orb, i) => {
-          let radius = largeOrbVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
-          const theta = Math.atan2(orb.position.y, orb.position.x);
-          const phi = Math.acos(orb.position.z / largeOrbVelocities[i]);
-          radius = Math.min(radius, 30);
-          orb.position.set(
-            radius * Math.sin(phi) * Math.cos(theta),
-            radius * Math.sin(phi) * Math.sin(theta),
-            radius * Math.cos(phi)
-          );
-        });
-
-        TWEEN.update();
-        renderer.render(scene, camera);
-      }
-
-      animate();
-
-      // Handle window resize
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-    }
-  </script>
-</body>
-</html>
+          new TWEEN.Tween(orb
