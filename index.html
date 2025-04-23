@@ -1,714 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synaeon - Generative AI VR Therapy | The Future of Mental Healing</title>
-  <meta name="description" content="Synaeon pioneers generative AI-powered VR therapy, transforming mental health treatment with adaptive, real-time exposure environments for clinically effective results.">
-  <meta name="keywords" content="VR therapy, AI therapy, generative AI, exposure therapy, mental health technology, anxiety treatment, PTSD treatment, virtual reality healthcare, Synaeon, AI mental health, digital therapeutics">
-  <meta name="author" content="Synaeon, Inc.">
-  <meta property="og:title" content="Synaeon - Generative AI VR Therapy | The Future of Mental Healing">
-  <meta property="og:description" content="Experience hyper-realistic, AI-generated VR environments adapting in real-time for truly personalized and effective exposure therapy. Discover Synaeon.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://synaeon.com/">
-  <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Synaeon - AI-Powered VR Therapy">
-  <meta name="twitter:description" content="AI-driven VR environments adapting in real-time for effective exposure therapy.">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
-
-  <link rel="icon" type="image/png" href="syneon_image.png">
-  <link rel="apple-touch-icon" href="syneon_image.png">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <style>
-    :root {
-      --primary: #00aaff;
-      --primary-dark: #0077cc;
-      --primary-light: #80dfff;
-      --primary-glow: rgba(0, 170, 255, 0.5);
-      --accent: #ffc107;
-      --accent-dark: #cc9a06;
-      --accent-light: #ffd54f;
-      --accent-glow: rgba(255, 193, 7, 0.5);
-      --secondary: #6f42c1;
-      --secondary-light: #a47de9;
-      --secondary-glow: rgba(111, 66, 193, 0.4);
-      --tertiary: #17a2b8;
-      --tertiary-light: #60d1e2;
-      --tertiary-glow: rgba(23, 162, 184, 0.4);
-      --success: #28a745;
-      --danger: #dc3545;
-      --bg-dark: #010204;
-      --bg-medium: #080f21;
-      --bg-light: #1a294f;
-      --bg-card: rgba(10, 20, 45, 0.75);
-      --bg-card-hover: rgba(15, 25, 55, 0.85);
-      --text-primary: #f0f8ff;
-      --text-secondary: rgba(240, 248, 255, 0.75);
-      --text-tertiary: rgba(240, 248, 255, 0.5);
-      --border-light: rgba(255, 255, 255, 0.1);
-      --border-medium: rgba(255, 255, 255, 0.2);
-      --border-glow: rgba(0, 170, 255, 0.25);
-      --border-accent-glow: rgba(255, 193, 7, 0.25);
-      --font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      --font-display: 'Outfit', var(--font-main);
-      --gradient-primary: linear-gradient(90deg, var(--primary-light), var(--primary));
-      --gradient-accent: linear-gradient(90deg, var(--accent-light), var(--accent));
-      --gradient-secondary: linear-gradient(90deg, var(--secondary-light), var(--secondary));
-      --gradient-text-hero: linear-gradient(95deg, var(--primary-light) 0%, var(--accent-light) 50%, var(--tertiary-light) 100%);
-      --gradient-text-header: linear-gradient(90deg, var(--text-primary), var(--primary-light));
-      --gradient-bg-subtle: linear-gradient(180deg, rgba(8, 15, 33, 0.1) 0%, rgba(8, 15, 33, 0) 100%);
-      --gradient-border: linear-gradient(90deg, var(--primary-glow), var(--accent-glow));
-      --gradient-fallback: radial-gradient(circle at top, #1a294f 0%, #010204 100%);
-      --shadow-glow-sm: 0 0 10px var(--primary-glow);
-      --shadow-glow-md: 0 0 20px var(--primary-glow);
-      --shadow-glow-lg: 0 0 40px var(--primary-glow);
-      --shadow-card: 0 15px 45px rgba(0, 0, 0, 0.5);
-      --shadow-button: 0 6px 20px rgba(0, 170, 255, 0.4);
-      --shadow-button-hover: 0 10px 30px rgba(0, 170, 255, 0.6);
-      --border-radius-sm: 8px;
-      --border-radius-md: 16px;
-      --border-radius-lg: 24px;
-      --border-radius-pill: 50px;
-      --transition-fast: all 0.2s ease-in-out;
-      --transition-medium: all 0.3s ease-in-out;
-      --transition-smooth: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
-      --transition-impact: all 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-      --transition-slide: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; font-size: 16px; background-color: var(--bg-dark); }
-    body {
-      font-family: var(--font-main);
-      color: var(--text-primary);
-      line-height: 1.75;
-      overflow-x: hidden;
-      position: relative;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background: var(--gradient-fallback);
-    }
-
-    #global-backgroundCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      z-index: -2;
-      opacity: 0;
-      transition: opacity 1.5s ease 0.5s;
-    }
-    #global-backgroundCanvas.loaded { opacity: 0.8; }
-
-    #loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      transition: opacity 0.8s ease-out 0.3s, visibility 0.8s linear 0.3s;
-      visibility: visible;
-      cursor: wait;
-    }
-    #loading-screen.hidden { opacity: 0; visibility: hidden; }
-
-    #loading-screen canvas#loadingCanvas {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1; filter: blur(2px); opacity: 0.7;
-    }
-
-    .loading-overlay {
-      z-index: 1; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; text-align: center; color: var(--text-primary);
-      padding: 2rem; animation: fadeInLoadingContent 1.2s ease-out 0.2s forwards; opacity: 0;
-    }
-    @keyframes fadeInLoadingContent { to { opacity: 1; transform: translateY(0); } }
-
-    .loading-overlay h1 {
-      font-family: var(--font-display); font-weight: 800;
-      font-size: clamp(2.2rem, 6vw, 4rem);
-      background: var(--gradient-text-hero); background-size: 300% auto;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      margin-bottom: 2.5rem;
-      text-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--accent-glow);
-      animation: gradientFlow 5s ease infinite;
-      letter-spacing: 0.02em;
-    }
-    @keyframes gradientFlow {
-      0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
-    }
-
-    #loading-bar-container {
-      width: clamp(300px, 70vw, 500px); height: 6px;
-      border: none; border-radius: var(--border-radius-pill); overflow: hidden;
-      box-shadow: var(--shadow-glow-md), inset 0 1px 2px rgba(0,0,0,0.4);
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    #loading-bar {
-      width: 0; height: 100%;
-      background: var(--gradient-primary);
-      transition: width 1.8s cubic-bezier(0.65, 0, 0.35, 1);
-      border-radius: var(--border-radius-pill);
-      box-shadow: 0 0 15px var(--primary-glow);
-    }
-
-    .main-content {
-      position: relative; z-index: 1; opacity: 0;
-      transition: opacity 1.2s ease-in;
-    }
-    .main-content.loaded { opacity: 1; }
-
-    h1, h2, h3, h4, h5, h6 {
-      font-family: var(--font-display); font-weight: 700; line-height: 1.3;
-      letter-spacing: -0.01em; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    }
-    h1 {
-      font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800;
-      background: var(--gradient-text-hero); background-size: 300% auto;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      margin-bottom: 1.8rem; animation: gradientFlow 7s ease infinite; line-height: 1.15;
-    }
-    h2 {
-      font-size: clamp(2.2rem, 6vw, 3.5rem); margin-bottom: 3rem;
-      background: var(--gradient-text-header);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      font-weight: 700;
-    }
-    h3 {
-      font-size: clamp(1.5rem, 4.5vw, 2.1rem); margin-bottom: 1.3rem;
-      color: var(--text-primary); font-weight: 600;
-    }
-    p {
-      font-size: clamp(1rem, 2.2vw, 1.15rem); line-height: 1.8;
-      color: var(--text-secondary); margin-bottom: 2rem; max-width: 75ch;
-    }
-    strong { color: var(--accent-light); font-weight: 600; }
-    a { color: var(--primary-light); text-decoration: none; transition: color 0.3s ease; }
-    a:hover { color: var(--accent-light); }
-
-    .hero {
-      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-      align-items: center; position: relative; padding: 8rem 1rem 5rem;
-      text-align: center; overflow: hidden; z-index: 1;
-      background: radial-gradient(ellipse at bottom, var(--bg-medium) 0%, var(--bg-dark) 70%);
-    }
-    .hero-inner {
-      backdrop-filter: blur(10px) saturate(110%);
-      background: rgba(8, 15, 33, 0.6);
-      border: 1px solid var(--border-glow);
-      border-radius: var(--border-radius-lg);
-      padding: clamp(3rem, 8vw, 5rem) clamp(2rem, 7vw, 4.5rem);
-      max-width: 1100px; width: 90%;
-      box-shadow: var(--shadow-card), 0 0 80px rgba(0, 170, 255, 0.3);
-      animation: heroFloat 12s infinite ease-in-out;
-      position: relative; z-index: 1;
-      transition: transform 0.6s var(--transition-smooth), box-shadow 0.6s ease;
-    }
-    .hero-inner:hover {
-      transform: translateY(-12px) scale(1.015);
-      box-shadow: var(--shadow-card), 0 0 100px rgba(0, 170, 255, 0.45);
-    }
-    @keyframes heroFloat {
-      0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
-    }
-    .hero-logo { margin-bottom: 2rem; }
-    .hero-logo img {
-      width: clamp(150px, 25vw, 220px); height: auto;
-      filter: drop-shadow(0 0 18px var(--primary-glow)) drop-shadow(0 0 8px var(--accent-glow));
-      transition: transform 0.5s var(--transition-impact), filter 0.5s ease;
-    }
-    .hero-logo img:hover { transform: scale(1.12) rotate(-4deg); filter: drop-shadow(0 0 30px var(--primary-glow)) drop-shadow(0 0 15px var(--accent-glow)); }
-    .hero-tagline {
-      font-family: var(--font-display); font-size: clamp(1rem, 2.2vw, 1.25rem);
-      text-transform: uppercase; letter-spacing: 0.35em;
-      color: var(--accent); margin-bottom: 1.2rem;
-      opacity: 1; text-shadow: 0 0 12px var(--accent-glow);
-    }
-    .hero-text {
-      font-size: clamp(1.15rem, 2.8vw, 1.5rem);
-      color: var(--text-secondary); max-width: 750px;
-      margin: 0 auto 3.5rem; line-height: 1.85;
-    }
-
-    .navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 0.7rem 2.5rem;
-      display: flex; justify-content: space-between;
-      align-items: center;
-      transition: all 0.45s var(--transition-smooth);
-      backdrop-filter: blur(16px) saturate(120%);
-      background: rgba(2, 4, 10, 0.7);
-      border-bottom: 1px solid var(--border-light);
-      transform: translateY(-100%);
-      animation: slideInNav 1s ease-out 0.8s forwards;
-    }
-    @keyframes slideInNav { to { transform: translateY(0); } }
-    .navbar.scrolled {
-      padding: 0.5rem 2.5rem;
-      background: rgba(2, 4, 10, 0.85);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
-    .nav-logo {
-      font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;
-      color: var(--text-primary); text-decoration: none;
-      letter-spacing: 0.05em;
-    }
-    .nav-logo img { height: 30px; vertical-align: middle; }
-
-    .nav-links { display: flex; gap: 2.5rem; align-items: center; }
-    .nav-link {
-      color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 1rem;
-      transition: var(--transition-smooth); position: relative; padding: 0.6rem 0.4rem;
-      letter-spacing: 0.05em; text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-    .nav-link::after {
-      content: ''; position: absolute; width: 0; height: 2px; bottom: 0px; left: 50%;
-      transform: translateX(-50%); background: var(--gradient-accent);
-      transition: width 0.35s ease, background 0.35s ease; border-radius: 1px;
-    }
-    .nav-link:hover, .nav-link:focus, .nav-link.active {
-      color: var(--text-primary); transform: translateY(-3px);
-      text-shadow: 0 0 10px var(--primary-glow); outline: none;
-    }
-    .nav-link:hover::after, .nav-link:focus::after, .nav-link.active::after { width: 85%; }
-
-    .hamburger { display: none; cursor: pointer; width: 30px; height: 24px; position: relative; flex-direction: column; justify-content: space-around; z-index: 1001; }
-    .hamburger span { display: block; height: 3px; width: 100%; background: var(--text-primary); border-radius: 3px; transition: all 0.35s var(--transition-impact); transform-origin: center; box-shadow: 0 0 5px var(--primary-glow); }
-    .hamburger.active span:nth-child(1) { transform: translateY(10.5px) rotate(45deg); }
-    .hamburger.active span:nth-child(2) { transform: scaleX(0); opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: translateY(-10.5px) rotate(-45deg); }
-
-    .btn {
-      display: inline-block; background: var(--gradient-primary); color: white;
-      font-family: var(--font-display); font-weight: 600; font-size: 1.1rem;
-      text-decoration: none; padding: 1rem 3rem; border-radius: var(--border-radius-pill);
-      border: none; cursor: pointer; transition: var(--transition-impact);
-      box-shadow: var(--shadow-button), var(--shadow-glow-md); position: relative;
-      overflow: hidden; z-index: 1; text-align: center; letter-spacing: 0.06em;
-      transform: perspective(1px) translateZ(0);
-      will-change: transform, box-shadow;
-    }
-    .btn::before {
-      content: ''; position: absolute; inset: 0; border-radius: var(--border-radius-pill);
-      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-      opacity: 0; transition: opacity 0.4s ease; z-index: -1;
-    }
-    .btn::after {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
-      transform: rotate(45deg); transition: transform 0.6s ease; opacity: 0;
-      pointer-events: none;
-    }
-    .btn:hover::before { opacity: 1; }
-    .btn:hover::after { transform: rotate(45deg) scale(1.5); opacity: 1; transition: transform 0.8s ease, opacity 0.8s ease; }
-    .btn:hover, .btn:focus { transform: translateY(-5px) scale(1.04); box-shadow: var(--shadow-button-hover), var(--shadow-glow-lg); outline: none; }
-    .btn:active { transform: translateY(-2px) scale(1.01); }
-
-    .btn-outline {
-      background: transparent; border: 2px solid var(--primary-light); color: var(--primary-light);
-      box-shadow: none; padding: calc(1rem - 2px) calc(3rem - 2px); position: relative; overflow: hidden;
-    }
-    .btn-outline::after {
-      content: ''; position: absolute; inset: 0; background: var(--primary);
-      z-index: -1; transform: scaleX(0); transform-origin: left;
-      transition: transform 0.45s var(--transition-smooth);
-    }
-    .btn-outline:hover, .btn-outline:focus {
-      color: var(--bg-dark); border-color: var(--primary-light);
-      box-shadow: 0 0 25px rgba(0, 170, 255, 0.4); transform: translateY(-5px) scale(1.04); outline: none;
-    }
-    .btn-outline:hover::after, .btn-outline:focus::after { transform: scaleX(1); }
-
-    .btn-group { display: flex; gap: 1.8rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
-
-    .section { padding: 8rem 2rem; position: relative; overflow: hidden; }
-    .section:nth-child(even) { background: var(--gradient-bg-subtle); }
-    .section-inner { max-width: 1250px; margin: 0 auto; position: relative; z-index: 2; }
-    .section-header { text-align: center; margin-bottom: 5rem; max-width: 900px; margin-left: auto; margin-right: auto; }
-    .section-header p { margin-left: auto; margin-right: auto; color: var(--text-secondary); font-size: clamp(1.1rem, 2.4vw, 1.25rem); }
-    .section-label {
-      display: inline-block; font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1.4rem;
-      padding: 0.7rem 1.8rem; border: 1px solid var(--border-accent-glow); border-radius: var(--border-radius-pill);
-      background: rgba(255, 193, 7, 0.1); box-shadow: 0 0 15px var(--accent-glow);
-      transition: var(--transition-smooth); transform: translateZ(0);
-    }
-    .section-label:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 0 25px var(--accent-glow); background: rgba(255, 193, 7, 0.18); }
-
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 3rem; }
-    .feature-card {
-      background: var(--bg-card); backdrop-filter: blur(12px) saturate(120%);
-      border-radius: var(--border-radius-md); padding: 3rem 2.5rem;
-      border: 1px solid var(--border-light);
-      transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s ease, background 0.4s ease;
-      height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden;
-      box-shadow: var(--shadow-card); transform: perspective(1200px) rotateY(0deg) translateZ(0);
-      will-change: transform, box-shadow;
-    }
-    .feature-card::before {
-      content: ''; position: absolute; inset: -1px; border-radius: var(--border-radius-md);
-      background: conic-gradient(from var(--angle), transparent 25%, var(--primary), var(--accent), transparent 75%);
-      opacity: 0; transition: opacity 0.5s ease; z-index: -1;
-      animation: spinBorder 6s linear infinite paused; filter: blur(8px);
-      will-change: --angle, opacity;
-    }
-    @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
-    @keyframes spinBorder { to { --angle: 360deg; } }
-
-    .feature-card:hover {
-      transform: translateY(-15px) rotateY(1deg) scale(1.02);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px var(--primary-glow);
-      background: var(--bg-card-hover);
-      border-color: var(--border-glow);
-    }
-    .feature-card:hover::before { opacity: 0.7; animation-play-state: running; }
-
-    .feature-icon {
-      width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      margin-bottom: 2rem;
-      background: linear-gradient(145deg, rgba(0, 170, 255, 0.15), rgba(0, 170, 255, 0.3));
-      border: 1px solid var(--primary); color: var(--primary-light); font-size: 2rem;
-      box-shadow: 0 0 18px var(--primary-glow), inset 0 1px 4px rgba(255,255,255,0.15);
-      transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, border-color 0.4s ease;
-    }
-    .feature-card:hover .feature-icon {
-      transform: rotateY(360deg) scale(1.15);
-      background: linear-gradient(145deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.35));
-      color: var(--accent-light); border-color: var(--accent);
-      box-shadow: 0 0 25px var(--accent-glow), inset 0 1px 4px rgba(255,255,255,0.15);
-    }
-    .feature-title { font-size: 1.6rem; margin-bottom: 1.2rem; color: var(--text-primary); font-weight: 600; }
-    .feature-text { color: var(--text-secondary); margin-bottom: 0; flex-grow: 1; font-size: 1rem; line-height: 1.7; }
-
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 3rem; }
-    .team-card {
-      background: var(--bg-medium); border-radius: var(--border-radius-md); overflow: hidden;
-      border: 1px solid var(--border-light); transition: var(--transition-smooth);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column;
-    }
-    .team-image-container { width: 100%; height: 350px; overflow: hidden; position: relative; }
-    .team-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--transition-smooth), filter 0.4s ease; filter: grayscale(30%); }
-    .team-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--secondary-glow); border-color: var(--secondary-glow); }
-    .team-card:hover .team-image { transform: scale(1.05); filter: grayscale(0%); }
-    .team-info { padding: 2rem; flex-grow: 1; background: var(--bg-medium); }
-    .team-name { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
-    .team-role { color: var(--secondary-light); font-size: 0.95rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; text-shadow: 0 0 8px var(--secondary-glow); }
-    .team-bio { font-size: 1rem; line-height: 1.65; color: var(--text-tertiary); }
-
-    .vr-demo {
-      background: var(--bg-medium); border-radius: var(--border-radius-lg); overflow: hidden;
-      border: 1px solid var(--border-medium); box-shadow: var(--shadow-card);
-      margin-top: 3rem;
-    }
-    .vr-demo-canvas {
-      width: 100%; height: 650px; background: var(--bg-dark);
-      position: relative; overflow: hidden; border-bottom: 1px solid var(--border-medium);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .vr-demo-canvas p { color: var(--text-secondary); font-size: 1.1rem; }
-
-    .vr-controls {
-      display: flex; gap: 1.5rem; padding: 2rem;
-      background: rgba(0, 0, 0, 0.4); justify-content: center; flex-wrap: wrap;
-    }
-
-    .video-container { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 3rem; }
-    .video-item { display: flex; flex-direction: column; align-items: center; max-width: 600px; width: 100%; }
-    .video-item h3 { margin-bottom: 1.5rem; color: var(--tertiary-light); text-shadow: 0 0 8px var(--tertiary-glow); }
-    .video-container iframe {
-      width: 100%; aspect-ratio: 16 / 9; max-height: 450px;
-      border: none; border-radius: var(--border-radius-md);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s ease;
-    }
-    .video-container iframe:hover { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 25px var(--primary-glow); }
-
-    .contact-details-container {
-      max-width: 700px; margin: 2rem auto 0; background: var(--bg-card);
-      border-radius: var(--border-radius-md); padding: 3rem; border: 1px solid var(--border-light);
-      text-align: center; box-shadow: var(--shadow-card);
-    }
-    .contact-item {
-      display: flex; justify-content: center; align-items: center; gap: 1rem;
-      font-size: clamp(1.05rem, 2.5vw, 1.2rem); margin-bottom: 1.5rem;
-    }
-    .contact-item a:first-child {
-      color: var(--primary-light); text-decoration: none; transition: color 0.3s ease;
-      word-break: break-all;
-    }
-    .contact-item a:first-child:hover { color: var(--accent-light); }
-    .contact-item a:last-child {
-      line-height: 0;
-      transition: transform 0.3s ease;
-    }
-    .contact-item a:last-child:hover { transform: scale(1.15); }
-    .contact-item svg { width: 28px; height: 28px; fill: var(--primary-light); transition: fill 0.3s ease; }
-    .contact-item a:last-child:hover svg { fill: var(--accent-light); }
-
-    .updates-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem; margin-top: 2rem; }
-    .update-item { text-align: center; max-width: 450px; width: 100%; }
-    .update-item img { max-width: 100%; border-radius: var(--border-radius-md); box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .update-item img:hover { transform: scale(1.03); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-    .update-item p { margin-top: 1.5rem; font-style: italic; color: var(--text-tertiary); font-size: 0.95rem; }
-
-    .footer {
-      background: linear-gradient(rgba(2, 4, 10, 0.9), rgba(1, 2, 4, 1));
-      padding: 5rem 2rem 2.5rem; position: relative;
-      border-top: 1px solid var(--border-light);
-      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.3);
-    }
-    .footer-content {
-      max-width: 1250px; margin: 0 auto; display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3.5rem;
-    }
-    .footer-column {}
-    .footer-title {
-      font-size: 1.3rem; margin-bottom: 1.8rem; font-weight: 600;
-      background: var(--gradient-accent);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      position: relative; display: inline-block; padding-bottom: 0.6rem;
-      text-shadow: 0 0 8px var(--accent-glow);
-    }
-    .footer-title::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 3px;
-      background: var(--gradient-accent); border-radius: 2px;
-    }
-    .footer-links { display: flex; flex-direction: column; gap: 0.8rem; }
-    .footer-link { color: var(--text-tertiary); text-decoration: none; transition: var(--transition-smooth); position: relative; font-size: 0.95rem; }
-    .footer-link::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.35s ease; }
-    .footer-link:hover { color: var(--primary-light); transform: translateX(6px); }
-    .footer-link:hover::after { width: 100%; }
-    .footer-text { color: var(--text-tertiary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.7; }
-    .footer-bottom {
-      max-width: 1250px; margin: 4rem auto 0; padding-top: 2rem;
-      border-top: 1px solid var(--border-light); display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 1.5rem;
-    }
-    .copyright { color: var(--text-tertiary); font-size: 0.9rem; }
-
-    @media (max-width: 992px) {
-      .section { padding: 6rem 1.5rem; }
-      .vr-demo-canvas { height: 550px; }
-      .video-container iframe { max-height: 400px; }
-      .hero-inner { max-width: 90%; }
-      .features-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
-    }
-
-    @media (max-width: 768px) {
-      .navbar { padding: 0.8rem 1.5rem; justify-content: space-between; }
-      .nav-logo { font-size: 1.3rem; }
-      .hamburger { display: flex; }
-      .nav-links {
-        position: fixed; top: 60px; left: 0; right: 0;
-        flex-direction: column; align-items: center;
-        background: rgba(8, 15, 33, 0.98);
-        padding: 2rem; gap: 1.5rem;
-        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-        transition: clip-path 0.4s ease-in-out, backdrop-filter 0.4s ease;
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border-light);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-      }
-      .nav-links.active { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
-      .nav-link { font-size: 1.1rem; padding: 0.8rem 0; }
-
-      .section { padding: 5rem 1rem; }
-      .btn-group { flex-direction: column; width: 100%; max-width: 400px; margin: 1.5rem auto 0; }
-      .vr-demo-canvas { height: 450px; }
-      .hero-logo img { width: 130px; }
-      .video-container iframe { max-height: 320px; }
-      .updates-grid { flex-direction: column; align-items: center; }
-      .update-item { max-width: 90%; }
-      .footer-content { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; text-align: center; }
-    }
-
-    @media (max-width: 576px) {
-      h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); }
-      h2 { font-size: clamp(1.8rem, 7vw, 2.5rem); }
-      .hero-inner { padding: 2.5rem 1.5rem; }
-      .btn, .btn-outline { width: 100%; padding: 0.9rem 1.5rem; font-size: 1rem; }
-      .vr-demo-canvas { height: 350px; }
-      .vr-controls { flex-direction: column; padding: 1.5rem; }
-      .video-container iframe { max-height: 280px; }
-      .hero-logo img { width: 110px; }
-      .section-label { padding: 0.6rem 1.2rem; font-size: 0.85rem; letter-spacing: 0.15em; }
-      .feature-card { padding: 2rem 1.5rem; }
-      .team-info { padding: 1.5rem; }
-      .contact-details-container { padding: 2rem 1.5rem; }
-    }
-
-    [data-aos="fade-up"] { transition-property: transform, opacity; }
-    body.aos-animate [data-aos] { pointer-events: auto; }
-    body.aos-init [data-aos] { pointer-events: none; }
-  </style>
-</head>
-
-<body>
-  <canvas id="global-backgroundCanvas"></canvas>
-
-  <div id="loading-screen">
-    <canvas id="loadingCanvas"></canvas>
-    <div class="loading-overlay" data-aos="fade-in" data-aos-delay="100" data-aos-duration="1000">
-      <h1>Synaeon</h1>
-      <div id="loading-bar-container">
-        <div id="loading-bar"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="main-content">
-    <nav class="navbar" id="navbar">
-      <a href="#" class="nav-logo">SYNAEON</a>
-      <div class="hamburger" id="hamburger">
-        <span></span><span></span><span></span>
-      </div>
-      <div class="nav-links" id="nav-links">
-        <a href="#about" class="nav-link">About</a>
-        <a href="#problem" class="nav-link">Problem</a>
-        <a href="#solution" class="nav-link">Solution</a>
-        <a href="#technology" class="nav-link">Technology</a>
-        <a href="#experience" class="nav-link">Experience</a>
-        <a href="#team" class="nav-link">Team</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </div>
-    </nav>
-
-    <main>
-      <section class="hero">
-        <div class="hero-inner" data-aos="fade-up" data-aos-duration="1200">
-          <div class="hero-logo" data-aos="zoom-in" data-aos-delay="200" data-aos-duration="800">
-            <img src="syneon_image.png" alt="Synaeon Logo">
-          </div>
-          <div class="hero-tagline" data-aos="fade-up" data-aos-delay="400" data-aos-duration="800">Mind Reimagined</div>
-          <h1 data-aos="fade-up" data-aos-delay="500" data-aos-duration="800">Generative AI Therapy:<br>Worlds Built Around You</h1>
-          <p class="hero-text" data-aos="fade-up" data-aos-delay="600" data-aos-duration="800">Hyper-personalized VR exposure therapy, adapting in real-time through the power of generative artificial intelligence.</p>
-          <div class="btn-group" data-aos="fade-up" data-aos-delay="700" data-aos-duration="800">
-            <a href="#solution" class="btn">Discover the Solution</a>
-            <a href="#contact" class="btn btn-outline">Connect With Us</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="about">
-        <div class="section-inner">
-          <div class="section-header" data-aos="fade-up">
-            <span class="section-label">Our Vision</span>
-            <h2>Pioneering Adaptive Mental Healthcare</h2>
-            <p>We are transforming exposure therapy with AI-driven VR environments that dynamically adapt to patient needs and therapist guidance, creating truly personalized and effective healing journeys.</p>
-          </div>
-          <div class="features-grid">
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-              <div class="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.4 3.9a2 2 0 0 1 3.2 0l5.1 8.6a2 2 0 0 1-.7 2.8c-1 .6-2.4.4-3.1-.4l-1.1-1.4a2 2 0 0 0-3.2 0l-1.1 1.4c-.7.9-2.1 1-3.1.4a2 2 0 0 1-.7-2.8l5.1-8.6zM12 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>
-              </div>
-              <h3 class="feature-title">Generative AI Core</h3>
-              <p class="feature-text">Our proprietary AI instantly translates therapist descriptions or pre-set protocols into rich, interactive 3D environments, offering limitless scenario possibilities.</p>
-            </div>
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-              <div class="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
-              </div>
-              <h3 class="feature-title">Adaptive Biofeedback Loop</h3>
-              <p class="feature-text">Real-time physiological monitoring (e.g., heart rate, EDA) dynamically adjusts the VR experience intensity, optimizing therapeutic engagement and efficacy.</p>
-            </div>
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-              <div class="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
-              </div>
-              <h3 class="feature-title">Intelligent Clinician Control</h3>
-              <p class="feature-text">A comprehensive dashboard provides therapists with precise control over the environment, scenario parameters, and real-time monitoring of patient progress.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="problem">
-        <div class="section-inner">
-          <div class="section-header" data-aos="fade-up">
-            <span class="section-label">The Challenge</span>
-            <h2>Overcoming Therapy Limitations</h2>
-            <p>Traditional exposure therapy often struggles with low immersion, lack of personalization, and high patient dropout rates (up to 50%), hindering effective treatment for many.</p>
-          </div>
-          <div class="features-grid">
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-              <h3 class="feature-title">Insufficient Realism</h3>
-              <p class="feature-text">Imagination-based or static media scenarios often fail to evoke the necessary emotional response for profound therapeutic processing.</p>
-            </div>
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-              <h3 class="feature-title">One-Size-Fits-All</h3>
-              <p class="feature-text">Traditional methods lack the dynamic adaptability required to precisely match exposure levels to individual patient thresholds and progress.</p>
-            </div>
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div>
-              <h3 class="feature-title">Engagement & Adherence</h3>
-              <p class="feature-text">The absence of deep immersion and personalization contributes significantly to patient disengagement and high treatment dropout rates.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="solution">
-        <div class="section-inner">
-          <div class="section-header" data-aos="fade-up">
-            <span class="section-label">The Synaeon Solution</span>
-            <h2>Hyper-Personalized AI VR Therapy</h2>
-            <p>Synaeon leverages generative AI to craft fully immersive, dynamic VR worlds that respond instantly to therapist input and patient biofeedback, ensuring precisely calibrated, engaging, and effective therapy.</p>
-          </div>
-          <div class="features-grid">
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="m12 22.08 V 12"/></svg></div>
-              <h3 class="feature-title">Infinite Environment Generation</h3>
-              <p class="feature-text">Go beyond static scenarios. Our AI generates unique, contextually relevant 3D environments on the fly, tailored precisely to the therapeutic need.</p>
-            </div>
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M7 13l-2.5 2.5M10 16l-1.5 1.5M14 16l1.5 1.5M17 13l2.5 2.5"/></svg></div>
-              <h3 class="feature-title">Intelligent Adaptation</h3>
-              <p class="feature-text">Integrated biometric sensors provide closed-loop feedback, enabling the AI to modulate exposure intensity for optimal therapeutic windows.</p>
-            </div>
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="M16 16l2 2 4-4"/></svg></div>
-              <h3 class="feature-title">Continuous Improvement</h3>
-              <p class="feature-text">The platform learns from every session, refining its understanding of patient triggers and coping mechanisms to enhance future therapeutic outcomes.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="technology">
-        <div class="section-inner">
-          <div class="section-header" data-aos="fade-up">
-            <span class="section-label">Core Technology</span>
-            <h2>The Synaeon Engine</h2>
-            <p>Our platform integrates proprietary speech-to-3D generative AI, real-time biometric analysis, and advanced VR rendering to deliver a seamless, powerful, and adaptive therapeutic tool.</p>
-          </div>
-          <div class="video-container">
-            <div class="video-item" data-aos="fade-right" data-aos-delay="100">
-              <h3>Introduction to Synaeon</h3>
+<h3>Introduction to Synaeon</h3>
               <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Synaeon Intro Video Placeholder" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <div class="video-item" data-aos="fade-left" data-aos-delay="200">
@@ -727,16 +17,13 @@
             <p>Engage with our interactive simulation showcasing the AI-driven approach for arachnophobia exposure. Select a level to begin your adaptive experience.</p>
           </div>
           <div class="vr-demo" data-aos="fade-up" data-aos-delay="100">
-            <div class="vr-controls" id="level-buttons">
+            <div class="vr-controls" id="level-buttons"> 
               <button class="btn" onclick="showLevel('level1')" id="level1-btn">Level 1: Controlled Exposure</button>
-              <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Immersive Scenario</button>
+              <button class="btn btn-outline" onclick="showLevel('level2')" id="level2-btn">Level 2: Intense Exposure</button>
+              <button class="btn btn-outline" id="soundToggleBtn" onclick="toggleSound()">Toggle Relaxing Sound</button>
             </div>
-            <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: none;">
-              <p>Loading Level 1...</p>
-            </div>
-            <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;">
-              <p>Loading Level 2...</p>
-            </div>
+            <div id="arachnophobia-demo" class="vr-demo-canvas" style="display: none;"></div>
+            <div id="arachnophobia-level2" class="vr-demo-canvas" style="display: none;"></div>
           </div>
         </div>
       </section>
@@ -750,7 +37,7 @@
           </div>
           <div class="team-grid">
             <div class="team-card" data-aos="fade-up" data-aos-delay="100">
-              <div class="team-image ​​​​​​image-container">
+              <div class="team-image-container">
                 <img src="https://github.com/mtthwnova66/vr-therapy-pitch/blob/main/matei.png?raw=true" alt="Matei Seleușan" class="team-image">
               </div>
               <div class="team-info">
@@ -782,14 +69,14 @@
           </div>
           <div class="contact-details-container" data-aos="fade-up" data-aos-delay="100">
             <div class="contact-item">
-              <a href="/cdn-cgi/l/email-protection#7c111d0819150f191019090f1d123c1b111d1510521f1311"><span class="__cf_email__" data-cfemail="5c313d2839352f393039292f3d321c3b313d3530723f3331">[email&#160;protected]</span></a>
-              <a href="https://www.linkedin.com/in/matei-seleușan-737 ​​​​​​737a83222" target="_blank" rel="noopener noreferrer" aria-label="Matei Seleușan LinkedIn Profile">
+              <a href="mailto:mateiseleusan@gmail.com">mateiseleusan@gmail.com</a>
+              <a href="https://www.linkedin.com/in/matei-seleușan-737a83222" target="_blank" rel="noopener noreferrer" aria-label="Matei Seleușan LinkedIn Profile">
                 <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.875 20.452H3.8V9h3.075v11.452zM22.225 0H1.771C.792 0 0 .771 0 1.723v20.554C0 23.229.792 24 1.771 24h20.451C23.2 24 24 23.229 24 22.277V1.723C24 .771 23.2 0 22.225 0z"/></svg>
               </a>
             </div>
             <div class="contact-item">
-              <a href="/cdn-cgi/l/email-protection#4a382b303c2b242723222b2329382f3e3f0a2d272b232664292527"><span class="__cf_email__" data-cfemail="1b697a616d7a757672737a7278697e6f6e5b7c767a727735787476">[email&#160;protected]</span></a>
-              <a href="https://www.linkedin.com/in/razvan-cretu-703111164/?originalSubdomain=ro" target="_blank" rel="noopener noreferrer" aria-label="Răzvan Crețu Linked  LinkedIn Profile">
+              <a href="mailto:razvanmihaicretu@gmail.com">razvanmihaicretu@gmail.com</a>
+              <a href="https://www.linkedin.com/in/razvan-cretu-703111164/?originalSubdomain=ro" target="_blank" rel="noopener noreferrer" aria-label="Răzvan Crețu LinkedIn Profile">
                 <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.026-3.041-1.85-3.041-1.853 0-2.136 1.445-2.136 2.941v5.669H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.372-1.85 3.605 0 4.271 2.371 4.271 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM6.875 20.452H3.8V9h3.075v11.452zM22.225 0H1.771C.792 0 0 .771 0 1.723v20.554C0 23.229.792 24 1.771 24h20.451C23.2 24 24 23.229 24 22.277V1.723C24 .771 23.2 0 22.225 0z"/></svg>
               </a>
             </div>
@@ -840,9 +127,9 @@
         <div class="footer-column" data-aos="fade-up" data-aos-delay="300">
           <h4 class="footer-title">Connect</h4>
           <div class="footer-links">
-            <a href="/cdn-cgi/l/email-protection#78115d0819150f191019090f1d12381b111d1510521f1311" class="footer-link">Matei Seleușan</a>
-            <a href="/cdn-cgi/l/email-protection#0a382b303c2b242723222b2329382f3e3f0a2d272b232664292527" class="footer-link">Răzvan Crețu</a>
-            <a href="https://www.linkedin.com/company/synaeon/" target="_blank" rel="noopener noreferrer" class="footer-link">LinkedIn</a>
+             <a href="mailto:mateiseleusan@gmail.com" class="footer-link">Matei Seleușan</a>
+             <a href="mailto:razvanmihaicretu@gmail.com" class="footer-link">Răzvan Crețu</a>
+             <a href="https://www.linkedin.com/company/synaeon/" target="_blank" rel="noopener noreferrer" class="footer-link">LinkedIn</a>
           </div>
         </div>
       </div>
@@ -851,86 +138,879 @@
       </div>
     </footer>
   </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+  <!-- Audio element for sound toggle feature -->
+  <audio id="relaxingAudio" src="relaxing.mp3" loop></audio>
+
   <script>
-    'use strict';
-
-    let currentLevel = null;
-    let backgroundAnimationId = null;
-    let loadingComplete = false;
-
-    function checkWebGLSupport() {
-      try {
-        const canvas = document.createElement('canvas');
-        return !!(
-          window.WebGLRenderingContext &&
-          (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
-        );
-      } catch (e) {
-        return false;
+    // --- Loading Screen Animation - Using proven working code from previous version ---
+    (function() {
+      const canvas = document.getElementById('loadingCanvas');
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 3;
+      const geometry = new THREE.IcosahedronGeometry(1, 2);
+      const material = new THREE.MeshStandardMaterial({ color: 0x47a0ff, wireframe: true });
+      const ball = new THREE.Mesh(geometry, material);
+      scene.add(ball);
+      const light = new THREE.PointLight(0xffffff, 1);
+      light.position.set(5, 5, 5);
+      scene.add(light);
+      
+      function animate() {
+        requestAnimationFrame(animate);
+        ball.rotation.x += 0.003;
+        ball.rotation.y += 0.005;
+        renderer.render(scene, camera);
       }
-    }
+      animate();
+      
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    })();
 
-    function handleLoadingScreen() {
+    // --- Show loading bar and fade out ---
+    window.addEventListener('load', function() {
       const loadingBar = document.getElementById('loading-bar');
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.querySelector('.main-content');
-      const backgroundCanvas = document.getElementById('global-backgroundCanvas');
+      const blobCanvas = document.getElementById('global-blobCanvas');
+      
+      loadingBar.style.width = '100%';
+      setTimeout(function() {
+        loadingScreen.style.opacity = '0';
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+          mainContent.style.display = 'block';
+          blobCanvas.style.display = 'block';
+          
+          // Initialize AOS animation
+          if (typeof AOS !== 'undefined') {
+            AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
+          }
+        }, 500);
+      }, 1200);
+    });
 
-      if (!loadingBar) {
-        console.error("Loading bar element not found!");
-        loadingScreen.classList.add('hidden');
-        mainContent.classList.add('loaded');
-        if (backgroundCanvas) backgroundCanvas.classList.add('loaded');
-        AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
+    // --- Main initialization function ---
+    document.addEventListener('DOMContentLoaded', function() {
+      // Navigation toggle
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('nav-links');
+      
+      hamburger.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        hamburger.classList.toggle('active');
+      });
+      
+      // Close mobile menu when clicking a link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+          navLinks.classList.remove('active');
+          hamburger.classList.remove('active');
+        });
+      });
+      
+      // Navbar scroll effect
+      const navbar = document.getElementById('navbar');
+      
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+      
+      // Initialize starfield/blob background
+      initBlobCanvas();
+    });
+
+    // --- Starfield Animation (using working code from previous version) ---
+    function initBlobCanvas() {
+      const canvas = document.getElementById('global-blobCanvas');
+      if (!canvas) {
+        console.error('Blob canvas not found');
         return;
       }
 
-      loadingBar.style.width = '100%';
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      setTimeout(() => {
-        loadingScreen.classList.add('hidden');
-        loadingComplete = true;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 15;
 
-        setTimeout(() => {
-          mainContent.classList.add('loaded');
-          if (backgroundCanvas) backgroundCanvas.classList.add('loaded');
-          AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' });
-        }, 800);
-      }, 2000);
-    }
+      // Circular texture for tiny and medium stars
+      function createCircleTexture() {
+        const size = 16;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+        context.beginPath();
+        context.arc(size / 2, size / 2, size / 2 - 1, 0, Math.PI * 2);
+        context.fillStyle = '#ffffff';
+        context.fill();
+        return new THREE.CanvasTexture(canvas);
+      }
 
-    function initLoadingAnimation() {
-      const canvas = document.getElementById('loadingCanvas');
-      if (!canvas || typeof THREE === 'undefined') {
-        console.error('Three.js not loaded or canvas not found for loading animation');
-        return;
+      const circleTexture = createCircleTexture();
+
+      // Particle materials
+      const tinyStarMaterial = new THREE.PointsMaterial({
+        size: 0.02,
+        map: circleTexture,
+        transparent: true,
+        opacity: 0.4,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        vertexColors: true
+      });
+
+      const mediumStarMaterial = new THREE.PointsMaterial({
+        size: 0.1,
+        map: circleTexture,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        vertexColors: true
+      });
+
+      const particleGroup = new THREE.Group();
+      scene.add(particleGroup);
+
+      // Tiny stars (1600)
+      const tinyStarGeometry = new THREE.BufferGeometry();
+      const tinyStarPositions = new Float32Array(1600 * 3);
+      const tinyStarColors = new Float32Array(1600 * 3);
+      const tinyStarVelocities = new Float32Array(1600);
+      for (let i = 0; i < 1600; i++) {
+        const radius = 20 + Math.random() * 30;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        tinyStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        tinyStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        tinyStarPositions[i * 3 + 2] = radius * Math.cos(phi);
+        const colorChoice = Math.random();
+        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
+        tinyStarColors[i * 3] = color.r;
+        tinyStarColors[i * 3 + 1] = color.g;
+        tinyStarColors[i * 3 + 2] = color.b;
+        tinyStarVelocities[i] = radius;
+      }
+      tinyStarGeometry.setAttribute('position', new THREE.BufferAttribute(tinyStarPositions, 3));
+      tinyStarGeometry.setAttribute('color', new THREE.BufferAttribute(tinyStarColors, 3));
+      const tinyStarSystem = new THREE.Points(tinyStarGeometry, tinyStarMaterial);
+      particleGroup.add(tinyStarSystem);
+
+      // Medium stars (1300)
+      const mediumStarGeometry = new THREE.BufferGeometry();
+      const mediumStarPositions = new Float32Array(1300 * 3);
+      const mediumStarColors = new Float32Array(1300 * 3);
+      const mediumStarVelocities = new Float32Array(1300);
+      for (let i = 0; i < 1300; i++) {
+        const radius = 15 + Math.random() * 25;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        mediumStarPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        mediumStarPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        mediumStarPositions[i * 3 + 2] = radius * Math.cos(phi);
+        const colorChoice = Math.random();
+        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
+        mediumStarColors[i * 3] = color.r;
+        mediumStarColors[i * 3 + 1] = color.g;
+        mediumStarColors[i * 3 + 2] = color.b;
+        mediumStarVelocities[i] = radius;
+      }
+      mediumStarGeometry.setAttribute('position', new THREE.BufferAttribute(mediumStarPositions, 3));
+      mediumStarGeometry.setAttribute('color', new THREE.BufferAttribute(mediumStarColors, 3));
+      const mediumStarSystem = new THREE.Points(mediumStarGeometry, mediumStarMaterial);
+      particleGroup.add(mediumStarSystem);
+
+      // Large orbs (300)
+      const largeOrbGroup = new THREE.Group();
+      particleGroup.add(largeOrbGroup);
+      const sphereGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+      const largeOrbVelocities = [];
+      for (let i = 0; i < 300; i++) {
+        const colorChoice = Math.random();
+        const color = colorChoice < 0.7 ? new THREE.Color(0xb0c4ff) : 
+                      colorChoice < 0.9 ? new THREE.Color(0xffe4b5) : new THREE.Color(0x00e5ff);
+        const material = new THREE.MeshPhongMaterial({
+          color: color,
+          emissive: color,
+          emissiveIntensity: 0.3,
+          specular: 0xffffff,
+          shininess: 50,
+          transparent: true,
+          opacity: 0.7,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+        const orb = new THREE.Mesh(sphereGeometry, material);
+        const radius = 10 + Math.random() * 20;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        orb.position.set(
+          radius * Math.sin(phi) * Math.cos(theta),
+          radius * Math.sin(phi) * Math.sin(theta),
+          radius * Math.cos(phi)
+        );
+        largeOrbGroup.add(orb);
+        largeOrbVelocities.push(radius);
+      }
+
+      // Nebula background
+      const nebulaGeometry = new THREE.SphereGeometry(100, 16, 16);
+      const nebulaMaterial = new THREE.MeshBasicMaterial({
+        color: 0x1c2526,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+      });
+      const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+      scene.add(nebula);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0x1c2526, 0.4);
+      scene.add(ambientLight);
+      const pointLight = new THREE.PointLight(0x8ab5ff, 0.6, 50);
+      pointLight.position.set(10, 10, 10);
+      scene.add(pointLight);
+      const pointLight2 = new THREE.PointLight(0x8ab5ff, 0.4, 50);
+      pointLight2.position.set(-10, -10, -10);
+      scene.add(pointLight2);
+
+      // Fade animations using TWEEN
+      function animateFades() {
+        try {
+          new TWEEN.Tween(tinyStarMaterial).to({ opacity: 0.2 }, 5000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          new TWEEN.Tween(mediumStarMaterial).to({ opacity: 0.3 }, 6000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          largeOrbGroup.children.forEach(orb => {
+            new TWEEN.Tween(orb.material).to({ opacity: 0.4 }, 7000).yoyo(true).repeat(Infinity).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          });
+        } catch (error) {
+          console.error('Error in animateFades:', error);
+        }
       }
 
       try {
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = 2.5;
+        animateFades();
+      } catch (error) {
+        console.error('Error calling animateFades:', error);
+      }
 
-        const geometry = new THREE.IcosahedronGeometry(0.8, 1);
-        const material = new THREE.MeshStandardMaterial({
-          color: 0x00aaff,
-          emissive: 0x0077cc,
-          wireframe: true,
-          roughness: 0.8,
-          metalness: 0.2
+      // Animation loop
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        // Global rotation
+        particleGroup.rotation.y += 0.001;
+
+        // Subtle camera oscillation
+        camera.position.y = Math.sin(elapsed * 0.1) * 0.5;
+
+        // Radial drift for tiny and medium stars
+        const tinyPositions = tinyStarGeometry.attributes.position.array;
+        for (let i = 0; i < 1600; i++) {
+          let radius = tinyStarVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
+          const theta = Math.atan2(tinyPositions[i * 3 + 1], tinyPositions[i * 3]);
+          const phi = Math.acos(tinyPositions[i * 3 + 2] / tinyStarVelocities[i]);
+          radius = Math.min(radius, 50);
+          tinyPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+          tinyPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          tinyPositions[i * 3 + 2] = radius * Math.cos(phi);
+        }
+        tinyStarGeometry.attributes.position.needsUpdate = true;
+
+        const mediumPositions = mediumStarGeometry.attributes.position.array;
+        for (let i = 0; i < 1300; i++) {
+          let radius = mediumStarVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
+          const theta = Math.atan2(mediumPositions[i * 3 + 1], mediumPositions[i * 3]);
+          const phi = Math.acos(mediumPositions[i * 3 + 2] / mediumStarVelocities[i]);
+          radius = Math.min(radius, 40);
+          mediumPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+          mediumPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          mediumPositions[i * 3 + 2] = radius * Math.cos(phi);
+        }
+        mediumStarGeometry.attributes.position.needsUpdate = true;
+
+        // Large orbs drift
+        largeOrbGroup.children.forEach((orb, i) => {
+          let radius = largeOrbVelocities[i] + Math.sin(elapsed * 0.05 + i) * 0.1;
+          const theta = Math.atan2(orb.position.y, orb.position.x);
+          const phi = Math.acos(orb.position.z / largeOrbVelocities[i]);
+          radius = Math.min(radius, 30);
+          orb.position.set(
+            radius * Math.sin(phi) * Math.cos(theta),
+            radius * Math.sin(phi) * Math.sin(theta),
+            radius * Math.cos(phi)
+          );
         });
-        const mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
 
-        const light = new THREE.PointLight(0xffffff, 0.8);
-        light.position.set(3, 3, 3);
-        scene.add(light);
-        const ambient = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambient);
+        renderer.render(scene, camera);
+        if (typeof TWEEN !== 'undefined') {
+          TWEEN.update(elapsed * 1000);
+        }
+      }
 
-        let animationId;
-        function animate() {
-          animationId = requestAnimationFrame(animate);
-          mesh.rotation.x += 0.004;
+      try {
+        animate();
+      } catch (error) {
+        console.error('Error in animate:', error);
+      }
+
+      // Resize handling
+      window.addEventListener('resize', () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      });
+    }
+
+    // --- VR Demo Controls ---
+    let currentLevel = null;
+    let audioPlaying = false;
+    const audio = document.getElementById('relaxingAudio');
+
+    function showLevel(level) {
+      const level1Canvas = document.getElementById('arachnophobia-demo');
+      const level2Canvas = document.getElementById('arachnophobia-level2');
+      const level1Btn = document.getElementById('level1-btn');
+      const level2Btn = document.getElementById('level2-btn');
+
+      if (level === 'level1') {
+        level1Canvas.style.display = 'block';
+        level2Canvas.style.display = 'none';
+        level1Btn.classList.remove('btn-outline');
+        level1Btn.classList.add('btn');
+        level2Btn.classList.remove('btn');
+        level2Btn.classList.add('btn-outline');
+        currentLevel = 'level1';
+        if (typeof initLevel1 === 'function') {
+          initLevel1();
+        } else {
+          console.error('initLevel1 is not defined. Ensure main.js is loaded correctly.');
+        }
+      } else {
+        level1Canvas.style.display = 'none';
+        level2Canvas.style.display = 'block';
+        level1Btn.classList.remove('btn');
+        level1Btn.classList.add('btn-outline');
+        level2Btn.classList.remove('btn-outline');
+        level2Btn.classList.add('btn');
+        currentLevel = 'level2';
+        if (typeof initLevel2 === 'function') {
+          initLevel2();
+        } else {
+          console.error('initLevel2 is not defined. Ensure main_level2.js is loaded correctly.');
+        }
+      }
+
+      // Handle resize to keep canvas sized correctly
+      window.addEventListener('resize', () => {
+        if (level1Canvas.style.display === 'block' && level1Canvas.querySelector('canvas')) {
+          const canvas = level1Canvas.querySelector('canvas');
+          if (canvas.renderer) {
+            canvas.renderer.setSize(level1Canvas.clientWidth, level1Canvas.clientHeight);
+          }
+        } else if (level2Canvas.style.display === 'block' && level2Canvas.querySelector('canvas')) {
+          const canvas = level2Canvas.querySelector('canvas');
+          if (canvas.renderer) {
+            canvas.renderer      <section class="section" id="solution">
+        <div class="section-inner">
+          <div class="section-header" data-aos="fade-up">
+            <span class="section-label">The Synaeon Solution</span>
+            <h2>Hyper-Personalized AI VR Therapy</h2>
+            <p>Synaeon leverages generative AI to craft fully immersive, dynamic VR worlds that respond instantly to therapist input and patient biofeedback, ensuring precisely calibrated, engaging, and effective therapy.</p>
+          </div>
+          <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="m12 22.08 V 12"/></svg></div> <h3 class="feature-title">Infinite Environment Generation</h3>
+              <p class="feature-text">Go beyond static scenarios. Our AI generates unique, contextually relevant 3D environments on the fly, tailored precisely to the therapeutic need.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+              <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M7 13l-2.5 2.5M10 16l-1.5 1.5M14 16l1.5 1.5M17 13l2.5 2.5"/></svg></div> <h3 class="feature-title">Intelligent Adaptation</h3>
+              <p class="feature-text">Integrated biometric sensors provide closed-loop feedback, enabling the AI to modulate exposure intensity for optimal therapeutic windows.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+               <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="M16 16l2 2 4-4"/></svg></div> <h3 class="feature-title">Continuous Improvement</h3>
+              <p class="feature-text">The platform learns from every session, refining its understanding of patient triggers and coping mechanisms to enhance future therapeutic outcomes.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="technology">
+        <div class="section-inner">
+          <div class="section-header" data-aos="fade-up">
+            <span class="section-label">Core Technology</span>
+            <h2>The Synaeon Engine</h2>
+            <p>Our platform integrates proprietary speech-to-3D generative AI, real-time biometric analysis, and advanced VR rendering to deliver a seamless, powerful, and adaptive therapeutic tool.</p>
+          </div>
+          <div class="video-container">
+            <div class="video-item" data-aos="fade-right" data-aos-delay="100"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synaeon - Generative AI VR Therapy | The Future of Mental Healing</title>
+  <meta name="description" content="Synaeon pioneers generative AI-powered VR therapy, transforming mental health treatment with adaptive, real-time exposure environments for clinically effective results.">
+  <meta name="keywords" content="VR therapy, AI therapy, generative AI, exposure therapy, mental health technology, anxiety treatment, PTSD treatment, virtual reality healthcare, Synaeon, AI mental health, digital therapeutics">
+  <meta name="author" content="Synaeon, Inc.">
+  <meta property="og:title" content="Synaeon - Generative AI VR Therapy | The Future of Mental Healing">
+  <meta property="og:description" content="Experience hyper-realistic, AI-generated VR environments adapting in real-time for truly personalized and effective exposure therapy. Discover Synaeon.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://synaeon.com/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Synaeon - AI-Powered VR Therapy">
+  <meta name="twitter:description" content="AI-driven VR environments adapting in real-time for effective exposure therapy.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
+
+  <link rel="icon" type="image/png" href="syneon_image.png">
+  <link rel="apple-touch-icon" href="syneon_image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  
+  <style>
+    /* --- CSS Overhaul for Extraordinary Visuals --- */
+    :root {
+      /* Palette: Futuristic Blues, Accented Gold/Amber, Deep Space */
+      --primary: #00aaff;        /* Brighter Electric Blue */
+      --primary-dark: #0077cc;
+      --primary-light: #80dfff;
+      --primary-glow: rgba(0, 170, 255, 0.5);
+
+      --accent: #ffc107;         /* Amber */
+      --accent-dark: #cc9a06;
+      --accent-light: #ffd54f;
+      --accent-glow: rgba(255, 193, 7, 0.5);
+
+      --secondary: #6f42c1;       /* Deep Purple */
+      --secondary-light: #a47de9;
+      --secondary-glow: rgba(111, 66, 193, 0.4);
+
+      --tertiary: #17a2b8;        /* Teal */
+      --tertiary-light: #60d1e2;
+      --tertiary-glow: rgba(23, 162, 184, 0.4);
+
+      --success: #28a745;
+      --danger: #dc3545;
+
+      --bg-dark: #010204;         /* Almost Black */
+      --bg-medium: #080f21;       /* Deep Navy */
+      --bg-light: #1a294f;        /* Lighter Navy/Indigo */
+      --bg-card: rgba(10, 20, 45, 0.75); /* Semi-transparent card bg */
+      --bg-card-hover: rgba(15, 25, 55, 0.85);
+
+      --text-primary: #f0f8ff;     /* Alice Blue (Softer White) */
+      --text-secondary: rgba(240, 248, 255, 0.75);
+      --text-tertiary: rgba(240, 248, 255, 0.5);
+
+      --border-light: rgba(255, 255, 255, 0.1);
+      --border-medium: rgba(255, 255, 255, 0.2);
+      --border-glow: rgba(0, 170, 255, 0.25); /* Primary glow for borders */
+      --border-accent-glow: rgba(255, 193, 7, 0.25);
+
+      /* Typography */
+      --font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      --font-display: 'Outfit', var(--font-main); /* Fallback for Outfit */
+
+      /* Effects & Layout */
+      --gradient-primary: linear-gradient(90deg, var(--primary-light), var(--primary));
+      --gradient-accent: linear-gradient(90deg, var(--accent-light), var(--accent));
+      --gradient-secondary: linear-gradient(90deg, var(--secondary-light), var(--secondary));
+      --gradient-text-hero: linear-gradient(95deg, var(--primary-light) 0%, var(--accent-light) 50%, var(--tertiary-light) 100%);
+      --gradient-text-header: linear-gradient(90deg, var(--text-primary), var(--primary-light));
+      --gradient-bg-subtle: linear-gradient(180deg, rgba(8, 15, 33, 0.1) 0%, rgba(8, 15, 33, 0) 100%); /* Subtle background variation */
+      --gradient-border: linear-gradient(90deg, var(--primary-glow), var(--accent-glow));
+
+      --shadow-glow-sm: 0 0 10px var(--primary-glow);
+      --shadow-glow-md: 0 0 20px var(--primary-glow);
+      --shadow-glow-lg: 0 0 40px var(--primary-glow);
+      --shadow-card: 0 15px 45px rgba(0, 0, 0, 0.5); /* Deeper card shadow */
+      --shadow-button: 0 6px 20px rgba(0, 170, 255, 0.4);
+      --shadow-button-hover: 0 10px 30px rgba(0, 170, 255, 0.6);
+
+      --border-radius-sm: 8px;
+      --border-radius-md: 16px;
+      --border-radius-lg: 24px;
+      --border-radius-pill: 50px;
+
+      /* Transitions */
+      --transition-fast: all 0.2s ease-in-out;
+      --transition-medium: all 0.3s ease-in-out;
+      --transition-smooth: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-impact: all 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* High impact */
+      --transition-slide: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    /* Base & Reset */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; background-color: var(--bg-dark); }
+    body {
+      font-family: var(--font-main);
+      color: var(--text-primary);
+      line-height: 1.75; /* Increased slightly */
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-color: var(--bg-dark); /* Ensure body bg matches html */
+    }
+
+    /* Background Canvas for Starfield/Nebula */
+    #global-blobCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      display: none;  /* Will be shown after loading */
+    }
+
+    /* Loading Screen - Similar to the working version */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      transition: opacity 0.5s ease;
+    }
+    
+    #loading-screen canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .loading-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-primary);
+    }
+    
+    .loading-overlay h1 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px var(--primary-glow);
+    }
+    
+    #loading-bar-container {
+      width: 300px;
+      height: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 5px var(--primary-glow);
+    }
+    
+    #loading-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+      transition: width 1.2s ease-in-out;
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Typography Enhancements */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display); font-weight: 700; line-height: 1.3;
+      letter-spacing: -0.01em; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800;
+      background: var(--gradient-text-hero); background-size: 300% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 1.8rem; animation: gradientFlow 7s ease infinite; line-height: 1.15;
+    }
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+    }
+    h2 {
+      font-size: clamp(2.2rem, 6vw, 3.5rem); margin-bottom: 3rem;
+      background: var(--gradient-text-header);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      font-weight: 700;
+    }
+    h3 {
+      font-size: clamp(1.5rem, 4.5vw, 2.1rem); margin-bottom: 1.3rem;
+      color: var(--text-primary); font-weight: 600;
+    }
+    p {
+      font-size: clamp(1rem, 2.2vw, 1.15rem); line-height: 1.8;
+      color: var(--text-secondary); margin-bottom: 2rem; max-width: 75ch;
+    }
+    strong { color: var(--accent-light); font-weight: 600; }
+    a { color: var(--primary-light); text-decoration: none; transition: color 0.3s ease; }
+    a:hover { color: var(--accent-light); }
+
+    /* --- Hero Section - More Immersive --- */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+      align-items: center; position: relative; padding: 8rem 1rem 5rem;
+      text-align: center; overflow: hidden; z-index: 1;
+      background: radial-gradient(ellipse at bottom, var(--bg-medium) 0%, var(--bg-dark) 70%); /* Darker gradient */
+    }
+    
+    .hero-inner {
+      backdrop-filter: blur(12px) saturate(110%); /* Slightly less blur */
+      background: rgba(8, 15, 33, 0.6); /* Use bg-medium alpha */
+      border: 1px solid var(--border-glow);
+      border-radius: var(--border-radius-lg);
+      padding: clamp(3rem, 8vw, 5rem) clamp(2rem, 7vw, 4.5rem);
+      max-width: 1100px; width: 90%;
+      box-shadow: var(--shadow-card), 0 0 80px rgba(0, 170, 255, 0.3); /* More pronounced glow */
+      animation: heroFloat 12s infinite ease-in-out; /* Slower, subtle float */
+      position: relative; z-index: 1;
+      transition: transform 0.6s var(--transition-smooth), box-shadow 0.6s ease;
+    }
+    
+    .hero-inner:hover {
+      transform: translateY(-12px) scale(1.015); /* Subtle scale */
+      box-shadow: var(--shadow-card), 0 0 100px rgba(0, 170, 255, 0.45);
+    }
+    
+    @keyframes heroFloat {
+      0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
+    }
+    
+    .hero-logo { margin-bottom: 2rem; }
+    
+    .hero-logo img {
+      width: clamp(150px, 25vw, 220px); height: auto;
+      filter: drop-shadow(0 0 18px var(--primary-glow)) drop-shadow(0 0 8px var(--accent-glow));
+      transition: transform 0.5s var(--transition-impact), filter 0.5s ease;
+    }
+    
+    .hero-logo img:hover { transform: scale(1.12) rotate(-4deg); filter: drop-shadow(0 0 30px var(--primary-glow)) drop-shadow(0 0 15px var(--accent-glow)); }
+    
+    .hero-tagline {
+      font-family: var(--font-display); font-size: clamp(1rem, 2.2vw, 1.25rem);
+      text-transform: uppercase; letter-spacing: 0.35em; /* Even wider */
+      color: var(--accent); margin-bottom: 1.2rem;
+      opacity: 1; text-shadow: 0 0 12px var(--accent-glow);
+    }
+    
+    .hero-text {
+      font-size: clamp(1.15rem, 2.8vw, 1.5rem); /* Larger hero text */
+      color: var(--text-secondary); max-width: 750px;
+      margin: 0 auto 3.5rem; line-height: 1.85;
+    }
+
+    /* --- Navigation - Sleek & Animated --- */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0.7rem 2.5rem; /* Tighter vertical padding */
+      display: flex; justify-content: space-between; /* Align logo left, links right */
+      align-items: center;
+      transition: all 0.45s var(--transition-smooth);
+      backdrop-filter: blur(16px) saturate(120%);
+      background: rgba(2, 4, 10, 0.7); /* Very dark base */
+      border-bottom: 1px solid var(--border-light);
+    }
+    
+    .navbar.scrolled {
+      padding: 0.5rem 2.5rem;
+      background: rgba(2, 4, 10, 0.85);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .nav-logo { /* Added for potential logo in nav */
+        font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;
+        color: var(--text-primary); text-decoration: none;
+        letter-spacing: 0.05em;
+    }
+    
+    .nav-logo img { height: 30px; vertical-align: middle; /* Adjust if using image logo */ }
+
+    .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+    
+    .nav-link {
+      color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 1rem;
+      transition: var(--transition-smooth); position: relative; padding: 0.6rem 0.4rem;
+      letter-spacing: 0.05em; text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .nav-link::after {
+      content: ''; position: absolute; width: 0; height: 2px; bottom: 0px; left: 50%;
+      transform: translateX(-50%); background: var(--gradient-accent); /* Use accent gradient */
+      transition: width 0.35s ease, background 0.35s ease; border-radius: 1px;
+    }
+    
+    .nav-link:hover, .nav-link:focus, .nav-link.active {
+      color: var(--text-primary); transform: translateY(-3px);
+      text-shadow: 0 0 10px var(--primary-glow); outline: none;
+    }
+    
+    .nav-link:hover::after, .nav-link:focus::after, .nav-link.active::after { width: 85%; }
+
+    /* Hamburger/Mobile Nav */
+    .hamburger { display: none; cursor: pointer; width: 30px; height: 24px; position: relative; flex-direction: column; justify-content: space-around; z-index: 1001; }
+    
+    .hamburger span { display: block; height: 3px; width: 100%; background: var(--text-primary); border-radius: 3px; transition: all 0.35s var(--transition-impact); transform-origin: center; box-shadow: 0 0 5px var(--primary-glow); }
+    
+    .hamburger.active span:nth-child(1) { transform: translateY(10.5px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { transform: scaleX(0); opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-10.5px) rotate(-45deg); }
+
+    /* --- Button Styles - Futuristic & Interactive --- */
+    .btn {
+      display: inline-block; background: var(--gradient-primary); color: white;
+      font-family: var(--font-display); font-weight: 600; font-size: 1.1rem;
+      text-decoration: none; padding: 1rem 3rem; border-radius: var(--border-radius-pill);
+      border: none; cursor: pointer; transition: var(--transition-impact);
+      box-shadow: var(--shadow-button), var(--shadow-glow-md); position: relative;
+      overflow: hidden; z-index: 1; text-align: center; letter-spacing: 0.06em;
+      transform: perspective(1px) translateZ(0); /* GPU hint */
+      will-change: transform, box-shadow; /* Optimize */
+    }
+    
+    /* Enhanced Hover/Click Effect (Subtle Shine + Background Shift) */
+    .btn::before { /* Background shift layer */
+      content: ''; position: absolute; inset: 0; border-radius: var(--border-radius-pill);
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      opacity: 0; transition: opacity 0.4s ease; z-index: -1;
+    }
+    
+    .btn::after { /* Shine layer */
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+      transform: rotate(45deg); transition: transform 0.6s ease; opacity: 0;
+      pointer-events: none;
+    }
+    
+    .btn:hover::before { opacity: 1; }
+    .btn:hover::after { transform: rotate(45deg) scale(1.5); opacity: 1; transition: transform 0.8s ease, opacity 0.8s ease; }
+    .btn:hover, .btn:focus { transform: translateY(-5px) scale(1.04); box-shadow: var(--shadow-button-hover), var(--shadow-glow-lg); outline: none; }
+    .btn:active { transform: translateY(-2px) scale(1.01); } /* Click feedback */
+
+    .btn-outline {
+      background: transparent; border: 2px solid var(--primary-light); color: var(--primary-light);
+      box-shadow: none; padding: calc(1rem - 2px) calc(3rem - 2px); position: relative; overflow: hidden;
+    }
+    
+    .btn-outline::after { /* Fill effect */
+      content: ''; position: absolute; inset: 0; background: var(--primary);
+      z-index: -1; transform: scaleX(0); transform-origin: left;
+      transition: transform 0.45s var(--transition-smooth);
+    }
+    
+    .btn-outline:hover, .btn-outline:focus {
+      color: var(--bg-dark); border-color: var(--primary-light);
+      box-shadow: 0 0 25px rgba(0, 170, 255, 0.4); transform: translateY(-5px) scale(1.04); outline: none;
+    }
+    
+    .btn-outline:hover::after, .btn-outline:focus::after { transform: scaleX(1); }
+
+    .btn-group { display: flex; gap: 1.8rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
+
+    /* --- Section Styling - Polished & Animated --- */
+    .section { padding: 8rem 2rem; position: relative; overflow: hidden; }
+    .section:nth-child(even) { background: var(--gradient-bg-subtle); } /* Subtle bg variation */
+    .section-inner { max-width: 1250px; margin: 0 auto; position: relative; z-index: 2; }
+    .section-header { text-align: center; margin-bottom: 5rem; max-width: 900px; margin-left: auto; margin-right: auto; }
+    .section-header p { margin-left: auto; margin-right: auto; color: var(--text-secondary); font-size: clamp(1.1rem, 2.4vw, 1.25rem); }
+    .section-label {
+      display: inline-block; font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1.4rem;
+      padding: 0.7rem 1.8rem; border: 1px solid var(--border-accent-glow); border-radius: var(--border-radius-pill);
+      background: rgba(255, 193, 7, 0.1); box-shadow: 0 0 15px var(--accent-glow);
+      transition: var(--transition-smooth); transform: translateZ(0);
+    }
+    .section-label:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 0 25px var(--accent-glow); background: rgba(255, 193, 7, 0.18); }
+
+    /* Features Grid */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 3rem; }
+    .feature-card {
+      background: var(--bg-card); backdrop-filter: blur(12px) saturate(120%);
+      border-radius: var(--border-radius-md); padding: 3rem 2.5rem;
+      border: 1px solid var(--border-light);
+      transition: transform 0.4s var(--transition-smooth), box-shadow 0.4s ease, background 0.4s ease;
+      height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden;
+      box-shadow: var(--shadow-card); transform: perspective(1200px) rotateY(0deg) translateZ(0);
+      will-change: transform, box-shadow; /* Optimize animation */
+    }
+    
+    /* Feature Card Effects */
+    .feature-card::before {
+      content: ''; position: absolute; inset: -1px; border-radius: var(--border-radius-md);
+      background: conic-gradient(from var(--angle), transparent 25%, var(--primary), var(--accent), transparent 75%);
+      opacity: 0; transition: opacity 0.5s ease; z-index: -1;
+      animation: spinBorder 6s linear infinite paused; filter: blur(8px);
+      will-change: --angle, opacity;
+    }
+    @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+    @keyframes spinBorder { to { --angle: 360deg; } }
+
+    .feature-card:hover {
+      transform: translateY(-15px) rotateY(1deg) scale(1.02);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px var(--primary-glow);
+      background: var(--bg-card-hover);
+      border-color: var(--border-glow);
+    }
+    .feature-card:hover::before { opacity: 0.7; animation-play-state: running; }
+
+    .feature-icon {
+      width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(145deg, rgba(0, 170, 255, 0.15), rgba(0, 170, 255, 0.3));
+      border: 1px solid var(--primary); color: var(--primary-light); font-size: 2rem;
+      box-shadow: 0 0 18px var(--primary-glow), inset 0 1px 4px rgba(255,255,255,0.15);
+      transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, border-color 0.4s ease; /* Bounce + smooth color */
+    }
+    .feature-card:hover .feature-icon {
+      transform: rotateY(360deg) scale(1.15);
+      background: linear-gradient(145deg, rgba(255
