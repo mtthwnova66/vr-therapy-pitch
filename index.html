@@ -1,198 +1,756 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synaeon - AI-Powered VR Therapy</title>
+import React, { useState, useEffect, useRef } from 'react';
+import { Mic, MicOff, Camera, Download, RefreshCw, Info, Settings, Layers, X } from 'lucide-react';
+
+// Basic 3D rendering using plain SVG for visualization
+const SceneRenderer = ({ sceneType, style }) => {
+  // Colors based on style
+  const getColors = () => {
+    if (style === 'cartoon') {
+      return {
+        primary: '#4285F4',
+        secondary: '#FBBC05',
+        accent: '#34A853',
+        background: '#EA4335'
+      };
+    } else if (style === 'stylized') {
+      return {
+        primary: '#FBBC05',
+        secondary: '#4285F4',
+        accent: '#EA4335',
+        background: '#34A853'
+      };
+    } else {
+      // realistic
+      return {
+        primary: '#34A853',
+        secondary: '#EA4335',
+        accent: '#4285F4',
+        background: '#FBBC05'
+      };
+    }
+  };
+
+  const colors = getColors();
   
-  <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
-  <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
-  <meta name="author" content="Synaeon">
-  <meta property="og:title" content="Synaeon - AI-Powered VR Therapy">
-  <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://synaeon.com/">
-  <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
-  <meta name="twitter:card" content="summary_large_image">
+  // Render different scenes based on type
+  const renderScene = () => {
+    switch(sceneType) {
+      case 'dog':
+        return (
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <rect x="0" y="0" width="200" height="200" fill="#111" />
+            
+            {/* Ground */}
+            <rect x="0" y="150" width="200" height="50" fill="#333" />
+            
+            {/* Dog body */}
+            <ellipse cx="100" cy="130" rx="40" ry="25" fill={colors.primary} />
+            
+            {/* Head */}
+            <circle cx="140" cy="115" r="20" fill={colors.primary} />
+            
+            {/* Ears */}
+            <ellipse cx="130" cy="100" rx="10" ry="15" fill={colors.secondary} />
+            <ellipse cx="150" cy="100" rx="10" ry="15" fill={colors.secondary} />
+            
+            {/* Eyes */}
+            <circle cx="135" cy="110" r="3" fill="#000" />
+            <circle cx="145" cy="110" r="3" fill="#000" />
+            
+            {/* Nose */}
+            <circle cx="140" cy="120" r="5" fill="#000" />
+            
+            {/* Legs */}
+            <rect x="80" y="150" width="10" height="25" fill={colors.primary} />
+            <rect x="110" y="150" width="10" height="25" fill={colors.primary} />
+            <rect x="65" y="150" width="10" height="20" fill={colors.primary} />
+            <rect x="125" y="150" width="10" height="20" fill={colors.primary} />
+            
+            {/* Tail */}
+            <path d="M 60,125 Q 40,95 50,80" stroke={colors.primary} strokeWidth="8" fill="none" />
+          </svg>
+        );
+      case 'city':
+        return (
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <rect x="0" y="0" width="200" height="200" fill="#111" />
+            
+            {/* Sky */}
+            <rect x="0" y="0" width="200" height="150" fill="#123456" />
+            
+            {/* Ground */}
+            <rect x="0" y="150" width="200" height="50" fill="#444" />
+            
+            {/* Buildings */}
+            <rect x="10" y="70" width="30" height="80" fill={colors.primary} />
+            <rect x="20" y="40" width="10" height="30" fill={colors.primary} />
+            
+            <rect x="45" y="90" width="40" height="60" fill={colors.secondary} />
+            <rect x="50" y="70" width="30" height="20" fill={colors.secondary} />
+            
+            <rect x="90" y="50" width="35" height="100" fill={colors.accent} />
+            
+            <rect x="130" y="100" width="25" height="50" fill={colors.primary} />
+            <rect x="140" y="70" width="5" height="30" fill={colors.primary} />
+            
+            <rect x="160" y="60" width="30" height="90" fill={colors.secondary} />
+            
+            {/* Windows */}
+            <rect x="15" y="80" width="5" height="5" fill="#FFFF99" />
+            <rect x="25" y="80" width="5" height="5" fill="#FFFF99" />
+            <rect x="15" y="90" width="5" height="5" fill="#FFFF99" />
+            <rect x="25" y="90" width="5" height="5" fill="#FFFF99" />
+            
+            <rect x="55" y="100" width="6" height="6" fill="#FFFF99" />
+            <rect x="70" y="100" width="6" height="6" fill="#FFFF99" />
+            <rect x="55" y="115" width="6" height="6" fill="#FFFF99" />
+            <rect x="70" y="115" width="6" height="6" fill="#FFFF99" />
+            
+            <rect x="100" y="60" width="7" height="7" fill="#FFFF99" />
+            <rect x="100" y="75" width="7" height="7" fill="#FFFF99" />
+            <rect x="100" y="90" width="7" height="7" fill="#FFFF99" />
+            <rect x="100" y="105" width="7" height="7" fill="#FFFF99" />
+            
+            <rect x="135" y="110" width="4" height="4" fill="#FFFF99" />
+            <rect x="145" y="110" width="4" height="4" fill="#FFFF99" />
+            <rect x="135" y="120" width="4" height="4" fill="#FFFF99" />
+            <rect x="145" y="120" width="4" height="4" fill="#FFFF99" />
+            
+            <rect x="170" y="70" width="5" height="5" fill="#FFFF99" />
+            <rect x="180" y="70" width="5" height="5" fill="#FFFF99" />
+            <rect x="170" y="85" width="5" height="5" fill="#FFFF99" />
+            <rect x="180" y="85" width="5" height="5" fill="#FFFF99" />
+            <rect x="170" y="100" width="5" height="5" fill="#FFFF99" />
+            <rect x="180" y="100" width="5" height="5" fill="#FFFF99" />
+          </svg>
+        );
+      case 'forest':
+        return (
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <rect x="0" y="0" width="200" height="200" fill="#111" />
+            
+            {/* Sky */}
+            <rect x="0" y="0" width="200" height="150" fill="#265073" />
+            
+            {/* Ground */}
+            <rect x="0" y="150" width="200" height="50" fill="#2D4356" />
+            
+            {/* Trees */}
+            <g>
+              <rect x="30" y="100" width="10" height="50" fill="#5F7161" />
+              <polygon points="10,100 60,100 35,50" fill={colors.primary} />
+              <polygon points="15,85 55,85 35,40" fill={colors.primary} />
+            </g>
+            
+            <g>
+              <rect x="80" y="110" width="12" height="40" fill="#5F7161" />
+              <polygon points="60,110 115,110 87.5,60" fill={colors.secondary} />
+              <polygon points="65,90 110,90 87.5,50" fill={colors.secondary} />
+            </g>
+            
+            <g>
+              <rect x="140" y="95" width="8" height="55" fill="#5F7161" />
+              <polygon points="115,95 170,95 142.5,45" fill={colors.accent} />
+              <polygon points="120,75 165,75 142.5,35" fill={colors.accent} />
+            </g>
+            
+            {/* Bushes */}
+            <ellipse cx="40" cy="160" rx="20" ry="10" fill="#2D4356" />
+            <ellipse cx="100" cy="165" rx="25" ry="12" fill="#2D4356" />
+            <ellipse cx="160" cy="162" rx="22" ry="10" fill="#2D4356" />
+          </svg>
+        );
+      case 'office':
+      default:
+        return (
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <rect x="0" y="0" width="200" height="200" fill="#111" />
+            
+            {/* Floor */}
+            <rect x="0" y="150" width="200" height="50" fill="#C8B6A6" />
+            
+            {/* Walls */}
+            <rect x="0" y="0" width="200" height="150" fill="#F3DEBA" />
+            
+            {/* Desk */}
+            <rect x="30" y="100" width="140" height="10" fill={colors.primary} />
+            <rect x="30" y="110" width="10" height="40" fill={colors.primary} />
+            <rect x="160" y="110" width="10" height="40" fill={colors.primary} />
+            
+            {/* Chair */}
+            <rect x="85" y="120" width="30" height="5" fill={colors.secondary} />
+            <rect x="85" y="125" width="5" height="25" fill={colors.secondary} />
+            <rect x="110" y="125" width="5" height="25" fill={colors.secondary} />
+            <rect x="80" y="95" width="40" height="25" fill={colors.secondary} />
+            <rect x="80" y="80" width="5" height="15" fill={colors.secondary} />
+            <rect x="115" y="80" width="5" height="15" fill={colors.secondary} />
+            
+            {/* Computer */}
+            <rect x="60" y="70" width="40" height="30" fill="#333" />
+            <rect x="75" y="100" width="10" height="10" fill="#333" />
+            <rect x="70" y="110" width="20" height="5" fill="#333" />
+            
+            {/* Window */}
+            <rect x="140" y="30" width="40" height="60" fill="#87CEEB" />
+            <line x1="160" y1="30" x2="160" y2="90" stroke="#333" strokeWidth="2" />
+            <line x1="140" y1="60" x2="180" y2="60" stroke="#333" strokeWidth="2" />
+            
+            {/* Plant */}
+            <rect x="20" y="70" width="15" height="20" fill={colors.accent} />
+            <path d="M 27.5,70 Q 20,50 15,60 Q 10,45 27.5,40 Q 45,45 40,60 Q 35,50 27.5,70" fill="green" />
+          </svg>
+        );
+    }
+  };
   
-  <link rel="icon" type="image/png" href="syneon_image.png">
-  <link rel="apple-touch-icon" href="syneon_image.png">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
-
-  <style>
-    :root {
-      --primary: #0071e3;
-      --primary-dark: #005bb5;
-      --primary-light: #47a0ff;
-      --primary-glow: rgba(71, 160, 255, 0.5);
-      --accent: #ffc107;
-      --accent-light: #ffdb66;
-      --accent-ultra: #fff0bf;
-      --accent-glow: rgba(255, 193, 7, 0.5);
-      --success: #34c759;
-      --neural-1: #ff3366;
-      --neural-2: #7c4dff;
-      --neural-3: #00e5ff;
-      --bg-dark: #040812;
-      --card-bg: rgba(10, 17, 40, 0.7);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.8);
-      --text-tertiary: rgba(255, 255, 255, 0.5);
-      --border-light: rgba(255, 255, 255, 0.1);
-      --font-main: 'Inter', sans-serif;
-      --font-display: 'Outfit', sans-serif;
-      --gradient-overlay: radial-gradient(circle at center, rgba(71, 160, 255, 0.1), transparent 70%);
-      --shadow-glow: 0 0 15px var(--primary-glow), 0 0 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    html { 
-      scroll-behavior: smooth; 
-      font-size: 16px; 
-    }
-    
-    body {
-      font-family: var(--font-main);
-      background-color: var(--bg-dark);
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-      position: relative;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    /* Video Background */
-    #background-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-    }
-
-    #global-blobCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      display: none;
-    }
-    
-    /* Loading Screen */
-    #loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      transition: opacity 0.5s ease;
-    }
-    
-    #loading-screen canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    
-    .loading-overlay {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: var(--text-primary);
-    }
-    
-    .loading-overlay h1 {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 0 10px var(--primary-glow);
-    }
-    
-    #loading-bar-container {
-      width: 300px;
-      height: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 5px var(--primary-glow);
-    }
-    
-    #loading-bar {
-      width: 0;
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
-      transition: width 1.2s ease-in-out;
-    }
-
-    .main-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* The rest of your original styles and entire markup continues here, unchanged, for over 1700 lines. */
-  </style>
-</head>
-<body>
-  <!-- Background Video -->
-  <video id="background-video" autoplay loop muted playsinline>
-    <source src="LS.s348 - Visual.mov" type="video/quicktime">
-    Your browser does not support the video tag.
-  </video>
-
-  <canvas id="global-blobCanvas"></canvas>
-
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <canvas id="loadingCanvas"></canvas>
-    <div class="loading-overlay">
-      <h1>Welcome to Synaeon</h1>
-      <div id="loading-bar-container">
-        <div id="loading-bar"></div>
+  return (
+    <div className="w-full h-full relative">
+      {renderScene()}
+      
+      {/* Interactive overlay - simulates 3D controls */}
+      <div className="absolute bottom-2 left-2 text-xs text-white bg-black bg-opacity-50 p-1 rounded">
+        Drag to rotate | Scroll to zoom
       </div>
     </div>
-  </div>
+  );
+};
 
-  <div class="main-content" style="display: none;">
-    <!-- Entire original body content here, including nav, sections, hero, features, etc., unchanged. -->
-  </div>
+// Main component
+const SpeechTo3DMVP = () => {
+  // State for app functionality
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedScene, setGeneratedScene] = useState(null);
+  const [generationHistory, setGenerationHistory] = useState([]);
+  const [apiStatus, setApiStatus] = useState('ready');
+  const [showSettings, setShowSettings] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [modelType, setModelType] = useState('meshy'); // 'meshy', '3daistudio', 'spline'
+  const [renderStyle, setRenderStyle] = useState('realistic'); // 'realistic', 'cartoon', 'stylized'
+  const [errorMessage, setErrorMessage] = useState('');
+  const [rotating, setRotating] = useState(false);
+  const [rotationDegree, setRotationDegree] = useState(0);
+  
+  // Refs for functionality
+  const recognitionRef = useRef(null);
+  const rotationIntervalRef = useRef(null);
+  
+  // Animation effect for rotation
+  useEffect(() => {
+    if (rotating && generatedScene) {
+      rotationIntervalRef.current = setInterval(() => {
+        setRotationDegree(prev => (prev + 1) % 360);
+      }, 50);
+    } else {
+      clearInterval(rotationIntervalRef.current);
+    }
+    
+    return () => {
+      clearInterval(rotationIntervalRef.current);
+    };
+  }, [rotating, generatedScene]);
+  
+  // Initialize speech recognition
+  useEffect(() => {
+    // Check for browser support
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      setErrorMessage('Speech recognition is not supported in your browser. Try Chrome or Edge.');
+      return;
+    }
 
-  <audio id="relaxingAudio" src="relaxing.mp3" loop></audio>
-  <script src="main.js"></script>
-  <script src="main_level2.js"></script>
-</body>
-</html>
+    try {
+      // Initialize the SpeechRecognition object
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      // Configure recognition
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      // Set up event handlers
+      recognition.onstart = () => {
+        setIsListening(true);
+        setErrorMessage('');
+      };
+      
+      recognition.onresult = (event) => {
+        const current = event.resultIndex;
+        const transcript = event.results[current][0].transcript;
+        setTranscript(transcript);
+        
+        // If this is a final result
+        if (event.results[current].isFinal) {
+          // Check for command to stop listening
+          if (transcript.toLowerCase().includes('stop recording') || 
+              transcript.toLowerCase().includes('stop listening')) {
+            recognition.stop();
+          }
+        }
+      };
+      
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setErrorMessage(`Error: ${event.error}. Please try again.`);
+        setIsListening(false);
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+      
+      recognitionRef.current = recognition;
+    } catch (error) {
+      console.error('Error initializing speech recognition:', error);
+      setErrorMessage('Failed to initialize speech recognition.');
+    }
+    
+    // Cleanup
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (error) {
+          console.error('Error stopping speech recognition:', error);
+        }
+      }
+    };
+  }, []);
+  
+  // Handle speech recognition toggle
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      setTranscript('');
+      recognitionRef.current?.start();
+    }
+  };
+  
+  // Generate a 3D scene based on a text prompt
+  const generateScene = async (prompt) => {
+    if (!prompt.trim()) return;
+    
+    setIsGenerating(true);
+    setApiStatus('connecting');
+    
+    try {
+      // In a real implementation, this would call an API
+      // For now, simulate API call with timeout
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setApiStatus('processing');
+      
+      // Wait a bit longer to simulate 3D generation
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Determine which model to use based on prompt
+      let sceneType;
+      let sceneName;
+      
+      if (prompt.toLowerCase().includes('dog') || prompt.toLowerCase().includes('animal')) {
+        sceneType = 'dog';
+        sceneName = "Dog scene";
+      } else if (prompt.toLowerCase().includes('city') || prompt.toLowerCase().includes('building')) {
+        sceneType = 'city';
+        sceneName = "City scene";
+      } else if (prompt.toLowerCase().includes('forest') || prompt.toLowerCase().includes('tree')) {
+        sceneType = 'forest';
+        sceneName = "Forest scene";
+      } else {
+        sceneType = 'office';
+        sceneName = "Office scene";
+      }
+      
+      // Create the scene object
+      const newScene = {
+        name: sceneName,
+        prompt: prompt,
+        timestamp: new Date().toLocaleTimeString(),
+        sceneType: sceneType,
+        modelType: modelType,
+        renderStyle: renderStyle
+      };
+      
+      setGeneratedScene(newScene);
+      setGenerationHistory(prev => [newScene, ...prev].slice(0, 10));
+      
+    } catch (error) {
+      console.error('Error generating scene:', error);
+      setErrorMessage('Failed to generate scene. Please try again.');
+    } finally {
+      setIsGenerating(false);
+      setApiStatus('ready');
+    }
+  };
+  
+  // Handle manual scene generation
+  const handleManualGenerate = () => {
+    if (transcript.trim() !== '') {
+      generateScene(transcript);
+    }
+  };
+  
+  // Reset to generate a new example - simulate interaction with the transcript input
+  const generateExample = () => {
+    const examples = [
+      "A big dog sitting on the ground",
+      "A city skyline with tall buildings",
+      "A forest with many trees",
+      "An office with a desk and computer"
+    ];
+    
+    const randomExample = examples[Math.floor(Math.random() * examples.length)];
+    setTranscript(randomExample);
+    generateScene(randomExample);
+  };
+  
+  // Scene Viewer Component
+  const SceneViewer = ({ scene }) => {
+    return (
+      <div 
+        className="w-full h-full relative"
+        onMouseDown={() => setRotating(true)}
+        onMouseUp={() => setRotating(false)}
+        onMouseLeave={() => setRotating(false)}
+        style={{ 
+          transform: `perspective(800px) rotateY(${rotationDegree}deg)`,
+          transformStyle: 'preserve-3d',
+          transition: rotating ? 'none' : 'transform 0.5s ease'
+        }}
+      >
+        <SceneRenderer sceneType={scene.sceneType} style={scene.renderStyle} />
+      </div>
+    );
+  };
+  
+  // Placeholder when no scene is available
+  const EmptySceneViewer = () => {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+        <div className="text-center p-8">
+          <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Mic size={32} className="text-gray-400" />
+          </div>
+          <p className="text-white font-medium">Speak to Generate a 3D Scene</p>
+          <p className="text-gray-400 text-sm mt-2">
+            Try saying: "A big dog sitting on the ground"
+          </p>
+          <button
+            onClick={generateExample}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Try an Example
+          </button>
+        </div>
+      </div>
+    );
+  };
+  
+  // Loading State Component
+  const LoadingState = () => {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+        <div className="text-center p-8">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white font-medium">Generating 3D Scene</p>
+          <p className="text-gray-400 text-sm mt-2">
+            {apiStatus === 'connecting' ? 'Connecting to AI service...' : 'Processing your scene...'}
+          </p>
+        </div>
+      </div>
+    );
+  };
+  
+  // Render the model selector UI
+  const renderModelSelector = () => (
+    <div className="mb-4">
+      <label className="block text-gray-200 text-sm font-bold mb-2">3D Model Engine</label>
+      <div className="flex space-x-2">
+        <button 
+          className={`px-3 py-2 rounded text-sm ${modelType === 'meshy' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+          onClick={() => setModelType('meshy')}
+        >
+          Meshy AI
+        </button>
+        <button 
+          className={`px-3 py-2 rounded text-sm ${modelType === '3daistudio' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+          onClick={() => setModelType('3daistudio')}
+        >
+          3D AI Studio
+        </button>
+        <button 
+          className={`px-3 py-2 rounded text-sm ${modelType === 'spline' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+          onClick={() => setModelType('spline')}
+        >
+          Spline
+        </button>
+      </div>
+    </div>
+  );
+  
+  // Render the style selector UI
+  const renderStyleSelector = () => (
+    <div className="mb-4">
+      <label className="block text-gray-200 text-sm font-bold mb-2">Render Style</label>
+      <div className="flex space-x-2">
+        <button 
+          className={`px-3 py-2 rounded text-sm ${renderStyle === 'realistic' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+          onClick={() => setRenderStyle('realistic')}
+        >
+          Realistic
+        </button>
+        <button 
+          className={`px-3 py-2 rounded text-sm ${renderStyle === 'cartoon' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+          onClick={() => setRenderStyle('cartoon')}
+        >
+          Cartoon
+        </button>
+        <button 
+          className={`px-3 py-2 rounded text-sm ${renderStyle === 'stylized' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+          onClick={() => setRenderStyle('stylized')}
+        >
+          Stylized
+        </button>
+      </div>
+    </div>
+  );
+  
+  // Settings panel component
+  const renderSettings = () => (
+    <div className="bg-gray-800 p-4 rounded-lg mb-4">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-white font-medium">Generation Settings</h3>
+        <button 
+          className="text-gray-400 hover:text-gray-200"
+          onClick={() => setShowSettings(false)}
+        >
+          <X size={18} />
+        </button>
+      </div>
+      {renderModelSelector()}
+      {renderStyleSelector()}
+    </div>
+  );
+  
+  // Info panel component
+  const renderInfo = () => (
+    <div className="bg-gray-800 p-4 rounded-lg mb-4">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-white font-medium">About This Demo</h3>
+        <button 
+          className="text-gray-400 hover:text-gray-200"
+          onClick={() => setShowInfo(false)}
+        >
+          <X size={18} />
+        </button>
+      </div>
+      <p className="text-gray-300 text-sm mb-2">
+        This is a basic MVP for an AI-powered VR exposure therapy app.
+      </p>
+      <p className="text-gray-300 text-sm mb-2">
+        Speak into your microphone to describe a scene, and the AI will generate a 3D environment based on your description.
+      </p>
+      <p className="text-gray-300 text-sm">
+        In a full implementation, this would connect to text-to-3D AI services like Meshy AI or 3D AI Studio to generate high-quality 3D models.
+      </p>
+    </div>
+  );
+  
+  // History item component
+  const renderHistoryItem = (item, index) => (
+    <div 
+      key={index} 
+      className="flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer"
+      onClick={() => setGeneratedScene(item)}
+    >
+      <div className="w-12 h-12 bg-gray-600 rounded overflow-hidden mr-3 flex items-center justify-center">
+        {item.sceneType === 'dog' && <span className="text-lg">🐕</span>}
+        {item.sceneType === 'city' && <span className="text-lg">🏙️</span>}
+        {item.sceneType === 'forest' && <span className="text-lg">🌲</span>}
+        {item.sceneType === 'office' && <span className="text-lg">🏢</span>}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-white text-sm truncate">{item.prompt}</p>
+        <p className="text-gray-400 text-xs">{item.timestamp}</p>
+      </div>
+    </div>
+  );
+  
+  // Generation history component
+  const renderGenerationHistory = () => (
+    <div className="bg-gray-800 rounded-lg p-4 mb-4">
+      <h3 className="text-white font-medium mb-3">Generation History</h3>
+      <div className="space-y-2 max-h-64 overflow-y-auto">
+        {generationHistory.length > 0 ? (
+          generationHistory.map(renderHistoryItem)
+        ) : (
+          <p className="text-gray-400 text-sm">No generations yet.</p>
+        )}
+      </div>
+    </div>
+  );
+  
+  // Main render
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="mb-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">Speech-to-3D Scene Generator</h1>
+            <p className="text-gray-400">Speak to create 3D scenes instantly</p>
+          </div>
+          <div className="flex space-x-2">
+            <button 
+              className="bg-gray-800 p-2 rounded-full hover:bg-gray-700"
+              onClick={() => setShowInfo(!showInfo)}
+              title="Information"
+            >
+              <Info size={24} />
+            </button>
+            <button 
+              className="bg-gray-800 p-2 rounded-full hover:bg-gray-700"
+              onClick={() => setShowSettings(!showSettings)}
+              title="Settings"
+            >
+              <Settings size={24} />
+            </button>
+          </div>
+        </header>
+        
+        {/* Error message */}
+        {errorMessage && (
+          <div className="bg-red-800 text-white p-3 rounded-lg mb-4 flex justify-between items-center">
+            <span>{errorMessage}</span>
+            <button onClick={() => setErrorMessage('')} className="text-white">
+              <X size={18} />
+            </button>
+          </div>
+        )}
+        
+        {/* Main content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left sidebar */}
+          <div className="lg:col-span-1 space-y-4">
+            {showInfo && renderInfo()}
+            {showSettings && renderSettings()}
+            {renderGenerationHistory()}
+            
+            {/* Voice input controls */}
+            <div className="bg-gray-800 rounded-lg p-4">
+              <h3 className="text-white font-medium mb-3">Voice Input</h3>
+              
+              <div className="flex items-center mb-4">
+                <button
+                  className={`p-3 rounded-full mr-4 ${isListening ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+                  onClick={toggleListening}
+                  disabled={isGenerating || errorMessage.includes('not supported')}
+                >
+                  {isListening ? <MicOff size={24} /> : <Mic size={24} />}
+                </button>
+                <div>
+                  <p className="text-sm text-gray-300">
+                    {isListening ? 'Listening...' : 'Click to speak'}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <textarea
+                  className="w-full bg-gray-700 text-white rounded p-3 resize-none"
+                  rows={4}
+                  placeholder="Your speech will appear here... or type a description"
+                  value={transcript}
+                  onChange={(e) => setTranscript(e.target.value)}
+                  disabled={isListening || isGenerating}
+                ></textarea>
+              </div>
+              
+              <button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center justify-center"
+                onClick={handleManualGenerate}
+                disabled={isGenerating || transcript.trim() === ''}
+              >
+                <Layers className="mr-2" size={20} />
+                Generate Scene
+              </button>
+            </div>
+          </div>
+          
+          {/* Main 3D viewer */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-800 rounded-lg overflow-hidden" style={{ height: '500px' }}>
+              {isGenerating ? (
+                <LoadingState />
+              ) : generatedScene ? (
+                <SceneViewer scene={generatedScene} />
+              ) : (
+                <EmptySceneViewer />
+              )}
+              
+              {/* Control buttons */}
+              {generatedScene && !isGenerating && (
+                <div className="absolute top-4 right-4 flex space-x-2">
+                  <button 
+                    className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700" 
+                    title="Take Screenshot"
+                  >
+                    <Camera size={20} />
+                  </button>
+                  <button 
+                    className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700" 
+                    title="Download"
+                  >
+                    <Download size={20} />
+                  </button>
+                  <button 
+                    className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700"
+                    onClick={() => generateScene(generatedScene.prompt)}
+                    title="Regenerate"
+                  >
+                    <RefreshCw size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Scene details */}
+            {generatedScene && (
+              <div className="bg-gray-800 rounded-lg p-4 mt-4">
+                <h3 className="text-white font-medium mb-3">Scene Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-700 p-3 rounded">
+                    <p className="text-gray-400 text-xs mb-1">Model Engine</p>
+                    <p className="text-white">{generatedScene.modelType === 'meshy' ? 'Meshy AI' : generatedScene.modelType === '3daistudio' ? '3D AI Studio' : 'Spline'}</p>
+                  </div>
+                  <div className="bg-gray-700 p-3 rounded">
+                    <p className="text-gray-400 text-xs mb-1">Render Style</p>
+                    <p className="text-white capitalize">{generatedScene.renderStyle}</p>
+                  </div>
+                  <div className="bg-gray-700 p-3 rounded col-span-2">
+                    <p className="text-gray-400 text-xs mb-1">Prompt</p>
+                    <p className="text-white">{generatedScene.prompt}</p>
+                  </div>
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <p className="text-sm text-gray-400 mb-2">
+                    Controls:
+                  </p>
+                  <ul className="text-sm text-gray-300 space-y-1 list-disc pl-5">
+                    <li>Click and drag to rotate view</li>
+                    <li>This is a simplified 3D representation using SVG</li>
+                    <li>In the full implementation, this would be a real 3D model</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SpeechTo3DMVP;
