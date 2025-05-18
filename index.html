@@ -416,52 +416,61 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    /* Waitlist Form Styling */
-    .waitlist-form-container {
-      max-width: 500px; /* Adjust max-width as needed */
-      margin: 0 auto; /* Center the container */
-      background: var(--card-bg); /* Use card background */
-      border-radius: 20px; /* Match card border-radius */
-      padding: 2rem; /* Add padding */
-      border: 1px solid var(--border-light); /* Match card border */
-      box-shadow: var(--shadow-glow); /* Match card shadow */
-      text-align: center; /* Center the form elements */
-    }
+   .waitlist-form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-glow);
+  text-align: center;
+}
 
-    .waitlist-form-container form {
-      display: flex;
-      flex-direction: column;
-      align-items: center; /* Center items vertically */
-      gap: 1.5rem; /* Space between input and button */
-    }
+.waitlist-form-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
 
-    .waitlist-input {
-      width: 100%; /* Make input take full width of container */
-      padding: 1rem 1.5rem; /* Adjust padding for bigger size */
-      border: 1px solid var(--border-light); /* Match border style */
-      border-radius: 10px; /* Rounded corners for input */
-      background-color: rgba(255, 255, 255, 0.1); /* Subtle white background */
-      color: var(--text-primary); /* Text color */
-      font-size: 1rem; /* Font size */
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
+.waitlist-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 1.2rem 1.5rem;
+  border: 1px solid var(--border-light);
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+}
 
-    .waitlist-input::placeholder {
-      color: var(--text-tertiary); /* Placeholder color */
-    }
+.waitlist-input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 10px var(--primary-glow);
+  background-color: rgba(255, 255, 255, 0.2);
+}
 
-    .waitlist-input:focus {
-      outline: none;
-      border-color: var(--primary-light);
-      box-shadow: 0 0 8px var(--primary-glow);
-    }
+.waitlist-input::placeholder {
+  color: var(--text-tertiary);
+}
 
-    .waitlist-button {
-      /* Inherits styles from .btn */
-      width: 100%; /* Make button take full width of container */
-      max-width: 300px; /* Limit button width */
-    }
+.waitlist-button {
+  margin: 0 auto;
+  width: auto;
+  min-width: 200px;
+}
 
+/* Make the form responsive */
+@media (max-width: 576px) {
+  .waitlist-input,
+  .waitlist-button {
+    width: 100%;
+  }
+}
     /* Section Styling */
     .section {
       padding: 8rem 2rem;
