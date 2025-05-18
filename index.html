@@ -416,6 +416,51 @@
       flex-wrap: wrap;
       justify-content: center;
     }
+    /* Waitlist Form Styling */
+    .waitlist-form-container {
+      max-width: 500px; /* Adjust max-width as needed */
+      margin: 0 auto; /* Center the container */
+      background: var(--card-bg); /* Use card background */
+      border-radius: 20px; /* Match card border-radius */
+      padding: 2rem; /* Add padding */
+      border: 1px solid var(--border-light); /* Match card border */
+      box-shadow: var(--shadow-glow); /* Match card shadow */
+      text-align: center; /* Center the form elements */
+    }
+
+    .waitlist-form-container form {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center items vertically */
+      gap: 1.5rem; /* Space between input and button */
+    }
+
+    .waitlist-input {
+      width: 100%; /* Make input take full width of container */
+      padding: 1rem 1.5rem; /* Adjust padding for bigger size */
+      border: 1px solid var(--border-light); /* Match border style */
+      border-radius: 10px; /* Rounded corners for input */
+      background-color: rgba(255, 255, 255, 0.1); /* Subtle white background */
+      color: var(--text-primary); /* Text color */
+      font-size: 1rem; /* Font size */
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .waitlist-input::placeholder {
+      color: var(--text-tertiary); /* Placeholder color */
+    }
+
+    .waitlist-input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    .waitlist-button {
+      /* Inherits styles from .btn */
+      width: 100%; /* Make button take full width of container */
+      max-width: 300px; /* Limit button width */
+    }
 
     /* Section Styling */
     .section {
@@ -1274,7 +1319,22 @@
         </div>
       </div>
     </section>
-
+<section class="section" id="waitlist">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-label">Stay Updated</span>
+          <h2>Join Our Waitlist</h2>
+          <p>Be among the first to experience the future of therapy. Sign up with your email below and we'll notify you about our soft launch on June 20th!</p>
+        </div>
+        <div class="waitlist-form-container">
+                    <form name="waitlist" method="POST" data-netlify="true" action="/thank-you.html">
+            <input type="hidden" name="form-name" value="waitlist" />
+            <input type="email" name="email" placeholder="Enter your email address" required class="waitlist-input">
+            <button type="submit" class="btn waitlist-button">Notify Me</button>
+          </form>
+        </div>
+      </div>
+    </section>
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-column">
