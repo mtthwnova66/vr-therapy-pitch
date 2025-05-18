@@ -808,7 +808,8 @@
       .hero-inner {
         margin-top: 20vh; /* Adjust for mobile */
       }
-      #waitlist .section-inner {
+     /* Responsive styles specific to waitlist section */
+      #waitlist .section-inner {
         padding: 2rem 1.5rem;
       }
 
@@ -857,9 +858,10 @@
         max-width: 250px;
       }
     }
-/* Waitlist Section Specific Styles */
+/* --- Waitlist Section Specific Styles --- */
+
     #waitlist .section-inner {
-      max-width: 700px; /* Slightly smaller max-width for the form */
+      max-width: 700px;
       background: var(--card-bg);
       border-radius: 20px;
       padding: 3rem;
@@ -873,19 +875,19 @@
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      align-items: center; /* Centers items horizontally in a column */
-      width: 100%; /* Ensure form takes full width of its container */
+      align-items: center; /* THIS centers the input and button */
+      width: 100%;
     }
 
     #waitlist input[type="email"] {
       width: 100%;
-      max-width: 400px; /* Limit input width */
-      padding: 1.2rem 1.5rem; /* Increased padding for bigger size */
+      max-width: 400px;
+      padding: 1.2rem 1.5rem; /* THIS controls the input height */
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid var(--border-light);
-      border-radius: 50px; /* Rounded input */
+      border-radius: 50px;
       color: var(--text-primary);
-      font-size: 1.1rem; /* Slightly larger font size */
+      font-size: 1.1rem; /* THIS controls the text size inside */
       outline: none;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
@@ -903,9 +905,10 @@
     #waitlist button[type="submit"] {
       width: 100%;
       max-width: 400px; /* Match input width */
-      font-size: 1rem; /* Adjust button font size */
-      padding: 1rem 1.5rem; /* Adjust button padding */
-      /* Inherits btn styles */
+      /* The existing .btn class styles handle the button's appearance */
+    }
+
+    /* --- Responsive styles specific to waitlist section (add INSIDE your existing @media (max-width: 768px) block) --- */
     }
     /* Footer */
     .footer {
