@@ -952,6 +952,67 @@
       font-size: 0.85rem;
       text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
+    /* Waitlist Section Specific Styles */
+    #waitlist .section-inner {
+      max-width: 700px; /* Slightly smaller max-width for the form */
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 3rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-glow);
+      text-align: center;
+    }
+
+    #waitlist form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    #waitlist input[type="email"] {
+      width: 100%;
+      max-width: 400px; /* Limit input width */
+      padding: 1rem 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-light);
+      border-radius: 50px; /* Rounded input */
+      color: var(--text-primary);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #waitlist input[type="email"]::placeholder {
+      color: var(--text-tertiary);
+      opacity: 0.8;
+    }
+
+    #waitlist input[type="email"]:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    #waitlist button[type="submit"] {
+      width: 100%;
+      max-width: 400px; /* Match input width */
+      font-size: 1rem; /* Adjust button font size */
+      padding: 1rem 1.5rem; /* Adjust button padding */
+      /* Inherits btn styles */
+    }
+
+    /* Add this to your responsive section for smaller screens */
+    @media (max-width: 768px) {
+      /* ... existing responsive styles ... */
+      #waitlist .section-inner {
+        padding: 2rem 1.5rem;
+      }
+
+      #waitlist input[type="email"],
+      #waitlist button[type="submit"] {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 
@@ -1304,6 +1365,20 @@
       <div class="footer-bottom">
         <p class="copyright">© 2025 Synaeon, Inc. All rights reserved.</p>
       </div>
+      <section class="section" id="waitlist">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-label">Stay Updated</span>
+                <h2>Join Our Waitlist</h2>
+                <p>Be among the first to experience the future of therapy. Sign up with your email below and we'll notify you about our soft launch on June 20th!</p>
+            </div>
+            <form name="waitlist" method="POST" data-netlify="true">
+                <input type="hidden" name="form-name" value="waitlist" />
+                <input type="email" name="email" placeholder="Enter your email address" required>
+                <button type="submit" class="btn">Notify Me</button>
+            </form>
+        </div>
+    </section>
     </footer>
   </div>
 
