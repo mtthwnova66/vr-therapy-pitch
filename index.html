@@ -1748,33 +1748,5 @@
   </script>
   <script src="main.js"></script>
   <script src="main_level2.js"></script>
-<section class="section" id="waitlist">
-  <div class="section-inner">
-    <span class="section-label">Join the Waitlist</span>
-    <h2>Be the First to Know</h2>
-    <p>Drop your email and we’ll ping you when we launch.</p>
-
-    <!-- Netlify form -->
-    <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-      <!-- Spam bot trap -->
-      <input type="hidden" name="form-name" value="waitlist" />
-      <p class="hidden">
-        <label>Don’t fill this out: <input name="bot-field" /></label>
-      </p>
-
-      <!-- Email field -->
-      <input
-        type="email"
-        name="email"
-        placeholder="your@email.com"
-        required
-        style="padding: .8rem; width: 300px; max-width: 100%; border-radius: 5px; border: none;"
-      />
-
-      <!-- Submit button -->
-      <button type="submit" class="btn">Join Now</button>
-    </form>
-  </div>
-</section>
 </body>
 </html>
