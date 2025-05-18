@@ -808,6 +808,14 @@
       .hero-inner {
         margin-top: 20vh; /* Adjust for mobile */
       }
+      #waitlist .section-inner {
+        padding: 2rem 1.5rem;
+      }
+
+      #waitlist input[type="email"],
+      #waitlist button[type="submit"] {
+        max-width: 100%; /* Full width on small screens */
+      }
     }
 
     @media (max-width: 576px) {
@@ -849,7 +857,56 @@
         max-width: 250px;
       }
     }
+/* Waitlist Section Specific Styles */
+    #waitlist .section-inner {
+      max-width: 700px; /* Slightly smaller max-width for the form */
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 3rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-glow);
+      text-align: center;
+      margin: 0 auto; /* Center the section-inner block */
+    }
 
+    #waitlist form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center; /* Centers items horizontally in a column */
+      width: 100%; /* Ensure form takes full width of its container */
+    }
+
+    #waitlist input[type="email"] {
+      width: 100%;
+      max-width: 400px; /* Limit input width */
+      padding: 1.2rem 1.5rem; /* Increased padding for bigger size */
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-light);
+      border-radius: 50px; /* Rounded input */
+      color: var(--text-primary);
+      font-size: 1.1rem; /* Slightly larger font size */
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #waitlist input[type="email"]::placeholder {
+      color: var(--text-tertiary);
+      opacity: 0.8;
+    }
+
+    #waitlist input[type="email"]:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    #waitlist button[type="submit"] {
+      width: 100%;
+      max-width: 400px; /* Match input width */
+      font-size: 1rem; /* Adjust button font size */
+      padding: 1rem 1.5rem; /* Adjust button padding */
+      /* Inherits btn styles */
+    }
     /* Footer */
     .footer {
       background: rgba(2, 6, 14, 0.9);
@@ -1274,7 +1331,20 @@
         </div>
       </div>
     </section>
-
+<section class="section" id="waitlist">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-label">Stay Updated</span>
+                <h2>Join Our Waitlist</h2>
+                <p>Be among the first to experience the future of therapy. Sign up with your email below and we'll notify you about our soft launch on June 20th!</p>
+            </div>
+            <form name="waitlist" method="POST" data-netlify="true" action="/thank-you.html">
+                <input type="hidden" name="form-name" value="waitlist" />
+                <input type="email" name="email" placeholder="Enter your email address" required>
+                <button type="submit" class="btn">Notify Me</button>
+            </form>
+        </div>
+    </section>
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-column">
