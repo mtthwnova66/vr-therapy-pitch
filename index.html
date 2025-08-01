@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synaeon - AI-Powered VR Therapy</title>
-  
+
+  <!-- Meta Tags -->
   <meta name="description" content="Synaeon offers AI-powered VR therapy that transforms mental health treatment with real-time, adaptive, and clinically effective exposure therapy.">
   <meta name="keywords" content="VR therapy, AI therapy, exposure therapy, mental health, anxiety treatment, VR healthcare">
   <meta name="author" content="Synaeon">
@@ -12,81 +13,66 @@
   <meta property="og:description" content="Revolutionizing mental health treatment with AI-powered VR exposure therapy.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://synaeon.com/">
-  <!-- UPDATED: Use an absolute URL to your GitHub-hosted image -->
   <meta property="og:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/mtthwnova66/vr-therapy-pitch/main/image.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  
+
+  <!-- Icons -->
   <link rel="icon" type="image/png" href="syneon_image.png">
   <link rel="apple-touch-icon" href="syneon_image.png">
-  
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.min.js"></script>
 
+  <!-- Unicorn Studio Background Script -->
+  <script type="text/javascript">
+    !function(){
+      if(!window.UnicornStudio){
+        window.UnicornStudio={isInitialized:!1};
+        var i=document.createElement("script");
+        i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",
+        i.onload=function(){
+          window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)
+        },
+        (document.head || document.body).appendChild(i)
+      }
+    }();
+  </script>
+
+  <!-- Custom Styles -->
   <style>
-    :root {
-      --primary: #0071e3;
-      --primary-dark: #005bb5;
-      --primary-light: #47a0ff;
-      --primary-glow: rgba(71, 160, 255, 0.5);
-      --accent: #ffc107;
-      --accent-light: #ffdb66;
-      --accent-ultra: #fff0bf;
-      --accent-glow: rgba(255, 193, 7, 0.5);
-      --success: #34c759;
-      --neural-1: #ff3366;
-      --neural-2: #7c4dff;
-      --neural-3: #00e5ff;
-      --bg-dark: #040812;
-      --card-bg: rgba(10, 17, 40, 0.7);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.8);
-      --text-tertiary: rgba(255, 255, 255, 0.5);
-      --border-light: rgba(255, 255, 255, 0.1);
-      --font-main: 'Inter', sans-serif;
-      --font-display: 'Outfit', sans-serif;
-      --gradient-overlay: radial-gradient(circle at center, rgba(71, 160, 255, 0.1), transparent 70%);
-      --shadow-glow: 0 0 15px var(--primary-glow), 0 0 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    html { 
-      scroll-behavior: smooth; 
-      font-size: 16px; 
-    }
-    
     body {
-      font-family: var(--font-main);
-      background-color: var(--bg-dark);
-      color: var(--text-primary);
-      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #040812;
+      color: #fff;
       overflow-x: hidden;
-      position: relative;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
-    
-    #global-blobCanvas {
+    #unicorn-background {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      display: none;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: -2;
+      overflow: hidden;
     }
+  </style>
+</head>
+
+<body>
+  <!-- Unicorn Studio Background Container -->
+  <div id="unicorn-background" data-us-project="doQiH3mFiF56Mzo7FdOJ"></div>
     
     /* Loading Screen */
     #loading-screen {
